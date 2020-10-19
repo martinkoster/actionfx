@@ -1,0 +1,23 @@
+plugins {
+    id("org.openjfx.javafxplugin") version "0.0.9"
+}
+
+description = "afx-spring: This module contains integration classes for using ActionFX with the Spring Framework."
+
+dependencies {
+	
+        implementation project(":afx-core")
+        implementation project(":afx-testing")
+
+        testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
+    	testImplementation group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
+    	testImplementation group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
+
+		testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
+		testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
+}
+
+test {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
