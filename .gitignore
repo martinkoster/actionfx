@@ -7,10 +7,10 @@
 # eclipse specific git ignore
 .project
 .metadata
-build/**
-out/**
-bin/**
-tmp/**
+**/build/**
+**/out/**
+**/bin/**
+**/tmp/**
 tmp/**/*
 *.tmp
 *.bak
