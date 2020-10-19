@@ -1,0 +1,188 @@
+plugins {
+    id "com.github.spotbugs" version "${spotbugsVersion}"
+    id "java"
+}
+
+wrapper {
+    gradleVersion = "6.7.0"
+    distributionType = Wrapper.DistributionType.ALL
+    distributionUrl = "https://services.gradle.org/distributions/gradle-6.7-bin.zip"
+}
+
+///////////////////////////////////////
+// configuration for all subprojects //
+///////////////////////////////////////
+configure(allprojects) { project ->
+ 
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+    apply plugin: "maven-publish"
+    apply plugin: "java"
+    apply plugin: "com.github.spotbugs"
+
+    sourceCompatibility = "11" 
+    targetCompatibility = "11"
+    
+    configurations {
+	    published
+	    all*.exclude module: "slf4j-log4j12"
+	    componentTestCompile.extendsFrom testImplementation
+	    componentTestCompile.extendsFrom testRuntime
+    }
+
+      
+    repositories {
+        mavenCentral()
+        jcenter()
+        mavenLocal()
+    }
+    
+	// In this section you declare additional sourceSets
+	sourceSets {
+	    componentTest {
+	        java {
+	            compileClasspath += main.output + test.output
+	            runtimeClasspath += main.output + test.output
+	            srcDir file("src/component-test/java")
+	        }
+	        resources.srcDir file("src/component-test/resources")
+	    }
+	}
+
+	[compileJava, compileTestJava, compileComponentTestJava]*.options*.encoding = "UTF-8"
+    
+	test {
+		useJUnitPlatform()
+		jacoco {
+			destinationFile = file("$buildDir/jacoco/UTest.exec")
+			enabled = true
+		}
+		reports {
+			html.enabled = true
+			html.destination = file("${reporting.baseDir}/${name}")
+		}
+	    testLogging {
+    	    exceptionFormat = "full"
+    	}
+    }
+
+    tasks.withType(Test) {
+       	systemProperties = System.properties
+       	systemProperties["user.dir"] = workingDir
+    	reports.html.destination = file("${reporting.baseDir}/${name}")
+    	testLogging {
+        	events "passed", "skipped", "failed"
+    	}
+    }
+    
+	task componentTest(type: Test) {
+		useJUnitPlatform()
+	    testClassesDirs = sourceSets.componentTest.output.classesDirs
+	    classpath = sourceSets.componentTest.runtimeClasspath
+	    outputs.upToDateWhen { false }
+	    // test includes
+	    if ( project.hasProperty("tests.include") ) {
+	    	include project.property("tests.include")
+	    }
+		testLogging {
+        	exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    	}
+    	afterTest { test, result ->
+        	println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
+    	}
+	    jacoco {
+			destinationFile = file("$buildDir/jacoco/CTest.exec")
+			enabled = true
+		}
+	}
+
+	////////////////////
+	// Infrastracture //
+	////////////////////
+    idea {
+	    module {
+	        scopes.TEST.plus += [ configurations.componentTestCompile ]
+	    }
+	}
+
+	eclipse {
+	    classpath {
+	        downloadSources = true
+	        plusConfigurations += [ configurations.componentTestCompile ]
+	    }
+	}
+
+	///////////////////
+	// Code analysis //
+	///////////////////
+    spotbugs {
+        effort = "max"
+        reportLevel = "high"  // TODO: remove if spotbugs works better
+        reportsDir = file("$buildDir/reports/spotbugs")
+    }
+    
+    spotbugsMain {
+        reports {
+            html {
+                enabled = true
+                destination = file("$buildDir/reports/spotbugs/spotbugs-main.html")
+                stylesheet = "fancy-hist.xsl"
+            }
+        }
+    }
+    
+    spotbugsTest {
+        enabled = false
+        ignoreFailures = true
+    }
+    
+    spotbugsComponentTest {
+        enabled = false
+        ignoreFailures = true
+    }
+
+    tasks.named("check") {
+        dependsOn cpdCheck
+    }
+
+	////////////////////////
+	// Build / Publishing //
+	////////////////////////
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier.set("sources")
+        from sourceSets.main.allSource
+    }
+
+    javadoc {
+        description = "Generates project-level javadoc for use in -javadoc jar"
+
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.author = true
+        options.header = project.name
+        options.addStringOption("Xdoclint:none", "-quiet")
+        options.addStringOption("charSet", "UTF-8")
+
+        // suppress warnings due to cross-module @see and @link references;
+        // note that global "api" task does display all warnings.
+        logging.captureStandardError LogLevel.INFO
+        logging.captureStandardOutput LogLevel.INFO // suppress "## warnings" message
+
+        failOnError = false
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier.set ("javadoc")
+        from javadoc.destinationDir
+    }
+
+
+    dependencies {
+ 		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
+    	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
+    	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
+    }
+}
+
+// disable artifactoryPublish and sonarqube on root-level (only apply for sub-projects)
+artifactoryPublish.skip = true
+
