@@ -26,8 +26,8 @@ configure(allprojects) { project ->
     configurations {
 	    published
 	    all*.exclude module: "slf4j-log4j12"
-	    componentTestCompile.extendsFrom testImplementation
-	    componentTestCompile.extendsFrom testRuntime
+	    integrationCompile.extendsFrom testImplementation
+	    integrationTestCompile.extendsFrom testRuntime
     }
 
       
@@ -39,24 +39,20 @@ configure(allprojects) { project ->
     
 	// In this section you declare additional sourceSets
 	sourceSets {
-	    componentTest {
+	    integrationTest {
 	        java {
 	            compileClasspath += main.output + test.output
 	            runtimeClasspath += main.output + test.output
-	            srcDir file("src/component-test/java")
+	            srcDir file("src/integration-test/java")
 	        }
-	        resources.srcDir file("src/component-test/resources")
+	        resources.srcDir file("src/integration-test/resources")
 	    }
 	}
 
-	[compileJava, compileTestJava, compileComponentTestJava]*.options*.encoding = "UTF-8"
+	[compileJava, compileTestJava, compileIntegrationTestJava]*.options*.encoding = "UTF-8"
     
 	test {
 		useJUnitPlatform()
-		jacoco {
-			destinationFile = file("$buildDir/jacoco/UTest.exec")
-			enabled = true
-		}
 		reports {
 			html.enabled = true
 			html.destination = file("${reporting.baseDir}/${name}")
@@ -75,10 +71,10 @@ configure(allprojects) { project ->
     	}
     }
     
-	task componentTest(type: Test) {
+	task integrationTest(type: Test) {
 		useJUnitPlatform()
-	    testClassesDirs = sourceSets.componentTest.output.classesDirs
-	    classpath = sourceSets.componentTest.runtimeClasspath
+	    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	    classpath = sourceSets.integrationTest.runtimeClasspath
 	    outputs.upToDateWhen { false }
 	    // test includes
 	    if ( project.hasProperty("tests.include") ) {
@@ -90,10 +86,6 @@ configure(allprojects) { project ->
     	afterTest { test, result ->
         	println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
     	}
-	    jacoco {
-			destinationFile = file("$buildDir/jacoco/CTest.exec")
-			enabled = true
-		}
 	}
 
 	////////////////////
@@ -101,14 +93,14 @@ configure(allprojects) { project ->
 	////////////////////
     idea {
 	    module {
-	        scopes.TEST.plus += [ configurations.componentTestCompile ]
+	        scopes.TEST.plus += [ configurations.integrationTestCompile ]
 	    }
 	}
 
 	eclipse {
 	    classpath {
 	        downloadSources = true
-	        plusConfigurations += [ configurations.componentTestCompile ]
+	        plusConfigurations += [ configurations.integrationTestCompile ]
 	    }
 	}
 
@@ -136,15 +128,11 @@ configure(allprojects) { project ->
         ignoreFailures = true
     }
     
-    spotbugsComponentTest {
+    spotbugsIntegrationTest {
         enabled = false
         ignoreFailures = true
     }
-
-    tasks.named("check") {
-        dependsOn cpdCheck
-    }
-
+ 
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
@@ -183,6 +171,5 @@ configure(allprojects) { project ->
     }
 }
 
-// disable artifactoryPublish and sonarqube on root-level (only apply for sub-projects)
-artifactoryPublish.skip = true
+
 
