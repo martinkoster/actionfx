@@ -2,7 +2,7 @@
 
 include 'afx-core'
 include 'afx-testing'
-include 'afx-spring'
+include 'afx-spring-boot'
 include 'app-sample'
 
 rootProject.name = 'actionfx'

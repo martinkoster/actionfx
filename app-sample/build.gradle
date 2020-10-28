@@ -13,7 +13,7 @@ dependencies {
         }
 
         implementation project(":afx-core")
-        implementation project(":afx-spring")
+        implementation project(":afx-spring-boot")
         
         testImplementation project(":afx-testing")
 

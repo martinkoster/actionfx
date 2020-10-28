@@ -1,6 +1,7 @@
 plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java"
+    id "java-library"
 }
 
 wrapper {
@@ -17,7 +18,7 @@ configure(allprojects) { project ->
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "maven-publish"
-    apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
 
     sourceCompatibility = "11" 

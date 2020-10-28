@@ -2,12 +2,19 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
-description = "afx-spring: This module contains integration classes for using ActionFX with the Spring Framework."
+description = "afx-spring-boot: This module contains integration classes for using ActionFX with the Spring Framework."
 
 dependencies {
 	
         implementation project(":afx-core")
         implementation project(":afx-testing")
+
+		// Spring Dependencies are not declared as "api" dependencies. We just want these dependencies at
+		// compile time. It is up to the user of this module, which exact version of Spring or Spring Boot to use.
+		implementation group: "org.springframework", name: "spring-core", version: "${springVersion}"
+		implementation group: "org.springframework", name: "spring-context", version: "${springVersion}"
+		implementation group: "org.springframework", name: "spring-beans", version: "${springVersion}"
+		
 
         testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
     	testImplementation group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
