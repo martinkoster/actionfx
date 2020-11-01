@@ -23,12 +23,23 @@
  */
 package com.github.actionfx.core;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
+import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
+import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
+import com.github.actionfx.core.test.app.SampleApp;
+
+import javafx.application.Preloader;
 
 /**
  * JUnit test case for {@link ActionFX}.
@@ -46,10 +57,39 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testBuilder() {
-		
+	void testBuilder_minimal_withConfigurationClass_sampleApp() {
 		// WHEN
-		ActionFX actionFX = ActionFX.builder().beanContainer(beanContainer)
+		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+
+		// THEN
+		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT));
+		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
+		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
+		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getPreloaderClass(), equalTo(Preloader.class));
+		assertThat(actionFX, equalTo(ActionFX.getInstance()));
+	}
+
+	@Test
+	void testBuilder_configurative() {
+		// GIVEN
+		Class<? extends Preloader> preloaderClass = Mockito.mock(Preloader.class).getClass();
+		ActionFXEnhancer enhancer = Mockito.mock(ActionFXEnhancer.class);
+
+		// WHEN
+		ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
+				.mainViewId("mainView").actionFXEnhancer(enhancer).enhancementStrategy(EnhancementStrategy.SUBCLASSING)
+				.preloaderClass(preloaderClass).build();
+
+		// THEN
+		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
+		assertThat(actionFX.getEnhancer(), equalTo(enhancer));
+		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
+		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getPreloaderClass(), equalTo(preloaderClass));
+		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 
 	@Test
@@ -68,7 +108,30 @@ class ActionFXTest {
 		// WHEN and THEN (
 		assertThat(actionFX, notNullValue());
 		assertThrows(IllegalStateException.class, () -> ActionFX.builder().build());
+	}
 
+	@Test
+	void testScanComponents() {
+		// GIVEN
+		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN
+
+	}
+
+	@Test
+	void testScanComponents_scanAlreadyPerformed_illegalState() {
+		// GIVEN
+		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN (another call to scanComponents results in an exception)
+		assertThrows(IllegalStateException.class, () -> actionFX.scanForActionFXComponents());
 	}
 
 }

@@ -53,7 +53,7 @@ public class AFXBeanRegistryPostProcessor implements BeanDefinitionRegistryPostP
 
 		SpringBeanContainer beanContainer = new SpringBeanContainer(registry, applicationContext);
 
-		// initializes the view manager
+		// set the new bean container to our ActionFX instance
 
 	}
 

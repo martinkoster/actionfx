@@ -27,7 +27,11 @@ import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
+import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
+import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.view.View;
 
 import javafx.application.Preloader;
 import javafx.stage.Stage;
@@ -57,6 +61,12 @@ public class ActionFX {
 	// 'protected' visibility to manipulate instance for unit testing
 	protected static ActionFX instance;
 
+	// internal framework state, starting with UNINITIALIZED. Further states are
+	// CONFIGURED and finally INITIALIZED
+	// BUILT
+	protected static ActionFXState actionFXState = ActionFXState.UNINITIALIZED;
+
+	// the internal bean container for managing ActionFX components
 	private BeanContainerFacade beanContainer;
 
 	// the ID of the mainView that is displayed in JavaFXs primary Stage
@@ -69,12 +79,37 @@ public class ActionFX {
 	// the package name to scan for ActionFX components
 	private String scanPackage;
 
+	// byte code enhancement strategy to use within ActionFX (runtime agent or
+	// sub-classing)
+	private EnhancementStrategy enhancementStrategy;
+
+	// the byte-code enhancer to use
+	private ActionFXEnhancer enhancer;
+
 	/**
 	 * Private constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
 	 */
 	private ActionFX() {
 		instance = this;
+	}
+
+	/**
+	 * Post construct routine that is executed by the {@link ActionFXBuilder} after
+	 * the instance of {@link ActionFX} has been created.
+	 */
+	private void postConstruct() {
+		// if the agent shall be used and it is not yet installed then we install it
+		// here
+		if (!enhancer.agentInstalled() && enhancementStrategy == EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT) {
+			enhancer.installAgent();
+		}
+		// install a preloader, if supplied
+		if (preloaderClass != null && preloaderClass.equals(Preloader.class)) {
+			System.setProperty("javafx.preloader", preloaderClass.getCanonicalName());
+		}
+		// after configuration and instance creation, the state transfers to CONFIGURED
+		actionFXState = ActionFXState.CONFIGURED;
 	}
 
 	/**
@@ -106,6 +141,80 @@ public class ActionFX {
 	}
 
 	/**
+	 * Scans for ActionFX components, depending on the configured
+	 * {@link #scanPackage}. In case an alternative bean container shall be used for
+	 * ActionFX, please use {@link #scanForActionFXComponents(BeanContainerFacade)}
+	 * instead of this method.
+	 */
+	public void scanForActionFXComponents() {
+		checkActionFXState(ActionFXState.CONFIGURED);
+		scanForActionFXComponentsInternal();
+	}
+
+	/**
+	 * Scans for ActionFX components, depending on the configured
+	 * {@link #scanPackage}. This routine allows to specify an alternative
+	 * {@link BeanContainerFacade} to use, instead of the internal
+	 * {@link DefaultBeanContainer}. The definition of the
+	 * {@link BeanContainerFacade} type is not part of the ActionFX configuration,
+	 * because the configuration and setup is performed at the soonest possible time
+	 * in the application, preferable in the {@code main()} method of the
+	 * Application. The bean container implementation (e.g. when using Spring as
+	 * bean container) is not yet setup at this point in time!
+	 * 
+	 * @param beanContainer the
+	 */
+	public void scanForActionFXComponents(BeanContainerFacade beanContainer) {
+		checkActionFXState(ActionFXState.CONFIGURED);
+		this.beanContainer = beanContainer;
+		scanForActionFXComponentsInternal();
+	}
+
+	/**
+	 * Internal component scanning routine.
+	 */
+	private void scanForActionFXComponentsInternal() {
+		// let's do the bean container implementation do the work
+		beanContainer.populateContainer(scanPackage);
+		actionFXState = ActionFXState.INITIALIZED;
+	}
+
+	/**
+	 * Gets the view by the supplied {@code viewId}.
+	 * 
+	 * @param viewId the view ID
+	 * @return the view instance. If the {@code viewId} does not exists,
+	 *         {@code null} is returned.
+	 */
+	public View getView(String viewId) {
+		return beanContainer.getBean(viewId);
+	}
+
+	/**
+	 * Gets the controller defined by the supplied {@code controllerClass}.
+	 * 
+	 * @param controllerClass the controller class for that a controller instance
+	 *                        shall be retrieved.
+	 * @return the retrieved controller instance.If the {@code controllerClass} does
+	 *         not exists, {@code null} is returned.
+	 */
+	public Object getController(Class<?> controllerClass) {
+		return beanContainer.getBean(controllerClass);
+	}
+
+	/**
+	 * Gets the controller by the supplied {@code controllerId}.
+	 * 
+	 * @param controllerId the controller ID for that a controller instance shall be
+	 *                     retrieved.
+	 * @return the retrieved controller instance.If the {@code controllerId} does
+	 *         not exists, {@code null} is returned.
+	 */
+	public Object getController(String controllerId) {
+		return beanContainer.getBean(controllerId);
+	}
+
+	/**
 	 * The ID / name of the main view that is displayed in JavaFX's primary
 	 * {@link Stage}.
 	 * 
@@ -125,6 +234,14 @@ public class ActionFX {
 		return preloaderClass;
 	}
 
+	/**
+	 * The package name with dot-notation "." that shall be scanned for ActionFX
+	 * components.
+	 * 
+	 * @param scanPackage the package name that shall be scanned for ActionFX
+	 *                    componets
+	 * @return this builder
+	 */
 	public String getScanPackage() {
 		return scanPackage;
 	}
@@ -139,6 +256,38 @@ public class ActionFX {
 	}
 
 	/**
+	 * Then enhancement strategy to use within ActionFX.
+	 * 
+	 * @return the enhancement strategy
+	 */
+	public EnhancementStrategy getEnhancementStrategy() {
+		return enhancementStrategy;
+	}
+
+	/**
+	 * The enhancer to use within ActionFX.
+	 * 
+	 * @return the enhancer
+	 */
+	public ActionFXEnhancer getEnhancer() {
+		return enhancer;
+	}
+
+	/**
+	 * Checks, whether ActionFX is currently in {@code expectedState}. If ActionFX's
+	 * state is different from the expected state, an {@link IllegalStateException}
+	 * is thrown.
+	 * 
+	 * @param expectedState the expected state to check.
+	 */
+	private static void checkActionFXState(ActionFXState expectedState) {
+		if (actionFXState != expectedState) {
+			throw new IllegalStateException(
+					"ActionFX is in state '" + actionFXState + "', while expected state was '" + expectedState + "'!");
+		}
+	}
+
+	/**
 	 * Builder for setting up the singleton instance of {@link ActionFX}.
 	 * 
 	 * @author koster
@@ -146,13 +295,15 @@ public class ActionFX {
 	 */
 	public static class ActionFXBuilder {
 
-		private BeanContainerFacade beanContainer;
-
 		private String mainViewId;
 
 		private Class<? extends Preloader> preloaderClass;
 
 		private String scanPackage;
+
+		private EnhancementStrategy enhancementStrategy;
+
+		private ActionFXEnhancer actionFXEnhancer;
 
 		public ActionFXBuilder() {
 		}
@@ -164,31 +315,15 @@ public class ActionFX {
 		 */
 		public ActionFX build() {
 			ActionFX actionFX = new ActionFX();
-			actionFX.beanContainer = beanContainer != null ? beanContainer : new DefaultBeanContainer();
+			actionFX.beanContainer = new DefaultBeanContainer();
 			actionFX.mainViewId = mainViewId;
 			actionFX.preloaderClass = preloaderClass;
 			actionFX.scanPackage = scanPackage;
+			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
+					: EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT;
+			actionFX.enhancer = actionFXEnhancer != null ? actionFXEnhancer : new ActionFXByteBuddyEnhancer();
+			actionFX.postConstruct();
 			return actionFX;
-		}
-
-		/**
-		 * Sets up the bean container to use for managing the view and controller
-		 * instances. Users of ActionFX do not need to call this method, unless they
-		 * want to use a different container implementation than
-		 * {@link DefaultBeanContainer}.
-		 * <p>
-		 * Calling this method is required for using a different bean container, e.g.
-		 * the Spring bean container.
-		 * <p>
-		 * If this method is not called, the {@link DefaultBeanContainer} is internally
-		 * used to manage ActionFX components.
-		 * 
-		 * @param beanContainer the bean container implementation
-		 * @return this builder
-		 */
-		public ActionFXBuilder beanContainer(BeanContainerFacade beanContainer) {
-			this.beanContainer = beanContainer;
-			return this;
 		}
 
 		/**
@@ -256,5 +391,66 @@ public class ActionFX {
 			this.preloaderClass = preloaderClass;
 			return this;
 		}
+
+		/**
+		 * The byte-code enhancement strategy to use within ActionFX. Currently the
+		 * following enhancement strategies are available:
+		 * <ul>
+		 * <li>{@link EnhancementStrategy#RUNTIME_INSTRUMENTATION_AGENT}: A byte-code
+		 * instrumentation agent is installed/attached at runtime. Methods of controller
+		 * classes are directly enhanced via method interceptors.</li>
+		 * <li>{@link EnhancementStrategy#SUBCLASSING}: Controller classes are
+		 * sub-classed, while controller methods are overriden and method interceptors
+		 * are attached.</li>
+		 * </ul>
+		 * 
+		 * @param enhancementStrategy the enhancement strategy to use
+		 * @return this builder
+		 */
+		public ActionFXBuilder enhancementStrategy(EnhancementStrategy enhancementStrategy) {
+			this.enhancementStrategy = enhancementStrategy;
+			return this;
+		}
+
+		/**
+		 * Sets the implementation of interface {@link ActionFXEnhancer} to use within
+		 * ActionFX. In case there is no instance set, the default enhancer
+		 * {@link ActionFXByteBuddyEnhancer} is used.
+		 * <p>
+		 * Please note that implementations of interface {@link ActionFXEnhancer} must
+		 * provide the possibility of both, byte code instrumentation via a runtime
+		 * agent and byte code enhancement via sub-classing.
+		 * 
+		 * @param actionFXEnhancer the enhancer implementation to use
+		 * @return this builder
+		 */
+		public ActionFXBuilder actionFXEnhancer(ActionFXEnhancer actionFXEnhancer) {
+			this.actionFXEnhancer = actionFXEnhancer;
+			return this;
+		}
+	}
+
+	/**
+	 * Enumeration describing the state of ActionFX.
+	 * 
+	 * @author koster
+	 *
+	 */
+	public static enum ActionFXState {
+		/**
+		 * ActionFX is not yet initialized.
+		 */
+		UNINITIALIZED,
+
+		/**
+		 * ActionFX instance is configured and built, but no component scan is
+		 * performed.
+		 */
+		CONFIGURED,
+
+		/**
+		 * ActionFX component scan is performed and instance is fully ready for use.
+		 */
+		INITIALIZED
 	}
 }

@@ -24,7 +24,6 @@
 package com.github.actionfx.spring.container;
 
 import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -70,9 +69,7 @@ public class SpringBeanContainer implements BeanContainerFacade {
 	}
 
 	@Override
-	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton,
-			Supplier<?> instantiantionSupplier) {
-
+	public void populateContainer(String rootPackage) {
 		// post process bean definitions and add a factory method for @InFxThread
 		// annotated classes
 		for (final String beanName : registry.getBeanDefinitionNames()) {

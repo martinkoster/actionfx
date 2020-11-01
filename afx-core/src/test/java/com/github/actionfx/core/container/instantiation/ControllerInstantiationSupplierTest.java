@@ -21,33 +21,40 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.spring.autoconfigure;
+package com.github.actionfx.core.container.instantiation;
 
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.spring.postpocessor.AFXBeanRegistryPostProcessor;
+import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
+import com.github.actionfx.core.test.TestController;
+
+import net.bytebuddy.agent.ByteBuddyAgent;
 
 /**
- * Spring auto configuration for ActionFX. This configuration registers a bean
- * definition registry post processor in order to add ActionFX beans to the
- * Spring application context.
+ * Test case for {@link ControllerInstantiationSupplier}.
  * 
  * @author koster
  *
  */
-@Configuration
-public class AFXAutoconfiguration {
+class ControllerInstantiationSupplierTest {
 
-	@Bean
-	public BeanDefinitionRegistryPostProcessor afxBeanRegistryPostProcessor() {
-		return new AFXBeanRegistryPostProcessor();
+	@BeforeAll
+	public static void onSetup() {
+		ByteBuddyAgent.install();
 	}
 
-	@Bean
-	public ActionFX actionFX() {
-		return ActionFX.getInstance();
+	@Test
+	void testGet() {
+		// GIVEN
+		ControllerInstantiationSupplier<TestController> supplier = new ControllerInstantiationSupplier<>(
+				TestController.class);
+
+		// WHEN
+		TestController controller = supplier.get();
+
+		// THEN
+		controller.actionMethod();
 	}
+
 }

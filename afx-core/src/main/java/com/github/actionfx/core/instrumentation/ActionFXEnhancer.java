@@ -40,6 +40,15 @@ public interface ActionFXEnhancer {
 	void installAgent();
 
 	/**
+	 * Flag that signalizes, whether the byte-code instrumentation agent is already
+	 * installed.
+	 * 
+	 * @return {@code true}, if the byte-code instrumentation agent is already
+	 *         installed, {@code false}, if the agent is not installed.
+	 */
+	boolean agentInstalled();
+
+	/**
 	 * Enhances the given {@code originalClass} by sub-classing and adding the
 	 * required behavior for ActionFX.
 	 * 

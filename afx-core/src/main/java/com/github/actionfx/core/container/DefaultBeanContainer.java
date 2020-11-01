@@ -32,9 +32,12 @@ import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
+import com.github.actionfx.core.container.instantiation.FxmlViewInstantiationSupplier;
 import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ClassPathScanningUtils;
+import com.github.actionfx.core.view.FxmlView;
 
 import javafx.concurrent.Task;
 
@@ -63,6 +66,13 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		for (Class<?> controllerClass : controllerClasses) {
 			AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 
+			// add a bean definition for the controller
+			addBeanDefinition(deriveControllerId(controllerClass), controllerClass, afxController.singleton(),
+					new ControllerInstantiationSupplier<>(controllerClass));
+
+			// and add a bean definition for the view
+			addBeanDefinition(afxController.viewId(), FxmlView.class, afxController.singleton(),
+					new FxmlViewInstantiationSupplier(controller, controllerAnnotation));
 		}
 	}
 

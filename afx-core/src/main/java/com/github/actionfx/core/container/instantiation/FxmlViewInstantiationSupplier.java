@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.view.instantiation;
+package com.github.actionfx.core.container.instantiation;
 
 import java.util.Arrays;
 

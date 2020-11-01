@@ -59,4 +59,29 @@ public interface BeanContainerFacade {
 	 * @return the bean instance
 	 */
 	<T> T getBean(Class<?> beanClass);
+
+	/**
+	 * Derives an ID from the given {@code controllerClass} under that the component
+	 * shall be stored and retrieved at.
+	 * <p>
+	 * The default implementation takes the simple class name and decapitalizes the
+	 * first letter.
+	 * <p>
+	 * <p>
+	 * <b>Example:</b>
+	 * 
+	 * <pre>
+	 * deriveControllerId(SomeController.class) = "someController"
+	 * 
+	 * <pre>
+	 * 
+	 * @param controllerClass the controller class
+	 * @return the derived controller ID
+	 */
+	default String deriveControllerId(Class<?> controllerClass) {
+		String className = controllerClass.getSimpleName();
+		return className.length() > 1
+				? className.substring(0, 1).toLowerCase() + className.substring(1, className.length())
+				: className.substring(0, 1).toLowerCase();
+	}
 }

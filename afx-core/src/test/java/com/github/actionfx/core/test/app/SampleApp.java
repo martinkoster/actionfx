@@ -21,28 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.view.instantiation;
+package com.github.actionfx.core.test.app;
 
-import java.util.function.Supplier;
+import com.github.actionfx.core.annotation.AFXApplication;
 
 /**
- * Base class for specialized {@link Supplier} implementation that take care of
- * the instantiation of an ActionFX component (controller, view, etc.).
+ * Sample application for testing.
  * 
  * @author koster
  *
  */
-public abstract class AbstractInstantiationSupplier<T> implements Supplier<T> {
+@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.core.test.app")
+public class SampleApp {
 
-	@Override
-	public T get() {
-		return createInstance();
-	}
-
-	/**
-	 * Method to implement for
-	 * 
-	 * @return
-	 */
-	protected abstract T createInstance();
 }

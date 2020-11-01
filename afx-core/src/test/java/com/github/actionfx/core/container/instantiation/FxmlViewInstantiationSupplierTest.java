@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.view.instantiation;
+package com.github.actionfx.core.container.instantiation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.container.instantiation.FxmlViewInstantiationSupplier;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.testing.annotation.TestInFxThread;

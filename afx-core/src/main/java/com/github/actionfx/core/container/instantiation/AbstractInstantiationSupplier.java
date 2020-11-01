@@ -21,39 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.view.instantiation;
+package com.github.actionfx.core.container.instantiation;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import com.github.actionfx.core.test.TestController;
-
-import net.bytebuddy.agent.ByteBuddyAgent;
+import java.util.function.Supplier;
 
 /**
- * Test case for {@link ControllerInstantiationSupplier}.
+ * Base class for specialized {@link Supplier} implementation that take care of
+ * the instantiation of an ActionFX component (controller, view, etc.).
  * 
  * @author koster
  *
  */
-class ControllerInstantiationSupplierTest {
+public abstract class AbstractInstantiationSupplier<T> implements Supplier<T> {
 
-	@BeforeAll
-	public static void onSetup() {
-		ByteBuddyAgent.install();
+	@Override
+	public T get() {
+		return createInstance();
 	}
 
-	@Test
-	void testGet() {
-		// GIVEN
-		ControllerInstantiationSupplier<TestController> supplier = new ControllerInstantiationSupplier<>(
-				TestController.class);
-
-		// WHEN
-		TestController controller = supplier.get();
-
-		// THEN
-		controller.actionMethod();
-	}
-
+	/**
+	 * Method to implement for
+	 * 
+	 * @return
+	 */
+	protected abstract T createInstance();
 }

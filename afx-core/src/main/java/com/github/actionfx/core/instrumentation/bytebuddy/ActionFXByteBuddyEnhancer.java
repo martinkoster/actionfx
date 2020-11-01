@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.interceptors.AFXActionMethodInterceptor;
 
@@ -56,16 +57,27 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 	// recognized whether the given class is already enhanced or not
 	protected static final String BYTE_BUDDY_ENHANCED_CLASS_NAME_MARKER = "$ByteBuddy";
 
+	// field is static, because the installation of the runtime agent is independent
+	// of this instance, but JVM-dependent
+	private static boolean agentInstalled = false;
+
 	@Override
 	public void installAgent() {
 		Instrumentation instrumentation = ByteBuddyAgent.install();
-		new AgentBuilder.Default().with(RedefinitionStrategy.RETRANSFORMATION).type(ElementMatchers.any())
+		new AgentBuilder.Default().with(RedefinitionStrategy.RETRANSFORMATION)
+				.type(ElementMatchers.isAnnotatedWith(AFXController.class))
 				.transform(
 						(builder, typeDescription, classLoader,
 								module) -> builder.method(ElementMatchers.isAnnotatedWith(AFXAction.class))
 										.intercept(MethodDelegation.withDefaultConfiguration()
 												.to(AFXActionMethodInterceptorDelegator.class)))
 				.installOn(instrumentation);
+		agentInstalled = true;
+	}
+
+	@Override
+	public boolean agentInstalled() {
+		return agentInstalled;
 	}
 
 	@SuppressWarnings("rawtypes")
