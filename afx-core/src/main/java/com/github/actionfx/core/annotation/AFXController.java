@@ -77,14 +77,14 @@ public @interface AFXController {
 	 *
 	 * @return the width of the view
 	 */
-	public int width() default -1;
+	public int width() default 200;
 
 	/**
 	 * The height of the window (however <tt>maximized</tt> has a higher priority).
 	 *
 	 * @return the height of the view
 	 */
-	public int height() default -1;
+	public int height() default 100;
 
 	/**
 	 * The title to be displayed for the given view/window.
@@ -98,14 +98,14 @@ public @interface AFXController {
 	 *
 	 * @return the X position
 	 */
-	public int posX() default -1;
+	public int posX() default 0;
 
 	/**
 	 * The Y position of the window on the screen.
 	 *
 	 * @return the Y position
 	 */
-	public int posY() default -1;
+	public int posY() default 0;
 
 	/**
 	 * The icon to be displayed in case the view is displayed in its own stage.

@@ -63,7 +63,9 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
- * Util-class for working with JavaFX.
+ * Util-class for working with JavaFX. This class comes with some handy routines
+ * for e.g. loading FXML, working with the JavaFX thread or just controlling the
+ * behavior of certain nodes depending on the binding.
  *
  * @author MartinKoster
  */

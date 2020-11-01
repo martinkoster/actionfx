@@ -21,36 +21,45 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.view;
+package com.github.actionfx.core.view.instantiation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.actionfx.core.test.TestView;
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.testing.annotation.TestInFxThread;
+import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
 
 /**
- * JUnit test case for {@link ViewBuilder}.
+ * JUnit test case for {@link FxmlViewInstantiationSupplier}
  * 
  * @author koster
  *
  */
-class ViewManagerTest {
+@ExtendWith(HeadlessMonocleExtension.class)
+class FxmlViewInstantiationSupplierTest {
 
-	@SuppressWarnings("unchecked")
+	@TestInFxThread
 	@Test
-	void testBuilder_instanceSupplied() {
+	void testCreateInstance() {
+		// GIVEN
+		AnnotatedController controller = new AnnotatedController();
+		AFXController controllerAnnotation = AnnotationUtils.findAnnotation(AnnotatedController.class,
+				AFXController.class);
+		FxmlViewInstantiationSupplier supplier = new FxmlViewInstantiationSupplier(controller, controllerAnnotation);
+
 		// WHEN
-		ViewBuilder<TestView> builder = new ViewBuilder<>(new TestView());
-		TestView view = builder.id("testId").width(100).height(50).icon("icon.png").posX(10).posY(20).maximized(true)
-				.modalDialogue(false).windowTitle("Title").stylesheets(Arrays.asList("cssClass1", "cssClass2"))
-				.getView();
+		FxmlView view = supplier.get();
 
 		// THEN
+		assertThat(view.getRootNode(), notNullValue());
 		assertThat(view.getId(), equalTo("testId"));
 		assertThat(view.getWidth(), equalTo(100));
 		assertThat(view.getHeight(), equalTo(50));
@@ -59,29 +68,13 @@ class ViewManagerTest {
 		assertThat(view.getPosY(), equalTo(20));
 		assertThat(view.isMaximized(), equalTo(true));
 		assertThat(view.isModalDialogue(), equalTo(false));
-		assertThat(view.getWindowTitle(), equalTo("Title"));
+		assertThat(view.getWindowTitle(), equalTo("Hello World"));
 		assertThat(view.getStylesheets(), hasItems(equalTo("cssClass1"), equalTo("cssClass2")));
 	}
 
-	@Test
-	void testBuilder_classSupplied() {
-		// WHEN
-		ViewBuilder<TestView> builder = new ViewBuilder<>(TestView.class);
-		TestView view = builder.id("testId").width(100).height(50).icon("icon.png").posX(10).posY(20).maximized(true)
-				.modalDialogue(false).windowTitle("Title").stylesheets(Arrays.asList("cssClass1", "cssClass2"))
-				.getView();
-
-		// THEN
-		assertThat(view.getId(), equalTo("testId"));
-		assertThat(view.getWidth(), equalTo(100));
-		assertThat(view.getHeight(), equalTo(50));
-		assertThat(view.getIcon(), equalTo("icon.png"));
-		assertThat(view.getPosX(), equalTo(10));
-		assertThat(view.getPosY(), equalTo(20));
-		assertThat(view.isMaximized(), equalTo(true));
-		assertThat(view.isModalDialogue(), equalTo(false));
-		assertThat(view.getWindowTitle(), equalTo("Title"));
-		assertThat(view.getStylesheets(), hasItems(equalTo("cssClass1"), equalTo("cssClass2")));
+	@AFXController(viewId = "testId", fxml = "/testfxml/SampleView.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {
+			"cssClass1", "cssClass2" })
+	private static class AnnotatedController {
 	}
 
 }

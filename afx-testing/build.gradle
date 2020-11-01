@@ -2,7 +2,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
-description = "afx-core: This module contains the core classes of the ActionFX framework."
+description = "afx-testing: This module contains classes for testing any JavaFX component."
 
 dependencies {
 	

@@ -21,38 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.test;
+package com.github.actionfx.core.annotation;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
+ * Annotation that marks:
+ * <p>
+ * <ul>
+ * <li>a type to be initialized in the JavaFX thread</li>
+ * <li>a method to be executed inside the JavaFX thread</li>
+ * </ul>
  * 
  * @author koster
  *
  */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
-
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
-	}
-
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
-
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
-
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
-	}
+@Retention(RUNTIME)
+@Target({ TYPE, METHOD })
+public @interface AFXDoInFxThread {
 
 }

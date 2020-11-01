@@ -21,38 +21,37 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.test;
+package com.github.actionfx.core.annotation;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
+ * Annotation to be applied at method level.
  * 
  * @author koster
  *
  */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
+@Retention(RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AFXAction {
 
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
-	}
+	/**
+	 * The view with {@code viewId} to be displayed, when the method successfully
+	 * terminates.
+	 * 
+	 * @return the view ID for the success view
+	 */
+	public String onSuccessViewId();
 
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
-
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
-
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
-	}
-
+	/**
+	 * The view with {@code viewId} to be displayed, when the method results in an
+	 * {@link Exception}.
+	 * 
+	 * @return the view ID for the failure view
+	 */
+	public String onFailureViewId() default "";
 }

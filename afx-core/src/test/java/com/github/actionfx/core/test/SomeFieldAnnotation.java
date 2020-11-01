@@ -23,36 +23,15 @@
  */
 package com.github.actionfx.core.test;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
- * 
- * @author koster
- *
- */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
-	}
+@Retention(RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface SomeFieldAnnotation {
 
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
-
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
-
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public String value() default "";
 }

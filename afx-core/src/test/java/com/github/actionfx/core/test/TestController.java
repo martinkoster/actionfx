@@ -23,36 +23,22 @@
  */
 package com.github.actionfx.core.test;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXController;
 
 /**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
+ * Test controller that holds the {@link AFXController} and {@link AFXAction}
+ * annotations.
  * 
  * @author koster
  *
  */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
+@AFXController(viewId = "testId", fxml = "/testfxml/SampleView.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {
+		"cssClass1", "cssClass2" })
+public class TestController {
 
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
+	@AFXAction(onSuccessViewId = "")
+	public void actionMethod() {
+		System.out.println("Original Method");
 	}
-
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
-
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
-
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

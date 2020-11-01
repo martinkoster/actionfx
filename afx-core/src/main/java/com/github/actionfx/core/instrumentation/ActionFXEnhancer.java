@@ -21,38 +21,50 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.test;
-
-import com.github.actionfx.core.container.BeanContainerFacade;
+package com.github.actionfx.core.instrumentation;
 
 /**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
+ * Interface for byte code enhancer. Enhancements is possible either via
+ * instrumentation agents or sub-classing. As the actual implementation is
+ * highly framework specific, we abstract the technology with this interface.
  * 
  * @author koster
  *
  */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
+public interface ActionFXEnhancer {
 
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
+	/**
+	 * Installs the byte code instrumentation for ActionFX. This method must be
+	 * called as early as possible in the application execution.s
+	 */
+	void installAgent();
+
+	/**
+	 * Enhances the given {@code originalClass} by sub-classing and adding the
+	 * required behavior for ActionFX.
+	 * 
+	 * @param originalClass the original class to enhance
+	 * @return the sub-class with enhanced behavior
+	 */
+	Class<?> enhanceClass(Class<?> originalClass);
+
+	/**
+	 * Defines available enhancement strategies for ActionFX.
+	 * 
+	 * @author koster
+	 *
+	 */
+	public enum EnhancementStrategy {
+
+		/**
+		 * Using this strategy, a byte-code instrumentation agent is installed at
+		 * runtime
+		 */
+		RUNTIME_INSTRUMENTATION_AGENT,
+
+		/**
+		 * Using this strategy, subclasses are created
+		 */
+		SUBCLASSING
 	}
-
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
-
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
-
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

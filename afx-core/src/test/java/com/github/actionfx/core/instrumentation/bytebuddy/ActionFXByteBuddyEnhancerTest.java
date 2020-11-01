@@ -21,38 +21,47 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.test;
+package com.github.actionfx.core.instrumentation.bytebuddy;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import java.lang.reflect.InvocationTargetException;
+
+import org.junit.jupiter.api.Test;
+
+import com.github.actionfx.core.test.TestController;
 
 /**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
+ * JUnit test case {@link ActionFXByteBuddyEnhancer}.
  * 
  * @author koster
  *
  */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
+class ActionFXByteBuddyEnhancerTest {
 
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
+	@Test
+	void testInstall() {
+		// GIVEN
+		ActionFXByteBuddyEnhancer enhancer = new ActionFXByteBuddyEnhancer();
+
+		// WHEN
+		enhancer.installAgent();
+
+		// THEN
+		TestController controller = new TestController();
+		controller.actionMethod();
 	}
 
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
+	@Test
+	void testEnhanceClass() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
+		// GIVEN
+		ActionFXByteBuddyEnhancer enhancer = new ActionFXByteBuddyEnhancer();
 
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
+		// WHEN
+		Class<?> enhancedClass = enhancer.enhanceClass(TestController.class);
 
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
+		// THEN
+		TestController controller = (TestController) enhancedClass.getDeclaredConstructor().newInstance();
+		controller.actionMethod();
 	}
 
 }

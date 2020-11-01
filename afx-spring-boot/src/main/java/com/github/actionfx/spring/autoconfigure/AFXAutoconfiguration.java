@@ -27,7 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.github.actionfx.core.view.manager.ViewManager;
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.spring.postpocessor.AFXBeanRegistryPostProcessor;
 
 /**
@@ -47,7 +47,7 @@ public class AFXAutoconfiguration {
 	}
 
 	@Bean
-	public ViewManager viewManager() {
-		return ViewManager.getInstance();
+	public ActionFX viewManager() {
+		return ActionFX.getInstance();
 	}
 }

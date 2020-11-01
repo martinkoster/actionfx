@@ -32,7 +32,17 @@ import java.util.function.Supplier;
  * @author koster
  *
  */
-public class AbstractInstantiationSupplier implements Supplier<T> {
+public abstract class AbstractInstantiationSupplier<T> implements Supplier<T> {
 
-	protected AbstractInstantiationSupplier()
+	@Override
+	public T get() {
+		return createInstance();
+	}
+
+	/**
+	 * Method to implement for
+	 * 
+	 * @return
+	 */
+	protected abstract T createInstance();
 }

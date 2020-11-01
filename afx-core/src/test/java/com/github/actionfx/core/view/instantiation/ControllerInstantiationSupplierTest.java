@@ -21,38 +21,39 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.test;
+package com.github.actionfx.core.view.instantiation;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import com.github.actionfx.core.test.TestController;
+
+import net.bytebuddy.agent.ByteBuddyAgent;
 
 /**
- * Test class of a BeanContainerFacade implementation without a no-arg
- * constructor.
+ * Test case for {@link ControllerInstantiationSupplier}.
  * 
  * @author koster
  *
  */
-public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanContainerFacade {
+class ControllerInstantiationSupplierTest {
 
-	public CustomBeanContainerImplWithoutNoArgConstructor(String someArgument) {
-		// no to do here, we just need to replace the no-arg constructor with a
-		// constructor that requires an argument
+	@BeforeAll
+	public static void onSetup() {
+		ByteBuddyAgent.install();
 	}
 
-	@Override
-	public <T> T getBean(String id) {
-		return null;
-	}
+	@Test
+	void testGet() {
+		// GIVEN
+		ControllerInstantiationSupplier<TestController> supplier = new ControllerInstantiationSupplier<>(
+				TestController.class);
 
-	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		return null;
-	}
+		// WHEN
+		TestController controller = supplier.get();
 
-	@Override
-	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
-
+		// THEN
+		controller.actionMethod();
 	}
 
 }

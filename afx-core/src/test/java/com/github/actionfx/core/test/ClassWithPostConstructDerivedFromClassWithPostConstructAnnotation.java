@@ -35,6 +35,7 @@ import javax.annotation.PostConstruct;
 public class ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation
 		extends ClassWithPostConstructAnnotation {
 
+	@SomeFieldAnnotation("2")
 	private boolean ininitialized2Invoked = false;
 
 	@PostConstruct

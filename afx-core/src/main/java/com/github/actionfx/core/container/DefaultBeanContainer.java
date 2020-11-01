@@ -24,14 +24,17 @@
 package com.github.actionfx.core.container;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 
+import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.utils.ClassPathScanningUtils;
 
 import javafx.concurrent.Task;
 
@@ -54,7 +57,17 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	private Map<BeanDefinition, Object> singletonCache = new HashMap<>();
 
 	@Override
-	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier) {
+	public void populateContainer(String rootPackage) {
+		List<Class<?>> controllerClasses = ClassPathScanningUtils.findClassesWithAnnotation(rootPackage,
+				AFXController.class);
+		for (Class<?> controllerClass : controllerClasses) {
+			AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
+
+		}
+	}
+
+	protected void addBeanDefinition(String id, Class<?> beanClass, boolean singleton,
+			Supplier<?> instantiationSupplier) {
 		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, instantiationSupplier));
 	}
 
@@ -113,27 +126,40 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	 * @param beanDefinition the bean definition
 	 * @return the created bean instance
 	 */
-	@SuppressWarnings("unchecked")
 	protected <T> T createBeanInstance(BeanDefinition beanDefinition) {
 		Class<?> beanClass = beanDefinition.getBeanClass();
-		final Task<T> instantiationTask = new Task<T>() {
-			@Override
-			protected T call() throws Exception {
-				T instance = (T) beanDefinition.getInstantiationSupplier().get();
-				// invoke methods annotated with @PostConstruct
-				AnnotationUtils.invokeMethodWithAnnotation(instance.getClass(), instance, PostConstruct.class);
-				return instance;
-			}
-		};
 		try {
+			final Task<T> instantiationTask = new Task<T>() {
+				@Override
+				protected T call() throws Exception {
+					return instantiateBean(beanDefinition);
+				}
+
+			};
 			// execute the task in the JavaFX thread and wait for the result
 			return AFXUtils.runInFxThreadAndWait(instantiationTask);
+
 		} catch (InterruptedException | ExecutionException e) {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 			throw new IllegalStateException(
 					"Failed to instantiate class '" + beanClass.getCanonicalName() + "' in JavaFX thread!", e);
 		}
+	}
+
+	/**
+	 * Creates the instance based on the {@link BeanDefinition}
+	 * 
+	 * @param <T>            the result type
+	 * @param beanDefinition the bean definition
+	 * @return the created instance
+	 */
+	@SuppressWarnings("unchecked")
+	private <T> T instantiateBean(BeanDefinition beanDefinition) {
+		T instance = (T) beanDefinition.getInstantiationSupplier().get();
+		// invoke methods annotated with @PostConstruct
+		AnnotationUtils.invokeMethodWithAnnotation(instance.getClass(), instance, PostConstruct.class);
+		return instance;
 	}
 
 	/**

@@ -33,6 +33,7 @@ import javax.annotation.PostConstruct;
  */
 public class ClassWithPostConstructAnnotation {
 
+	@SomeFieldAnnotation("1")
 	private boolean ininitialized1Invoked = false;
 
 	@PostConstruct

@@ -21,67 +21,54 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.view.manager;
+package com.github.actionfx.core;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.github.actionfx.core.container.DefaultBeanContainer;
-import com.github.actionfx.core.test.CustomBeanContainerImpl;
-import com.github.actionfx.core.test.CustomBeanContainerImplWithoutNoArgConstructor;
-
 /**
- * JUnit test case for {@code ViewManager}.
+ * JUnit test case for {@link ActionFX}.
  * 
  * @author koster
  *
  */
-class ViewManagerTest {
+class ActionFXTest {
 
 	@BeforeEach
 	void onSetup() {
 		// set view manager instance to 'null' in order to force the creation of a
 		// ViewManager instance for each test
-		ViewManager.instance = null;
+		ActionFX.instance = null;
 	}
 
 	@Test
-	void testViewManagerInstance_withDefaultBeanContainer() {
-		// GIVEN (no system property supplied)
-		System.setProperty(ViewManager.BEAN_CONTAINER_IMPLEMENTATION_SYSTEM_PROPERTY, "");
-
+	void testBuilder() {
+		
 		// WHEN
-		ViewManager viewManager = ViewManager.getInstance();
-
-		// THEN
-		assertThat(viewManager.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		ActionFX actionFX = ActionFX.builder().beanContainer(beanContainer)
 	}
 
 	@Test
-	void testViewManagerInstance_withCustomBeanContainer() {
-		// GIVEN (a bean container that has a no-arg constructor)
-		System.setProperty(ViewManager.BEAN_CONTAINER_IMPLEMENTATION_SYSTEM_PROPERTY,
-				CustomBeanContainerImpl.class.getCanonicalName());
+	void testBuilder_notYetBuilt() {
 
-		ViewManager viewManager = ViewManager.getInstance();
-
-		// THEN
-		assertThat(viewManager.getBeanContainer(), instanceOf(CustomBeanContainerImpl.class));
-
+		// WHEN and THEN (
+		assertThrows(IllegalStateException.class, () -> ActionFX.getInstance());
 	}
 
 	@Test
-	void testViewManagerInstance_withCustomButInvalidBeanContainer() {
-		// GIVEN (a bean container lacking a no-arg constructor)
-		System.setProperty(ViewManager.BEAN_CONTAINER_IMPLEMENTATION_SYSTEM_PROPERTY,
-				CustomBeanContainerImplWithoutNoArgConstructor.class.getCanonicalName());
+	void testBuilder_alreadyBuilt() {
 
-		// WHEN and THEN
-		assertThrows(IllegalStateException.class, () -> ViewManager.getInstance());
+		// GIVEN (instance is built)
+		ActionFX actionFX = ActionFX.builder().build();
+
+		// WHEN and THEN (
+		assertThat(actionFX, notNullValue());
+		assertThrows(IllegalStateException.class, () -> ActionFX.builder().build());
+
 	}
 
 }

@@ -23,11 +23,18 @@
  */
 package com.github.actionfx.core.app;
 
+import com.github.actionfx.core.ActionFX;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * Base class for ActionFX applications.
+ * Base class for ActionFX applications that can be optionally used. This class
+ * takes care for building the proper {@link ActionFX} instance that is used for
+ * handling the controller, views and their flow.
+ * <p>
+ * When this class is not used, the setup of the {@link ActionFX} instance need
+ * to be performed ...
  * 
  * @author koster
  *
