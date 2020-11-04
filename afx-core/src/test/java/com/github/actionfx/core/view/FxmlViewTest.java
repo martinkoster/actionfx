@@ -31,11 +31,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.scene.layout.GridPane;
 
-@ExtendWith(HeadlessMonocleExtension.class)
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class FxmlViewTest {
 
 	@Test

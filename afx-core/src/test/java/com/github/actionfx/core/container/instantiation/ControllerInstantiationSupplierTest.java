@@ -25,9 +25,11 @@ package com.github.actionfx.core.container.instantiation;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.test.TestController;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import net.bytebuddy.agent.ByteBuddyAgent;
 
@@ -37,10 +39,12 @@ import net.bytebuddy.agent.ByteBuddyAgent;
  * @author koster
  *
  */
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class ControllerInstantiationSupplierTest {
 
 	@BeforeAll
 	public static void onSetup() {
+		ActionFX.builder().build();
 		ByteBuddyAgent.install();
 	}
 

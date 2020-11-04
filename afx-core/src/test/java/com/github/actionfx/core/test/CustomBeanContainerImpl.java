@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.test;
 
+import java.util.function.Supplier;
+
 import com.github.actionfx.core.container.BeanContainerFacade;
 
 /**
@@ -46,6 +48,11 @@ public class CustomBeanContainerImpl implements BeanContainerFacade {
 
 	@Override
 	public void populateContainer(String rootPackage) {
+
+	}
+
+	@Override
+	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier) {
 
 	}
 

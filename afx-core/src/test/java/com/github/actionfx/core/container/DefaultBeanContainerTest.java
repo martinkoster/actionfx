@@ -31,12 +31,18 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.test.DerivedFromTestView;
 import com.github.actionfx.core.test.TestView;
-import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
+import com.github.actionfx.core.test.app.MainController;
+import com.github.actionfx.core.test.app.ModelWithDefaultConstructor;
+import com.github.actionfx.core.test.app.SampleApp;
+import com.github.actionfx.core.view.View;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 /**
  * JUnit test case for {@link DefaultBeanContainer}.
@@ -44,8 +50,13 @@ import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
  * @author koster
  *
  */
-@ExtendWith(HeadlessMonocleExtension.class)
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class DefaultBeanContainerTest {
+
+	@BeforeAll
+	static void beforeAll() {
+		ActionFX.builder().build();
+	}
 
 	@Test
 	void testGetBean_singletonById() {
@@ -159,4 +170,45 @@ class DefaultBeanContainerTest {
 		assertThat(view1, not(sameInstance(view2))); // consecutive calls to getBean yield the different instances
 	}
 
+	@Test
+	void testPopulateContainer() {
+		// GIVEN
+		DefaultBeanContainer container = new DefaultBeanContainer();
+
+		// WHEN
+		container.populateContainer(SampleApp.class.getPackageName());
+
+		// THEN
+		View view = container.getBean("mainView");
+		MainController mainControllerById = container.getBean("mainController");
+		MainController mainControllerByClassName = container.getBean(MainController.class);
+
+		assertThat(view, notNullValue());
+		assertThat(mainControllerById, notNullValue());
+		assertThat(mainControllerByClassName, notNullValue());
+		assertThat(mainControllerById, sameInstance(mainControllerByClassName));
+	}
+
+	@Test
+	void testGetBean_withDependencyInjection() {
+		// GIVEN
+		DefaultBeanContainer container = new DefaultBeanContainer();
+		container.populateContainer(SampleApp.class.getPackageName());
+
+		// WHEN
+		MainController controller = container.getBean("mainController");
+		View view = container.getBean("mainView");
+		ModelWithDefaultConstructor model = container.getBean(ModelWithDefaultConstructor.class);
+
+		// THEN (verify all annotated fields are resolved)
+		assertThat(controller.getMainView(), notNullValue());
+		assertThat(controller.getMainView(), sameInstance(view)); // view is a singleton!
+		assertThat(controller.getModel(), notNullValue());
+		assertThat(controller.getModel(), sameInstance(model)); // type is a singleton!
+
+		// check, that @Inject-annotated field in abstract base class is resolved
+		assertThat(controller.getBaseModel(), notNullValue());
+		assertThat(controller.getBaseModel(), sameInstance(model)); // type is still a singleton!
+
+	}
 }

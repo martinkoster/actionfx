@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.test;
 
+import java.util.function.Supplier;
+
 import com.github.actionfx.core.container.BeanContainerFacade;
 
 /**
@@ -51,7 +53,11 @@ public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanConta
 
 	@Override
 	public void populateContainer(String rootPackage) {
-		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier) {
 
 	}
 

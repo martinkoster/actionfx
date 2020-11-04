@@ -43,7 +43,6 @@ import com.github.actionfx.core.test.subpackage.AnotherClassWithSomeAnnotation;
  */
 class ClassPathScanningUtilsTest {
 
-	@SuppressWarnings("unchecked")
 	@Test
 	void testFindClasses() {
 		// WHEN

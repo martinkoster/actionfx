@@ -26,18 +26,26 @@ package com.github.actionfx.core;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
+import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.SampleApp;
+import com.github.actionfx.core.view.View;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.application.Preloader;
 
@@ -47,6 +55,7 @@ import javafx.application.Preloader;
  * @author koster
  *
  */
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class ActionFXTest {
 
 	@BeforeEach
@@ -111,7 +120,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents() {
+	void testScanComponents_usingDefaultBeanContainer() {
 		// GIVEN
 		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
@@ -119,7 +128,31 @@ class ActionFXTest {
 		actionFX.scanForActionFXComponents();
 
 		// THEN
+		View view = actionFX.getView("mainView");
+		MainController mainControllerById = actionFX.getController("mainController");
+		MainController mainControllerByClassName = actionFX.getController(MainController.class);
 
+		assertThat(view, notNullValue());
+		assertThat(mainControllerById, notNullValue());
+		assertThat(mainControllerByClassName, notNullValue());
+		assertThat(mainControllerById, sameInstance(mainControllerByClassName));
+
+	}
+
+	@Test
+	void testScanComponents_usingCustomBeanContainer() {
+		// GIVEN
+		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
+
+		// WHEN
+		actionFX.scanForActionFXComponents(customBeanContainer);
+
+		// THEN (custom container has be asked to populate container with the
+		// rootPackage of SampleApp)
+		verify(customBeanContainer).populateContainer(rootPackageCaptor.capture());
+		assertThat(rootPackageCaptor.getValue(), equalTo(SampleApp.class.getPackageName()));
 	}
 
 	@Test

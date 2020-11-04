@@ -24,6 +24,7 @@
 package com.github.actionfx.core.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +58,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -474,6 +476,20 @@ public class AFXUtils {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Loads an image from the supplied {@code classpathLocation}.
+	 * 
+	 * @param classpathLocation the classpath location to load from
+	 * @return the loaded image
+	 */
+	public static Image loadImage(String classpathLocation) {
+		try (InputStream inputStream = AFXUtils.class.getResourceAsStream(classpathLocation)) {
+			return new Image(inputStream);
+		} catch (final IOException e) {
+			throw new IllegalStateException("Failed to load '" + classpathLocation + "'!", e);
+		}
 	}
 
 }

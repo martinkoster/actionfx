@@ -26,7 +26,11 @@ package com.github.actionfx.core.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.actionfx.core.utils.AFXUtils;
+
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -92,7 +96,13 @@ public abstract class AbstractView implements View {
 	 */
 	@Override
 	public void show(Stage stage) {
-
+		Scene scene = new Scene(getRootNode());
+		stage.setScene(scene);
+		initializeStage(stage);
+		if (!isHeadlessMode()) {
+			// this test is required for unit testing.
+			stage.show();
+		}
 	}
 
 	/**
@@ -100,7 +110,14 @@ public abstract class AbstractView implements View {
 	 */
 	@Override
 	public void show() {
-
+		Stage stage = new Stage();
+		Scene scene = new Scene(getRootNode());
+		stage.setScene(scene);
+		initializeStage(stage);
+		if (!isHeadlessMode()) {
+			// this test is required for unit testing.
+			stage.show();
+		}
 	}
 
 	/**
@@ -108,12 +125,49 @@ public abstract class AbstractView implements View {
 	 */
 	@Override
 	public void showAndWait() {
-
+		Stage stage = new Stage();
+		Scene scene = new Scene(getRootNode());
+		stage.setScene(scene);
+		initializeStage(stage);
+		if (!isHeadlessMode()) {
+			// this test is required for unit testing.
+			stage.showAndWait();
+		}
 	}
 
 	@Override
 	public void hide() {
+		if (getRootNode().sceneProperty().get() != null && getRootNode().sceneProperty().get().getWindow() != null) {
+			getRootNode().sceneProperty().get().getWindow().hide();
+		}
+	}
 
+	/**
+	 * Initializes the given {@link Stage} with the parameters defined for this
+	 * view.
+	 * 
+	 * @param stage the stage to initialize
+	 */
+	protected void initializeStage(Stage stage) {
+		// modality can be only set once
+		if (modalDialogue) {
+			stage.initModality(Modality.APPLICATION_MODAL);
+		}
+		if (icon != null && !"".equals(icon.trim())) {
+			stage.getIcons().add(AFXUtils.loadImage(icon));
+		}
+		if (getWidth() != -1 && getHeight() != -1) {
+			stage.setWidth(width);
+			stage.setHeight(height);
+		}
+		if (getPosX() != -1 && getPosY() != -1) {
+			stage.setX(getPosX());
+			stage.setY(getPosY());
+		}
+		if (getWindowTitle() != null && !"".equals(getWindowTitle())) {
+			stage.setTitle(getWindowTitle());
+		}
+		stage.setMaximized(maximized);
 	}
 
 	/**

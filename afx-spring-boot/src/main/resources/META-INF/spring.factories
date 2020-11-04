@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.actionfx.spring.autoconfigure.AFXAutoconfiguration
+org.springframework.context.ApplicationContextInitializer=\
+com.github.actionfx.spring.container.AFXApplicationContextInitializer

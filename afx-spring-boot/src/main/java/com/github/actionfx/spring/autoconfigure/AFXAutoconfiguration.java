@@ -23,28 +23,19 @@
  */
 package com.github.actionfx.spring.autoconfigure;
 
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.spring.postpocessor.AFXBeanRegistryPostProcessor;
 
 /**
- * Spring auto configuration for ActionFX. This configuration registers a bean
- * definition registry post processor in order to add ActionFX beans to the
- * Spring application context.
+ * Spring auto configuration for ActionFX.
  * 
  * @author koster
  *
  */
 @Configuration
 public class AFXAutoconfiguration {
-
-	@Bean
-	public BeanDefinitionRegistryPostProcessor afxBeanRegistryPostProcessor() {
-		return new AFXBeanRegistryPostProcessor();
-	}
 
 	@Bean
 	public ActionFX actionFX() {

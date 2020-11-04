@@ -41,7 +41,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 
 import com.github.actionfx.testing.annotation.TestInFxThread;
-import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -73,7 +73,7 @@ import javafx.scene.paint.Color;
  *
  * @author koster
  */
-@ExtendWith(HeadlessMonocleExtension.class)
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 @TestInFxThread
 class AFXUtilsTest {
 

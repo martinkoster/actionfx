@@ -32,20 +32,20 @@ import javafx.stage.Stage;
  * Base class for ActionFX applications that can be optionally used. This class
  * takes care for building the proper {@link ActionFX} instance that is used for
  * handling the controller, views and their flow.
- * <p>
- * When this class is not used, the setup of the {@link ActionFX} instance need
- * to be performed ...
- * 
+ *
  * @author koster
  *
  */
 public abstract class AbstractAFXApplication extends Application {
 
 	@Override
+	public void init() throws Exception {
+		ActionFX.builder().configurationClass(getClass()).build().scanForActionFXComponents();
+	}
+
+	@Override
 	public void start(Stage primaryStage) throws Exception {
-//		Object controller = ViewManager.getInstance().getControllerInstance(getPrimaryStageController());
-//		View view = ViewManager.getInstance().getViewByController(controller);
-//		view.show(primaryStage);
+		ActionFX.getInstance().displayMainView(primaryStage);
 	}
 
 }

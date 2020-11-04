@@ -104,7 +104,7 @@ public class AnnotationUtils {
 	 * @throws SecurityException
 	 */
 	public static <A extends Annotation> void invokeMethodWithAnnotation(Class<?> clazz, final Object instance,
-			final Class<A> annotationClass) throws IllegalStateException, SecurityException {
+			final Class<A> annotationClass) {
 		Method[] declaredMethods = clazz.getDeclaredMethods();
 		for (final Method method : declaredMethods) {
 			if (method.isAnnotationPresent(annotationClass)) {

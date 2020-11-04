@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core;
 
+import javax.inject.Inject;
+
 import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.BeanContainerFacade;
@@ -33,6 +35,7 @@ import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhan
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.view.View;
 
+import javafx.application.Application;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
 
@@ -40,17 +43,47 @@ import javafx.stage.Stage;
  * Central handler for working with ActionFX. It provides routines to get views
  * and controllers.
  * <p>
- * Before using this class, it needs to be setup for the specific application.
+ * Before using this class, it needs to be setup in the {@code main()} or
+ * {@link Application#init()} method for the specific application.
  * <p>
- * <b>Expample:</b>
+ * <b>Expample:</b> ActionFX actionFX =
+ * ActionFX.builder().configurationClass(SampleApp.class).build();
  * 
  * <pre>
- * </pre>
  * <p>
- * After the setup, an instance of this class is retrieved via:
+ * After the setup, an instance of this class is retrieved throughout the application via:
  * 
  * <pre>
  * ActionFX instance = ActionFX.getInstance();
+ * </pre>
+ * <p>
+ * After the ActionFX instance is built, a component scan can be performed:
+ * 
+ * <pre>
+ * ActionFX.getInstance().scanForActionFXComponents();
+ * </pre>
+ * 
+ * This will populate ActionFX internal bean container and makes controller and
+ * views available for usage. Please note, that this step is not required, if
+ * you use Spring Boot and included module {@code afx-spring-boot} in your
+ * application classpath. The {@code afx-spring-boot} provides
+ * auto-configuration and scans for ActionFX components with its Spring bean
+ * container during start-up.
+ * <p>
+ * In case you need access to the ActionFX instance in a controller, you can
+ * alternatively inject the ActionFX instance via {@link Inject}. This might be
+ * helpful for unit testing your controller independently of a setup ActionFX
+ * instance (you can use e.g. Mockito to mock the {@link ActionFX} instance for
+ * unit-testing).
+ * 
+ * <pre>
+ * &#64;AFXController(viewId="mainView", fxml="some.fxml">
+ * public class MainController {
+ * 
+ * &#64;Inject
+ * private ActionFX actionFX;
+ * 
+ * }
  * </pre>
  * 
  * @author koster
@@ -86,6 +119,9 @@ public class ActionFX {
 	// the byte-code enhancer to use
 	private ActionFXEnhancer enhancer;
 
+	// the primary stage of the JavaFX application
+	private Stage primaryStage;
+
 	/**
 	 * Private constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
@@ -105,7 +141,7 @@ public class ActionFX {
 			enhancer.installAgent();
 		}
 		// install a preloader, if supplied
-		if (preloaderClass != null && preloaderClass.equals(Preloader.class)) {
+		if (preloaderClass != null && !preloaderClass.equals(Preloader.class)) {
 			System.setProperty("javafx.preloader", preloaderClass.getCanonicalName());
 		}
 		// after configuration and instance creation, the state transfers to CONFIGURED
@@ -198,7 +234,7 @@ public class ActionFX {
 	 * @return the retrieved controller instance.If the {@code controllerClass} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public Object getController(Class<?> controllerClass) {
+	public <T> T getController(Class<T> controllerClass) {
 		return beanContainer.getBean(controllerClass);
 	}
 
@@ -210,8 +246,17 @@ public class ActionFX {
 	 * @return the retrieved controller instance.If the {@code controllerId} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public Object getController(String controllerId) {
+	public <T> T getController(String controllerId) {
 		return beanContainer.getBean(controllerId);
+	}
+
+	/**
+	 * Returns the main view of the application.
+	 * 
+	 * @return the main view
+	 */
+	public View getMainView() {
+		return getView(getMainViewId());
 	}
 
 	/**
@@ -222,6 +267,17 @@ public class ActionFX {
 	 */
 	public String getMainViewId() {
 		return mainViewId;
+	}
+
+	/**
+	 * Displays the main view in the primary stage.
+	 * 
+	 * @param primaryStage the primary stage
+	 */
+	public void displayMainView(Stage primaryStage) {
+		setPrimaryStage(primaryStage);
+		View view = getMainView();
+		view.show(primaryStage);
 	}
 
 	/**
@@ -285,6 +341,25 @@ public class ActionFX {
 			throw new IllegalStateException(
 					"ActionFX is in state '" + actionFXState + "', while expected state was '" + expectedState + "'!");
 		}
+	}
+
+	/**
+	 * Gets the primary stage, if it was set be the user.
+	 * 
+	 * @return the primary stage
+	 */
+	public Stage getPrimaryStage() {
+		return primaryStage;
+	}
+
+	/**
+	 * Users can set the primary stage here so that it is available throughout the
+	 * application.
+	 * 
+	 * @param primaryStage the primary stage
+	 */
+	public void setPrimaryStage(Stage primaryStage) {
+		this.primaryStage = primaryStage;
 	}
 
 	/**
@@ -428,6 +503,10 @@ public class ActionFX {
 			this.actionFXEnhancer = actionFXEnhancer;
 			return this;
 		}
+	}
+
+	public static class ActionFXInitializer {
+
 	}
 
 	/**

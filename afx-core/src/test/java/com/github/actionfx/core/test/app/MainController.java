@@ -23,7 +23,10 @@
  */
 package com.github.actionfx.core.test.app;
 
+import javax.inject.Inject;
+
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.view.FxmlView;
 
 /**
  * Test controller.
@@ -32,6 +35,23 @@ import com.github.actionfx.core.annotation.AFXController;
  *
  */
 @AFXController(fxml = "/testfxml/SampleView.fxml", viewId = "mainView")
-public class MainController {
+public class MainController extends AbstractController {
+
+	// field has the same name than defined view above. so we can expect to have
+	// that view injected here
+	@Inject
+	private FxmlView mainView;
+
+	// here, a new instance is constructed using the default no-arg constructor
+	@Inject
+	private ModelWithDefaultConstructor model;
+
+	public FxmlView getMainView() {
+		return mainView;
+	}
+
+	public ModelWithDefaultConstructor getModel() {
+		return model;
+	}
 
 }

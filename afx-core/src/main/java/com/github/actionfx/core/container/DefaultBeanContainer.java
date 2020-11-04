@@ -23,23 +23,28 @@
  */
 package com.github.actionfx.core.container;
 
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
 import com.github.actionfx.core.container.instantiation.FxmlViewInstantiationSupplier;
-import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ClassPathScanningUtils;
 import com.github.actionfx.core.view.FxmlView;
-
-import javafx.concurrent.Task;
 
 /**
  * Default implementation of a bean container using an underlying hash map as
@@ -53,11 +58,36 @@ import javafx.concurrent.Task;
  */
 public class DefaultBeanContainer implements BeanContainerFacade {
 
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanContainer.class);
+
 	// bean definition map with key: id -> value: bean definition
 	private Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
 	// map for bean defintion -> singleton instances
 	private Map<BeanDefinition, Object> singletonCache = new HashMap<>();
+
+	// strategies to resolve an ID or type to a bean
+	private List<BeanResolutionFunction> beanResolverFunctions = new ArrayList<>();
+
+	public DefaultBeanContainer() {
+		// bean resolution strategies
+		// the first strategy is to resolve by bean name / ID
+		beanResolverFunctions.add((id, type) -> getBean(id));
+
+		// the second strategy is to resolve by type
+		beanResolverFunctions.add((id, type) -> getBean(type));
+
+		// the third is to add a bean definition and instantiating via the default
+		// constructor, if it is not a Java primitive
+		beanResolverFunctions.add((id, type) -> {
+			if (isNotPrimitiveOrString(type)) {
+				addBeanDefinition(id, type, true, new ConstructorBasedInstantiationSupplier<>(type));
+				return getBean(id);
+			} else {
+				return null;
+			}
+		});
+	}
 
 	@Override
 	public void populateContainer(String rootPackage) {
@@ -66,18 +96,21 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		for (Class<?> controllerClass : controllerClasses) {
 			AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 
+			ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
+					controllerClass);
+
 			// add a bean definition for the controller
 			addBeanDefinition(deriveControllerId(controllerClass), controllerClass, afxController.singleton(),
-					new ControllerInstantiationSupplier<>(controllerClass));
+					controllerSupplier);
 
 			// and add a bean definition for the view
 			addBeanDefinition(afxController.viewId(), FxmlView.class, afxController.singleton(),
-					new FxmlViewInstantiationSupplier(controller, controllerAnnotation));
+					new FxmlViewInstantiationSupplier(controllerSupplier, afxController));
 		}
 	}
 
-	protected void addBeanDefinition(String id, Class<?> beanClass, boolean singleton,
-			Supplier<?> instantiationSupplier) {
+	@Override
+	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier) {
 		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, instantiationSupplier));
 	}
 
@@ -128,36 +161,6 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	}
 
 	/**
-	 * Creates a new, fresh instance based on the supplied bean definition. This
-	 * method ensures that instantiation is performed in the JavaFX thread, as this
-	 * is required for certain view components (e.g. a WebView).
-	 * 
-	 * @param <T>            the bean type
-	 * @param beanDefinition the bean definition
-	 * @return the created bean instance
-	 */
-	protected <T> T createBeanInstance(BeanDefinition beanDefinition) {
-		Class<?> beanClass = beanDefinition.getBeanClass();
-		try {
-			final Task<T> instantiationTask = new Task<T>() {
-				@Override
-				protected T call() throws Exception {
-					return instantiateBean(beanDefinition);
-				}
-
-			};
-			// execute the task in the JavaFX thread and wait for the result
-			return AFXUtils.runInFxThreadAndWait(instantiationTask);
-
-		} catch (InterruptedException | ExecutionException e) {
-			// Restore interrupted state...
-			Thread.currentThread().interrupt();
-			throw new IllegalStateException(
-					"Failed to instantiate class '" + beanClass.getCanonicalName() + "' in JavaFX thread!", e);
-		}
-	}
-
-	/**
 	 * Creates the instance based on the {@link BeanDefinition}
 	 * 
 	 * @param <T>            the result type
@@ -165,11 +168,88 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	 * @return the created instance
 	 */
 	@SuppressWarnings("unchecked")
-	private <T> T instantiateBean(BeanDefinition beanDefinition) {
+	private <T> T createBeanInstance(BeanDefinition beanDefinition) {
 		T instance = (T) beanDefinition.getInstantiationSupplier().get();
+
+		// inject potential dependencies
+		injectDependencies(instance);
+
 		// invoke methods annotated with @PostConstruct
 		AnnotationUtils.invokeMethodWithAnnotation(instance.getClass(), instance, PostConstruct.class);
+
 		return instance;
+	}
+
+	/**
+	 * Performs dependency injection on the supplied {@code bean}. Dependency
+	 * injection is performed on fields that are annotated by {@link Inject}.
+	 * 
+	 * @param bean the bean to perform dependency injection on
+	 */
+	protected void injectDependencies(Object bean) {
+		Class<? extends Object> clazz = bean.getClass();
+		injectMembers(clazz, bean);
+	}
+
+	protected void injectMembers(Class<?> clazz, final Object instance) {
+		LOG.debug("Injecting members for class {} and instance {}", clazz, instance);
+		Field[] fields = clazz.getDeclaredFields();
+		if (fields != null) {
+			for (final Field field : fields) {
+				if (field.isAnnotationPresent(Inject.class)) {
+					Class<?> type = field.getType();
+					String key = field.getName();
+					Object value = resolveBean(key, type);
+					LOG.debug("Field annotated with @Inject found: {}, resolved value: {}", field.getName(), value);
+					if (value != null) {
+						injectIntoField(field, instance, value);
+					}
+				}
+			}
+		}
+		Class<? extends Object> superclass = clazz.getSuperclass();
+		if (superclass != null) {
+			injectMembers(superclass, instance);
+		}
+	}
+
+	private static boolean isNotPrimitiveOrString(Class<?> type) {
+		return !type.isPrimitive() && !type.isAssignableFrom(String.class);
+	}
+
+	/**
+	 * Tries to resolve the ID and / or type to a bean by using the internal
+	 * {@link BeanResolutionFunction}.
+	 * 
+	 * @param <T>
+	 * @param id   the ID / bean name
+	 * @param type the type
+	 * @return the bean instance, or {@code null}, if resolution is not possible
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> T resolveBean(String id, Class<?> type) {
+		for (BeanResolutionFunction function : beanResolverFunctions) {
+			T value = (T) function.resolve(id, type);
+			if (value != null) {
+				return value;
+			}
+		}
+		return null;
+	}
+
+	protected void injectIntoField(final Field field, final Object instance, final Object target) {
+		AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+			boolean wasAccessible = field.canAccess(instance);
+			try {
+				field.setAccessible(true);
+				field.set(instance, target);
+				return null; // return nothing...
+			} catch (IllegalArgumentException | IllegalAccessException ex) {
+				throw new IllegalStateException("Cannot set field: " + field + " with value " + target, ex);
+			} finally {
+				field.setAccessible(wasAccessible);
+			}
+		});
 	}
 
 	/**
@@ -193,10 +273,6 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 			this.beanClass = beanClass;
 			this.singleton = singleton;
 			instantiationSupplier = instantiatiationSupplier;
-		}
-
-		public String getId() {
-			return id;
 		}
 
 		public Class<?> getBeanClass() {
@@ -240,7 +316,27 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 			}
 			return true;
 		}
+	}
 
+	/**
+	 * Strategy interface for resolving an id or class to a bean.
+	 * 
+	 * @author koster
+	 *
+	 */
+	@FunctionalInterface
+	private static interface BeanResolutionFunction {
+
+		/**
+		 * Resolves the ID or type to a bean
+		 * 
+		 * @param <T>
+		 * @param id   the ID to resolve
+		 * @param type the type to resolve
+		 * @return the resolve instance, or {@link null}, if the ID or type can not be
+		 *         resolved.
+		 */
+		public Object resolve(String id, Class<?> type);
 	}
 
 }

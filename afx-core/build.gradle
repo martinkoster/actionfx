@@ -12,13 +12,14 @@ dependencies {
             modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
         }
 		
-
 		api group: "javax.annotation", name: "javax.annotation-api", version: "${javaxAnnotationVersion}"
+		api group: "javax.inject", name: "javax.inject", version: "${javaxInjectVersion}"
 		api group: "io.github.classgraph", name: "classgraph", version: "${classgraphVersion}"
 		api group: "org.apache.commons", name: "commons-lang3", version: "${commonsLangVersion}"
 		api group: "net.bytebuddy", name: "byte-buddy", version: "${byteBuddyVersion}"
 		api group: "net.bytebuddy", name: "byte-buddy-agent", version: "${byteBuddyVersion}"
 
+		implementation group: "ch.qos.logback", name: "logback-classic", version: "${logbackVersion}" 
 
         testImplementation project(":afx-testing")
         testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
@@ -31,6 +32,11 @@ dependencies {
 }
 
 test {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+integrationTest {    
 		forkEvery = 1
     	maxParallelForks = 1       
 }

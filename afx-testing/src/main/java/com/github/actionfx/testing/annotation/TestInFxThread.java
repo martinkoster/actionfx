@@ -28,12 +28,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
 
 /**
  * Annotation to mark a test class or test method to be executed within the
  * JavaFX thread. Only works together when the test class uses
- * {@link HeadlessMonocleExtension}.
+ * {@link FxThreadForAllMonocleExtension} or
+ * {@link FxThreadForEachMonocleExtension} extensions.
  *
  * @author MartinKoster
  */

@@ -24,6 +24,7 @@
 package com.github.actionfx.core.container.instantiation;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.view.FxmlView;
@@ -39,16 +40,17 @@ public class FxmlViewInstantiationSupplier extends AbstractInstantiationSupplier
 
 	private AFXController controllerAnnotation;
 
-	private Object controller;
+	private Supplier<?> controllerSupplier;
 
-	public FxmlViewInstantiationSupplier(Object controller, AFXController controllerAnnotation) {
-		this.controller = controller;
+	public FxmlViewInstantiationSupplier(Supplier<?> controllerSupplier, AFXController controllerAnnotation) {
+		this.controllerSupplier = controllerSupplier;
 		this.controllerAnnotation = controllerAnnotation;
 	}
 
 	@Override
 	protected FxmlView createInstance() {
-		FxmlView fxmlView = new FxmlView(controllerAnnotation.viewId(), controllerAnnotation.fxml(), controller);
+		FxmlView fxmlView = new FxmlView(controllerAnnotation.viewId(), controllerAnnotation.fxml(),
+				controllerSupplier.get());
 		ViewBuilder<FxmlView> builder = new ViewBuilder<FxmlView>(fxmlView);
 		return builder.posX(controllerAnnotation.posX()).posY(controllerAnnotation.posY())
 				.width(controllerAnnotation.width()).height(controllerAnnotation.height())

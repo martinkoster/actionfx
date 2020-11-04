@@ -23,19 +23,25 @@
  */
 package com.github.actionfx.spring.container;
 
-import java.util.concurrent.ExecutionException;
+import java.util.Set;
+import java.util.function.Supplier;
 
-import org.springframework.beans.BeanInstantiationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
+import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.spring.postpocessor.InFxThread;
-
-import javafx.concurrent.Task;
+import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
+import com.github.actionfx.core.container.instantiation.FxmlViewInstantiationSupplier;
+import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.view.FxmlView;
 
 /**
  * Implementation of {@link BeanContainerFacade} that leverages Spring as
@@ -50,6 +56,8 @@ import javafx.concurrent.Task;
  *
  */
 public class SpringBeanContainer implements BeanContainerFacade {
+
+	private static Logger LOG = LoggerFactory.getLogger(SpringBeanContainer.class);
 
 	private BeanDefinitionRegistry beanDefinitionRegistry;
 
@@ -70,24 +78,70 @@ public class SpringBeanContainer implements BeanContainerFacade {
 
 	@Override
 	public void populateContainer(String rootPackage) {
-		// post process bean definitions and add a factory method for @InFxThread
-		// annotated classes
-		for (final String beanName : registry.getBeanDefinitionNames()) {
-			final BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
-			if (beanDefinition.getBeanClassName() != null) {
-				final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), null);
-				final InFxThread inFxThread = IrisReflectionUtils.findAnnotation(beanClass, InFxThread.class);
-				if (inFxThread != null) {
 
-					// add the factory method "createFxComponent" to the bean definition
-					beanDefinition.setFactoryBeanName(ACTIONFX_BEANREGISTRY_POST_PROCESSOR_BEAN);
-					beanDefinition.setFactoryMethodName("createFxComponent");
-					final ConstructorArgumentValues cav = beanDefinition.getConstructorArgumentValues();
-					cav.addGenericArgumentValue(beanClass);
-				}
-			}
+		// scan for FxController annotations...
+		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+		scanner.addIncludeFilter(new AnnotationTypeFilter(AFXController.class));
+		Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(rootPackage);
+
+		for (BeanDefinition beanDefinition : beanDefinitions) {
+			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), null);
+			AFXController afxController = AnnotationUtils.findAnnotation(beanClass, AFXController.class);
+
+			ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(beanClass);
+
+			// add a bean definition for the controller
+			registerBeanDefinition(deriveControllerId(beanClass),
+					createBeanDefinitionForController(beanDefinition, afxController, controllerSupplier));
+
+			// add a bean definition for the view
+			registerBeanDefinition(afxController.viewId(),
+					createBeanDefinitionForView(beanDefinition, afxController, controllerSupplier));
 		}
 
+	}
+
+	@Override
+	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier) {
+		GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+		beanDefinition.setBeanClass(beanClass);
+		beanDefinition.setScope(singleton ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
+		beanDefinition.setInstanceSupplier(instantiationSupplier);
+		registerBeanDefinition(id, beanDefinition);
+	}
+
+	private BeanDefinition createBeanDefinitionForController(BeanDefinition beanDefinition, AFXController afxController,
+			ControllerInstantiationSupplier<?> controllerSupplier) {
+		GenericBeanDefinition result = new GenericBeanDefinition(beanDefinition);
+		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
+		result.setInstanceSupplier(controllerSupplier);
+		return result;
+
+	}
+
+	private BeanDefinition createBeanDefinitionForView(BeanDefinition beanDefinition, AFXController afxController,
+			ControllerInstantiationSupplier<?> controllerSupplier) {
+		// views follow the same rules than the controller (scope, dependsOn, etc.)
+		GenericBeanDefinition result = new GenericBeanDefinition(beanDefinition);
+		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
+		result.setBeanClass(FxmlView.class);
+		result.setInstanceSupplier(new FxmlViewInstantiationSupplier(controllerSupplier, afxController));
+		return result;
+	}
+
+	/**
+	 * Registers the <code>BeanDefinition</code> with the Spring context.
+	 * 
+	 * @param beanName    the bean name
+	 * @param definition  the bean definition
+	 * @param beanFactory the bean factory
+	 */
+	protected void registerBeanDefinition(String beanName, BeanDefinition definition) {
+		beanDefinitionRegistry.registerBeanDefinition(beanName, definition);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Registered BeanDefinition of type '{}' with bean name '{}'.", definition.getBeanClassName(),
+					beanName);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,35 +155,4 @@ public class SpringBeanContainer implements BeanContainerFacade {
 	public <T> T getBean(Class<?> beanClass) {
 		return (T) applicationContext.getBean(beanClass);
 	}
-
-	/**
-	 * Factory method for <tt>@InFxThread</tt> annotated bean classes.
-	 * <p>
-	 * The generic return type here is significant. If the signature is changed to
-	 * return an instance of type <tt>Object</tt>, Spring is not able to know the
-	 * bean class type of the created bean (although there is an attribute
-	 * <tt>beanClass</tt> in <tt>BeanDefinition</tt>).
-	 *
-	 * @param beanClass the bean class to create
-	 * @return the created bean instance
-	 */
-	public <T> T createFxComponent(final Class<T> beanClass) {
-		final Task<T> instantiationTask = new Task<T>() {
-			@Override
-			protected T call() throws Exception {
-				return IrisReflectionUtils.instantiateClass(beanClass);
-			}
-		};
-		try {
-			// execute the task in the JavaFX thread and wait for the result
-			final T bean = FxUtils.runInFxThreadAndWait(instantiationTask);
-			return bean;
-		} catch (InterruptedException | ExecutionException e) {
-			// Restore interrupted state...
-			Thread.currentThread().interrupt();
-			throw new BeanInstantiationException(beanClass,
-					"Failed to instantiate class '" + beanClass.getCanonicalName() + "' in JavaFX thread!", e);
-		}
-	}
-
 }

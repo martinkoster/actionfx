@@ -51,7 +51,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
 	// Cache of already enhanced classes, where the key is the canonical name of the
 	// class
-	private Map<String, Class<?>> ENHANCED_CLASSES_CACHE = new HashMap<>();
+	private static final Map<String, Class<?>> ENHANCED_CLASSES_CACHE = new HashMap<>();
 
 	// enhanced classes have this fragment in its canonical name. by that, we can
 	// recognized whether the given class is already enhanced or not
@@ -63,6 +63,9 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
 	@Override
 	public void installAgent() {
+		if (agentInstalled) {
+			return;
+		}
 		Instrumentation instrumentation = ByteBuddyAgent.install();
 		new AgentBuilder.Default().with(RedefinitionStrategy.RETRANSFORMATION)
 				.type(ElementMatchers.isAnnotatedWith(AFXController.class))

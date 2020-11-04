@@ -14,6 +14,10 @@ import com.github.actionfx.core.annotation.AFXAction;
  */
 public class AFXActionMethodInterceptor {
 
+	private AFXActionMethodInterceptor() {
+		// class can not be instantiated
+	}
+
 	public static Object interceptAFXAction(AFXAction afxAction, Callable<?> callable, Object instance, Method method,
 			Object... args) throws Exception {
 		System.out.println("Entering method " + method.getName() + ", annotation " + afxAction);

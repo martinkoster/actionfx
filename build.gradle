@@ -27,7 +27,7 @@ configure(allprojects) { project ->
     configurations {
 	    published
 	    all*.exclude module: "slf4j-log4j12"
-	    integrationCompile.extendsFrom testImplementation
+	    integrationTestCompile.extendsFrom testImplementation
 	    integrationTestCompile.extendsFrom testRuntime
     }
 

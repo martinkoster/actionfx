@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.container;
 
+import java.util.function.Supplier;
+
 /**
  * Facade for accessing a bean container holding necessary view and controller
  * instances.
@@ -40,6 +42,19 @@ public interface BeanContainerFacade {
 	 * @param rootPackage the root package that acts as source for view components
 	 */
 	void populateContainer(String rootPackage);
+
+	/**
+	 * Adds a new bean definition to the bean container.
+	 * 
+	 * @param id                    the bean ID / name
+	 * @param beanClass             the bean type
+	 * @param singleton             {@code true}, if the created instance of the
+	 *                              bean shall be a singleton, {@code false}, if
+	 *                              there should be a new instance created, whenever
+	 *                              {@link #getBean(Class)} is called.
+	 * @param instantiationSupplier the supplier that provides the instance
+	 */
+	void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier);
 
 	/**
 	 * Gets a bean from the underlying bean container by ID.

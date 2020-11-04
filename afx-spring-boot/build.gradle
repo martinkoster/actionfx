@@ -6,8 +6,7 @@ description = "afx-spring-boot: This module contains integration classes for usi
 
 dependencies {
 	
-        implementation project(":afx-core")
-        implementation project(":afx-testing")
+        api project(":afx-core")
 
 		// Spring Dependencies are not declared as "api" dependencies. We just want these dependencies at
 		// compile time. It is up to the user of this module, which exact version of Spring or Spring Boot to use.
@@ -15,6 +14,12 @@ dependencies {
 		implementation group: "org.springframework", name: "spring-context", version: "${springVersion}"
 		implementation group: "org.springframework", name: "spring-beans", version: "${springVersion}"
 		
+		implementation group: "ch.qos.logback", name: "logback-classic", version: "${logbackVersion}"
+		
+        testImplementation project(":afx-testing")
+
+		testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "${springBootVersion}"
+		testImplementation group: "org.springframework", name: "spring-test", version: "${springVersion}"
 
         testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
     	testImplementation group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
@@ -25,6 +30,11 @@ dependencies {
 }
 
 test {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+integrationTest {    
 		forkEvery = 1
     	maxParallelForks = 1       
 }

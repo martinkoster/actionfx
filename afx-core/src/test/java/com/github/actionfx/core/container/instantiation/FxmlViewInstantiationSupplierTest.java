@@ -32,11 +32,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.container.instantiation.FxmlViewInstantiationSupplier;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.testing.annotation.TestInFxThread;
-import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 /**
  * JUnit test case for {@link FxmlViewInstantiationSupplier}
@@ -44,7 +43,7 @@ import com.github.actionfx.testing.junit5.HeadlessMonocleExtension;
  * @author koster
  *
  */
-@ExtendWith(HeadlessMonocleExtension.class)
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class FxmlViewInstantiationSupplierTest {
 
 	@TestInFxThread
@@ -54,7 +53,8 @@ class FxmlViewInstantiationSupplierTest {
 		AnnotatedController controller = new AnnotatedController();
 		AFXController controllerAnnotation = AnnotationUtils.findAnnotation(AnnotatedController.class,
 				AFXController.class);
-		FxmlViewInstantiationSupplier supplier = new FxmlViewInstantiationSupplier(controller, controllerAnnotation);
+		FxmlViewInstantiationSupplier supplier = new FxmlViewInstantiationSupplier(() -> controller,
+				controllerAnnotation);
 
 		// WHEN
 		FxmlView view = supplier.get();
