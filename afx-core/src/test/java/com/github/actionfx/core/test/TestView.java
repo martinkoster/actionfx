@@ -27,9 +27,15 @@ import javax.annotation.PostConstruct;
 
 import com.github.actionfx.core.view.AbstractView;
 
+import javafx.scene.layout.AnchorPane;
+
 public class TestView extends AbstractView {
 
 	private boolean initializeInvoked = false;
+
+	public TestView() {
+		rootNode = new AnchorPane();
+	}
 
 	@PostConstruct
 	public void initialize() {

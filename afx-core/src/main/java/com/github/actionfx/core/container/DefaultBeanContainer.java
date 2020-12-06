@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,13 +19,11 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.container;
 
 import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +39,11 @@ import org.slf4j.LoggerFactory;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
-import com.github.actionfx.core.container.instantiation.FxmlViewInstantiationSupplier;
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ClassPathScanningUtils;
-import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.core.utils.ReflectionUtils;
+import com.github.actionfx.core.view.View;
 
 /**
  * Default implementation of a bean container using an underlying hash map as
@@ -52,7 +51,7 @@ import com.github.actionfx.core.view.FxmlView;
  * <p>
  * The bean container respects the @PostConstruct annotation and performs
  * corresponding initialization after bean creation.
- * 
+ *
  * @author koster
  *
  */
@@ -61,13 +60,13 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanContainer.class);
 
 	// bean definition map with key: id -> value: bean definition
-	private Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
+	private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
-	// map for bean defintion -> singleton instances
-	private Map<BeanDefinition, Object> singletonCache = new HashMap<>();
+	// map for bean definition -> singleton instances
+	private final Map<BeanDefinition, Object> singletonCache = new HashMap<>();
 
 	// strategies to resolve an ID or type to a bean
-	private List<BeanResolutionFunction> beanResolverFunctions = new ArrayList<>();
+	private final List<BeanResolutionFunction> beanResolverFunctions = new ArrayList<>();
 
 	public DefaultBeanContainer() {
 		// bean resolution strategies
@@ -90,33 +89,35 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	}
 
 	@Override
-	public void populateContainer(String rootPackage) {
-		List<Class<?>> controllerClasses = ClassPathScanningUtils.findClassesWithAnnotation(rootPackage,
+	public void populateContainer(final String rootPackage) {
+		final List<Class<?>> controllerClasses = ClassPathScanningUtils.findClassesWithAnnotation(rootPackage,
 				AFXController.class);
-		for (Class<?> controllerClass : controllerClasses) {
-			AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
+		for (final Class<?> controllerClass : controllerClasses) {
+			final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 
-			ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
+			final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
 					controllerClass);
+			final String controllerId = deriveControllerId(controllerClass);
 
 			// add a bean definition for the controller
-			addBeanDefinition(deriveControllerId(controllerClass), controllerClass, afxController.singleton(),
-					controllerSupplier);
+			addBeanDefinition(controllerId, controllerClass, afxController.singleton(), controllerSupplier);
 
-			// and add a bean definition for the view
-			addBeanDefinition(afxController.viewId(), FxmlView.class, afxController.singleton(),
-					new FxmlViewInstantiationSupplier(controllerSupplier, afxController));
+			// and add a bean definition for the view (view itself is injected into the
+			// controller instance)
+			addBeanDefinition(afxController.viewId(), View.class, afxController.singleton(),
+					() -> ControllerWrapper.getViewFrom(getBean(controllerId)));
 		}
 	}
 
 	@Override
-	public void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier) {
+	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
+			final Supplier<?> instantiationSupplier) {
 		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, instantiationSupplier));
 	}
 
 	@Override
-	public <T> T getBean(String id) {
-		BeanDefinition beanDefinition = beanDefinitionMap.get(id);
+	public <T> T getBean(final String id) {
+		final BeanDefinition beanDefinition = beanDefinitionMap.get(id);
 		if (beanDefinition == null) {
 			// no bean defined with that ID
 			return null;
@@ -125,8 +126,8 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	}
 
 	@Override
-	public <T> T getBean(Class<?> beanClass) {
-		BeanDefinition beanDefinition = beanDefinitionMap.values().stream()
+	public <T> T getBean(final Class<?> beanClass) {
+		final BeanDefinition beanDefinition = beanDefinitionMap.values().stream()
 				.filter(definition -> beanClass.isAssignableFrom(definition.getBeanClass())).findFirst().orElse(null);
 		if (beanDefinition == null) {
 			return null;
@@ -136,19 +137,19 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 	/**
 	 * Retrieves the bean by the provided {@code beanDefinition}.
-	 * 
+	 *
 	 * @param <T>            the bean type
 	 * @param beanDefinition the bean definition
 	 * @return the bean instance
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> T getBeanByDefinition(BeanDefinition beanDefinition) {
+	protected <T> T getBeanByDefinition(final BeanDefinition beanDefinition) {
 		if (beanDefinition.isSingleton()) {
 			if (singletonCache.containsKey(beanDefinition)) {
 				return (T) singletonCache.get(beanDefinition);
 			} else {
-				// instance is single but it is not yet created, so let's do this
-				T bean = createBeanInstance(beanDefinition);
+				// instance is singleton, but it is not yet created, so let's do this
+				final T bean = createBeanInstance(beanDefinition);
 				singletonCache.put(beanDefinition, bean);
 				return bean;
 			}
@@ -162,14 +163,14 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 	/**
 	 * Creates the instance based on the {@link BeanDefinition}
-	 * 
+	 *
 	 * @param <T>            the result type
 	 * @param beanDefinition the bean definition
 	 * @return the created instance
 	 */
 	@SuppressWarnings("unchecked")
-	private <T> T createBeanInstance(BeanDefinition beanDefinition) {
-		T instance = (T) beanDefinition.getInstantiationSupplier().get();
+	private <T> T createBeanInstance(final BeanDefinition beanDefinition) {
+		final T instance = (T) beanDefinition.getInstantiationSupplier().get();
 
 		// inject potential dependencies
 		injectDependencies(instance);
@@ -183,53 +184,62 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	/**
 	 * Performs dependency injection on the supplied {@code bean}. Dependency
 	 * injection is performed on fields that are annotated by {@link Inject}.
-	 * 
+	 *
 	 * @param bean the bean to perform dependency injection on
 	 */
-	protected void injectDependencies(Object bean) {
-		Class<? extends Object> clazz = bean.getClass();
+	protected void injectDependencies(final Object bean) {
+		final Class<? extends Object> clazz = bean.getClass();
 		injectMembers(clazz, bean);
 	}
 
-	protected void injectMembers(Class<?> clazz, final Object instance) {
-		LOG.debug("Injecting members for class {} and instance {}", clazz, instance);
-		Field[] fields = clazz.getDeclaredFields();
+	protected void injectMembers(final Class<?> clazz, final Object instance) {
+		LOG.debug("Injecting members for class {} and instance {}", clazz.getCanonicalName(), instance);
+		final AFXController afxController = AnnotationUtils.findAnnotation(clazz, AFXController.class);
+		final Field[] fields = clazz.getDeclaredFields();
 		if (fields != null) {
 			for (final Field field : fields) {
 				if (field.isAnnotationPresent(Inject.class)) {
-					Class<?> type = field.getType();
-					String key = field.getName();
-					Object value = resolveBean(key, type);
+					final Class<?> type = field.getType();
+					final String key = field.getName();
+					Object value;
+					// in case the controller wants to have injected its own view instance,
+					// we can not do the same via "resolveBean", as this would lead to a stack
+					// overflow (we are still in construction pahse of the controller)
+					if (afxController != null && field.getName().equals(afxController.viewId())) {
+						value = ControllerWrapper.getViewFrom(instance);
+					} else {
+						value = resolveBean(key, type);
+					}
 					LOG.debug("Field annotated with @Inject found: {}, resolved value: {}", field.getName(), value);
 					if (value != null) {
-						injectIntoField(field, instance, value);
+						ReflectionUtils.setFieldValue(field, instance, value);
 					}
 				}
 			}
 		}
-		Class<? extends Object> superclass = clazz.getSuperclass();
+		final Class<? extends Object> superclass = clazz.getSuperclass();
 		if (superclass != null) {
 			injectMembers(superclass, instance);
 		}
 	}
 
-	private static boolean isNotPrimitiveOrString(Class<?> type) {
+	private static boolean isNotPrimitiveOrString(final Class<?> type) {
 		return !type.isPrimitive() && !type.isAssignableFrom(String.class);
 	}
 
 	/**
 	 * Tries to resolve the ID and / or type to a bean by using the internal
 	 * {@link BeanResolutionFunction}.
-	 * 
+	 *
 	 * @param <T>
 	 * @param id   the ID / bean name
 	 * @param type the type
 	 * @return the bean instance, or {@code null}, if resolution is not possible
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> T resolveBean(String id, Class<?> type) {
-		for (BeanResolutionFunction function : beanResolverFunctions) {
-			T value = (T) function.resolve(id, type);
+	protected <T> T resolveBean(final String id, final Class<?> type) {
+		for (final BeanResolutionFunction function : beanResolverFunctions) {
+			final T value = (T) function.resolve(id, type);
 			if (value != null) {
 				return value;
 			}
@@ -237,38 +247,24 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		return null;
 	}
 
-	protected void injectIntoField(final Field field, final Object instance, final Object target) {
-		AccessController.doPrivileged((PrivilegedAction<?>) () -> {
-			boolean wasAccessible = field.canAccess(instance);
-			try {
-				field.setAccessible(true);
-				field.set(instance, target);
-				return null; // return nothing...
-			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new IllegalStateException("Cannot set field: " + field + " with value " + target, ex);
-			} finally {
-				field.setAccessible(wasAccessible);
-			}
-		});
-	}
-
 	/**
 	 * Internal bean definition structure.
-	 * 
+	 *
 	 * @author koster
 	 *
 	 */
 	private static class BeanDefinition {
 
-		private String id;
+		private final String id;
 
-		private Class<?> beanClass;
+		private final Class<?> beanClass;
 
-		private boolean singleton;
+		private final boolean singleton;
 
-		private Supplier<?> instantiationSupplier;
+		private final Supplier<?> instantiationSupplier;
 
-		public BeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiatiationSupplier) {
+		public BeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
+				final Supplier<?> instantiatiationSupplier) {
 			this.id = id;
 			this.beanClass = beanClass;
 			this.singleton = singleton;
@@ -291,12 +287,12 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			result = prime * result + (id == null ? 0 : id.hashCode());
 			return result;
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (this == obj) {
 				return true;
 			}
@@ -306,7 +302,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			BeanDefinition other = (BeanDefinition) obj;
+			final BeanDefinition other = (BeanDefinition) obj;
 			if (id == null) {
 				if (other.id != null) {
 					return false;
@@ -320,7 +316,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 	/**
 	 * Strategy interface for resolving an id or class to a bean.
-	 * 
+	 *
 	 * @author koster
 	 *
 	 */
@@ -329,7 +325,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 		/**
 		 * Resolves the ID or type to a bean
-		 * 
+		 *
 		 * @param <T>
 		 * @param id   the ID to resolve
 		 * @param type the type to resolve

@@ -76,7 +76,6 @@ class ActionFXTest {
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
 		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
-		assertThat(actionFX.getPreloaderClass(), equalTo(Preloader.class));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 
@@ -89,7 +88,7 @@ class ActionFXTest {
 		// WHEN
 		ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
 				.mainViewId("mainView").actionFXEnhancer(enhancer).enhancementStrategy(EnhancementStrategy.SUBCLASSING)
-				.preloaderClass(preloaderClass).build();
+				.build();
 
 		// THEN
 		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
@@ -97,7 +96,6 @@ class ActionFXTest {
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
 		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
-		assertThat(actionFX.getPreloaderClass(), equalTo(preloaderClass));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 

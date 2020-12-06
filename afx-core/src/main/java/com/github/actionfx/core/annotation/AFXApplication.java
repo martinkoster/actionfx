@@ -29,8 +29,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javafx.application.Preloader;
-
 /**
  * Annotation that can be applied to the main class of an ActionFX application.
  * 
@@ -54,12 +52,4 @@ public @interface AFXApplication {
 	 * @return the ID of the main view.
 	 */
 	public String mainViewId();
-
-	/**
-	 * Optional preloader class that is used to be displayed during startup of the
-	 * actual application.
-	 * 
-	 * @return the preloader class to use during startup
-	 */
-	public Class<? extends Preloader> preloaderClass() default Preloader.class;
 }

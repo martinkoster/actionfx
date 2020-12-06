@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.container;
 
@@ -41,12 +41,13 @@ import com.github.actionfx.core.test.TestView;
 import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.ModelWithDefaultConstructor;
 import com.github.actionfx.core.test.app.SampleApp;
+import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 /**
  * JUnit test case for {@link DefaultBeanContainer}.
- * 
+ *
  * @author koster
  *
  */
@@ -61,12 +62,12 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_singletonById() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, () -> new TestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
 
 		// WHEN
-		TestView view1 = container.getBean("beanId");
-		TestView view2 = container.getBean("beanId");
+		final TestView view1 = container.getBean("beanId");
+		final TestView view2 = container.getBean("beanId");
 
 		// THEN
 		assertThat(view1, notNullValue());
@@ -79,12 +80,12 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_singletonByType() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, () -> new TestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
 
 		// WHEN
-		TestView view1 = container.getBean(TestView.class);
-		TestView view2 = container.getBean(TestView.class);
+		final TestView view1 = container.getBean(TestView.class);
+		final TestView view2 = container.getBean(TestView.class);
 
 		// THEN
 		assertThat(view1, notNullValue());
@@ -97,13 +98,13 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_singletonByType_superTypeIsRequested() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", DerivedFromTestView.class, true, () -> new DerivedFromTestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", DerivedFromTestView.class, true, DerivedFromTestView::new);
 
 		// WHEN (request the super type 'TestView', although 'DerivedFromTestView' is
 		// registered)
-		TestView view1 = container.getBean(TestView.class);
-		TestView view2 = container.getBean(TestView.class);
+		final TestView view1 = container.getBean(TestView.class);
+		final TestView view2 = container.getBean(TestView.class);
 
 		// THEN
 		assertThat(view1, notNullValue());
@@ -117,8 +118,8 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_byId_idDoesNotExist() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, () -> new TestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
 
 		// WHEN and THEN
 		assertThat(container.getBean("someNonExistingId"), nullValue());
@@ -127,8 +128,8 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_byType_idDoesNotExist() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, () -> new TestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
 
 		// WHEN and THEN
 		assertThat(container.getBean(String.class), nullValue());
@@ -137,12 +138,12 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_nonSingletonById() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, false, () -> new TestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", TestView.class, false, TestView::new);
 
 		// WHEN
-		TestView view1 = container.getBean("beanId");
-		TestView view2 = container.getBean("beanId");
+		final TestView view1 = container.getBean("beanId");
+		final TestView view2 = container.getBean("beanId");
 
 		// THEN
 		assertThat(view1, notNullValue());
@@ -155,12 +156,12 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_nonSingletonByType() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, false, () -> new TestView());
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addBeanDefinition("beanId", TestView.class, false, TestView::new);
 
 		// WHEN
-		TestView view1 = container.getBean(TestView.class);
-		TestView view2 = container.getBean(TestView.class);
+		final TestView view1 = container.getBean(TestView.class);
+		final TestView view2 = container.getBean(TestView.class);
 
 		// THEN
 		assertThat(view1, notNullValue());
@@ -173,32 +174,35 @@ class DefaultBeanContainerTest {
 	@Test
 	void testPopulateContainer() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultBeanContainer container = new DefaultBeanContainer();
 
 		// WHEN
 		container.populateContainer(SampleApp.class.getPackageName());
 
 		// THEN
-		View view = container.getBean("mainView");
-		MainController mainControllerById = container.getBean("mainController");
-		MainController mainControllerByClassName = container.getBean(MainController.class);
+		final View view = container.getBean("mainView");
+		final MainController mainControllerById = container.getBean("mainController");
+		final MainController mainControllerByClassName = container.getBean(MainController.class);
 
 		assertThat(view, notNullValue());
 		assertThat(mainControllerById, notNullValue());
 		assertThat(mainControllerByClassName, notNullValue());
 		assertThat(mainControllerById, sameInstance(mainControllerByClassName));
+		assertThat(view, instanceOf(FxmlView.class));
+		final FxmlView fxmlView = (FxmlView) view;
+		assertThat(fxmlView.getController(), sameInstance(mainControllerById));
 	}
 
 	@Test
 	void testGetBean_withDependencyInjection() {
 		// GIVEN
-		DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultBeanContainer container = new DefaultBeanContainer();
 		container.populateContainer(SampleApp.class.getPackageName());
 
 		// WHEN
-		MainController controller = container.getBean("mainController");
-		View view = container.getBean("mainView");
-		ModelWithDefaultConstructor model = container.getBean(ModelWithDefaultConstructor.class);
+		final MainController controller = container.getBean("mainController");
+		final View view = container.getBean("mainView");
+		final ModelWithDefaultConstructor model = container.getBean(ModelWithDefaultConstructor.class);
 
 		// THEN (verify all annotated fields are resolved)
 		assertThat(controller.getMainView(), notNullValue());

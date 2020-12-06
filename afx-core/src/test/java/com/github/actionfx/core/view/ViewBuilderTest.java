@@ -27,8 +27,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
 
 import com.github.actionfx.core.test.TestView;
@@ -46,7 +44,7 @@ class ViewBuilderTest {
 		// WHEN
 		ViewBuilder<TestView> builder = new ViewBuilder<>(new TestView());
 		TestView view = builder.id("testId").width(100).height(50).icon("icon.png").posX(10).posY(20).maximized(true)
-				.modalDialogue(false).windowTitle("Title").stylesheets(Arrays.asList("cssClass1", "cssClass2"))
+				.modalDialogue(false).windowTitle("Title").stylesheets(new String[] { "cssClass1", "cssClass2" })
 				.getView();
 
 		// THEN
@@ -67,7 +65,7 @@ class ViewBuilderTest {
 		// WHEN
 		ViewBuilder<TestView> builder = new ViewBuilder<>(TestView.class);
 		TestView view = builder.id("testId").width(100).height(50).icon("icon.png").posX(10).posY(20).maximized(true)
-				.modalDialogue(false).windowTitle("Title").stylesheets(Arrays.asList("cssClass1", "cssClass2"))
+				.modalDialogue(false).windowTitle("Title").stylesheets(new String[] { "cssClass1", "cssClass2" })
 				.getView();
 
 		// THEN

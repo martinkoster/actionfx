@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
  * @author koster
  *
  */
+@AFXMethodInterceptable
 @Retention(RUNTIME)
 @Target(ElementType.METHOD)
 public @interface AFXAction {

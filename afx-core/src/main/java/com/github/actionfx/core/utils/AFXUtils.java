@@ -87,7 +87,7 @@ public class AFXUtils {
 	 * @param controller the controller to set
 	 * @return the loaded {@code Node} instance
 	 */
-	public static final Node loadFxml(final String fxmlPath, final Object controller) {
+	public static final <T> T loadFxml(final String fxmlPath, final Object controller) {
 		try {
 			final FXMLLoader loader = new FXMLLoader(AFXUtils.class.getResource(fxmlPath));
 			if (controller != null) {

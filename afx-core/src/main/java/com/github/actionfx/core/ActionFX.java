@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core;
 
@@ -36,7 +36,6 @@ import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.view.View;
 
 import javafx.application.Application;
-import javafx.application.Preloader;
 import javafx.stage.Stage;
 
 /**
@@ -48,21 +47,21 @@ import javafx.stage.Stage;
  * <p>
  * <b>Expample:</b> ActionFX actionFX =
  * ActionFX.builder().configurationClass(SampleApp.class).build();
- * 
+ *
  * <pre>
  * <p>
  * After the setup, an instance of this class is retrieved throughout the application via:
- * 
+ *
  * <pre>
  * ActionFX instance = ActionFX.getInstance();
  * </pre>
  * <p>
  * After the ActionFX instance is built, a component scan can be performed:
- * 
+ *
  * <pre>
  * ActionFX.getInstance().scanForActionFXComponents();
  * </pre>
- * 
+ *
  * This will populate ActionFX internal bean container and makes controller and
  * views available for usage. Please note, that this step is not required, if
  * you use Spring Boot and included module {@code afx-spring-boot} in your
@@ -75,17 +74,17 @@ import javafx.stage.Stage;
  * helpful for unit testing your controller independently of a setup ActionFX
  * instance (you can use e.g. Mockito to mock the {@link ActionFX} instance for
  * unit-testing).
- * 
+ *
  * <pre>
  * &#64;AFXController(viewId="mainView", fxml="some.fxml">
  * public class MainController {
- * 
+ *
  * &#64;Inject
  * private ActionFX actionFX;
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * @author koster
  *
  */
@@ -104,10 +103,6 @@ public class ActionFX {
 
 	// the ID of the mainView that is displayed in JavaFXs primary Stage
 	private String mainViewId;
-
-	// an optional preloader class that shall be displayed during application
-	// startup
-	private Class<? extends Preloader> preloaderClass;
 
 	// the package name to scan for ActionFX components
 	private String scanPackage;
@@ -140,10 +135,6 @@ public class ActionFX {
 		if (!enhancer.agentInstalled() && enhancementStrategy == EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT) {
 			enhancer.installAgent();
 		}
-		// install a preloader, if supplied
-		if (preloaderClass != null && !preloaderClass.equals(Preloader.class)) {
-			System.setProperty("javafx.preloader", preloaderClass.getCanonicalName());
-		}
 		// after configuration and instance creation, the state transfers to CONFIGURED
 		actionFXState = ActionFXState.CONFIGURED;
 	}
@@ -151,7 +142,7 @@ public class ActionFX {
 	/**
 	 * Creates a builder that is used for setting up the application-specific
 	 * instance of {@link ActionFX}.
-	 * 
+	 *
 	 * @return the ActionFX builder instance that is used to setup the configuration
 	 */
 	public static ActionFXBuilder builder() {
@@ -166,7 +157,7 @@ public class ActionFX {
 	 * setup your application-specific configuration that ActionFX shall handle by
 	 * using the {@link #build()} method, returning an instance of
 	 * {@link ActionFXBuilder}.
-	 * 
+	 *
 	 * @return
 	 */
 	public static ActionFX getInstance() {
@@ -197,10 +188,10 @@ public class ActionFX {
 	 * in the application, preferable in the {@code main()} method of the
 	 * Application. The bean container implementation (e.g. when using Spring as
 	 * bean container) is not yet setup at this point in time!
-	 * 
+	 *
 	 * @param beanContainer the
 	 */
-	public void scanForActionFXComponents(BeanContainerFacade beanContainer) {
+	public void scanForActionFXComponents(final BeanContainerFacade beanContainer) {
 		checkActionFXState(ActionFXState.CONFIGURED);
 		this.beanContainer = beanContainer;
 		scanForActionFXComponentsInternal();
@@ -217,42 +208,42 @@ public class ActionFX {
 
 	/**
 	 * Gets the view by the supplied {@code viewId}.
-	 * 
+	 *
 	 * @param viewId the view ID
 	 * @return the view instance. If the {@code viewId} does not exists,
 	 *         {@code null} is returned.
 	 */
-	public View getView(String viewId) {
+	public View getView(final String viewId) {
 		return beanContainer.getBean(viewId);
 	}
 
 	/**
 	 * Gets the controller defined by the supplied {@code controllerClass}.
-	 * 
+	 *
 	 * @param controllerClass the controller class for that a controller instance
 	 *                        shall be retrieved.
 	 * @return the retrieved controller instance.If the {@code controllerClass} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public <T> T getController(Class<T> controllerClass) {
+	public <T> T getController(final Class<T> controllerClass) {
 		return beanContainer.getBean(controllerClass);
 	}
 
 	/**
 	 * Gets the controller by the supplied {@code controllerId}.
-	 * 
+	 *
 	 * @param controllerId the controller ID for that a controller instance shall be
 	 *                     retrieved.
 	 * @return the retrieved controller instance.If the {@code controllerId} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public <T> T getController(String controllerId) {
+	public <T> T getController(final String controllerId) {
 		return beanContainer.getBean(controllerId);
 	}
 
 	/**
 	 * Returns the main view of the application.
-	 * 
+	 *
 	 * @return the main view
 	 */
 	public View getMainView() {
@@ -262,7 +253,7 @@ public class ActionFX {
 	/**
 	 * The ID / name of the main view that is displayed in JavaFX's primary
 	 * {@link Stage}.
-	 * 
+	 *
 	 * @return the main view ID
 	 */
 	public String getMainViewId() {
@@ -271,29 +262,19 @@ public class ActionFX {
 
 	/**
 	 * Displays the main view in the primary stage.
-	 * 
+	 *
 	 * @param primaryStage the primary stage
 	 */
-	public void displayMainView(Stage primaryStage) {
+	public void displayMainView(final Stage primaryStage) {
 		setPrimaryStage(primaryStage);
-		View view = getMainView();
+		final View view = getMainView();
 		view.show(primaryStage);
-	}
-
-	/**
-	 * An optional {@link Preloader} class that shall be displayed during
-	 * application start-up.
-	 * 
-	 * @return the preloader class to be displayed during application start-up.
-	 */
-	public Class<? extends Preloader> getPreloaderClass() {
-		return preloaderClass;
 	}
 
 	/**
 	 * The package name with dot-notation "." that shall be scanned for ActionFX
 	 * components.
-	 * 
+	 *
 	 * @param scanPackage the package name that shall be scanned for ActionFX
 	 *                    componets
 	 * @return this builder
@@ -304,7 +285,7 @@ public class ActionFX {
 
 	/**
 	 * Grants access to the bean container. Mainly for testing purposes.
-	 * 
+	 *
 	 * @return the underlying bean container implementation
 	 */
 	protected BeanContainerFacade getBeanContainer() {
@@ -313,7 +294,7 @@ public class ActionFX {
 
 	/**
 	 * Then enhancement strategy to use within ActionFX.
-	 * 
+	 *
 	 * @return the enhancement strategy
 	 */
 	public EnhancementStrategy getEnhancementStrategy() {
@@ -322,7 +303,7 @@ public class ActionFX {
 
 	/**
 	 * The enhancer to use within ActionFX.
-	 * 
+	 *
 	 * @return the enhancer
 	 */
 	public ActionFXEnhancer getEnhancer() {
@@ -333,10 +314,10 @@ public class ActionFX {
 	 * Checks, whether ActionFX is currently in {@code expectedState}. If ActionFX's
 	 * state is different from the expected state, an {@link IllegalStateException}
 	 * is thrown.
-	 * 
+	 *
 	 * @param expectedState the expected state to check.
 	 */
-	private static void checkActionFXState(ActionFXState expectedState) {
+	private static void checkActionFXState(final ActionFXState expectedState) {
 		if (actionFXState != expectedState) {
 			throw new IllegalStateException(
 					"ActionFX is in state '" + actionFXState + "', while expected state was '" + expectedState + "'!");
@@ -345,7 +326,7 @@ public class ActionFX {
 
 	/**
 	 * Gets the primary stage, if it was set be the user.
-	 * 
+	 *
 	 * @return the primary stage
 	 */
 	public Stage getPrimaryStage() {
@@ -355,16 +336,25 @@ public class ActionFX {
 	/**
 	 * Users can set the primary stage here so that it is available throughout the
 	 * application.
-	 * 
+	 *
 	 * @param primaryStage the primary stage
 	 */
-	public void setPrimaryStage(Stage primaryStage) {
+	public void setPrimaryStage(final Stage primaryStage) {
 		this.primaryStage = primaryStage;
 	}
 
 	/**
+	 * Resets ActionFX to its initial state. Can be used in unit test. Use this
+	 * method in productive code only when you know exactly what you are doing.
+	 */
+	public void reset() {
+		instance = null;
+		actionFXState = ActionFXState.INITIALIZED;
+	}
+
+	/**
 	 * Builder for setting up the singleton instance of {@link ActionFX}.
-	 * 
+	 *
 	 * @author koster
 	 *
 	 */
@@ -372,27 +362,21 @@ public class ActionFX {
 
 		private String mainViewId;
 
-		private Class<? extends Preloader> preloaderClass;
-
 		private String scanPackage;
 
 		private EnhancementStrategy enhancementStrategy;
 
 		private ActionFXEnhancer actionFXEnhancer;
 
-		public ActionFXBuilder() {
-		}
-
 		/**
 		 * Creates the instance of {@link ActionFX} ready to use.
-		 * 
+		 *
 		 * @return the ActionFX instance (which is a singleton from then on)
 		 */
 		public ActionFX build() {
-			ActionFX actionFX = new ActionFX();
+			final ActionFX actionFX = new ActionFX();
 			actionFX.beanContainer = new DefaultBeanContainer();
 			actionFX.mainViewId = mainViewId;
-			actionFX.preloaderClass = preloaderClass;
 			actionFX.scanPackage = scanPackage;
 			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
 					: EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT;
@@ -410,20 +394,20 @@ public class ActionFX {
 		 * Setting the {@link AFXApplication} annotation on a class is not mandatory.
 		 * Instead, the configuration can be also done with the builder methods
 		 * {@link #mainViewId}, {@link #scanPackage} and {@link #preloaderClass}.
-		 * 
+		 *
 		 * @param configurationClass the configuration class that is expected to have an
 		 *                           {@link AFXApplication} annotation.
 		 * @return this builder
 		 */
-		public ActionFXBuilder configurationClass(Class<?> configurationClass) {
-			AFXApplication afxApplication = AnnotationUtils.findAnnotation(configurationClass, AFXApplication.class);
+		public ActionFXBuilder configurationClass(final Class<?> configurationClass) {
+			final AFXApplication afxApplication = AnnotationUtils.findAnnotation(configurationClass,
+					AFXApplication.class);
 			if (afxApplication == null) {
 				throw new IllegalArgumentException("Class '" + configurationClass.getCanonicalName()
 						+ "' or its super-classes are not annotated with @" + AFXApplication.class.getSimpleName()
 						+ "!");
 			}
 			mainViewId = afxApplication.mainViewId();
-			preloaderClass = afxApplication.preloaderClass();
 			scanPackage = afxApplication.scanPackage();
 			return this;
 		}
@@ -433,11 +417,11 @@ public class ActionFX {
 		 * primary {@link Stage}. Please note that this ID must of course exist inside
 		 * ActionFX's container e.g. by annotating a controller with
 		 * {@link AFXController} and defining this view ID there.
-		 * 
+		 *
 		 * @param mainViewId
 		 * @return this builder
 		 */
-		public ActionFXBuilder mainViewId(String mainViewId) {
+		public ActionFXBuilder mainViewId(final String mainViewId) {
 			this.mainViewId = mainViewId;
 			return this;
 		}
@@ -445,25 +429,13 @@ public class ActionFX {
 		/**
 		 * The package name with dot-notation "." that shall be scanned for ActionFX
 		 * components.
-		 * 
+		 *
 		 * @param scanPackage the package name that shall be scanned for ActionFX
 		 *                    componets
 		 * @return this builder
 		 */
-		public ActionFXBuilder scanPackage(String scanPackage) {
+		public ActionFXBuilder scanPackage(final String scanPackage) {
 			this.scanPackage = scanPackage;
-			return this;
-		}
-
-		/**
-		 * The {@link Preloader} class to use for displaying during application
-		 * start-up. Using a preloader is optional.
-		 * 
-		 * @param preloaderClass the preloader class
-		 * @return this builder
-		 */
-		public ActionFXBuilder preloaderClass(Class<? extends Preloader> preloaderClass) {
-			this.preloaderClass = preloaderClass;
 			return this;
 		}
 
@@ -478,11 +450,11 @@ public class ActionFX {
 		 * sub-classed, while controller methods are overriden and method interceptors
 		 * are attached.</li>
 		 * </ul>
-		 * 
+		 *
 		 * @param enhancementStrategy the enhancement strategy to use
 		 * @return this builder
 		 */
-		public ActionFXBuilder enhancementStrategy(EnhancementStrategy enhancementStrategy) {
+		public ActionFXBuilder enhancementStrategy(final EnhancementStrategy enhancementStrategy) {
 			this.enhancementStrategy = enhancementStrategy;
 			return this;
 		}
@@ -495,11 +467,11 @@ public class ActionFX {
 		 * Please note that implementations of interface {@link ActionFXEnhancer} must
 		 * provide the possibility of both, byte code instrumentation via a runtime
 		 * agent and byte code enhancement via sub-classing.
-		 * 
+		 *
 		 * @param actionFXEnhancer the enhancer implementation to use
 		 * @return this builder
 		 */
-		public ActionFXBuilder actionFXEnhancer(ActionFXEnhancer actionFXEnhancer) {
+		public ActionFXBuilder actionFXEnhancer(final ActionFXEnhancer actionFXEnhancer) {
 			this.actionFXEnhancer = actionFXEnhancer;
 			return this;
 		}
@@ -511,7 +483,7 @@ public class ActionFX {
 
 	/**
 	 * Enumeration describing the state of ActionFX.
-	 * 
+	 *
 	 * @author koster
 	 *
 	 */

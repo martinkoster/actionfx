@@ -29,10 +29,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -58,15 +56,6 @@ import com.github.actionfx.core.test.SomeFieldAnnotation;
  *
  */
 class AnnotationUtilsTest {
-
-	private static final List<String> ALL_PUBLIC_METHOD_NAMES = Arrays.asList("initialize1", "initialize2",
-			"isIninitialized1Invoked", "isIninitialized2Invoked");
-
-	private static final List<String> ALL_PUBLIC_METHOD_WITH_RETURN_TYPE_NAMES = Arrays
-			.asList("isIninitialized1Invoked", "isIninitialized2Invoked");
-
-	private static final List<String> ALL_DECLARED_FIELDS = Arrays.asList("ininitialized1Invoked",
-			"ininitialized2Invoked");
 
 	private static final List<String> ANNOTATED_FIELDS_WITH_SUPER_CLASS = Arrays.asList("ininitialized1Invoked",
 			"ininitialized2Invoked");
@@ -120,33 +109,7 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
-	public void testFindAllPublicMethods() {
-		// WHEN
-		final List<Method> methodList = AnnotationUtils
-				.findAllPublicMethods(ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class);
-
-		// THEN
-		thenAssertMethodNamesList(methodList, ALL_PUBLIC_METHOD_NAMES);
-	}
-
-	@Test
-	public void testFindPublicMethodsWithReturnType() {
-		// WHEN
-		final List<Method> methodList = AnnotationUtils.findPublicMethodsWithReturnType(
-				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class);
-
-		// THEN
-		thenAssertMethodNamesList(methodList, ALL_PUBLIC_METHOD_WITH_RETURN_TYPE_NAMES);
-	}
-
-	private void thenAssertMethodNamesList(final List<Method> methods, final List<String> exptectedMethodNames) {
-		assertThat(methods, notNullValue());
-		assertThat(methods.stream().map(Method::getName).collect(Collectors.toList()),
-				containsInAnyOrder(exptectedMethodNames.toArray()));
-	}
-
-	@Test
-	public void testFindAnnotatedFields_noSuperclassScanning() {
+	void testFindAnnotatedFields_noSuperclassScanning() {
 		// WHEN
 		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
@@ -157,7 +120,7 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
-	public void testFindAnnotatedFields_withSuperclassScanning() {
+	void testFindAnnotatedFields_withSuperclassScanning() {
 		// WHEN
 		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
@@ -168,7 +131,7 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
-	public void testFindAnnotatedFields_withComparatorAscending() {
+	void testFindAnnotatedFields_withComparatorAscending() {
 		// WHEN
 		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
@@ -179,7 +142,7 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
-	public void testFindAnnotatedFields_withComparatorDescending() {
+	void testFindAnnotatedFields_withComparatorDescending() {
 		// WHEN
 		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
@@ -190,17 +153,7 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
-	public void testFindAllDeclaredFields() {
-		// WHEN
-		final List<Field> fields = AnnotationUtils
-				.findAllDeclaredFields(ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class);
-
-		// THEN
-		thenAssertFieldsInAnyOrder(fields, ALL_DECLARED_FIELDS);
-	}
-
-	@Test
-	public void testFindAllAnnotatedFields_noSuperclassScanning() {
+	void testFindAllAnnotatedFields_noSuperclassScanning() {
 		// WHEN
 		final List<Field> fields = AnnotationUtils.findAllAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
@@ -211,7 +164,7 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
-	public void testFindAllAnnotatedFields_withSuperclassScanning() {
+	void testFindAllAnnotatedFields_withSuperclassScanning() {
 		// WHEN
 		final List<Field> fields = AnnotationUtils.findAllAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
