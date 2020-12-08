@@ -453,6 +453,16 @@ class NodeWrapperTest {
 	}
 
 	@Test
+	void testGetWindow() {
+
+	}
+
+	@Test
+	void testGetScene() {
+
+	}
+
+	@Test
 	void testLookup_nodeDoesNotExist() {
 		assertThat(wrapperWithHierarchy().lookup("fantasyNode"), nullValue());
 	}

@@ -34,6 +34,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * Abstract base class for view implementations.
@@ -170,6 +171,16 @@ public abstract class AbstractView implements View {
 //			throw new IllegalStateException("Removing view from node type '"
 //					+ view.getParent().getClass().getCanonicalName() + "' not possible!");
 //		}
+	}
+
+	@Override
+	public Window getWindow() {
+		return NodeWrapper.of(rootNode).getWindow();
+	}
+
+	@Override
+	public Scene getScene() {
+		return NodeWrapper.of(rootNode).getScene();
 	}
 
 	/**

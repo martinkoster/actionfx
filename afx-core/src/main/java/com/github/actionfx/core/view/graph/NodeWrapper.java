@@ -46,11 +46,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Window;
 
 /**
  * Wrapper around a {@link Node} (or other objects inside a scene graph, e.g.
@@ -333,6 +335,43 @@ public class NodeWrapper {
 	public boolean isLeafNode() {
 		return !Parent.class.isAssignableFrom(getWrappedType())
 				&& AnnotationUtils.findAnnotation(getWrappedType(), DefaultProperty.class) == null;
+	}
+
+	/**
+	 * Gets the {@link Window} where the wrapped node is currently displayed in. In
+	 * case the node has not yet been displayed, {@code null} is returned.
+	 *
+	 * @return the {@link Window} in that this view is displayed, or {@code null},
+	 *         in case the node has not yet been displayed.
+	 */
+	public Window getWindow() {
+		final Scene scene = getScene();
+		if (scene == null) {
+			return null;
+		}
+		return scene.getWindow();
+	}
+
+	/**
+	 * Gets the {@link Scene} that the wrapped node is part of. In case the node has
+	 * not yet been added to a scene, {@code null} is returned.
+	 *
+	 * @return the {@link Scene} that the wrapped node is part of, or {@code null},
+	 *         in case the node has not been added to a scene.
+	 */
+	public Scene getScene() {
+		if (isOfType(Node.class)) {
+			final Node node = (Node) wrapped;
+			node.getScene();
+		} else if (isOfType(Tab.class)) {
+			final Tab tab = (Tab) wrapped;
+			if (tab.getTabPane() == null) {
+				return null;
+			}
+			return tab.getTabPane().getScene();
+		}
+		throw new IllegalStateException(
+				"Can not access scene from node of type '" + getWrappedType().getCanonicalName() + "'!");
 	}
 
 	/**

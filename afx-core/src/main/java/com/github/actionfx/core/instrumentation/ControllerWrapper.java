@@ -28,6 +28,8 @@ import java.lang.reflect.Field;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
 
+import javafx.stage.Stage;
+
 /**
  * Wrapper class around a JavaFX controller that is enhanced either with an
  * instrumentation agent or via sub-classing. The wrapper offers convenient
@@ -60,6 +62,15 @@ public class ControllerWrapper<T> {
 	 */
 	public View getView() {
 		return (View) ReflectionUtils.getFieldValue(getViewField(), controller);
+	}
+
+	/**
+	 * Gets the stage }
+	 *
+	 * @return
+	 */
+	public Stage getStage() {
+
 	}
 
 	/**

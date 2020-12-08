@@ -26,9 +26,11 @@ package com.github.actionfx.core.view;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * Interface for JavaFX views.
@@ -50,7 +52,7 @@ public interface View {
 	 * all nodes of the scene graph do inherit from {@link Node} - e.g. tabs of type
 	 * {@link Tab} inside a {@link TabPane}. However, in most of the cases, FXML
 	 * views are based on view components based on type {@link Node}.
-	 * 
+	 *
 	 * @return the root node of the view
 	 */
 	<T> T getRootNode();
@@ -94,4 +96,22 @@ public interface View {
 	 * Hides the view. This only works, when the view has its own stage.
 	 */
 	void hide();
+
+	/**
+	 * Gets the {@link Window} where this view is currently displayed in. In case
+	 * the view has not yet been displayed, {@code null} is returned.
+	 *
+	 * @return the {@link Window} in that this view is displayed, or {@code null},
+	 *         in case the view has not yet been displayed.
+	 */
+	Window getWindow();
+
+	/**
+	 * Gets the {@link Scene} that this view is part of. In case the view has not
+	 * yet been added to a scene, {@code null} is returned.
+	 *
+	 * @return the {@link Scene} that this view is part of, or {@code null}, in case
+	 *         the view has not been added to a scene.
+	 */
+	Scene getScene();
 }

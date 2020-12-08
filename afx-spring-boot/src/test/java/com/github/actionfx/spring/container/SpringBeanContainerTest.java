@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.spring.container;
 
@@ -47,14 +47,14 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.core.view.View;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
 
 /**
  * JUnit test case for {@link SpringBeanContainer}.
- * 
+ *
  * @author koster
  *
  */
@@ -92,19 +92,19 @@ class SpringBeanContainerTest {
 
 		// THEN (4 beans are registered (2 x controller, 2 x views)
 		verify(registry, times(4)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
-		List<String> beanNames = beanNameCaptor.getAllValues();
-		List<BeanDefinition> beanDefinitions = beanDefinitionCaptor.getAllValues();
+		final List<String> beanNames = beanNameCaptor.getAllValues();
+		final List<BeanDefinition> beanDefinitions = beanDefinitionCaptor.getAllValues();
 		assertThat(beanNames, contains("mainController", "mainView", "prototypeScopedController", "prototypeView"));
 		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(1), FxmlView.class, true);
+		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true);
 		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false);
-		assertBeanDefinitionFor(beanDefinitions.get(3), FxmlView.class, false);
+		assertBeanDefinitionFor(beanDefinitions.get(3), View.class, false);
 	}
 
 	@Test
 	void addBeanDefinition() {
 		// WHEN
-		container.addBeanDefinition("mainController", MainController.class, true, () -> new MainController());
+		container.addBeanDefinition("mainController", MainController.class, true, MainController::new);
 
 		// THEN
 		verify(registry, times(1)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
@@ -115,7 +115,7 @@ class SpringBeanContainerTest {
 	@Test
 	void getBean_byName() {
 		// GIVEN
-		MainController controller = new MainController();
+		final MainController controller = new MainController();
 		when(appContext.getBean(ArgumentMatchers.eq("mainController"))).thenReturn(controller);
 
 		// WHEN and THEN
@@ -126,7 +126,7 @@ class SpringBeanContainerTest {
 	@Test
 	void getBean_byClass() {
 		// GIVEN
-		MainController controller = new MainController();
+		final MainController controller = new MainController();
 		when(appContext.getBean(ArgumentMatchers.eq(MainController.class))).thenReturn(controller);
 
 		// WHEN and THEN
@@ -134,7 +134,8 @@ class SpringBeanContainerTest {
 		verify(appContext, times(1)).getBean(ArgumentMatchers.eq(MainController.class));
 	}
 
-	private void assertBeanDefinitionFor(BeanDefinition definition, Class<?> beanClass, boolean singleton) {
+	private void assertBeanDefinitionFor(final BeanDefinition definition, final Class<?> beanClass,
+			final boolean singleton) {
 		assertThat(definition.getBeanClassName(), equalTo(beanClass.getCanonicalName()));
 		assertThat(definition.isSingleton(), equalTo(singleton));
 	}

@@ -49,6 +49,12 @@ import net.bytebuddy.implementation.bind.annotation.SuperCall;
 import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
 
+/**
+ * Byte-code enhancer using the ByteBuddy framework.
+ *
+ * @author koster
+ *
+ */
 public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
 	// Cache of already enhanced classes, where the key is the canonical name of the
