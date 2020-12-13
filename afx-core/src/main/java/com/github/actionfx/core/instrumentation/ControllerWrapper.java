@@ -28,7 +28,8 @@ import java.lang.reflect.Field;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
 
-import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.stage.Window;
 
 /**
  * Wrapper class around a JavaFX controller that is enhanced either with an
@@ -44,6 +45,16 @@ public class ControllerWrapper<T> {
 
 	public ControllerWrapper(final T controller) {
 		this.controller = controller;
+	}
+
+	/**
+	 * Convenient factory method for a {@link ControllerWrapper}.
+	 *
+	 * @param controller the controller wrapper
+	 * @return the wrapper instance
+	 */
+	public static <T> ControllerWrapper<T> of(final T controller) {
+		return new ControllerWrapper<>(controller);
 	}
 
 	/**
@@ -65,12 +76,25 @@ public class ControllerWrapper<T> {
 	}
 
 	/**
-	 * Gets the stage }
+	 * Gets the {@link Scene} that the controller's view is part of. In case the
+	 * view has not yet been added to a scene, {@code null} is returned.
 	 *
-	 * @return
+	 * @return the {@link Scene} that the wrapped node is part of, or {@code null},
+	 *         in case the controller's view has not been added to a scene.
 	 */
-	public Stage getStage() {
+	public Scene getScene() {
+		return getView().getScene();
+	}
 
+	/**
+	 * Gets the {@link Window} where the controller's view is currently displayed
+	 * in. In case the view has not yet been displayed, {@code null} is returned.
+	 *
+	 * @return the {@link Window} in that this view is displayed, or {@code null},
+	 *         in case the node has not yet been displayed.
+	 */
+	public Window getWindow() {
+		return getView().getWindow();
 	}
 
 	/**
@@ -81,7 +105,7 @@ public class ControllerWrapper<T> {
 	 * @param view       the view to set
 	 */
 	public static void setViewOn(final Object controller, final View view) {
-		new ControllerWrapper<>(controller).setView(view);
+		of(controller).setView(view);
 	}
 
 	/**
@@ -92,7 +116,7 @@ public class ControllerWrapper<T> {
 	 * @return the retrieved {@link View}
 	 */
 	public static View getViewFrom(final Object controller) {
-		return new ControllerWrapper<>(controller).getView();
+		return of(controller).getView();
 	}
 
 	/**

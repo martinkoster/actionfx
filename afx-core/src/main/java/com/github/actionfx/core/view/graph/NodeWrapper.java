@@ -362,7 +362,7 @@ public class NodeWrapper {
 	public Scene getScene() {
 		if (isOfType(Node.class)) {
 			final Node node = (Node) wrapped;
-			node.getScene();
+			return node.getScene();
 		} else if (isOfType(Tab.class)) {
 			final Tab tab = (Tab) wrapped;
 			if (tab.getTabPane() == null) {

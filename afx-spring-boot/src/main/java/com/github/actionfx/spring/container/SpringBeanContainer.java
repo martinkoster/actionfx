@@ -106,7 +106,6 @@ public class SpringBeanContainer implements BeanContainerFacade {
 			registerBeanDefinition(afxController.viewId(), createBeanDefinitionForView(beanDefinition, afxController,
 					() -> ControllerWrapper.getViewFrom(getBean(controllerBeanId))));
 		}
-
 	}
 
 	@Override
@@ -161,7 +160,7 @@ public class SpringBeanContainer implements BeanContainerFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getBean(final Class<?> beanClass) {
-		return (T) applicationContext.getBean(beanClass);
+	public <T> T getBean(final Class<T> beanClass) {
+		return applicationContext.getBean(beanClass);
 	}
 }

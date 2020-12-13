@@ -21,37 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.annotation;
+package com.github.actionfx.core.instrumentation.interceptors;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.github.actionfx.core.annotation.AFXController;
 
 /**
- * Annotation that can be applied to the main class of an ActionFX application.
+ * Test controller.
  *
  * @author koster
  *
  */
-@Retention(RUNTIME)
-@Documented
-@Target(TYPE)
-public @interface AFXApplication {
+@AFXController(viewId = "nestedTabPaneView", fxml = "/testfxml/NestedTabPaneView.fxml")
+public class ControllerTwo {
 
-	/**
-	 * Package name to scan for view components.
-	 *
-	 * @return the package name to scan (sub-packages are included in the scan)
-	 */
-	public String scanPackage();
-
-	/**
-	 * The ID of the main view that shall be display in the JavaFX primary stage.
-	 *
-	 * @return the ID of the main view.
-	 */
-	public String mainViewId();
 }

@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.actionfx.core.annotation.AFXAction;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
@@ -57,6 +60,8 @@ import net.bytebuddy.matcher.ElementMatchers;
  */
 public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ActionFXByteBuddyEnhancer.class);
+
 	// Cache of already enhanced classes, where the key is the canonical name of the
 	// class
 	private static final Map<String, Class<?>> ENHANCED_CLASSES_CACHE = new HashMap<>();
@@ -79,6 +84,9 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 				.type(ElementMatchers.isAnnotatedWith(AFXController.class))
 				.transform((builder, typeDescription, classLoader, module) -> addViewField(interceptMethods(builder)))
 				.installOn(instrumentation);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("ByteBuddy agent successfully installed.");
+		}
 		agentInstalled = true;
 	}
 

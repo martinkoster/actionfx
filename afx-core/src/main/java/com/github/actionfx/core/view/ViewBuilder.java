@@ -120,9 +120,31 @@ public class ViewBuilder<T extends AbstractView> {
 		return this;
 	}
 
+	/**
+	 * Embeds the given {@link AFXNestedView}s into the {@link View} under
+	 * construction.
+	 *
+	 * @param nestedViews the nested views to embed into the {@link View} under
+	 *                    construction.
+	 */
 	public ViewBuilder<T> nestedViews(final AFXNestedView[] nestedViews) {
+		embedNestedViews(view, nestedViews);
+		return this;
+	}
+
+	public T getView() {
+		return view;
+	}
+
+	/**
+	 * Embeds the given {@link AFXNestedView}s into the supplied {@link View}.
+	 *
+	 * @param view        the view that acts as target for the nested views
+	 * @param nestedViews the nested views to embed into the supplied {@code view}.
+	 */
+	public static void embedNestedViews(final View view, final AFXNestedView[] nestedViews) {
 		if (nestedViews == null || nestedViews.length == 0) {
-			return this;
+			return;
 		}
 		final ActionFX actionFX = ActionFX.getInstance();
 		for (final AFXNestedView nestedView : nestedViews) {
@@ -130,22 +152,17 @@ public class ViewBuilder<T extends AbstractView> {
 			final View viewToAttach = actionFX.getView(nestedView.refViewId());
 			if (viewToAttach == null) {
 				throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
-						+ "' does not exist, can not embed it into this view '" + view.id + "'!");
+						+ "' does not exist, can not embed it into this view '" + view.getId() + "'!");
 			}
-			final NodeWrapper wrappedRootNode = NodeWrapper.of(view.rootNode);
+			final NodeWrapper wrappedRootNode = NodeWrapper.of(view.getRootNode());
 			final NodeWrapper target = wrappedRootNode.lookup(nestedView.attachToNodeWithId());
 			if (target == null) {
 				throw new IllegalStateException("Node with id='" + nestedView.attachToNodeWithId()
-						+ "' does not exist, can not attach a nested view into this view '" + view.id + "'!");
+						+ "' does not exist, can not attach a nested view into this view '" + view.getId() + "'!");
 			}
 			// and finally attach the nested view to our located parent
 			target.attachNode(viewToAttach.getRootNode(), NodeWrapper.nodeAttacherFor(target, nestedView));
 		}
-		return this;
-	}
-
-	public T getView() {
-		return view;
 	}
 
 }

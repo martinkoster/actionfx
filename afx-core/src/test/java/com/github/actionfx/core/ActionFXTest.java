@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core;
 
@@ -47,11 +47,9 @@ import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
-import javafx.application.Preloader;
-
 /**
  * JUnit test case for {@link ActionFX}.
- * 
+ *
  * @author koster
  *
  */
@@ -68,7 +66,7 @@ class ActionFXTest {
 	@Test
 	void testBuilder_minimal_withConfigurationClass_sampleApp() {
 		// WHEN
-		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// THEN
 		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT));
@@ -82,11 +80,10 @@ class ActionFXTest {
 	@Test
 	void testBuilder_configurative() {
 		// GIVEN
-		Class<? extends Preloader> preloaderClass = Mockito.mock(Preloader.class).getClass();
-		ActionFXEnhancer enhancer = Mockito.mock(ActionFXEnhancer.class);
+		final ActionFXEnhancer enhancer = Mockito.mock(ActionFXEnhancer.class);
 
 		// WHEN
-		ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
+		final ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
 				.mainViewId("mainView").actionFXEnhancer(enhancer).enhancementStrategy(EnhancementStrategy.SUBCLASSING)
 				.build();
 
@@ -103,14 +100,14 @@ class ActionFXTest {
 	void testBuilder_notYetBuilt() {
 
 		// WHEN and THEN (
-		assertThrows(IllegalStateException.class, () -> ActionFX.getInstance());
+		assertThrows(IllegalStateException.class, ActionFX::getInstance);
 	}
 
 	@Test
 	void testBuilder_alreadyBuilt() {
 
 		// GIVEN (instance is built)
-		ActionFX actionFX = ActionFX.builder().build();
+		final ActionFX actionFX = ActionFX.builder().build();
 
 		// WHEN and THEN (
 		assertThat(actionFX, notNullValue());
@@ -120,15 +117,15 @@ class ActionFXTest {
 	@Test
 	void testScanComponents_usingDefaultBeanContainer() {
 		// GIVEN
-		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// WHEN
 		actionFX.scanForActionFXComponents();
 
 		// THEN
-		View view = actionFX.getView("mainView");
-		MainController mainControllerById = actionFX.getController("mainController");
-		MainController mainControllerByClassName = actionFX.getController(MainController.class);
+		final View view = actionFX.getView("mainView");
+		final MainController mainControllerById = actionFX.getController("mainController");
+		final MainController mainControllerByClassName = actionFX.getController(MainController.class);
 
 		assertThat(view, notNullValue());
 		assertThat(mainControllerById, notNullValue());
@@ -140,9 +137,9 @@ class ActionFXTest {
 	@Test
 	void testScanComponents_usingCustomBeanContainer() {
 		// GIVEN
-		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
-		BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-		ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
 
 		// WHEN
 		actionFX.scanForActionFXComponents(customBeanContainer);
@@ -156,7 +153,7 @@ class ActionFXTest {
 	@Test
 	void testScanComponents_scanAlreadyPerformed_illegalState() {
 		// GIVEN
-		ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// WHEN
 		actionFX.scanForActionFXComponents();

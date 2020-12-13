@@ -25,6 +25,7 @@ package com.github.actionfx.core.annotation;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -40,6 +41,7 @@ import javafx.stage.Stage;
  */
 @AFXMethodInterceptable
 @Retention(RUNTIME)
+@Documented
 @Target(ElementType.METHOD)
 public @interface AFXAction {
 
@@ -61,13 +63,13 @@ public @interface AFXAction {
 	 *         {@link Stage}, {@code false}, if the currently used {@link Stage}
 	 *         shall be used. Default is {@code false}.
 	 */
-	public boolean showInNewStage() default false;
+	public boolean showInNewWindow() default false;
 
 	/**
 	 * The nested views to be displayed, when the method successfully terminates.
 	 * This attribute allows to embed view into the current scene graph and
 	 * {@link Stage}. Please take note, that this attribute must not be used
-	 * together with {@link #showView()} and {@link #showInNewStage()}.
+	 * together with {@link #showView()} and {@link #showInNewWindow()}.
 	 *
 	 * @return the nested views to be displayed
 	 */

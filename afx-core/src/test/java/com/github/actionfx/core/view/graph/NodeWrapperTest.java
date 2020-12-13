@@ -25,6 +25,7 @@ package com.github.actionfx.core.view.graph;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.view.BorderPanePosition;
+import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.DefaultProperty;
@@ -46,6 +48,7 @@ import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -60,6 +63,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * JUnit test case for {@link NodeWrapper}.
@@ -453,13 +458,38 @@ class NodeWrapperTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testGetWindow() {
+		// GIVEN
+		final Stage stage = new Stage();
+		final VBox root = new VBox();
+		final Label label = new Label();
+		root.getChildren().add(label);
+		final Scene scene = new Scene(root);
+		stage.setScene(scene);
 
+		// WHEN
+		final Window window = NodeWrapper.of(label).getWindow();
+
+		// THEN
+		assertThat(window, notNullValue());
+		assertThat(window, sameInstance(stage));
 	}
 
 	@Test
 	void testGetScene() {
+		// GIVEN
+		final VBox root = new VBox();
+		final Label label = new Label();
+		root.getChildren().add(label);
+		final Scene scene = new Scene(root);
 
+		// WHEN
+		final Scene nodeScene = NodeWrapper.of(label).getScene();
+
+		// THEN
+		assertThat(nodeScene, notNullValue());
+		assertThat(nodeScene, sameInstance(scene));
 	}
 
 	@Test

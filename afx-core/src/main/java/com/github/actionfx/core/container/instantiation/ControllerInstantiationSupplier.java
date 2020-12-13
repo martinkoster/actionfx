@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import com.github.actionfx.core.ActionFX;
@@ -31,6 +32,7 @@ import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.ViewBuilder;
@@ -104,5 +106,11 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 */
 	protected void injectView(final T controller, final View view) {
 		ControllerWrapper.setViewOn(controller, view);
+		// check, if there is a field with the views name - in this case we also inject
+		// it there
+		final Field field = ReflectionUtils.findField(controller.getClass(), view.getId());
+		if (field != null && View.class.isAssignableFrom(field.getType())) {
+			ReflectionUtils.setFieldValue(field, controller, view);
+		}
 	}
 }

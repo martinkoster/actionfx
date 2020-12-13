@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.instrumentation;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,11 +31,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.lang.reflect.InvocationTargetException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.test.TestController;
+import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
+import com.github.actionfx.testing.annotation.TestInFxThread;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * JUnit test case for {@link ControllerWrapper}.
@@ -42,6 +53,7 @@ import com.github.actionfx.core.view.View;
  * @author koster
  *
  */
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class ControllerWrapperTest {
 
 	@Test
@@ -78,6 +90,42 @@ class ControllerWrapperTest {
 
 		// WHEN (then exception is expected)
 		assertThrows(IllegalStateException.class, () -> wrapper.setView(view));
+	}
+
+	@Test
+	@TestInFxThread
+	void testGetWindow() {
+		// GIVEN
+		final TestController controller = createEnhancedTestController();
+		final AFXController afxController = AnnotationUtils.findAnnotation(TestController.class, AFXController.class);
+		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
+		ControllerWrapper.setViewOn(controller, fxmlView);
+		final Stage stage = new Stage();
+		fxmlView.show(stage);
+
+		// WHEN
+		final Window window = ControllerWrapper.of(controller).getWindow();
+
+		// THEN
+		assertThat(window, notNullValue());
+		assertThat(window, sameInstance(stage));
+	}
+
+	@Test
+	void testGetScene() {
+		// GIVEN
+		final TestController controller = createEnhancedTestController();
+		final AFXController afxController = AnnotationUtils.findAnnotation(TestController.class, AFXController.class);
+		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
+		ControllerWrapper.setViewOn(controller, fxmlView);
+		final Scene scene = new Scene(fxmlView.getRootNode());
+
+		// WHEN
+		final Scene nodeScene = ControllerWrapper.of(controller).getScene();
+
+		// THEN
+		assertThat(nodeScene, notNullValue());
+		assertThat(nodeScene, sameInstance(scene));
 	}
 
 	TestController createEnhancedTestController() {

@@ -349,7 +349,7 @@ public class ActionFX {
 	 */
 	public void reset() {
 		instance = null;
-		actionFXState = ActionFXState.INITIALIZED;
+		actionFXState = ActionFXState.UNINITIALIZED;
 	}
 
 	/**

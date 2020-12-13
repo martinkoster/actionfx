@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,10 +19,11 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.annotation;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,17 +32,18 @@ import java.lang.annotation.Target;
 /**
  * Annotation for ActionFX controllers to associate and manage a view togehter
  * with it.
- * 
+ *
  * @author MartinKoster
- * 
+ *
  */
 @Target(ElementType.TYPE)
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXController {
 
 	/**
 	 * The ID of the view. Must be unique among all views of this application.
-	 * 
+	 *
 	 * @return the view ID
 	 */
 	public String viewId();
@@ -49,7 +51,7 @@ public @interface AFXController {
 	/**
 	 * Path to the FXML file to load for this view. Path is relative to the
 	 * application's classpath.
-	 * 
+	 *
 	 * @return the path to the FXML file
 	 */
 	public String fxml();
@@ -57,7 +59,7 @@ public @interface AFXController {
 	/**
 	 * Specifies whether this view is a modal dialog or a regular window. Default is
 	 * <tt>false</tt>.
-	 * 
+	 *
 	 * @return <tt>true</tt>, if this view is a modal dialogue, <tt>false</tt>
 	 *         otherwise.
 	 */
@@ -66,7 +68,7 @@ public @interface AFXController {
 	/**
 	 * Specifies whether this view shall be displayed maxized or not. Default is
 	 * <tt>false</tt>.
-	 * 
+	 *
 	 * @return <tt>true</tt>, whether the view shall be maximized, <tt>false</tt>
 	 *         otherwise.
 	 */
@@ -109,7 +111,7 @@ public @interface AFXController {
 
 	/**
 	 * The icon to be displayed in case the view is displayed in its own stage.
-	 * 
+	 *
 	 * @return the location of the icon
 	 */
 	public String icon() default "";
@@ -117,7 +119,7 @@ public @interface AFXController {
 	/**
 	 * Determines whether the view is managed as singleton or not. If the view is
 	 * not a singleton, the view is newly created whenever it is requested.
-	 * 
+	 *
 	 * @return {@code true}, if the view is managed as singleton, {@code false}, if
 	 *         there is a new view created every time the view is requested.
 	 */
@@ -133,7 +135,7 @@ public @interface AFXController {
 	 * want to have a fail-early fail-fast pattern and exceptions during view
 	 * initializations should/must be thrown at application startup (and not later,
 	 * when you already work with the application).
-	 * 
+	 *
 	 * @return {@code true} (default), when view components should be lazily
 	 *         initialized, {@code false} otherwise
 	 */
@@ -149,7 +151,7 @@ public @interface AFXController {
 
 	/**
 	 * An optional list of nested views that shall be embedded in the view.
-	 * 
+	 *
 	 * @return the nested views to be embedded
 	 */
 	public AFXNestedView[] nestedViews() default {};

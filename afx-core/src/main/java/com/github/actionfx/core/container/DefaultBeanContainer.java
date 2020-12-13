@@ -126,7 +126,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	}
 
 	@Override
-	public <T> T getBean(final Class<?> beanClass) {
+	public <T> T getBean(final Class<T> beanClass) {
 		final BeanDefinition beanDefinition = beanDefinitionMap.values().stream()
 				.filter(definition -> beanClass.isAssignableFrom(definition.getBeanClass())).findFirst().orElse(null);
 		if (beanDefinition == null) {
@@ -199,27 +199,31 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		if (fields != null) {
 			for (final Field field : fields) {
 				if (field.isAnnotationPresent(Inject.class)) {
-					final Class<?> type = field.getType();
-					final String key = field.getName();
-					Object value;
-					// in case the controller wants to have injected its own view instance,
-					// we can not do the same via "resolveBean", as this would lead to a stack
-					// overflow (we are still in construction pahse of the controller)
-					if (afxController != null && field.getName().equals(afxController.viewId())) {
-						value = ControllerWrapper.getViewFrom(instance);
-					} else {
-						value = resolveBean(key, type);
-					}
-					LOG.debug("Field annotated with @Inject found: {}, resolved value: {}", field.getName(), value);
-					if (value != null) {
-						ReflectionUtils.setFieldValue(field, instance, value);
-					}
+					injectSingleField(instance, afxController, field);
 				}
 			}
 		}
 		final Class<? extends Object> superclass = clazz.getSuperclass();
 		if (superclass != null) {
 			injectMembers(superclass, instance);
+		}
+	}
+
+	private void injectSingleField(final Object instance, final AFXController afxController, final Field field) {
+		final Class<?> type = field.getType();
+		final String key = field.getName();
+		Object value;
+		// in case the controller wants to have injected its own view instance,
+		// we can not do the same via "resolveBean", as this would lead to a stack
+		// overflow (we are still in construction phase of the controller)
+		if (afxController != null && field.getName().equals(afxController.viewId())) {
+			value = ControllerWrapper.getViewFrom(instance);
+		} else {
+			value = resolveBean(key, type);
+		}
+		LOG.debug("Field annotated with @Inject found: {}, resolved value: {}", field.getName(), value);
+		if (value != null) {
+			ReflectionUtils.setFieldValue(field, instance, value);
 		}
 	}
 

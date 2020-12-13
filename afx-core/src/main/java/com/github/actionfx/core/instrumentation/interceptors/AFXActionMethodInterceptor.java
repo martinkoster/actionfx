@@ -8,6 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
+import com.github.actionfx.core.view.View;
+import com.github.actionfx.core.view.ViewBuilder;
+
+import javafx.stage.Popup;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * Interceptor implementation for handling method invocation of methods
@@ -52,16 +59,72 @@ public class AFXActionMethodInterceptor {
 		}
 	}
 
+	/**
+	 * Shows the view inside a window, either freshly created or inside the
+	 * currently displayed one.
+	 *
+	 * @param afxAction              the {@link AFXAction} annotation that is
+	 *                               intercepted
+	 * @param instance               the controller instance
+	 * @param method                 the intercepted method
+	 * @param methodInvocationResult the result of the intercepted method
+	 */
 	private static void showView(final AFXAction afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
-		final ActionFX actionFX = ActionFX.getInstance();
-
+		final String viewId = afxAction.showView();
+		final View view = getViewById(viewId);
+		if (afxAction.showInNewWindow()) {
+			// display in a new fresh stage
+			view.show(new Stage());
+		} else {
+			// use the current window to display the content
+			final Window window = ControllerWrapper.of(instance).getWindow();
+			if (window == null) {
+				throw new IllegalStateException(
+						"The view is not part of a window? Did you forget to display your view inside the primary stage?");
+			}
+			final Class<?> windowType = window.getClass();
+			if (Stage.class.isAssignableFrom(windowType)) {
+				view.show((Stage) window);
+			} else if (Popup.class.isAssignableFrom(windowType)) {
+				final Popup popup = (Popup) window;
+				popup.getContent().clear();
+				popup.getContent().add(view.getRootNode());
+			} else {
+				throw new IllegalStateException("Display of view with id '" + viewId
+						+ "' is not supported for window of type '" + windowType.getCanonicalName() + "'!");
+			}
+		}
 	}
 
+	/**
+	 * Shows one or multiple nested views inside the currently displayed scene graph
+	 * by attaching the new views.
+	 *
+	 * @param afxAction              the {@link AFXAction} annotation that is
+	 *                               intercepted
+	 * @param instance               the controller instance
+	 * @param method                 the intercepted method
+	 * @param methodInvocationResult the result of the intercepted method
+	 */
 	private static void showNestedViews(final AFXAction afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
-		final ActionFX actionFX = ActionFX.getInstance();
-
+		final View currentView = ControllerWrapper.getViewFrom(instance);
+		ViewBuilder.embedNestedViews(currentView, afxAction.showNestedViews());
 	}
 
+	/**
+	 * Gets a view by its id.
+	 *
+	 * @param viewId the id of the view
+	 * @return the retrieved view
+	 */
+	private static View getViewById(final String viewId) {
+		final ActionFX actionFX = ActionFX.getInstance();
+		final View view = actionFX.getView(viewId);
+		if (view == null) {
+			throw new IllegalStateException("View with id '" + viewId + "' does not exist!");
+		}
+		return view;
+	}
 }
