@@ -88,8 +88,7 @@ public class AFXActionMethodInterceptor {
 				view.show((Stage) window);
 			} else if (Popup.class.isAssignableFrom(windowType)) {
 				final Popup popup = (Popup) window;
-				popup.getContent().clear();
-				popup.getContent().add(view.getRootNode());
+				view.show(popup, popup.getOwnerWindow());
 			} else {
 				throw new IllegalStateException("Display of view with id '" + viewId
 						+ "' is not supported for window of type '" + windowType.getCanonicalName() + "'!");

@@ -29,6 +29,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -63,6 +64,15 @@ public interface View {
 	 * @param stage the stage to show the view inside
 	 */
 	void show(Stage stage);
+
+	/**
+	 * Shows the view in the supplied {@link Stage}.
+	 *
+	 * @param popup the popup to show the view inside
+	 * @param owner the window owning the popup
+	 *
+	 */
+	void show(Popup popup, Window owner);
 
 	/**
 	 * Shows the view in a new stage / new window.
@@ -114,4 +124,11 @@ public interface View {
 	 *         the view has not been added to a scene.
 	 */
 	Scene getScene();
+
+	/**
+	 * Gets the controller instance that handles actions from this view.
+	 *
+	 * @return the controller instance
+	 */
+	Object getController();
 }

@@ -124,7 +124,6 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
 		result.setInstanceSupplier(controllerInstantiationSupplier);
 		return result;
-
 	}
 
 	private BeanDefinition createBeanDefinitionForView(final BeanDefinition beanDefinition,

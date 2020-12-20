@@ -38,7 +38,7 @@ import javafx.scene.layout.AnchorPane;
  *
  */
 @AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true)
-public class MainAppController {
+public class MainController {
 
 	@AFXNestedView(refViewId = "masterView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
 	@FXML
@@ -51,5 +51,4 @@ public class MainAppController {
 	@AFXNestedView(refViewId = "detailsView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
 	@FXML
 	private AnchorPane detailsPane;
-
 }

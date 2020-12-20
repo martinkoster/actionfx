@@ -33,6 +33,7 @@ import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -110,18 +111,25 @@ public abstract class AbstractView implements View {
 	}
 
 	/**
+	 * Shows the view in the supplied {@link Stage}.
+	 *
+	 * @param popup the popup to show the view inside
+	 * @param owner the window owning the popup
+	 *
+	 */
+	@Override
+	public void show(final Popup popup, final Window owner) {
+		popup.getContent().clear();
+		popup.getContent().add(getRootNode());
+		popup.show(owner);
+	}
+
+	/**
 	 * Shows the view in a new stage / new window.
 	 */
 	@Override
 	public void show() {
-		final Stage stage = new Stage();
-		final Scene scene = new Scene(getRootNode());
-		stage.setScene(scene);
-		initializeStage(stage);
-		if (!isHeadlessMode()) {
-			// this test is required for unit testing.
-			stage.show();
-		}
+		show(new Stage());
 	}
 
 	/**
@@ -141,11 +149,9 @@ public abstract class AbstractView implements View {
 
 	@Override
 	public void hide() {
-		if (Parent.class.isAssignableFrom(rootNode.getClass())) {
-			final Parent parent = (Parent) getRootNode();
-			if (parent.sceneProperty().get() != null && parent.sceneProperty().get().getWindow() != null) {
-				parent.sceneProperty().get().getWindow().hide();
-			}
+		final Window window = getWindow();
+		if (window != null) {
+			window.hide();
 		}
 	}
 
@@ -163,14 +169,14 @@ public abstract class AbstractView implements View {
 			return;
 		}
 		final NodeWrapper wrapper = new NodeWrapper(view.getParent());
-//		if (wrapper.supportsMultipleChildren()) {
-//			wrapper.getChildren().remove(view);
-//		} else if (wrapper.supportsSingleChild()) {
-//			wrapper.getSingleChildProperty().setValue(null);
-//		} else {
-//			throw new IllegalStateException("Removing view from node type '"
-//					+ view.getParent().getClass().getCanonicalName() + "' not possible!");
-//		}
+		if (wrapper.supportsMultipleChildren()) {
+			wrapper.getChildren().remove(view);
+		} else if (wrapper.supportsSingleChild()) {
+			wrapper.getSingleChildProperty().setValue(null);
+		} else {
+			throw new IllegalStateException("Removing view from node type '"
+					+ view.getParent().getClass().getCanonicalName() + "' not possible!");
+		}
 	}
 
 	@Override

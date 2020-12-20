@@ -83,6 +83,7 @@ public class FxmlView extends AbstractView {
 		}
 	}
 
+	@Override
 	public Object getController() {
 		return controller;
 	}

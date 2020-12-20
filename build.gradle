@@ -27,6 +27,7 @@ configure(allprojects) { project ->
     configurations {
 	    published
 	    all*.exclude module: "slf4j-log4j12"
+	    all*.exclude module: "jsr305"
 	    integrationTestCompile.extendsFrom testImplementation
 	    integrationTestCompile.extendsFrom testRuntime
     }
@@ -166,6 +167,7 @@ configure(allprojects) { project ->
 
 
     dependencies {
+	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
     	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
     	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"

@@ -272,7 +272,7 @@ public class NodeWrapper {
 	 *         if the node supports only a single child.
 	 */
 	@SuppressWarnings("unchecked")
-	protected boolean supportsMultipleChildren() {
+	public boolean supportsMultipleChildren() {
 		final Boolean cached = SUPPORTS_MULTIPLE_CHILDREN.get(getWrappedType());
 		if (cached != null) {
 			return cached.booleanValue();
@@ -310,7 +310,7 @@ public class NodeWrapper {
 	 * @return {@code true}, if the node supports a single child, {@code false}, if
 	 *         the node supports only multiple children.
 	 */
-	protected boolean supportsSingleChild() {
+	public boolean supportsSingleChild() {
 		final Boolean cached = SUPPORTS_SINGLE_CHILD.get(getWrappedType());
 		if (cached != null) {
 			return cached.booleanValue();

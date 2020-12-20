@@ -23,7 +23,12 @@
  */
 package com.github.actionfx.core;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+
 import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.annotation.AFXController;
@@ -35,12 +40,21 @@ import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhan
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.view.View;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
  * Central handler for working with ActionFX. It provides routines to get views
  * and controllers.
+ * <p>
+ * As ActionFX uses an internal bean container with dependency injection
+ * support, it is recommended to wire all controllers with {@code @Inject}
+ * instead of accessing them through this class (please note that there is also
+ * support of Spring's bean container through ActionFX's {@code afx-spring-boot}
+ * module).
+ * <p>
+ * <b>Using ActionFX:</b>
  * <p>
  * Before using this class, it needs to be setup in the {@code main()} or
  * {@link Application#init()} method for the specific application.
@@ -90,6 +104,8 @@ import javafx.stage.Stage;
  */
 public class ActionFX {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ActionFX.class);
+
 	// 'protected' visibility to manipulate instance for unit testing
 	protected static ActionFX instance;
 
@@ -117,6 +133,9 @@ public class ActionFX {
 	// the primary stage of the JavaFX application
 	private Stage primaryStage;
 
+	// central exception handler
+	private UncaughtExceptionHandler uncaughtExceptionHandler;
+
 	/**
 	 * Private constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
@@ -135,6 +154,8 @@ public class ActionFX {
 		if (!enhancer.agentInstalled() && enhancementStrategy == EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT) {
 			enhancer.installAgent();
 		}
+		// initialize exception handling
+		Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		// after configuration and instance creation, the state transfers to CONFIGURED
 		actionFXState = ActionFXState.CONFIGURED;
 	}
@@ -201,7 +222,7 @@ public class ActionFX {
 	 * Internal component scanning routine.
 	 */
 	private void scanForActionFXComponentsInternal() {
-		// let's do the bean container implementation do the work
+		// let's let the bean container implementation do the work
 		beanContainer.populateContainer(scanPackage);
 		actionFXState = ActionFXState.INITIALIZED;
 	}
@@ -347,6 +368,7 @@ public class ActionFX {
 	 * Resets ActionFX to its initial state. Can be used in unit test. Use this
 	 * method in productive code only when you know exactly what you are doing.
 	 */
+	@SuppressFBWarnings(justification = "Design Decision")
 	public void reset() {
 		instance = null;
 		actionFXState = ActionFXState.UNINITIALIZED;
@@ -368,6 +390,8 @@ public class ActionFX {
 
 		private ActionFXEnhancer actionFXEnhancer;
 
+		private UncaughtExceptionHandler uncaughtExceptionHandler;
+
 		/**
 		 * Creates the instance of {@link ActionFX} ready to use.
 		 *
@@ -381,6 +405,8 @@ public class ActionFX {
 			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
 					: EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT;
 			actionFX.enhancer = actionFXEnhancer != null ? actionFXEnhancer : new ActionFXByteBuddyEnhancer();
+			actionFX.uncaughtExceptionHandler = uncaughtExceptionHandler != null ? uncaughtExceptionHandler
+					: (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
 			actionFX.postConstruct();
 			return actionFX;
 		}
@@ -393,7 +419,7 @@ public class ActionFX {
 		 * <p>
 		 * Setting the {@link AFXApplication} annotation on a class is not mandatory.
 		 * Instead, the configuration can be also done with the builder methods
-		 * {@link #mainViewId}, {@link #scanPackage} and {@link #preloaderClass}.
+		 * {@link #mainViewId}, {@link #scanPackage}, etc.
 		 *
 		 * @param configurationClass the configuration class that is expected to have an
 		 *                           {@link AFXApplication} annotation.
@@ -475,10 +501,17 @@ public class ActionFX {
 			this.actionFXEnhancer = actionFXEnhancer;
 			return this;
 		}
-	}
 
-	public static class ActionFXInitializer {
-
+		/**
+		 * Configures an exception handler for uncaught exceptions.
+		 *
+		 * @param uncaughtExceptionHandler the exception handler for uncaught exceptions
+		 * @return this builder
+		 */
+		public ActionFXBuilder uncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler) {
+			this.uncaughtExceptionHandler = uncaughtExceptionHandler;
+			return this;
+		}
 	}
 
 	/**
@@ -487,7 +520,7 @@ public class ActionFX {
 	 * @author koster
 	 *
 	 */
-	public static enum ActionFXState {
+	public enum ActionFXState {
 		/**
 		 * ActionFX is not yet initialized.
 		 */

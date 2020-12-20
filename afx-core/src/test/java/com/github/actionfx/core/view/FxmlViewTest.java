@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,21 +19,31 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.view;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 
+import com.github.actionfx.core.view.graph.NodeWrapper;
+import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class FxmlViewTest {
@@ -41,13 +51,105 @@ class FxmlViewTest {
 	@Test
 	void testFxmlView() {
 		// WHEN
-		FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
 
 		// THEN
 		assertThat(view.getId(), equalTo("testId"));
 		assertThat(view.getController(), instanceOf(TestController.class));
 		assertThat(view.getRootNode(), notNullValue());
 		assertThat(view.getRootNode(), instanceOf(GridPane.class));
+	}
+
+	@Test
+	@TestInFxThread
+	void testShow() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+
+		// WHEN
+		view.show();
+
+		// THEN
+		assertThat(view.getWindow(), notNullValue());
+		assertThat(view.getWindow(), instanceOf(Stage.class));
+	}
+
+	@Test
+	@TestInFxThread
+	void testShow_withStage() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		final Stage stage = new Stage();
+
+		// WHEN
+		view.show(stage);
+
+		// THEN
+		assertThat(view.getWindow(), notNullValue());
+		assertThat(view.getWindow(), sameInstance(stage));
+		assertThat(stage.getScene(), notNullValue());
+		assertThat(stage.getScene().getRoot(), sameInstance(view.getRootNode()));
+	}
+
+	@Test
+	@TestInFxThread
+	void testShow_withPopup() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		final Stage owner = new Stage();
+		final Popup popup = new Popup();
+
+		// WHEN
+		view.show(popup, owner);
+
+		// THEN
+		assertThat(view.getWindow(), notNullValue());
+		assertThat(view.getWindow(), sameInstance(popup));
+		assertThat(popup.getContent(), hasSize(1));
+		assertThat(popup.getContent().get(0), sameInstance(view.getRootNode()));
+	}
+
+	@Test
+	@TestInFxThread
+	void testHide() {
+		// GIVEN
+		final Stage stage = Mockito.spy(Stage.class);
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		view.show(stage);
+
+		// WHEN
+		view.hide();
+
+		// THEN
+		verify(stage, times(1)).hide();
+	}
+
+	@Test
+	void testAttachViewToParent() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		final AnchorPane parent = new AnchorPane();
+
+		// WHEN
+		view.attachViewToParent(parent, NodeWrapper.anchorPaneFillingAttacher());
+
+		// THEN
+		assertThat(parent.getChildren(), hasSize(1));
+		assertThat(parent.getChildren().get(0), sameInstance(view.getRootNode()));
+	}
+
+	@Test
+	void testDetachView_parentSupportsMultipleChildren() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		final AnchorPane parent = new AnchorPane();
+		parent.getChildren().add(view.getRootNode());
+
+		// WHEN
+		view.detachView();
+
+		// THEN
+		assertThat(parent.getChildren(), hasSize(0));
 	}
 
 }

@@ -56,5 +56,4 @@ public class CustomBeanContainerImpl implements BeanContainerFacade {
 			final Supplier<?> instantiationSupplier) {
 
 	}
-
 }

@@ -44,6 +44,7 @@ import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 /**
@@ -113,29 +114,29 @@ class AFXActionMethodInterceptorTest {
 		assertThat(viewOfControllerTwo.getWindow(), sameInstance(primaryStage));
 	}
 
-//	@Test
-//	@TestInFxThread
-//	void testInterceptAFXAction_showViewTwoInSameWindow_windowIsPopup() throws Exception {
-//		// GIVEN
-//		final Callable<?> callable = Mockito.mock(Callable.class);
-//		final Method method = findMethod(ControllerOne.class, "showViewTwoInSameWindow");
-//		final AFXAction afxAction = findAnnotation(method);
-//		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
-//		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
-//		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
-//		final View viewOfControllerTwo = ControllerWrapper.of(controllerTwo).getView();
-//		// display view in a Popup
-//		final Popup popup = new Popup();
-//
-//		viewOfControllerOne.show(primaryStage);
-//
-//		// WHEN
-//		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne, method);
-//
-//		// THEN (check that view of controller two is identical to the primary stage)
-//		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
-//		assertThat(viewOfControllerTwo.getWindow(), sameInstance(primaryStage));
-//	}
+	@Test
+	@TestInFxThread
+	void testInterceptAFXAction_showViewTwoInSameWindow_windowIsPopup() throws Exception {
+		// GIVEN
+		final Callable<?> callable = Mockito.mock(Callable.class);
+		final Method method = findMethod(ControllerOne.class, "showViewTwoInSameWindow");
+		final AFXAction afxAction = findAnnotation(method);
+		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
+		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
+		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
+		final View viewOfControllerTwo = ControllerWrapper.of(controllerTwo).getView();
+		// display view in a Popup
+		final Popup popup = new Popup();
+		final Stage primaryStage = new Stage();
+		viewOfControllerOne.show(popup, primaryStage);
+
+		// WHEN
+		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne, method);
+
+		// THEN (check that view of controller two is identical to the popup)
+		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
+		assertThat(viewOfControllerTwo.getWindow(), sameInstance(popup));
+	}
 
 	@Test
 	@TestInFxThread
