@@ -30,11 +30,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javafx.stage.Stage;
-
 /**
- * Annotation to be applied at method level that allows to define which view to
- * be display after method invocation.
+ * Annotation to be applied at method level that let's ActionFX wire the
+ * annotated method to the specified event.
  *
  * @author koster
  *
@@ -43,36 +41,6 @@ import javafx.stage.Stage;
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface AFXAction {
-
-	/**
-	 * The view to be displayed, when the method successfully terminates. This
-	 * attribute competes with attribute {@link #showNestedViews()}, while this
-	 * attribute has higher precedence than {@link #showNestedViews()}.
-	 *
-	 * @return the view ID for the success view
-	 */
-	public String showView() default "";
-
-	/**
-	 * Determines whether the view defined in {@link #showView()} shall be displayed
-	 * in its own {@link Stage}. The specification of this attribute does not affect
-	 * view transition in case the attribute {@link #showNestedViews()} is given.
-	 *
-	 * @return {@code true}, if the referenced view shall be displayed in its own
-	 *         {@link Stage}, {@code false}, if the currently used {@link Stage}
-	 *         shall be used. Default is {@code false}.
-	 */
-	public boolean showInNewWindow() default false;
-
-	/**
-	 * The nested views to be displayed, when the method successfully terminates.
-	 * This attribute allows to embed view into the current scene graph and
-	 * {@link Stage}. Please take note, that this attribute must not be used
-	 * together with {@link #showView()} and {@link #showInNewWindow()}.
-	 *
-	 * @return the nested views to be displayed
-	 */
-	public AFXNestedView[] showNestedViews() default {};
+public @interface AFXOnEvent {
 
 }

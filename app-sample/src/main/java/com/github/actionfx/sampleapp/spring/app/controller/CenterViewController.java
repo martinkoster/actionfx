@@ -21,24 +21,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.annotation;
+package com.github.actionfx.sampleapp.spring.app.controller;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.github.actionfx.core.annotation.AFXController;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
 
-/**
- * Annotation that must not be directly used. This is merely a marker annotation
- * for other annotations like {@link AFXShowView} annotation in order to mark the
- * using annotation as a "method interceptable".
- * 
- * @author koster
- *
- */
-@Retention(RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface AFXMethodInterceptable {
+@AFXController(viewId = "centerView", fxml = "/fxml/CenterView.fxml")
+public class CenterViewController {
 
+	@FXML
+	private Canvas canvas;
 }

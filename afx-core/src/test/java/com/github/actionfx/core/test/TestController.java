@@ -23,11 +23,11 @@
  */
 package com.github.actionfx.core.test;
 
-import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.annotation.AFXController;
 
 /**
- * Test controller that holds the {@link AFXController} and {@link AFXAction}
+ * Test controller that holds the {@link AFXController} and {@link AFXShowView}
  * annotations.
  *
  * @author koster
@@ -37,7 +37,7 @@ import com.github.actionfx.core.annotation.AFXController;
 		"cssClass1", "cssClass2" })
 public class TestController {
 
-	@AFXAction()
+	@AFXShowView()
 	public void actionMethod() {
 		System.out.println("Original Method");
 	}

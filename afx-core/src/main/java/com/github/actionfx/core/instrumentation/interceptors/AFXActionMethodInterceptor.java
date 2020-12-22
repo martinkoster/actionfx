@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.ViewBuilder;
@@ -18,7 +18,7 @@ import javafx.stage.Window;
 
 /**
  * Interceptor implementation for handling method invocation of methods
- * annotated with the {@link AFXAction} annotation.
+ * annotated with the {@link AFXShowView} annotation.
  *
  * @author koster
  *
@@ -31,7 +31,7 @@ public class AFXActionMethodInterceptor {
 		// class can not be instantiated
 	}
 
-	public static Object interceptAFXAction(final AFXAction afxAction, final Callable<?> callable,
+	public static Object interceptAFXAction(final AFXShowView afxAction, final Callable<?> callable,
 			final Object instance, final Method method, final Object... args) throws Exception {
 		try {
 			final Object result = callable.call();
@@ -43,14 +43,14 @@ public class AFXActionMethodInterceptor {
 	}
 
 	/**
-	 * Executes the on-success action defined in {@link AFXAction}.
+	 * Executes the on-success action defined in {@link AFXShowView}.
 	 *
-	 * @param afxAction              the {@link AFXAction} annotation
+	 * @param afxAction              the {@link AFXShowView} annotation
 	 * @param instance               the instance holding the intercepted method
 	 * @param method                 the intercepted method
 	 * @param methodInvocationResult the result of the intercepted method
 	 */
-	private static void doOnSuccess(final AFXAction afxAction, final Object instance, final Method method,
+	private static void doOnSuccess(final AFXShowView afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
 		if (!"".equals(afxAction.showView())) {
 			showView(afxAction, instance, method, methodInvocationResult);
@@ -63,13 +63,13 @@ public class AFXActionMethodInterceptor {
 	 * Shows the view inside a window, either freshly created or inside the
 	 * currently displayed one.
 	 *
-	 * @param afxAction              the {@link AFXAction} annotation that is
+	 * @param afxAction              the {@link AFXShowView} annotation that is
 	 *                               intercepted
 	 * @param instance               the controller instance
 	 * @param method                 the intercepted method
 	 * @param methodInvocationResult the result of the intercepted method
 	 */
-	private static void showView(final AFXAction afxAction, final Object instance, final Method method,
+	private static void showView(final AFXShowView afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
 		final String viewId = afxAction.showView();
 		final View view = getViewById(viewId);
@@ -100,13 +100,13 @@ public class AFXActionMethodInterceptor {
 	 * Shows one or multiple nested views inside the currently displayed scene graph
 	 * by attaching the new views.
 	 *
-	 * @param afxAction              the {@link AFXAction} annotation that is
+	 * @param afxAction              the {@link AFXShowView} annotation that is
 	 *                               intercepted
 	 * @param instance               the controller instance
 	 * @param method                 the intercepted method
 	 * @param methodInvocationResult the result of the intercepted method
 	 */
-	private static void showNestedViews(final AFXAction afxAction, final Object instance, final Method method,
+	private static void showNestedViews(final AFXShowView afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
 		final View currentView = ControllerWrapper.getViewFrom(instance);
 		ViewBuilder.embedNestedViews(currentView, afxAction.showNestedViews());

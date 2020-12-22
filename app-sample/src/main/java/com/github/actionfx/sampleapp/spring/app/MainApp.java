@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2020 Martin Koster
- * 
+w * Copyright (c) 2020 Martin Koster
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,26 +19,30 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
-package com.github.actionfx.core.annotation;
+package com.github.actionfx.sampleapp.spring.app;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.app.AbstractAFXApplication;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javafx.application.Application;
 
 /**
- * Annotation that must not be directly used. This is merely a marker annotation
- * for other annotations like {@link AFXShowView} annotation in order to mark the
- * using annotation as a "method interceptable".
- * 
+ * Main entry point in the sample application.
+ *
  * @author koster
  *
  */
-@Retention(RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface AFXMethodInterceptable {
+public class MainApp {
+
+	public static void main(final String[] argv) {
+		Application.launch(SampleActionFXApplication.class);
+	}
+
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.core.app")
+	public static class SampleActionFXApplication extends AbstractAFXApplication {
+
+	}
 
 }

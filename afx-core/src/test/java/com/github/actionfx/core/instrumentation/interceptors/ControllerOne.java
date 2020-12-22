@@ -23,7 +23,7 @@
  */
 package com.github.actionfx.core.instrumentation.interceptors;
 
-import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXNestedView;
 import com.github.actionfx.core.view.BorderPanePosition;
@@ -51,7 +51,7 @@ public class ControllerOne {
 	/**
 	 * displays the view of ControllerTwo in a new stage
 	 */
-	@AFXAction(showView = "nestedTabPaneView", showInNewWindow = true)
+	@AFXShowView(showView = "nestedTabPaneView", showInNewWindow = true)
 	public void showViewTwoInNewStage() {
 
 	}
@@ -59,7 +59,7 @@ public class ControllerOne {
 	/**
 	 * displays the view of ControllerTwo in the current stage
 	 */
-	@AFXAction(showView = "nestedTabPaneView", showInNewWindow = false)
+	@AFXShowView(showView = "nestedTabPaneView", showInNewWindow = false)
 	public void showViewTwoInSameWindow() {
 
 	}
@@ -67,7 +67,7 @@ public class ControllerOne {
 	/**
 	 * displays the view of ControllerTwo in "mainBorderPane" at center position
 	 */
-	@AFXAction(showNestedViews = @AFXNestedView(refViewId = "nestedTabPaneView", attachToNodeWithId = "mainBorderPane", attachToBorderPanePosition = BorderPanePosition.CENTER))
+	@AFXShowView(showNestedViews = @AFXNestedView(refViewId = "nestedTabPaneView", attachToNodeWithId = "mainBorderPane", attachToBorderPanePosition = BorderPanePosition.CENTER))
 	public void showViewAsNested() {
 
 	}

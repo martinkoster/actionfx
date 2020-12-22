@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.interceptors.AFXActionMethodInterceptor;
@@ -123,7 +123,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 	 * @return the builder
 	 */
 	private DynamicType.Builder<?> interceptMethods(final DynamicType.Builder<?> builder) {
-		return builder.method(ElementMatchers.isAnnotatedWith(AFXAction.class))
+		return builder.method(ElementMatchers.isAnnotatedWith(AFXShowView.class))
 				.intercept(MethodDelegation.withDefaultConfiguration().to(AFXActionMethodInterceptorDelegator.class));
 	}
 
@@ -139,7 +139,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
 	/**
 	 * Interceptor implementation for handling method invocation of methods
-	 * annotated with the {@link AFXAction} annotation. This helper class just
+	 * annotated with the {@link AFXShowView} annotation. This helper class just
 	 * delegates the interception to a technology-neutral interceptor.
 	 *
 	 * @author koster
@@ -150,7 +150,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 		@RuntimeType
 		public static Object intercept(@SuperCall final Callable<?> callable, @This final Object instance,
 				@Origin final Method method, @AllArguments final Object... args) throws Exception {
-			final AFXAction afxAction = method.getAnnotation(AFXAction.class);
+			final AFXShowView afxAction = method.getAnnotation(AFXShowView.class);
 			return AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, instance, method, args);
 		}
 	}

@@ -21,28 +21,16 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.github.actionfx.core.annotation;
+package com.github.actionfx.sampleapp.spring.app.controller;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.github.actionfx.core.annotation.AFXController;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javafx.fxml.FXML;
+import javafx.scene.control.Accordion;
 
-/**
- * Annotation that marks:
- * <p>
- * <ul>
- * <li>a type to be initialized in the JavaFX thread</li>
- * <li>a method to be executed inside the JavaFX thread</li>
- * </ul>
- * 
- * @author koster
- *
- */
-@Retention(RUNTIME)
-@Target({ TYPE, METHOD })
-public @interface AFXDoInFxThread {
+@AFXController(viewId = "detailsView", fxml = "/fxml/DetailsView.fxml")
+public class DetailsController {
 
+	@FXML
+	private Accordion detailsAccordion;
 }

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.annotation.AFXAction;
+import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;
@@ -73,7 +73,7 @@ class AFXActionMethodInterceptorTest {
 		// GIVEN
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewTwoInNewStage");
-		final AFXAction afxAction = findAnnotation(method);
+		final AFXShowView afxAction = findAnnotation(method);
 		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
 		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
@@ -97,7 +97,7 @@ class AFXActionMethodInterceptorTest {
 		// GIVEN
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewTwoInSameWindow");
-		final AFXAction afxAction = findAnnotation(method);
+		final AFXShowView afxAction = findAnnotation(method);
 		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
 		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
@@ -120,7 +120,7 @@ class AFXActionMethodInterceptorTest {
 		// GIVEN
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewTwoInSameWindow");
-		final AFXAction afxAction = findAnnotation(method);
+		final AFXShowView afxAction = findAnnotation(method);
 		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
 		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
@@ -144,7 +144,7 @@ class AFXActionMethodInterceptorTest {
 		// GIVEN
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewAsNested");
-		final AFXAction afxAction = findAnnotation(method);
+		final AFXShowView afxAction = findAnnotation(method);
 		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
 		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
@@ -165,8 +165,8 @@ class AFXActionMethodInterceptorTest {
 		assertThat(controllerOne.getMainBorderPane().getCenter(), sameInstance(viewOfControllerTwo.getRootNode()));
 	}
 
-	private static AFXAction findAnnotation(final Method method) {
-		return method.getAnnotation(AFXAction.class);
+	private static AFXShowView findAnnotation(final Method method) {
+		return method.getAnnotation(AFXShowView.class);
 	}
 
 	private static Method findMethod(final Class<?> clazz, final String methodName) {
