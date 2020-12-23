@@ -39,7 +39,6 @@ import javafx.stage.Stage;
  * @author koster
  *
  */
-@AFXMethodInterceptable
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
