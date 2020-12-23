@@ -53,6 +53,7 @@ Instead of using the base class mentioned in the previous section, an own custom
 The builder for the ActionFX instance offers the following configuration options:
 
 Builder Method | Description
+-------------- | -----------
 `configurationClass(final Class<?> configurationClass)` | Reads out the {@link AFXApplication} annotation that is expected to be  present on the given `configurationClass`. In case the annotation is not present on the given class (or on its super-classes), an `IllegalArgumentException` is thrown.
 `mainViewId(final String mainViewId)` | Sets the ID / name of the view that is used to be displayed in JavaFX's primary `Stage`. Please note that this ID must of course exist inside ActionFX's container e.g. by annotating a controller with `AFXController` and defining this view ID there.
 `scanPackage(final String scanPackage)` | The package name with dot-notation "." that shall be scanned for ActionFX components.
@@ -131,6 +132,7 @@ The [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView
 The annotation provides different options how the new view shall be displayed. The following attributes are available in [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java):
 
 Attribute | Description 
+--------- | -----------
 showView |  The view to be displayed, when the method successfully terminates. This attribute competes with attribute `showNestedViews()`, while this attribute has higher precedence than `showNestedViews()` 
 showInNewWindow |  Determines whether the view defined in `showView()` shall be displayed in its own `Stage`. The specification of this attribute does not affect view transition in case the attribute `showNestedViews()` is given.
 showNestedViews | The nested views to be displayed, when the method successfully terminates. This attribute allows to embed view into the current scene graph and `Stage`. Please take note, that this attribute must not be used together with `showView()` and `showInNewWindow()`.
