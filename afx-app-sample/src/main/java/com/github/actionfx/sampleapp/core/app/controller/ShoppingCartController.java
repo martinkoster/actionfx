@@ -24,31 +24,17 @@
 package com.github.actionfx.sampleapp.core.app.controller;
 
 import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.annotation.AFXNestedView;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.ListView;
 
-/**
- * Main application controller that is wiring up the master-, details- and
- * center view.
- *
- * @author koster
- *
- */
-@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true)
-public class MainController {
+@AFXController(viewId = "shoppingCartView", fxml = "/fxml/ShoppingCartView.fxml")
+public class ShoppingCartController {
 
-	@AFXNestedView(refViewId = "masterView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
 	@FXML
-	private AnchorPane masterPane;
+	private ListView<String> shoppingCartListView;
 
-	@AFXNestedView(refViewId = "centerView")
-	@FXML
-	private ScrollPane centerViewPane;
-
-	@AFXNestedView(refViewId = "detailsView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
-	@FXML
-	private AnchorPane detailsPane;
+	public void addToShoppingCart(final String product) {
+		shoppingCartListView.getItems().add(product);
+	}
 }

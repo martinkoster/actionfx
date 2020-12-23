@@ -35,3 +35,37 @@ integrationTest {
 		forkEvery = 1
     	maxParallelForks = 1       
 }
+
+////////////////////////
+// Build / Publishing //
+////////////////////////
+modifyPom {
+    project {
+        name 'ActionFX: app-sample'
+        description 'Sample applications for ActionFX'
+        url 'https://https://github.com/martinkoster/actionfx'
+        inceptionYear '2020'
+	
+        scm {
+            url 'https://https://github.com/martinkoster/actionfx'
+            connection 'scm:https://github.com/martinkoster/actionfx.git'
+            developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
+        }
+	
+        licenses {
+            license {
+                name 'The New BSD License'
+                url 'https://opensource.org/licenses/BSD-2-Clause'
+                distribution 'repo'
+            }
+        }
+	
+        developers {
+            developer {
+                id 'martinkoster'
+                name 'Martin Koster'
+                email 'koster@gmx.de'
+            }
+        }
+    }
+}

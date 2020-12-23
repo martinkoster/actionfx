@@ -1,2 +1,2 @@
-# Module "afx-spring"
+# Module "afx-spring-boot"
 

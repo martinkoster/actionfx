@@ -1,3 +1,3 @@
-# Module "afx-core"
+# Module "afx-testing"
 
 

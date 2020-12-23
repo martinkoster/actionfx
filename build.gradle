@@ -2,6 +2,8 @@ plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java"
     id "java-library"
+    id "com.bmuschko.nexus" version "${gradleNexusPlugin}"
+    id "io.codearte.nexus-staging" version "${gradleNexusStagingPlugin}"
 }
 
 wrapper {
@@ -20,6 +22,7 @@ configure(allprojects) { project ->
     apply plugin: "maven-publish"
     apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
+	apply plugin: 'com.bmuschko.nexus'
 
     sourceCompatibility = "11" 
     targetCompatibility = "11"
@@ -135,14 +138,6 @@ configure(allprojects) { project ->
         ignoreFailures = true
     }
  
-	////////////////////////
-	// Build / Publishing //
-	////////////////////////
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier.set("sources")
-        from sourceSets.main.allSource
-    }
-
     javadoc {
         description = "Generates project-level javadoc for use in -javadoc jar"
 
@@ -159,13 +154,22 @@ configure(allprojects) { project ->
 
         failOnError = false
     }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        archiveClassifier.set ("javadoc")
-        from javadoc.destinationDir
-    }
-
-
+    
+	////////////////////////
+	// Build / Publishing //
+	////////////////////////
+	extraArchive {
+	    sources = true
+	    tests = false
+	    javadoc = true
+	}
+	
+	nexus {
+	    sign = true
+	    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+	    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+	}
+	
     dependencies {
 	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
@@ -174,5 +178,45 @@ configure(allprojects) { project ->
     }
 }
 
+	////////////////////////
+	// Build / Publishing //
+	////////////////////////
+	modifyPom {
+	    project {
+	        name 'actionfx'
+	        description 'JavaFX framework with dependency injection support.'
+	        url 'https://https://github.com/martinkoster/actionfx'
+	        inceptionYear '2020'
+	
+	        scm {
+	            url 'https://https://github.com/martinkoster/actionfx'
+	            connection 'scm:https://github.com/martinkoster/actionfx.git'
+	            developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
+	        }
+	
+	        licenses {
+	            license {
+	                name 'The New BSD License'
+	                url 'https://opensource.org/licenses/BSD-2-Clause'
+	                distribution 'repo'
+	            }
+	        }
+	
+	        developers {
+	            developer {
+	                id 'martinkoster'
+	                name 'Martin Koster'
+	                email 'koster@gmx.de'
+	            }
+	        }
+	    }
+	}
 
+configure(rootProject) {
+	//apply plugin: 'io.codearte.nexus-staging'
+	
+	nexusStaging {
+	    packageGroup = "com.github.martinkoster" //optional if packageGroup == project.getGroup()
+	}
+}
 

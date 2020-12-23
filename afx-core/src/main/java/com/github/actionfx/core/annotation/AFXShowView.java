@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 
 /**
  * Annotation to be applied at method level that allows to define which view to
- * be display after method invocation.
+ * be displayed after successful method invocation.
  *
  * @author koster
  *

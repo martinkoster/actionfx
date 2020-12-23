@@ -30,17 +30,17 @@ import com.github.actionfx.core.annotation.AFXController;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
-@AFXController(viewId = "masterView", fxml = "/fxml/MasterView.fxml")
-public class MasterController {
+@AFXController(viewId = "productCatalogListView", fxml = "/fxml/ProductCatalogListView.fxml")
+public class ProductCatalogController {
 
 	@FXML
-	private ListView<String> masterListView;
+	private ListView<String> productListView;
 
 	@PostConstruct
 	public void initializeView() {
-		masterListView.getItems().add("Item 1");
-		masterListView.getItems().add("Item 2");
-		masterListView.getItems().add("Item 3");
+		productListView.getItems().add("Product 1");
+		productListView.getItems().add("Product 2");
+		productListView.getItems().add("Product 3");
 	}
 
 }
