@@ -81,6 +81,49 @@ Once the ActionFX instance is configured and initialized with components, you ca
 	}
 ```
 
+## Defining an ActionFX controller
+
+By using annotation [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) on a class, this class becomes an ActionFX controller. A controller is responsible for holding the actions that can be triggered from a view, preferably defined in an FXML document.
+
+The following attributes are available as part of the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation:
+
+Attribute | Description | Default Value
+--------- | ----------- | -------------
+`viewId` | The ID of the view. Must be unique among all views of this application. | -
+`fxml` | Path to the FXML file to load for this view. Path is relative to the application's classpath. | -
+`modal` | Specifies whether this view is a modal dialog or a regular window. | `false` 
+`maximized` | Specifies whether this view shall be displayed maxized or not. | `false`
+`width` | The width of the view (however `maximized` has a higher priority) | `200`
+`height` | The height of the window (however `maximized` has a higher priority). | `100`
+`title` | The title to be displayed for the given view/window. | `""`
+`posX` | The X position of the window on the screen. | `0`
+`poxY` | The Y position of the window on the screen. | `0`
+`icon` | The icon to be displayed in case the view is displayed in its own stage. | `""`
+`singleton` | Determines whether the view is managed as singleton or not. If the view is not a singleton, the view is newly created whenever it is requested. | `true`
+`lazyInitialisation` |  Flag that controls the initialization of the view and controller. If set to `true`, view components are lazily initialized at the point the view is really required and requested to be used vie the view manager. If set to `false`, the view components are initialized at the startup of the ActionFX application, when the view manager is initialized. Although lazy loading should be preferred, disabling of lazy loading makes sense, when you want to have a fail-early fail-fast pattern and exceptions during view initializations should/must be thrown at application startup (and not later, when you already work with the application). | `true`
+`stylesheets` | Which stylesheets shall be applied to the scene? This array contains a list of classpath locations to CSS files. | `{}`
+`nestedViews` | An optional list of nested views that shall be embedded in the view. | `{}`
+
+After defining the controller and scanning for ActionFX components (see previous chapters on how to setup ActionFX), an instance of the controller is retrieved by:
+
+```java
+	ActionFX.getInstance().getController(SomeController.class);
+```
+
+Preferably, you can just annotate a field with `@Inject` (if the controller is called from another controller):
+
+```java
+@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true)
+public class MainController {
+	
+	// Controller "SomeController" is injected into the "MainController"
+	@Inject
+	private SomeController someController;
+}
+```
+
+Please note that controller **must not be instantiated directly** via the `new` keyword, because ActionFX is enhancing the class in the background and is evaluating the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation.
+
 ## Example of a Controller Definition with Nested Views
 
 The following code snippet show how a controller definition can look like, while other controllers and their views are wired into the FXML-bassed view. 
