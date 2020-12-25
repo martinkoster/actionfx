@@ -52,9 +52,24 @@ public interface BeanContainerFacade {
 	 *                              bean shall be a singleton, {@code false}, if
 	 *                              there should be a new instance created, whenever
 	 *                              {@link #getBean(Class)} is called.
+	 * @param lazyInit              Flag that controls the initialization of the
+	 *                              view and controller. If set to {@code true},
+	 *                              beans are lazily initialized at the point the
+	 *                              bean is really required and requested to be
+	 *                              used. If set to {@link false}, the beans are
+	 *                              initialized at the startup of the ActionFX
+	 *                              application, when the view manager is
+	 *                              initialized. Although lazy loading should be
+	 *                              preferred, disabling of lazy loading makes
+	 *                              sense, when you want to have a fail-early
+	 *                              fail-fast pattern and exceptions during view
+	 *                              initializations should/must be thrown at
+	 *                              application startup (and not later, when you
+	 *                              already work with the application).
 	 * @param instantiationSupplier the supplier that provides the instance
 	 */
-	void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, Supplier<?> instantiationSupplier);
+	void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, boolean lazyInit,
+			Supplier<?> instantiationSupplier);
 
 	/**
 	 * Gets a bean from the underlying bean container by ID.

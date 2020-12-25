@@ -157,9 +157,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addBeanDefinition(java.lang.String,java.lang.Class,boolean,java.util.function.Supplier)">addBeanDefinition</a></span>&#8203;(java.lang.String&nbsp;id,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addBeanDefinition(java.lang.String,java.lang.Class,boolean,boolean,java.util.function.Supplier)">addBeanDefinition</a></span>&#8203;(java.lang.String&nbsp;id,
                  java.lang.Class&lt;?&gt;&nbsp;beanClass,
                  boolean&nbsp;singleton,
+                 boolean&nbsp;lazyInit,
                  java.util.function.Supplier&lt;?&gt;&nbsp;instantiationSupplier)</code></th>
 <td class="colLast">
 <div class="block">Adds a new bean definition to the bean container.</div>
@@ -230,7 +231,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dl>
 </li>
 </ul>
-<a id="addBeanDefinition(java.lang.String,java.lang.Class,boolean,java.util.function.Supplier)">
+<a id="addBeanDefinition(java.lang.String,java.lang.Class,boolean,boolean,java.util.function.Supplier)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -239,6 +240,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre class="methodSignature">void&nbsp;addBeanDefinition&#8203;(java.lang.String&nbsp;id,
                        java.lang.Class&lt;?&gt;&nbsp;beanClass,
                        boolean&nbsp;singleton,
+                       boolean&nbsp;lazyInit,
                        java.util.function.Supplier&lt;?&gt;&nbsp;instantiationSupplier)</pre>
 <div class="block">Adds a new bean definition to the bean container.</div>
 <dl>
@@ -249,6 +251,20 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
                               bean shall be a singleton, <code>false</code>, if
                               there should be a new instance created, whenever
                               <a href="#getBean(java.lang.Class)"><code>getBean(Class)</code></a> is called.</dd>
+<dd><code>lazyInit</code> - Flag that controls the initialization of the
+                              view and controller. If set to <code>true</code>,
+                              beans are lazily initialized at the point the
+                              bean is really required and requested to be
+                              used. If set to {@link false}, the beans are
+                              initialized at the startup of the ActionFX
+                              application, when the view manager is
+                              initialized. Although lazy loading should be
+                              preferred, disabling of lazy loading makes
+                              sense, when you want to have a fail-early
+                              fail-fast pattern and exceptions during view
+                              initializations should/must be thrown at
+                              application startup (and not later, when you
+                              already work with the application).</dd>
 <dd><code>instantiationSupplier</code> - the supplier that provides the instance</dd>
 </dl>
 </li>

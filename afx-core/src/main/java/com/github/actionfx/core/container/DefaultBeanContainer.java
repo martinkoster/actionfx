@@ -80,7 +80,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		// constructor, if it is not a Java primitive
 		beanResolverFunctions.add((id, type) -> {
 			if (isNotPrimitiveOrString(type)) {
-				addBeanDefinition(id, type, true, new ConstructorBasedInstantiationSupplier<>(type));
+				addBeanDefinition(id, type, true, true, new ConstructorBasedInstantiationSupplier<>(type));
 				return getBean(id);
 			} else {
 				return null;
@@ -100,19 +100,22 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 			final String controllerId = deriveControllerId(controllerClass);
 
 			// add a bean definition for the controller
-			addBeanDefinition(controllerId, controllerClass, afxController.singleton(), controllerSupplier);
+			addBeanDefinition(controllerId, controllerClass, afxController.singleton(), afxController.lazyInit(),
+					controllerSupplier);
 
 			// and add a bean definition for the view (view itself is injected into the
 			// controller instance)
-			addBeanDefinition(afxController.viewId(), View.class, afxController.singleton(),
+			addBeanDefinition(afxController.viewId(), View.class, afxController.singleton(), afxController.lazyInit(),
 					() -> ControllerWrapper.getViewFrom(getBean(controllerId)));
 		}
+		// all non-lazy beans are instantiated now after reading all bean definitions
+		instatiateNonLazyBeans();
 	}
 
 	@Override
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
-			final Supplier<?> instantiationSupplier) {
-		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, instantiationSupplier));
+			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
+		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, lazyInit, instantiationSupplier));
 	}
 
 	@Override
@@ -252,6 +255,14 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	}
 
 	/**
+	 * Instantiate all non-lazy beans.
+	 */
+	protected void instatiateNonLazyBeans() {
+		beanDefinitionMap.values().stream().filter(beanDefinition -> !beanDefinition.isLazyInitialisation())
+				.forEach(this::getBeanByDefinition);
+	}
+
+	/**
 	 * Internal bean definition structure.
 	 *
 	 * @author koster
@@ -265,13 +276,16 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 		private final boolean singleton;
 
+		private final boolean lazyInitialisation;
+
 		private final Supplier<?> instantiationSupplier;
 
 		public BeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
-				final Supplier<?> instantiatiationSupplier) {
+				final boolean lazyInitialisation, final Supplier<?> instantiatiationSupplier) {
 			this.id = id;
 			this.beanClass = beanClass;
 			this.singleton = singleton;
+			this.lazyInitialisation = lazyInitialisation;
 			instantiationSupplier = instantiatiationSupplier;
 		}
 
@@ -281,6 +295,10 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 		public boolean isSingleton() {
 			return singleton;
+		}
+
+		public boolean isLazyInitialisation() {
+			return lazyInitialisation;
 		}
 
 		public Supplier<?> getInstantiationSupplier() {

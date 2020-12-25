@@ -38,8 +38,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.test.DerivedFromTestView;
 import com.github.actionfx.core.test.TestView;
+import com.github.actionfx.core.test.app.LazilyInitializedController;
 import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.ModelWithDefaultConstructor;
+import com.github.actionfx.core.test.app.NonLazilyInitializedController;
 import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
@@ -63,7 +65,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_singletonById() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
+		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN
 		final TestView view1 = container.getBean("beanId");
@@ -81,7 +83,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_singletonByType() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
+		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN
 		final TestView view1 = container.getBean(TestView.class);
@@ -99,7 +101,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_singletonByType_superTypeIsRequested() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", DerivedFromTestView.class, true, DerivedFromTestView::new);
+		container.addBeanDefinition("beanId", DerivedFromTestView.class, true, true, DerivedFromTestView::new);
 
 		// WHEN (request the super type 'TestView', although 'DerivedFromTestView' is
 		// registered)
@@ -119,7 +121,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_byId_idDoesNotExist() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
+		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN and THEN
 		assertThat(container.getBean("someNonExistingId"), nullValue());
@@ -129,7 +131,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_byType_idDoesNotExist() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, true, TestView::new);
+		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN and THEN
 		assertThat(container.getBean(String.class), nullValue());
@@ -139,7 +141,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_nonSingletonById() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, false, TestView::new);
+		container.addBeanDefinition("beanId", TestView.class, false, true, TestView::new);
 
 		// WHEN
 		final TestView view1 = container.getBean("beanId");
@@ -157,7 +159,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_nonSingletonByType() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.addBeanDefinition("beanId", TestView.class, false, TestView::new);
+		container.addBeanDefinition("beanId", TestView.class, false, true, TestView::new);
 
 		// WHEN
 		final TestView view1 = container.getBean(TestView.class);
@@ -191,6 +193,12 @@ class DefaultBeanContainerTest {
 		assertThat(view, instanceOf(FxmlView.class));
 		final FxmlView fxmlView = (FxmlView) view;
 		assertThat(fxmlView.getController(), sameInstance(mainControllerById));
+
+		// check that non-lazy controllers are instantiated
+		assertThat(NonLazilyInitializedController.isConstructed(), equalTo(true));
+
+		// check that lazy controllers are not instantiated
+		assertThat(LazilyInitializedController.isConstructed(), equalTo(false));
 	}
 
 	@Test

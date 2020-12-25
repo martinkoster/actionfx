@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -191,9 +191,10 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addBeanDefinition(java.lang.String,java.lang.Class,boolean,java.util.function.Supplier)">addBeanDefinition</a></span>&#8203;(java.lang.String&nbsp;id,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addBeanDefinition(java.lang.String,java.lang.Class,boolean,boolean,java.util.function.Supplier)">addBeanDefinition</a></span>&#8203;(java.lang.String&nbsp;id,
                  java.lang.Class&lt;?&gt;&nbsp;beanClass,
                  boolean&nbsp;singleton,
+                 boolean&nbsp;lazyInit,
                  java.util.function.Supplier&lt;?&gt;&nbsp;instantiationSupplier)</code></th>
 <td class="colLast">
 <div class="block">Adds a new bean definition to the bean container.</div>
@@ -235,6 +236,13 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#instatiateNonLazyBeans()">instatiateNonLazyBeans</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Instantiate all non-lazy beans.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#populateContainer(java.lang.String)">populateContainer</a></span>&#8203;(java.lang.String&nbsp;rootPackage)</code></th>
 <td class="colLast">
@@ -243,7 +251,7 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
  ActionFX.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>protected &lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resolveBean(java.lang.String,java.lang.Class)">resolveBean</a></span>&#8203;(java.lang.String&nbsp;id,
            java.lang.Class&lt;?&gt;&nbsp;type)</code></th>
@@ -321,7 +329,7 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 </dl>
 </li>
 </ul>
-<a id="addBeanDefinition(java.lang.String,java.lang.Class,boolean,java.util.function.Supplier)">
+<a id="addBeanDefinition(java.lang.String,java.lang.Class,boolean,boolean,java.util.function.Supplier)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -330,12 +338,13 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <pre class="methodSignature">public&nbsp;void&nbsp;addBeanDefinition&#8203;(java.lang.String&nbsp;id,
                               java.lang.Class&lt;?&gt;&nbsp;beanClass,
                               boolean&nbsp;singleton,
+                              boolean&nbsp;lazyInit,
                               java.util.function.Supplier&lt;?&gt;&nbsp;instantiationSupplier)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BeanContainerFacade.html#addBeanDefinition(java.lang.String,java.lang.Class,boolean,java.util.function.Supplier)">BeanContainerFacade</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BeanContainerFacade.html#addBeanDefinition(java.lang.String,java.lang.Class,boolean,boolean,java.util.function.Supplier)">BeanContainerFacade</a></code></span></div>
 <div class="block">Adds a new bean definition to the bean container.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="BeanContainerFacade.html#addBeanDefinition(java.lang.String,java.lang.Class,boolean,java.util.function.Supplier)">addBeanDefinition</a></code>&nbsp;in interface&nbsp;<code><a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></dd>
+<dd><code><a href="BeanContainerFacade.html#addBeanDefinition(java.lang.String,java.lang.Class,boolean,boolean,java.util.function.Supplier)">addBeanDefinition</a></code>&nbsp;in interface&nbsp;<code><a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>id</code> - the bean ID / name</dd>
 <dd><code>beanClass</code> - the bean type</dd>
@@ -343,6 +352,20 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
                               bean shall be a singleton, <code>false</code>, if
                               there should be a new instance created, whenever
                               <a href="BeanContainerFacade.html#getBean(java.lang.Class)"><code>BeanContainerFacade.getBean(Class)</code></a> is called.</dd>
+<dd><code>lazyInit</code> - Flag that controls the initialization of the
+                              view and controller. If set to <code>true</code>,
+                              beans are lazily initialized at the point the
+                              bean is really required and requested to be
+                              used. If set to {@link false}, the beans are
+                              initialized at the startup of the ActionFX
+                              application, when the view manager is
+                              initialized. Although lazy loading should be
+                              preferred, disabling of lazy loading makes
+                              sense, when you want to have a fail-early
+                              fail-fast pattern and exceptions during view
+                              initializations should/must be thrown at
+                              application startup (and not later, when you
+                              already work with the application).</dd>
 <dd><code>instantiationSupplier</code> - the supplier that provides the instance</dd>
 </dl>
 </li>
@@ -436,7 +459,7 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <a id="resolveBean(java.lang.String,java.lang.Class)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>resolveBean</h4>
 <pre class="methodSignature">protected&nbsp;&lt;T&gt;&nbsp;T&nbsp;resolveBean&#8203;(java.lang.String&nbsp;id,
@@ -452,6 +475,16 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the bean instance, or <code>null</code>, if resolution is not possible</dd>
 </dl>
+</li>
+</ul>
+<a id="instatiateNonLazyBeans()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>instatiateNonLazyBeans</h4>
+<pre class="methodSignature">protected&nbsp;void&nbsp;instatiateNonLazyBeans()</pre>
+<div class="block">Instantiate all non-lazy beans.</div>
 </li>
 </ul>
 </li>

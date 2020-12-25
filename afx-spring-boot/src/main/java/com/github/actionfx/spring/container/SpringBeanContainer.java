@@ -110,10 +110,11 @@ public class SpringBeanContainer implements BeanContainerFacade {
 
 	@Override
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
-			final Supplier<?> instantiationSupplier) {
+			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
 		final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
 		beanDefinition.setBeanClass(beanClass);
 		beanDefinition.setScope(singleton ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
+		beanDefinition.setLazyInit(lazyInit);
 		beanDefinition.setInstanceSupplier(instantiationSupplier);
 		registerBeanDefinition(id, beanDefinition);
 	}

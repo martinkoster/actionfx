@@ -21,39 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.test;
+package com.github.actionfx.core.test.app;
 
-import java.util.function.Supplier;
-
-import com.github.actionfx.core.container.BeanContainerFacade;
+import com.github.actionfx.core.annotation.AFXController;
 
 /**
- * Test class of a BeanContainerFacade implementation having a no-arg
- * constructor.
+ * Test controller that is not lazily initialized
  *
  * @author koster
  *
  */
-public class CustomBeanContainerImpl implements BeanContainerFacade {
+@AFXController(fxml = "/testfxml/SampleView.fxml", viewId = "lazyInitView", lazyInit = true)
+public class LazilyInitializedController {
 
-	@Override
-	public <T> T getBean(final String id) {
-		return null;
+	// static field that gives feedback whether one instance is already constructed
+	// or not
+	private static boolean constructed = false;
+
+	public LazilyInitializedController() {
+		constructed = true;
 	}
 
-	@Override
-	public <T> T getBean(final Class<T> beanClass) {
-		return null;
-	}
-
-	@Override
-	public void populateContainer(final String rootPackage) {
-
-	}
-
-	@Override
-	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
-			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
-
+	public static boolean isConstructed() {
+		return constructed;
 	}
 }

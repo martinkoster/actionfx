@@ -58,7 +58,7 @@ public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanConta
 
 	@Override
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
-			final Supplier<?> instantiationSupplier) {
+			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
 
 	}
 

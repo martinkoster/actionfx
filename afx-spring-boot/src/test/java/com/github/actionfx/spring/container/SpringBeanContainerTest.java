@@ -110,7 +110,7 @@ class SpringBeanContainerTest {
 	@Test
 	void addBeanDefinition() {
 		// WHEN
-		container.addBeanDefinition("mainController", MainController.class, true, MainController::new);
+		container.addBeanDefinition("mainController", MainController.class, true, true, MainController::new);
 
 		// THEN
 		verify(registry, times(1)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
