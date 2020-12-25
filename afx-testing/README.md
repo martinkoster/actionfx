@@ -22,7 +22,7 @@ class ActionFXTest {
 	void testFirst() {
 	}
 	
-		@Test
+	@Test
 	void testSecond() {
 	}
 	
@@ -41,7 +41,7 @@ class ActionFXTest {
 	void testFirst() {
 	}
 	
-		@Test
+	@Test
 	void testSecond() {
 	}
 	
@@ -81,7 +81,7 @@ class ActionFXTest {
 	void testFirst() {
 	}
 	
-		@Test
+	@Test
 	void testSecond() {
 	}
 	
