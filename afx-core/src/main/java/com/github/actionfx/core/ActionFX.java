@@ -314,7 +314,7 @@ public class ActionFX {
 	}
 
 	/**
-	 * Then enhancement strategy to use within ActionFX.
+	 * The enhancement strategy to use within ActionFX.
 	 *
 	 * @return the enhancement strategy
 	 */
