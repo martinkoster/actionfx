@@ -99,15 +99,15 @@ Attribute | Description | Default Value
 `posX` | The X position of the window on the screen. | `0`
 `poxY` | The Y position of the window on the screen. | `0`
 `icon` | The icon to be displayed in case the view is displayed in its own stage. | `""`
-`singleton` | Determines whether the view is managed as singleton or not. If the view is not a singleton, the view is newly created whenever it is requested. | `true`
-`lazyInitialisation` |  Flag that controls the initialization of the view and controller. If set to `true`, view components are lazily initialized at the point the view is really required and requested to be used vie the view manager. If set to `false`, the view components are initialized at the startup of the ActionFX application, when the view manager is initialized. Although lazy loading should be preferred, disabling of lazy loading makes sense, when you want to have a fail-early fail-fast pattern and exceptions during view initializations should/must be thrown at application startup (and not later, when you already work with the application). | `true`
+`singleton` | Determines whether the view (and by that the controller) is managed as singleton or not. If the view is not a singleton, the view is newly created whenever it is requested. | `true`
+`lazyInit` |  Flag that controls the initialization of the view and controller. If set to `true`, view components are lazily initialized at the point the view is really required and requested to be used vie the view manager. If set to `false`, the view components are initialized at the startup of the ActionFX application, when the view manager is initialized. Although lazy loading should be preferred, disabling of lazy loading makes sense, when you want to have a fail-early fail-fast pattern and exceptions during view initializations should/must be thrown at application startup (and not later, when you already work with the application). | `true`
 `stylesheets` | Which stylesheets shall be applied to the scene? This array contains a list of classpath locations to CSS files. | `{}`
 `nestedViews` | An optional list of nested views that shall be embedded in the view. | `{}`
 
 After defining the controller and scanning for ActionFX components (see previous chapters on how to setup ActionFX), an instance of the controller is retrieved by:
 
 ```java
-	ActionFX.getInstance().getController(SomeController.class);
+	SomeController someController = ActionFX.getInstance().getController(SomeController.class);
 ```
 
 Preferably, you can just annotate a field with `@Inject` (if the controller is called from another controller):

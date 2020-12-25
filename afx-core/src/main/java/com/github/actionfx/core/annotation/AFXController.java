@@ -139,7 +139,7 @@ public @interface AFXController {
 	 * @return {@code true} (default), when view components should be lazily
 	 *         initialized, {@code false} otherwise
 	 */
-	public boolean lazyInitialisation() default true;
+	public boolean lazyInit() default true;
 
 	/**
 	 * Which stylesheets shall be applied to the scene? This array contains a list
