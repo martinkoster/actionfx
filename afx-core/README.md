@@ -2,6 +2,10 @@
 
 The "afx-core" module consists of the core functionality of ActionFX.
 
+Module | Description | API Documentation | Dependency 
+------ | ----------- | ----------------- | ----------
+[afx-core](afx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](afx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `afx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/afx-core/index.html) | `implementation group: "com.github.martinkoster", name: "afx-core", version: "0.0.1"`
+
 ## Overview
 
 This module provides:
