@@ -1,0 +1,36 @@
+image: java:11-jdk
+    
+stages:
+  - build
+  - test
+    
+before_script:
+#  - echo `pwd` # debug
+#  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+    
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+    
+build:
+  stage: build
+  script:
+    - ./gradlew assemble
+  artifacts:
+    paths:
+      - build/libs/*.jar
+      - afx-core/build/libs/*.jar
+      - afx-testing/build/libs/*.jar
+      - afx-spring-boot/build/libs/*.jar
+    expire_in: 1 week
+  only:
+  - develop
+    
+test:
+  stage: test
+  script:
+    - ./gradlew check
+    
+
