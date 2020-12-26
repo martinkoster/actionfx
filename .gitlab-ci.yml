@@ -1,5 +1,4 @@
-image: openjdk/openjdk-11-rhel7
-registry: registry.redhat.io
+image: adoptopenjdk/openjdk11:jdk-11.0.9.1_1-ubuntu
     
 stages:
   - build
