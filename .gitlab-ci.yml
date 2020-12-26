@@ -1,4 +1,5 @@
-image: java:11-jdk
+image: openjdk/openjdk-11-rhel7
+registry: registry.redhat.io
     
 stages:
   - build
