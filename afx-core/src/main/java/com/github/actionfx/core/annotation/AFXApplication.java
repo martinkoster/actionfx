@@ -31,7 +31,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that can be applied to the main class of an ActionFX application.
+ * Annotation that can be applied to the main class of an ActionFX application
+ * for configuring it.
  *
  * @author koster
  *

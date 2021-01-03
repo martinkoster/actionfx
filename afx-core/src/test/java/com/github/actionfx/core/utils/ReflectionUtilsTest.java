@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,15 +19,18 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -39,13 +42,15 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import com.github.actionfx.core.test.ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation;
+import com.github.actionfx.core.utils.ReflectionUtils.FieldFilter;
 
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
  * JUnit test case for {@link ReflectionUtils}.
- * 
+ *
  * @author koster
  *
  */
@@ -57,9 +62,129 @@ class ReflectionUtilsTest {
 			.asList("isIninitialized1Invoked", "isIninitialized2Invoked");
 
 	@Test
+	void getNestedFieldValue_pathIsNotNested() {
+		// GIVEN
+		final NestedElement nestedElement = new NestedElement(null, null);
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement", classWithNestedElement),
+				sameInstance(nestedElement));
+	}
+
+	@Test
+	void getNestedFieldValue_pathIsNotNested_endsWithDot() {
+		// GIVEN
+		final NestedElement nestedElement = new NestedElement(null, null);
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement.", classWithNestedElement),
+				sameInstance(nestedElement));
+	}
+
+	@Test
+	void getNestedFieldValue_isNested() {
+		// GIVEN
+		final NestedElement nestedElement = new NestedElement(new StringValueType("hello"),
+				new StringValueType("world"));
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement.fieldWithGetter.value", classWithNestedElement),
+				equalTo("hello"));
+	}
+
+	@Test
+	void getNestedFieldValue_onePathElementIsNull() {
+		// GIVEN
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement.fieldWithGetter.value", classWithNestedElement),
+				nullValue());
+	}
+
+	@Test
+	void getNestedFieldValue_onePathElementHasNoGetter_directFieldAccessIsExecuted() {
+		// GIVEN
+		final NestedElement nestedElement = new NestedElement(new StringValueType("hello"),
+				new StringValueType("world"));
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
+
+		// WHEN and THEN
+		assertThat(
+				ReflectionUtils.getNestedFieldValue("nestedElement.fieldWithoutGetter.value", classWithNestedElement),
+				equalTo("world"));
+	}
+
+	@Test
+	void getNestedFieldProperty_pathIsNotNested() {
+		// GIVEN
+		final StringPropertyType stringPropertyType = new StringPropertyType("hello world");
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldProperty("value", stringPropertyType),
+				sameInstance(stringPropertyType.valueProperty()));
+	}
+
+	@Test
+	void getNestedFieldProperty_pathIsNotNested_endsWithDot() {
+		// GIVEN
+		final StringPropertyType stringPropertyType = new StringPropertyType("hello world");
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldProperty("value.", stringPropertyType),
+				sameInstance(stringPropertyType.valueProperty()));
+	}
+
+	@Test
+	void getNestedFieldProperty_isNested() {
+		// GIVEN
+		final StringPropertyType helloPropertyType = new StringPropertyType("hello");
+		final StringPropertyType worldPropertyType = new StringPropertyType("world");
+
+		final NestedElementWithProperties nestedElementWithProperties = new NestedElementWithProperties(
+				helloPropertyType, worldPropertyType);
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null,
+				nestedElementWithProperties);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldProperty("nestedElementWithProperties.fieldWithGetter.value",
+				classWithNestedElement), sameInstance(helloPropertyType.valueProperty()));
+	}
+
+	@Test
+	void getNestedFieldProperty_onePathElementIsNull() {
+		// GIVEN
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
+
+		// WHEN and THEN
+		assertThat(
+				ReflectionUtils.getNestedFieldProperty("nestedElement.fieldWithGetter.value", classWithNestedElement),
+				nullValue());
+	}
+
+	@Test
+	void getNestedFieldProperty_onePathElementHasNoGetter_directFieldAccessIsExecuted() {
+		// GIVEN
+		final StringPropertyType helloPropertyType = new StringPropertyType("hello");
+		final StringPropertyType worldPropertyType = new StringPropertyType("world");
+
+		final NestedElementWithProperties nestedElementWithProperties = new NestedElementWithProperties(
+				helloPropertyType, worldPropertyType);
+		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null,
+				nestedElementWithProperties);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getNestedFieldProperty("nestedElementWithProperties.fieldWithoutGetter.value",
+				classWithNestedElement), sameInstance(worldPropertyType.valueProperty()));
+	}
+
+	@Test
 	void testGetFieldValue() throws NoSuchFieldException, SecurityException {
 		// GIVEN
-		ClassWithField instance = new ClassWithField();
+		final ClassWithField instance = new ClassWithField();
 
 		// WHEN and THEN
 		assertThat(ReflectionUtils.getFieldValue(ClassWithField.class.getDeclaredField("field1"), instance),
@@ -69,10 +194,10 @@ class ReflectionUtilsTest {
 	@Test
 	void testGetFieldValueByGetter() throws NoSuchFieldException, SecurityException {
 		// GIVEN
-		Field helloField = ClassWithMethods.class.getDeclaredField("hello");
+		final Field helloField = ClassWithMethods.class.getDeclaredField("hello");
 
 		// WHEN
-		String hello = (String) ReflectionUtils.getFieldValueByGetter(helloField, new ClassWithMethods());
+		final String hello = (String) ReflectionUtils.getFieldValueByGetter(helloField, new ClassWithMethods());
 
 		// THEN
 		assertThat(hello, equalTo("Hello"));
@@ -81,10 +206,10 @@ class ReflectionUtilsTest {
 	@Test
 	void testGetFieldValueByGetter_fieldNameIsOnlyOneLetter() throws NoSuchFieldException, SecurityException {
 		// GIVEN
-		Field aField = ClassWithMethods.class.getDeclaredField("a");
+		final Field aField = ClassWithMethods.class.getDeclaredField("a");
 
 		// WHEN
-		Integer value = (Integer) ReflectionUtils.getFieldValueByGetter(aField, new ClassWithMethods());
+		final Integer value = (Integer) ReflectionUtils.getFieldValueByGetter(aField, new ClassWithMethods());
 
 		// THEN
 		assertThat(value, equalTo(Integer.valueOf(42)));
@@ -93,10 +218,10 @@ class ReflectionUtilsTest {
 	@Test
 	void testGetFieldValueByGetter_booleanType() throws NoSuchFieldException, SecurityException {
 		// GIVEN
-		Field voidMethodExecutedField = ClassWithMethods.class.getDeclaredField("voidMethodExecuted");
+		final Field voidMethodExecutedField = ClassWithMethods.class.getDeclaredField("voidMethodExecuted");
 
 		// WHEN
-		boolean invoked = (boolean) ReflectionUtils.getFieldValueByGetter(voidMethodExecutedField,
+		final boolean invoked = (boolean) ReflectionUtils.getFieldValueByGetter(voidMethodExecutedField,
 				new ClassWithMethods());
 
 		// THEN
@@ -106,11 +231,11 @@ class ReflectionUtilsTest {
 	@Test
 	void testGetFieldValueByPropertyGetter() throws NoSuchFieldException, SecurityException {
 		// GIVEN
-		Field stringField = ClassWithMethods.class.getDeclaredField("string");
+		final Field stringField = ClassWithMethods.class.getDeclaredField("string");
 
 		// WHEN
-		StringProperty stringProperty = (StringProperty) ReflectionUtils.getFieldValueByPropertyGetter(stringField,
-				new ClassWithMethods());
+		final StringProperty stringProperty = (StringProperty) ReflectionUtils
+				.getFieldValueByPropertyGetter(stringField, new ClassWithMethods());
 
 		// THEN
 		assertThat(stringProperty, notNullValue());
@@ -119,7 +244,7 @@ class ReflectionUtilsTest {
 	@Test
 	void testSetFieldValue() throws NoSuchFieldException, SecurityException {
 		// GIVEN
-		ClassWithField instance = new ClassWithField();
+		final ClassWithField instance = new ClassWithField();
 
 		// WHEN
 		ReflectionUtils.setFieldValue(ClassWithField.class.getDeclaredField("field1"), instance, "Yahoo");
@@ -144,10 +269,23 @@ class ReflectionUtilsTest {
 	}
 
 	@Test
+	void testFindFields() {
+		// GIVEN
+		final FieldFilter filter = field -> field.getName().equals("field1");
+
+		// WHEN
+		final List<Field> fields = ReflectionUtils.findFields(DerivedFromClassWithField.class, filter);
+
+		// THEN
+		assertThat(fields, hasSize(1));
+		assertThat(fields.get(0).getName(), equalTo("field1"));
+	}
+
+	@Test
 	void testInvokeMethod_returningVoid() throws NoSuchMethodException, SecurityException {
 		// GIVEN
-		ClassWithMethods instance = new ClassWithMethods();
-		Method voidMethod = ClassWithMethods.class.getDeclaredMethod("voidMethod");
+		final ClassWithMethods instance = new ClassWithMethods();
+		final Method voidMethod = ClassWithMethods.class.getDeclaredMethod("voidMethod");
 
 		// WHEN
 		ReflectionUtils.invokeMethod(voidMethod, instance, Void.class);
@@ -159,8 +297,8 @@ class ReflectionUtilsTest {
 	@Test
 	void testInvokeMethod_argumentString_returningString() throws NoSuchMethodException, SecurityException {
 		// GIVEN
-		ClassWithMethods instance = new ClassWithMethods();
-		Method sayHelloMethod = ClassWithMethods.class.getDeclaredMethod("sayHello", String.class);
+		final ClassWithMethods instance = new ClassWithMethods();
+		final Method sayHelloMethod = ClassWithMethods.class.getDeclaredMethod("sayHello", String.class);
 
 		// WHEN and THEN
 		assertThat(ReflectionUtils.invokeMethod(sayHelloMethod, instance, String.class, "World"),
@@ -190,7 +328,7 @@ class ReflectionUtilsTest {
 	@Test
 	void testFindMethod() {
 		// WHEN
-		Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "voidMethod");
+		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "voidMethod");
 
 		// THEN
 		assertThat(method, notNullValue());
@@ -200,14 +338,14 @@ class ReflectionUtilsTest {
 	@Test
 	void testFindMethod_withArguments() {
 		// WHEN
-		Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "sayHello", String.class);
+		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "sayHello", String.class);
 
 		// THEN
 		assertThat(method, notNullValue());
 		assertThat(method.getName(), equalTo("sayHello"));
 	}
 
-	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, String... exptectedFieldNames) {
+	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {
 		assertThat(methods, notNullValue());
 		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList()), hasItems(exptectedFieldNames)); // hasItems
 	}
@@ -225,11 +363,15 @@ class ReflectionUtilsTest {
 		public String getField1() {
 			return field1;
 		}
+
+		public void setField1(final String value) {
+			field1 = value;
+		}
 	}
 
 	public static class DerivedFromClassWithField extends ClassWithField {
 
-		private String field2 = "World";
+		private final String field2 = "World";
 
 		public String getField2() {
 			return field2;
@@ -240,10 +382,10 @@ class ReflectionUtilsTest {
 
 		private boolean voidMethodExecuted = false;
 
-		private String hello = "Hello";
+		private final String hello = "Hello";
 
 		// member field with just one letter
-		private Integer a = Integer.valueOf(42);
+		private final Integer a = Integer.valueOf(42);
 
 		private StringProperty string;
 
@@ -251,7 +393,7 @@ class ReflectionUtilsTest {
 			voidMethodExecuted = true;
 		}
 
-		public String sayHello(String name) {
+		public String sayHello(final String name) {
 			return "Hello " + name;
 		}
 
@@ -269,7 +411,7 @@ class ReflectionUtilsTest {
 
 		/**
 		 * Typical lazy-initialization of a property.
-		 * 
+		 *
 		 * @return the property
 		 */
 		public StringProperty stringProperty() {
@@ -277,6 +419,123 @@ class ReflectionUtilsTest {
 				string = new SimpleStringProperty();
 			}
 			return string;
+		}
+	}
+
+	/**
+	 * Class that holds a nested element
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ClassWithNestedElement {
+
+		private final NestedElement nestedElement;
+
+		private final NestedElementWithProperties nestedElementWithProperties;
+
+		public ClassWithNestedElement(final NestedElement nestedElement,
+				final NestedElementWithProperties nestedElementWithProperties) {
+			this.nestedElement = nestedElement;
+			this.nestedElementWithProperties = nestedElementWithProperties;
+		}
+
+		public NestedElement getNestedElement() {
+			return nestedElement;
+		}
+
+		public NestedElementWithProperties getNestedElementWithProperties() {
+			return nestedElementWithProperties;
+		}
+
+	}
+
+	/**
+	 * Class that holds 2 fields, one that can be accessed via a getter and one that
+	 * required direct field access.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class NestedElement {
+
+		private final StringValueType fieldWithGetter;
+
+		private final StringValueType fieldWithoutGetter;
+
+		public NestedElement(final StringValueType fieldWithGetter, final StringValueType fieldWithoutGetter) {
+			this.fieldWithGetter = fieldWithGetter;
+			this.fieldWithoutGetter = fieldWithoutGetter;
+		}
+
+		public StringValueType getFieldWithGetter() {
+			return fieldWithGetter;
+		}
+	}
+
+	/**
+	 * Class that holds 2 fields, one that can be accessed via a getter and one that
+	 * required direct field access. The values itself are Property-based.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class NestedElementWithProperties {
+
+		private final StringPropertyType fieldWithGetter;
+
+		private final StringPropertyType fieldWithoutGetter;
+
+		public NestedElementWithProperties(final StringPropertyType fieldWithGetter,
+				final StringPropertyType fieldWithoutGetter) {
+			this.fieldWithGetter = fieldWithGetter;
+			this.fieldWithoutGetter = fieldWithoutGetter;
+		}
+
+		public StringPropertyType getFieldWithGetter() {
+			return fieldWithGetter;
+		}
+	}
+
+	/**
+	 * Class holding a single string value that can be accessed through a getter.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class StringValueType {
+
+		private final String value;
+
+		public StringValueType(final String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	/**
+	 * Class holding a single string property that can be accessed through a getter.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class StringPropertyType {
+
+		private final StringProperty value = new SimpleStringProperty();
+
+		public StringPropertyType(final String value) {
+			this.value.set(value);
+		}
+
+		public String getValue() {
+			return value.get();
+		}
+
+		public Property<String> valueProperty() {
+			return value;
 		}
 	}
 

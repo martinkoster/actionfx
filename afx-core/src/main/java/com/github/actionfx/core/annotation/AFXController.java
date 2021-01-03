@@ -30,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for ActionFX controllers to associate and manage a view togehter
+ * Annotation for ActionFX controllers to associate and manage a view together
  * with it.
  *
  * @author MartinKoster

@@ -21,31 +21,25 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
+package com.github.actionfx.core.annotation;
 
-import javax.inject.Inject;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.annotation.AFXOnValueChanged;
+/**
+ * Annotation that can be applied at field level on a {@link Control}, in order
+ * to enable a multi-selection on that annotated control.
+ * <p>
+ * This annotation can be e.g. applied to a {@link TableView} field, so that the
+ * user can select multiple entries in that table view.
+ *
+ * @author MartinKoster
+ *
+ */
+@Target({ ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AFXEnableMultiSelection {
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-
-@AFXController(viewId = "productDetailsView", fxml = "/fxml/ProductDetailsView.fxml")
-public class ProductDetailsController {
-
-	@Inject
-	private ShoppingCartController shoppingCartController;
-
-	@FXML
-	private Button addToShoppingCartButton;
-
-	@FXML
-	private Label productLabel;
-
-	@AFXOnValueChanged()
-	public void addToShoppingCart() {
-		shoppingCartController.addToShoppingCart("Test");
-	}
 }

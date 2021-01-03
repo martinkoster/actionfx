@@ -21,25 +21,35 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.annotation;
+package com.github.actionfx.core.view.graph;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.Control;
 
 /**
- * Annotation to be applied at method level that let's ActionFX wire the
- * annotated method to the specified event.
+ * Custom control for testing.
  *
  * @author koster
  *
  */
-@Retention(RUNTIME)
-@Documented
-@Target(ElementType.METHOD)
-public @interface AFXOnEvent {
+public class CustomControl extends Control {
+
+	private StringProperty customValue;
+
+	public final StringProperty customValueProperty() {
+		if (customValue == null) {
+			customValue = new SimpleStringProperty();
+		}
+		return customValue;
+	}
+
+	public final String getCustomValue() {
+		return customValueProperty().get();
+	}
+
+	public final void setCustomValue(final String value) {
+		customValueProperty().set(value);
+	}
 
 }

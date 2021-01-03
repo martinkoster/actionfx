@@ -172,13 +172,11 @@ public class AnnotationUtils {
 	public static <T extends Annotation> List<Field> findAllAnnotatedFields(final Class<?> clazz,
 			final Class<T> annotationClazz, final boolean checkSuperClasses) {
 		final List<Field> fieldList = new ArrayList<>();
-		final Field[] fields = clazz.getDeclaredFields();
-		if (fields != null) {
-			for (final Field field : fields) {
-				final T a = AnnotationUtils.findAnnotation(field, annotationClazz);
-				if (a != null) {
-					fieldList.add(field);
-				}
+		final List<Field> fields = ReflectionUtils.findAllDeclaredFields(clazz);
+		for (final Field field : fields) {
+			final T a = AnnotationUtils.findAnnotation(field, annotationClazz);
+			if (a != null) {
+				fieldList.add(field);
 			}
 		}
 		if (checkSuperClasses && clazz.getSuperclass() != null) {

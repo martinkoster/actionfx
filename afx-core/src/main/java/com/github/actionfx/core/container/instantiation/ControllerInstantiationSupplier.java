@@ -23,17 +23,28 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXOnValueChanged;
+import com.github.actionfx.core.annotation.AFXOnValueSelected;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.ViewBuilder;
+import com.github.actionfx.core.view.graph.ControlWrapper;
+import com.github.actionfx.core.view.graph.NodeWrapper;
+
+import javafx.scene.control.Control;
 
 /**
  * Instantiation supplier for controller instances. This class is responsible
@@ -76,6 +87,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			final T controller = controllerClass.getDeclaredConstructor().newInstance();
 			final FxmlView fxmlView = createFxmlViewInstance(controller);
 			injectView(controller, fxmlView);
+			applyFieldLevelAnnotations(controller);
+			applyMethodLevelEventAnnotations(controller, fxmlView);
 			return controller;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
@@ -104,5 +117,95 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 */
 	protected void injectView(final T controller, final View view) {
 		ControllerWrapper.setViewOn(controller, view);
+	}
+
+	/**
+	 * Applies method-level annotations (e.g. {@link AFXOnValueChanged}.
+	 *
+	 * @param instance the instance that is checked for ActionFX method level
+	 *                 annotations
+	 * @param view     the view that belongs to the controller
+	 */
+	protected void applyMethodLevelEventAnnotations(final Object instance, final View view) {
+		enableOnValueChangeActions(instance, view);
+		enableOnValueSelectedActions(instance, view);
+	}
+
+	/**
+	 * Applies field-level annotations (e.g. {@link AFXEnableMultiSelection}.
+	 *
+	 * @param instance the instance that is checked for ActionFX field level
+	 *                 annotations
+	 */
+	protected void applyFieldLevelAnnotations(final Object instance) {
+		enableMultiSelectionControls(instance);
+	}
+
+	/**
+	 * Wires methods annotated with {@link AFXOnValueChanged} to the corresponding
+	 * value inside the control.
+	 *
+	 * @param instance the instance holding the methods
+	 * @param view     the view that belongs to the controller
+	 */
+	private void enableOnValueChangeActions(final Object instance, final View view) {
+		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
+				method -> method.getAnnotation(AFXOnValueChanged.class) != null);
+		for (final Method method : methods) {
+			final AFXOnValueChanged onValueChanged = method.getAnnotation(AFXOnValueChanged.class);
+			final NodeWrapper wrappedRootNode = NodeWrapper.of(view.getRootNode());
+			final NodeWrapper wrappedTargetNode = wrappedRootNode.lookup(onValueChanged.controlId());
+			if (wrappedTargetNode == null) {
+				throw new IllegalStateException("Node with id='" + onValueChanged.controlId()
+						+ "' does not exist! Annotation @AFXOnValueChanged annotation on method '" + method.getName()
+						+ "' has incorrect controlId() value!");
+			}
+			if (!Control.class.isAssignableFrom(wrappedTargetNode.getWrappedType())) {
+				throw new IllegalStateException("Node with id='" + onValueChanged.controlId()
+						+ "' is not an instance of javafx.scene.control.Control! Annotation @AFXOnValueChanged annotation on method '"
+						+ method.getName() + "' has incorrect controlId() value!");
+
+			}
+			final ControlWrapper controlWrapper = new ControlWrapper(wrappedTargetNode.getWrapped());
+
+		}
+	}
+
+	/**
+	 * Wires methods annotated with {@link AFXOnValueSelected} to the corresponding
+	 * value inside the control.
+	 *
+	 * @param instance the instance holding the methods
+	 * @param view     the view that belongs to the controller
+	 */
+	private void enableOnValueSelectedActions(final Object instance, final View view) {
+
+	}
+
+	/**
+	 * Enables multi-selection for fields annotated with
+	 * {@link AFXEnableMultiSelection}.
+	 *
+	 * @param instance the instance holding the fields
+	 */
+	private void enableMultiSelectionControls(final Object instance) {
+		final List<Field> enableMultiSelectionFields = AnnotationUtils.findAllAnnotatedFields(instance.getClass(),
+				AFXEnableMultiSelection.class, true);
+		for (final Field enableMultiSelectionField : enableMultiSelectionFields) {
+			final Object fieldValue = ReflectionUtils.getFieldValue(enableMultiSelectionField, instance);
+			if (fieldValue == null) {
+				throw new IllegalStateException("Field '" + enableMultiSelectionField.getName() + "' in class '"
+						+ instance.getClass().getCanonicalName()
+						+ "' is annotated by @AFXEnableMultiSelection, but field value is 'null'!");
+			}
+			if (!Control.class.isAssignableFrom(fieldValue.getClass())) {
+				throw new IllegalStateException("Field '" + enableMultiSelectionField.getName() + "' in class '"
+						+ instance.getClass().getCanonicalName()
+						+ "' is annotated by @AFXEnableMultiSelection, but field value is not of type 'javafx.scene.control.Control'!");
+
+			}
+			final ControlWrapper controlWrapper = new ControlWrapper((Control) instance);
+			controlWrapper.enableMultiSelection();
+		}
 	}
 }

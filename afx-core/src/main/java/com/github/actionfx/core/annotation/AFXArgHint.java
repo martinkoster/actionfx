@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,31 +21,30 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
+package com.github.actionfx.core.annotation;
 
-import javax.inject.Inject;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.annotation.AFXOnValueChanged;
+/**
+ * Annotation to apply "hints" to method arguments. Argument hints are required,
+ * because the Java compiler potentially removes the argument names, and by
+ * that, removes some semantics in case there are two arguments of the same
+ * type.
+ *
+ * @author koster
+ *
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface AFXArgHint {
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-
-@AFXController(viewId = "productDetailsView", fxml = "/fxml/ProductDetailsView.fxml")
-public class ProductDetailsController {
-
-	@Inject
-	private ShoppingCartController shoppingCartController;
-
-	@FXML
-	private Button addToShoppingCartButton;
-
-	@FXML
-	private Label productLabel;
-
-	@AFXOnValueChanged()
-	public void addToShoppingCart() {
-		shoppingCartController.addToShoppingCart("Test");
-	}
+	/**
+	 * The hint value defines which semantic the annotated method parameter has.
+	 *
+	 * @return the argument hint
+	 */
+	public ArgumentHint value() default ArgumentHint.TYPE_BASED;
 }

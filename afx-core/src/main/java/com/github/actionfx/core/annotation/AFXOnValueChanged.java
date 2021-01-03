@@ -30,11 +30,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javafx.stage.Stage;
-
 /**
- * Annotation to be applied at method level that allows to define which view to
- * be displayed after successful method invocation.
+ * Annotated methods are invoked when the value of the specified
+ * {@link #controlId()) is changed.
  *
  * @author koster
  *
@@ -42,36 +40,30 @@ import javafx.stage.Stage;
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface AFXShowView {
+public @interface AFXOnValueChanged {
 
 	/**
-	 * The view to be displayed, when the method successfully terminates. This
-	 * attribute competes with attribute {@link #showNestedViews()}, while this
-	 * attribute has higher precedence than {@link #showNestedViews()}.
+	 * ID of the control whose value shall be observed for changes. Please note that
+	 * the given Id needs to be an existing node ID in the scene graph that
+	 * evaluates to a {@link Control}.
 	 *
-	 * @return the view ID for the success view
+	 * @return the node ID of a control, whose value shall be observed for changes.
 	 */
-	public String showView() default "";
+	public String controlId();
 
 	/**
-	 * Determines whether the view defined in {@link #showView()} shall be displayed
-	 * in its own {@link Stage}. The specification of this attribute does not affect
-	 * view transition in case the attribute {@link #showNestedViews()} is given.
+	 * An optional timeout that is waited after the value change in the control
+	 * occurs. The default value is 0, i.e. means the method is immediately executed
+	 * after the value change occurs. In case there is a positive value specified,
+	 * there is only one method invocation for the last change event that occurred
+	 * in the time between first change event and the given number of timeout
+	 * milliseconds.
+	 * <p>
+	 * This value can be used e.g. for reducing the number of method invocation
+	 * (e.g. for a TextField you might not want to have this method invoked on every
+	 * key stroke, but you might want to wait for multiple changes).
 	 *
-	 * @return {@code true}, if the referenced view shall be displayed in its own
-	 *         {@link Stage}, {@code false}, if the currently used {@link Stage}
-	 *         shall be used. Default is {@code false}.
+	 * @return the timeout in milliseconds
 	 */
-	public boolean showInNewWindow() default false;
-
-	/**
-	 * The nested views to be displayed, when the method successfully terminates.
-	 * This attribute allows to embed a view into the current scene graph and
-	 * {@link Stage}. Please take note, that this attribute must not be used
-	 * together with {@link #showView()} and {@link #showInNewWindow()}.
-	 *
-	 * @return the nested views to be displayed
-	 */
-	public AFXNestedView[] showNestedViews() default {};
-
+	public int timeoutMs() default 0;
 }

@@ -21,31 +21,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
+package com.github.actionfx.core.annotation;
 
-import javax.inject.Inject;
-
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.annotation.AFXOnValueChanged;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-
-@AFXController(viewId = "productDetailsView", fxml = "/fxml/ProductDetailsView.fxml")
-public class ProductDetailsController {
-
-	@Inject
-	private ShoppingCartController shoppingCartController;
-
-	@FXML
-	private Button addToShoppingCartButton;
-
-	@FXML
-	private Label productLabel;
-
-	@AFXOnValueChanged()
-	public void addToShoppingCart() {
-		shoppingCartController.addToShoppingCart("Test");
-	}
+/**
+ * A hint for a method parameter that can help in case two different method
+ * parameters have the same type.
+ *
+ * @author koster
+ *
+ */
+public enum ArgumentHint {
+	OLD_VALUE, NEW_VALUE, TYPE_BASED
 }
