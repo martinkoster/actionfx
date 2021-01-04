@@ -3,6 +3,7 @@
 ActionFX aims at simplifying the development of JavaFX applications by reducing the amount of boilerplate code a developer has to provide. 
 
 [![Gitlab pipeline status](https://gitlab.com/martinkoster/actionfx/badges/master/pipeline.svg)](https://gitlab.com/martinkoster/actionfx/-/pipelines)
+[![codecov](https://codecov.io/gh/martinkoster/actionfx/branch/master/graph/badge.svg?token=FSIK44KEV6)](https://codecov.io/gh/martinkoster/actionfx)
 
 ## Design Philosophies
 - **Support and encourage the implementation of the MVC pattern**: Controllers are light-weight, loosely-coupled components that are not dependent on any framework base classes. Views on the other hand are preferably defined via FXML and other concerns like view behavior, main-window/popup-window considerations are configuration aspects defined via annotations (and not as tons of code).

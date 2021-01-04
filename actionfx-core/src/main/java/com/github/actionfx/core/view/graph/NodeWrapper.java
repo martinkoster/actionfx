@@ -128,6 +128,10 @@ public class NodeWrapper {
 		} else {
 			// we look up the IDProperty annotation, e.g. for "Tab"s
 			final Field idField = lookupIdField(getWrappedType());
+			if (idField == null) {
+				// no ID field? so we don't have any ID here...
+				return null;
+			}
 			final Property<String> idProperty = (Property<String>) getPropertyFieldValue(idField, wrapped);
 			return idProperty != null ? idProperty.getValue() : null;
 		}
