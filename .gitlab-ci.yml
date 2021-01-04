@@ -20,15 +20,39 @@ build:
     - ./gradlew assemble
   artifacts:
     paths:
-      - build/libs/*.jar
-      - afx-core/build/libs/*.jar
-      - afx-testing/build/libs/*.jar
-      - afx-spring-boot/build/libs/*.jar
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
     expire_in: 1 week
     
 test:
   stage: test
   script:
     - ./gradlew check
+  artifacts:
+    paths:
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
+    expire_in: 1 week
     
-
+reportCodeCoverage:
+  stage: test
+  dependencies:
+    - test
+  script:
+    - ./gradelw codeCoverageReport
+    -  bash <(curl -s https://codecov.io/bash)
+  artifacts:
+    paths:
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
+    expire_in: 1 week
+    

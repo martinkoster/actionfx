@@ -1,8 +1,8 @@
 // To declare projects as part of a multi-project build use the 'include' method
 
-include 'afx-core'
-include 'afx-testing'
-include 'afx-spring-boot'
-include 'afx-app-sample'
+include 'actionfx-core'
+include 'actionfx-testing'
+include 'actionfx-spring-boot'
+include 'actionfx-app-sample'
 
 rootProject.name = 'actionfx'
