@@ -44,8 +44,8 @@ unittest:
 reportCodeCoverage:
   stage: quality
   script:
-    - ./gradelw codeCoverageReport
-    -  bash <(curl -s https://codecov.io/bash)
+    - ./gradlew codeCoverageReport
+    -  bash <(curl -s https://codecov.io/bash) 
   artifacts:
     paths:
       - build/
