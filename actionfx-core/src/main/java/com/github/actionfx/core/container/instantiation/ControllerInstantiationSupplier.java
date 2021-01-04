@@ -26,8 +26,10 @@ package com.github.actionfx.core.container.instantiation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
@@ -38,6 +40,7 @@ import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.listener.TimedChangeListener;
+import com.github.actionfx.core.listener.TimedListChangeListener;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.MethodInvocationAdapter;
 import com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue;
@@ -65,9 +68,9 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 
 	private final Class<T> controllerClass;
 
-	private static Comparator<Method> AFXONVALUECHANGE_COMPARATOR = new AFXOnValueChangeAnnotatedMethodComparator();
+	private static final Comparator<Method> AFXONVALUECHANGE_COMPARATOR = new AFXOnValueChangeAnnotatedMethodComparator();
 
-	private static Comparator<Method> AFXONVALUESELECTED_COMPARATOR = new AFXOnValueSelectedAnnotatedMethodComparator();
+	private static final Comparator<Method> AFXONVALUESELECTED_COMPARATOR = new AFXOnValueSelectedAnnotatedMethodComparator();
 
 	public ControllerInstantiationSupplier(final Class<T> controllerClass) {
 		this.controllerClass = prepareControllerClass(controllerClass);
@@ -166,7 +169,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			final BooleanProperty listenerActionBooleanProperty = lookupListenerActiveBooleanProperty(instance,
 					onValueChanged.listenerActiveBooleanProperty());
 			final ControlWrapper controlWrapper = createControlWrapper(onValueChanged.controlId(), view);
-			final TimedChangeListener<?> changeListener = createChangeListener(instance, method,
+			final TimedChangeListener<?> changeListener = createValueChangeListener(instance, method,
 					onValueChanged.timeoutMs(), listenerActionBooleanProperty);
 			controlWrapper.addValueChangeListener(changeListener);
 		}
@@ -215,8 +218,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Creates a change listener that invokes the supplied {@link Method} on the
-	 * given {@code instance}.
+	 * Creates a value change listener that invokes the supplied {@link Method} on
+	 * the given {@code instance}.
 	 *
 	 * @param instance                      the instance holding the method
 	 * @param method                        the method to execute from the change
@@ -227,12 +230,48 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *                                      change listener is executed
 	 * @return
 	 */
-	private TimedChangeListener<?> createChangeListener(final Object instance, final Method method,
+	private TimedChangeListener<?> createValueChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty) {
 		return new TimedChangeListener<>((observable, oldValue, newValue) -> {
 			final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
 					ParameterValue.ofNewValue(newValue), ParameterValue.ofOldValue(oldValue),
 					ParameterValue.of(observable));
+			adapter.invoke();
+		}, timeoutMs, listenerActionBooleanProperty);
+	}
+
+	/**
+	 * Creates a list change listener that invokes the supplied {@link Method} on
+	 * the given {@code instance}.
+	 *
+	 * @param instance                      the instance holding the method
+	 * @param method                        the method to execute from the list
+	 *                                      change listener
+	 * @param timeoutMs                     the timeout in milliseconds
+	 * @param listenerActionBooleanProperty an optional boolean property that must
+	 *                                      be set to {@code true}, so that the
+	 *                                      change listener is executed
+	 * @param valuesSupplier                a supplier that gets the values to
+	 *                                      retrieve
+	 * @return
+	 */
+	private TimedListChangeListener<?> createListChangeListener(final Object instance, final Method method,
+			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty,
+			final Supplier<?> valuesSupplier) {
+		return new TimedListChangeListener<>(change -> {
+			final List<Object> addedList = new ArrayList<>();
+			final List<Object> removedList = new ArrayList<>();
+			while (change.next()) {
+				if (change.wasAdded()) {
+					addedList.addAll(change.getAddedSubList());
+				} else if (change.wasRemoved()) {
+					removedList.addAll(change.getRemoved());
+				}
+			}
+			change.reset();
+			final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
+					ParameterValue.ofAllSelectedValues(valuesSupplier.get()), ParameterValue.ofAddedValues(addedList),
+					ParameterValue.ofRemovedValues(removedList), ParameterValue.of(change));
 			adapter.invoke();
 		}, timeoutMs, listenerActionBooleanProperty);
 	}
@@ -245,7 +284,30 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @param view     the view that belongs to the controller
 	 */
 	private void enableOnValueSelectedActions(final Object instance, final View view) {
-
+		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
+				method -> method.getAnnotation(AFXOnValueSelected.class) != null);
+		methods.sort(AFXONVALUESELECTED_COMPARATOR);
+		for (final Method method : methods) {
+			final AFXOnValueSelected onValueSelected = method.getAnnotation(AFXOnValueSelected.class);
+			final BooleanProperty listenerActionBooleanProperty = lookupListenerActiveBooleanProperty(instance,
+					onValueSelected.listenerActiveBooleanProperty());
+			final ControlWrapper controlWrapper = createControlWrapper(onValueSelected.controlId(), view);
+			// check, whether the wrapped control supports multi-selection or only single
+			// selection
+			if (controlWrapper.supportsMultiSelection()) {
+				final TimedListChangeListener<?> changeListener = createListChangeListener(instance, method,
+						onValueSelected.timeoutMs(), listenerActionBooleanProperty, controlWrapper::getSelectedValues);
+				controlWrapper.addSelectedValuesChangeListener(changeListener);
+			} else if (controlWrapper.supportsSelection()) {
+				final TimedChangeListener<?> changeListener = createValueChangeListener(instance, method,
+						onValueSelected.timeoutMs(), listenerActionBooleanProperty);
+				controlWrapper.addSelectedValueChangeListener(changeListener);
+			} else {
+				throw new IllegalStateException("Control with ID='" + onValueSelected.controlId()
+						+ "' does not support selection! Please check your ActionFX annotations inside constroller '"
+						+ instance.getClass().getCanonicalName() + "'!");
+			}
+		}
 	}
 
 	/**

@@ -23,6 +23,9 @@
  */
 package com.github.actionfx.core.annotation;
 
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener.Change;
+
 /**
  * A hint for a method parameter that can help in case two different method
  * parameters have the same type.
@@ -31,5 +34,36 @@ package com.github.actionfx.core.annotation;
  *
  */
 public enum ArgumentHint {
-	OLD_VALUE, NEW_VALUE, TYPE_BASED
+	/**
+	 * The "old" value of a single-value property (see
+	 * {@link ChangeListener#changed(javafx.beans.value.ObservableValue, Object, Object)}).
+	 */
+	OLD_VALUE,
+
+	/**
+	 * The "new" value of a single-value property (see
+	 * {@link ChangeListener#changed(javafx.beans.value.ObservableValue, Object, Object)}).
+	 */
+	NEW_VALUE,
+
+	/**
+	 * Method arguments are matched by type.
+	 */
+	TYPE_BASED,
+
+	/**
+	 * A list of added values for list changes (see
+	 * {@link Change#getAddedSubList()}).
+	 */
+	ADDED_VALUES,
+
+	/**
+	 * A list of removed values for list changes (see {@link Change#getRemoved()}.
+	 */
+	REMOVED_VALUES,
+
+	/**
+	 * A list of all selected values.
+	 */
+	ALL_SELECTED
 }

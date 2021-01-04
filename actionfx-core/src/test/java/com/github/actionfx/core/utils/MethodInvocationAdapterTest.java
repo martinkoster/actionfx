@@ -141,12 +141,72 @@ class MethodInvocationAdapterTest {
 		assertThat(result, nullValue());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	void testInvoke_withVoidMethodWithSelected() {
+		// GIVEN
+		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithSelected");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.isExecuted(), equalTo(true));
+		// first "new", then "old"
+		assertThat(instance.getInvokedArguments(), hasSize(1)); // the list of invoked arguments now contains a list
+		assertThat((List<String>) instance.getInvokedArguments().get(0), contains("selected"));
+		assertThat(result, nullValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testInvoke_withVoidMethodWithSelectedAddedRemovedLists() {
+		// GIVEN
+		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithSelectedAddedRemovedLists");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.isExecuted(), equalTo(true));
+		// first "new", then "old"
+		assertThat(instance.getInvokedArguments(), hasSize(3)); // the list of invoked arguments now contains 3 lists
+		assertThat((List<String>) instance.getInvokedArguments().get(0), contains("selected"));
+		assertThat((List<String>) instance.getInvokedArguments().get(1), contains("added"));
+		assertThat((List<String>) instance.getInvokedArguments().get(2), contains("removed"));
+		assertThat(result, nullValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testInvoke_withVoidMethodWithRemovedAddedSelectedLists() {
+		// GIVEN
+		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithRemovedAddedSelectedLists");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.isExecuted(), equalTo(true));
+		// first "new", then "old"
+		assertThat(instance.getInvokedArguments(), hasSize(3)); // the list of invoked arguments now contains 3 lists
+		assertThat((List<String>) instance.getInvokedArguments().get(0), contains("removed"));
+		assertThat((List<String>) instance.getInvokedArguments().get(1), contains("added"));
+		assertThat((List<String>) instance.getInvokedArguments().get(2), contains("selected"));
+		assertThat(result, nullValue());
+	}
+
 	private static MethodInvocationAdapter methodInvocationAdapter(final String methodName) {
 		final ClassWithPublicMethods instance = new ClassWithPublicMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
 		return new MethodInvocationAdapter(instance, method, ParameterValue.of("Type-based Value 1"),
 				ParameterValue.of("Type-based Value 2"), ParameterValue.of(Integer.valueOf(4711)),
-				ParameterValue.ofOldValue(Integer.valueOf(100)), ParameterValue.ofNewValue(Integer.valueOf(1000)));
+				ParameterValue.ofOldValue(Integer.valueOf(100)), ParameterValue.ofNewValue(Integer.valueOf(1000)),
+				ParameterValue.ofAllSelectedValues(List.of("selected")), ParameterValue.ofAddedValues(List.of("added")),
+				ParameterValue.ofRemovedValues(List.of("removed")));
 	}
 
 	/**
@@ -193,6 +253,29 @@ class MethodInvocationAdapterTest {
 		public void voidMethodWithWithTwoStrings(final String value1, final String value2) {
 			invokedArguments.add(value1);
 			invokedArguments.add(value2);
+			setExecuted();
+		}
+
+		public void voidMethodWithSelected(final List<String> selected) {
+			invokedArguments.add(selected);
+			setExecuted();
+		}
+
+		public void voidMethodWithSelectedAddedRemovedLists(final List<String> selected, final List<String> added,
+				final List<String> removed) {
+			invokedArguments.add(selected);
+			invokedArguments.add(added);
+			invokedArguments.add(removed);
+			setExecuted();
+		}
+
+		public void voidMethodWithRemovedAddedSelectedLists(
+				@AFXArgHint(ArgumentHint.REMOVED_VALUES) final List<String> removed,
+				@AFXArgHint(ArgumentHint.ADDED_VALUES) final List<String> added,
+				@AFXArgHint(ArgumentHint.ALL_SELECTED) final List<String> selected) {
+			invokedArguments.add(removed);
+			invokedArguments.add(added);
+			invokedArguments.add(selected);
 			setExecuted();
 		}
 

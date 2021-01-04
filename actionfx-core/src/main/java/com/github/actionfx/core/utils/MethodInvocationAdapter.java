@@ -47,20 +47,6 @@ import com.github.actionfx.core.annotation.ArgumentHint;
  */
 public class MethodInvocationAdapter {
 
-	/**
-	 * String fragment of a method argument that represents the "old" value.
-	 * Requires the compiler to preserve argument names. If this is not the case,
-	 * use {@link AFXArgHint} annotation on method arguments.
-	 */
-	public static final String PARAMETER_NAME_FRAGMENT_OLD = "old";
-
-	/**
-	 * String fragment of a method argument that represents the "new" value.
-	 * Requires the compiler to preserve argument names. If this is not the case,
-	 * use {@link AFXArgHint} annotation on method arguments.
-	 */
-	public static final String PARAMETER_NAME_FRAGMENT_NEW = "new";
-
 	private final Object instance;
 
 	private final Method method;
@@ -161,8 +147,7 @@ public class MethodInvocationAdapter {
 		for (final ListIterator<ParameterValue> iterator = candidates.listIterator(); iterator.hasNext();) {
 			final ParameterValue candidate = iterator.next();
 			// check for @AFXArgHint annotations, these have the highest priority
-			if (candidateMatchesNewValueParameter(parameter, candidate)
-					|| candidateMatchesOldValueParameter(parameter, candidate)) {
+			if (candidateMatchesParameterByHint(parameter, candidate)) {
 				// we will not find a better match than this, so we "consume" the parameter and
 				// immediately return it
 				iterator.remove();
@@ -188,62 +173,34 @@ public class MethodInvocationAdapter {
 
 	/**
 	 * Checks, whether the given {@code candidate} matches the method
-	 * {@link Parameter} AND whether both represent the "new" value.
+	 * {@link Parameter} by an {@link ArgumentHint}.
 	 *
 	 * @param the       method parameter
 	 * @param candidate the candidate
 	 * @return {@link true}, if and only if the candidate is suitable for the given
 	 *         {@link Parameter}.
 	 */
-	private static boolean candidateMatchesNewValueParameter(final Parameter parameter,
-			final ParameterValue candidate) {
-		return isNewValueParameter(parameter) && parameterValueHasHint(candidate, ArgumentHint.NEW_VALUE)
-				&& candidateMatchesTypeParameter(parameter, candidate);
+	private static boolean candidateMatchesParameterByHint(final Parameter parameter, final ParameterValue candidate) {
+		for (final ArgumentHint hint : ArgumentHint.values()) {
+			if (parameterHasHint(parameter, hint) && parameterValueHasHint(candidate, hint)
+					&& candidateMatchesTypeParameter(parameter, candidate)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
-	 * Checks, whether the given method {@link Parameter} represents the "new"
-	 * value. This is checked by 1.) if the name contains the string fragment "new"
-	 * (compiler must preserve argument names in that case) OR 2.) the method
-	 * parameter is annotated by corresponding an @AFXArgHint annotation.
+	 * Checks, if the given {@code parameter} has the supplied {@code hint}.
 	 *
 	 * @param parameter the parameter to check
-	 * @return {@code true}, if the parameter represents an "new" value
+	 * @param hint      the hint
+	 * @return {@code true}, if and only if the supplied parameter carries the given
+	 *         hint
 	 */
-	private static boolean isNewValueParameter(final Parameter parameter) {
-		final AFXArgHint hint = parameter.getAnnotation(AFXArgHint.class);
-		return parameter.getName() != null && parameter.getName().contains(PARAMETER_NAME_FRAGMENT_NEW)
-				|| hint != null && hint.value() == ArgumentHint.NEW_VALUE;
-	}
-
-	/**
-	 * Checks, whether the given {@code candidate} matches the method
-	 * {@link Parameter} AND whether both represent the "old" value.
-	 *
-	 * @param parameter the method parameter
-	 * @param candidate the candidate
-	 * @return {@link true}, if and only if the candidate is suitable for the given
-	 *         {@link Parameter}.
-	 */
-	private static boolean candidateMatchesOldValueParameter(final Parameter parameter,
-			final ParameterValue candidate) {
-		return isOldValueParameter(parameter) && parameterValueHasHint(candidate, ArgumentHint.OLD_VALUE)
-				&& candidateMatchesTypeParameter(parameter, candidate);
-	}
-
-	/**
-	 * Checks, whether the given method {@link Parameter} represents the "old"
-	 * value. This is checked by 1.) if the name contains the string fragment "old"
-	 * (compiler must preserve argument names in that case) OR 2.) the method
-	 * parameter is annotated by corresponding an @AFXArgHint annotation.
-	 *
-	 * @param parameter the parameter to check
-	 * @return {@code true}, if the parameter represents an "old" value
-	 */
-	private static boolean isOldValueParameter(final Parameter parameter) {
-		final AFXArgHint hint = parameter.getAnnotation(AFXArgHint.class);
-		return parameter.getName() != null && parameter.getName().contains(PARAMETER_NAME_FRAGMENT_OLD)
-				|| hint != null && hint.value() == ArgumentHint.OLD_VALUE;
+	private static boolean parameterHasHint(final Parameter parameter, final ArgumentHint hint) {
+		final AFXArgHint argHint = parameter.getAnnotation(AFXArgHint.class);
+		return argHint != null && argHint.value() == hint;
 	}
 
 	/**
@@ -328,6 +285,18 @@ public class MethodInvocationAdapter {
 
 		public static ParameterValue ofNewValue(final Object value) {
 			return new ParameterValue(ArgumentHint.NEW_VALUE, value);
+		}
+
+		public static ParameterValue ofAddedValues(final Object value) {
+			return new ParameterValue(ArgumentHint.ADDED_VALUES, value);
+		}
+
+		public static ParameterValue ofRemovedValues(final Object value) {
+			return new ParameterValue(ArgumentHint.REMOVED_VALUES, value);
+		}
+
+		public static ParameterValue ofAllSelectedValues(final Object value) {
+			return new ParameterValue(ArgumentHint.ALL_SELECTED, value);
 		}
 
 		public ArgumentHint getHint() {
