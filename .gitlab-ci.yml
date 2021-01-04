@@ -27,7 +27,7 @@ build:
       - actionfx-app-sample/build/
     expire_in: 1 week
     
-test:
+unittest:
   stage: test
   script:
     - ./gradlew check
@@ -43,7 +43,7 @@ test:
 reportCodeCoverage:
   stage: test
   dependencies:
-    - test
+    - unittest
   script:
     - ./gradelw codeCoverageReport
     -  bash <(curl -s https://codecov.io/bash)
