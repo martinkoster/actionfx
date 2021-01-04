@@ -3,6 +3,7 @@ image: adoptopenjdk/openjdk11:jdk-11.0.9.1_1-ubuntu
 stages:
   - build
   - test
+  - quality
     
 before_script:
 #  - echo `pwd` # debug
@@ -41,9 +42,7 @@ unittest:
     expire_in: 1 week
     
 reportCodeCoverage:
-  stage: test
-  dependencies:
-    - unittest
+  stage: quality
   script:
     - ./gradelw codeCoverageReport
     -  bash <(curl -s https://codecov.io/bash)
