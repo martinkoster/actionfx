@@ -28,8 +28,9 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -37,7 +38,10 @@ import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
-import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+import com.github.actionfx.testing.annotation.TestInFxThread;
+import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
+
+import javafx.scene.control.SelectionMode;
 
 /**
  * JUnit test case for {@link FxmlViewInstantiationSupplier}
@@ -45,16 +49,17 @@ import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
  * @author koster
  *
  */
-@ExtendWith(FxThreadForAllMonocleExtension.class)
+@TestInFxThread
+@ExtendWith(FxThreadForEachMonocleExtension.class)
 class ControllerInstantiationSupplierTest {
 
-	@BeforeEach
-	void onSetup() {
+	@BeforeAll
+	static void beforeAll() {
 		ActionFX.builder().build();
 	}
 
 	@Test
-	void testCreateInstance_sampleViewWithFxml() {
+	void testCreateInstance_viewCreationTest() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewController> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewController.class);
@@ -82,4 +87,81 @@ class ControllerInstantiationSupplierTest {
 		assertThat(fxmlView.getStylesheets(), hasItems(equalTo("cssClass1"), equalTo("cssClass2")));
 	}
 
+	@Test
+	void testCreateInstance_listenerTest_textField_allListenersAreActive() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		controller.textField.setText("Hello World"); // triggers listener
+
+		// THEN (all 3 annotated methods are invoked)
+		assertThat(controller.invocations,
+				contains("onTextFieldValueChange('Hello World')",
+						"onTextFieldValueChangeWithNewAndOldValue('Hello World', '', ObservableValue)",
+						"onTextFieldValueChangeWithAnnotatedArguments('', 'Hello World', ObservableValue)"));
+	}
+
+	@Test
+	void testCreateInstance_listenerTest_textField_onlyOneListenerIsActive_usingListenerActiveBooleanPropertyInAnnotation() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		// deactivate 2 out of 3 listeners (2 annotations use the
+		// "listenerActiveBooleanProperty"
+		controller.listenerEnabled.set(false);
+		controller.textField.setText("Hello World"); // triggers listener
+
+		// THEN (only 1 method invocation is invoked)
+		assertThat(controller.invocations, contains("onTextFieldValueChange('Hello World')"));
+	}
+
+	@Test
+	void testCreateInstance_listenerTest_choiceBox() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		controller.choiceBox.setValue("Hello World"); // triggers listener
+
+		// THEN (only 1 method invocation is invoked)
+		assertThat(controller.invocations, contains("onChoiceBoxValueChange('Hello World')"));
+	}
+
+	@Test
+	void testCreateInstance_listenerTest_comboBox() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		controller.comboBox.setValue("Hello World"); // triggers listener
+
+		// THEN (only 1 method invocation is invoked)
+		assertThat(controller.invocations, contains("onComboBoxValueChange('Hello World')"));
+	}
+
+	@Test
+	void testCreateInstance_enableMultiSelectionControls() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN
+		assertThat(controller.singleSelectionTable.getSelectionModel().getSelectionMode(),
+				equalTo(SelectionMode.SINGLE));
+		assertThat(controller.multiSelectionTable.getSelectionModel().getSelectionMode(),
+				equalTo(SelectionMode.MULTIPLE));
+	}
 }

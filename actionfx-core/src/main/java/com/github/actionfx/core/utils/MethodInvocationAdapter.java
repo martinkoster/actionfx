@@ -259,7 +259,9 @@ public class MethodInvocationAdapter {
 
 	/**
 	 * Checks, whether the given {@code candidate} matches the type of the method
-	 * {@link Parameter}.
+	 * {@link Parameter}. In case the parameter value is {@code null}, it is
+	 * possible to assign this {@code null} value to a non-primitive method
+	 * parameter.
 	 *
 	 * @param parameter the method parameter
 	 * @param candidate the candidate
@@ -267,7 +269,8 @@ public class MethodInvocationAdapter {
 	 *         the method parameter
 	 */
 	private static boolean candidateMatchesTypeParameter(final Parameter parameter, final ParameterValue candidate) {
-		return parameter.getType().isAssignableFrom(candidate.getType());
+		return candidate.getType() == null && !parameter.getType().isPrimitive()
+				|| parameter.getType().isAssignableFrom(candidate.getType());
 	}
 
 	/**
@@ -336,7 +339,7 @@ public class MethodInvocationAdapter {
 		}
 
 		public Class<?> getType() {
-			return value.getClass();
+			return value != null ? value.getClass() : null;
 		}
 
 		@Override
@@ -372,6 +375,12 @@ public class MethodInvocationAdapter {
 			}
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return "ParameterValue [hint=" + hint + ", value=" + value + "]";
+		}
+
 	}
 
 }

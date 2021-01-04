@@ -1,0 +1,33 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f1a6256a375, pid=15481, tid=15499
+#
+# JRE version: OpenJDK Runtime Environment (15.0+36) (build 15+36-1562)
+# Java VM: OpenJDK 64-Bit Server VM (15+36-1562, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x4375]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x65
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %d %P %E" (or dumping to /home/koster/development/projects/actionfx/actionfx-core/core.15481)
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -XX:+ShowCodeDetailsInExceptionMessages -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:43961 -ea -javaagent:/home/koster/development/sts-4.8.0.RELEASE/configuration/org.eclipse.osgi/257/0/.cp/lib/javaagent-shaded.jar -Dfile.encoding=UTF-8 org.eclipse.jdt.internal.junit.runner.RemoteTestRunner -version 3 -port 37591 -testLoaderClass org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader -loaderpluginname org.eclipse.jdt.junit5.runtime -test com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplierTest:testCreateInstance_listenerText_textField -uniqueId [engine:junit-jupiter]/[class:com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplierTest]/[method:testCreateInstance_listenerText_textField()]
+
+Host: Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz, 4 cores, 9G, Ubuntu 20.04.1 LTS
+Time: Mon Jan  4 18:53:43 2021 CET elapsed time: 123.225308 seconds (0d 0h 2m 3s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007f1a5c1d2960):  JavaThread "Signal Dispatcher" daemon [_thread_in_vm, id=15499, stack(0x00007f1a601ee000,0x00007f1a602ef000)]
+
+Stack: [0x00007f1a601ee000,0x00007f1a602ef000],  sp=0x00007f1a602ec1b0,  free space=1016k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libjimage.so+0x4375]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x65
+C  [libjimage.so+0x4f0e]  ImageFileReader::find_location_index(char const*, unsigned long long*) const+0x3e
+C  [libjimage.so+0x540c]  JIMAGE_FindResource+0xfc
+V  [libjvm.so+0x4e9431]

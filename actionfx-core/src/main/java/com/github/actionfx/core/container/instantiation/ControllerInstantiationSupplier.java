@@ -26,6 +26,7 @@ package com.github.actionfx.core.container.instantiation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.List;
 
 import com.github.actionfx.core.ActionFX;
@@ -63,6 +64,10 @@ import javafx.scene.control.Control;
 public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSupplier<T> {
 
 	private final Class<T> controllerClass;
+
+	private static Comparator<Method> AFXONVALUECHANGE_COMPARATOR = new AFXOnValueChangeAnnotatedMethodComparator();
+
+	private static Comparator<Method> AFXONVALUESELECTED_COMPARATOR = new AFXOnValueSelectedAnnotatedMethodComparator();
 
 	public ControllerInstantiationSupplier(final Class<T> controllerClass) {
 		this.controllerClass = prepareControllerClass(controllerClass);
@@ -155,12 +160,12 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private void enableOnValueChangeActions(final Object instance, final View view) {
 		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
 				method -> method.getAnnotation(AFXOnValueChanged.class) != null);
+		methods.sort(AFXONVALUECHANGE_COMPARATOR);
 		for (final Method method : methods) {
 			final AFXOnValueChanged onValueChanged = method.getAnnotation(AFXOnValueChanged.class);
 			final BooleanProperty listenerActionBooleanProperty = lookupListenerActiveBooleanProperty(instance,
 					onValueChanged.listenerActiveBooleanProperty());
 			final ControlWrapper controlWrapper = createControlWrapper(onValueChanged.controlId(), view);
-
 			final TimedChangeListener<?> changeListener = createChangeListener(instance, method,
 					onValueChanged.timeoutMs(), listenerActionBooleanProperty);
 			controlWrapper.addValueChangeListener(changeListener);
@@ -226,7 +231,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty) {
 		return new TimedChangeListener<>((observable, oldValue, newValue) -> {
 			final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
-					ParameterValue.ofNewValue(newValue), ParameterValue.ofOldValue(oldValue), observable);
+					ParameterValue.ofNewValue(newValue), ParameterValue.ofOldValue(oldValue),
+					ParameterValue.of(observable));
 			adapter.invoke();
 		}, timeoutMs, listenerActionBooleanProperty);
 	}
@@ -264,8 +270,45 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 						+ "' is annotated by @AFXEnableMultiSelection, but field value is not of type 'javafx.scene.control.Control'!");
 
 			}
-			final ControlWrapper controlWrapper = new ControlWrapper((Control) instance);
+			final ControlWrapper controlWrapper = new ControlWrapper((Control) fieldValue);
 			controlWrapper.enableMultiSelection();
 		}
 	}
+
+	/**
+	 * Comparator implementation that orders methods according to the "order"
+	 * attribute among same controls.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class AFXOnValueChangeAnnotatedMethodComparator implements Comparator<Method> {
+
+		@Override
+		public int compare(final Method o1, final Method o2) {
+			final AFXOnValueChanged c1 = o1.getAnnotation(AFXOnValueChanged.class);
+			final AFXOnValueChanged c2 = o2.getAnnotation(AFXOnValueChanged.class);
+			return Comparator.comparing(AFXOnValueChanged::controlId).thenComparing(AFXOnValueChanged::order)
+					.compare(c1, c2);
+		}
+	}
+
+	/**
+	 * Comparator implementation that orders methods according to the "order"
+	 * attribute among same controls.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class AFXOnValueSelectedAnnotatedMethodComparator implements Comparator<Method> {
+
+		@Override
+		public int compare(final Method o1, final Method o2) {
+			final AFXOnValueSelected c1 = o1.getAnnotation(AFXOnValueSelected.class);
+			final AFXOnValueSelected c2 = o2.getAnnotation(AFXOnValueSelected.class);
+			return Comparator.comparing(AFXOnValueSelected::controlId).thenComparing(AFXOnValueSelected::order)
+					.compare(c1, c2);
+		}
+	}
+
 }

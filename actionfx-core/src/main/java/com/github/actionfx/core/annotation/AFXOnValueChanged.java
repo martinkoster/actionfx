@@ -81,4 +81,14 @@ public @interface AFXOnValueChanged {
 	 *         is always called on changes.
 	 */
 	public String listenerActiveBooleanProperty() default "";
+
+	/**
+	 * An optional order that can be specified to define the order of execution of
+	 * the annotated method, in case more than one method listens to changes of the
+	 * same specific control. Lower order values will be executed before higher
+	 * order values.
+	 *
+	 * @return the order, default is 1
+	 */
+	public int order() default 1;
 }

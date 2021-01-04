@@ -33,8 +33,8 @@ import java.lang.annotation.Target;
 import javafx.beans.property.BooleanProperty;
 
 /**
- * Annotated methods are invoked when one value or potentially multiple values
- * are selected in a control identified by {@link #controlId()}.
+ * Annotated methods are returning the data that is displayed in referenced
+ * {@link Control}s.
  *
  * @author koster
  *
@@ -42,52 +42,48 @@ import javafx.beans.property.BooleanProperty;
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface AFXOnValueSelected {
+public @interface AFXLoadControlValues {
 
 	/**
-	 * ID of the control whose selection shall be observed for changes. Please note
-	 * that the given Id needs to be an existing node ID in the scene graph that
-	 * evaluates to a {@link Control}.
+	 * ID of the control whose values shall be loaded for by the annotated method
 	 *
-	 * @return the node ID of a control, whose selection shall be observed for
-	 *         changes.
+	 * @return the node ID of a control for that data shall be loaded
 	 */
 	public String controlId();
 
 	/**
-	 * An optional timeout that is waited after the value change in the control
-	 * occurs. The default value is 0, i.e. means the method is immediately executed
-	 * after the value change occurs. In case there is a positive value specified,
-	 * there is only one method invocation for the last change event that occurred
-	 * in the time between first change event and the given number of timeout
-	 * milliseconds.
-	 * <p>
-	 * This value can be used e.g. for reducing the number of method invocation
-	 * (e.g. for a TableView you might not want to have this method invoked on every
-	 * selection, but you might want to wait for multiple selections to be done).
+	 * Optional flag that determines, whether the data shall be loaded in an
+	 * asynchronous fashion. When set to {@code true}, the annotated method is not
+	 * executed inside the JavaFX-thread, but in its own thread in order not to
+	 * block the JavaFX thread. The data itself however is set again to the
+	 * referenced control from inside the JavaFX thread.
 	 *
-	 * @return the timeout in milliseconds
+	 * @return {@code true},if method execution shall be performed from a new
+	 *         thread, {@code false}, if the method shall be executed synchronously
+	 *         inside the JavaFX thread. Default is {@code false}.
 	 */
-	public long timeoutMs() default 0;
+	public boolean async() default false;
 
 	/**
 	 * An optional expression that must resolve to a field of type
-	 * {@link BooleanProperty}, if specified. The annotated method is only called,
-	 * when the boolean property holds the value {@code true}. This attribute can be
-	 * useful, when you want to activate the callback methods after a complete
-	 * initialization of the JavaFX dialogue with values, etc.
+	 * {@link BooleanProperty}, if specified. The annotated method is only called
+	 * after construction (before {@code @PostConstruct} initialization methods),
+	 * when the boolean property holds the value {@code true}.
+	 * <p>
+	 * After construction time, the data is loaded, whenever the boolean property
+	 * switches its value from {@code false} to {@code true}.
 	 *
 	 * @return an expression that points to a field of type {@link BooleanProperty}.
 	 *         Default is the empty string "", that means that the annotated method
-	 *         is always called on changes.
+	 *         is called after construction time of the controller, but before
+	 *         {@code @PostConstruct} annotated methods.
 	 */
-	public String listenerActiveBooleanProperty() default "";
+	public String loadingActiveBooleanProperty() default "";
 
 	/**
 	 * An optional order that can be specified to define the order of execution of
-	 * the annotated method, in case more than one method listens to changes of the
-	 * same specific control. Lower order values will be executed before higher
-	 * order values.
+	 * the annotated method, in case more than one data loading routine is present
+	 * inside the ActionFX controller.
 	 *
 	 * @return the order, default is 1
 	 */
