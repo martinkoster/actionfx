@@ -20,7 +20,6 @@ configure(allprojects) { project ->
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: 'jacoco'
-    id "org.sonarqube" version "3.0"
     apply plugin: "maven-publish"
     apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
