@@ -42,7 +42,7 @@ import javafx.beans.property.BooleanProperty;
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface AFXLoadControlValues {
+public @interface AFXLoadControlData {
 
 	/**
 	 * ID of the control whose values shall be loaded for by the annotated method

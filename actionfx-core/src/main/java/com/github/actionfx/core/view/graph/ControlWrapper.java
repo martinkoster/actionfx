@@ -25,6 +25,7 @@ package com.github.actionfx.core.view.graph;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,11 +38,15 @@ import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.utils.ReflectionUtils;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Control;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
@@ -70,6 +75,9 @@ public class ControlWrapper extends NodeWrapper {
 	// cache for control configurations read from external Properties-file
 	private static final Map<Class<? extends Control>, ControlConfig> CONTROL_CONFIG_CACHE = Collections
 			.synchronizedMap(new HashMap<>());
+
+	// the field name of the "onAction" property inside controls that do support it
+	private static final String ON_ACTION_FIELD_NAME = "onAction";
 
 	private static final String PROPERTY_KEY_VALUE_PROPERTY = "valueProperty";
 	private static final String PROPERTY_KEY_VALUES_OBSERVABLE_LIST = "valuesObservableList";
@@ -197,6 +205,34 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
+	 * Checks, whether the wrapped {@link Control} supports a "value" property (e.g.
+	 * for @{@link javafx.scene.control.TextField} that is the
+	 * {@link javafx.scene.control.TextField#textProperty()} as configured in the
+	 * properties file on classpath
+	 * {@code /afxcontrolwrapper/javafx.scene.control.TextField.properties).}
+	 *
+	 * @return {@code true}, if a value property is available and accessible,
+	 *         {@code false} otherwise.
+	 */
+	public boolean supportsValue() {
+		return controlConfig.hasValueProperty();
+	}
+
+	/**
+	 * Checks, whether the wrapped {@link Control} supports a "values" property
+	 * (e.g. for @{@link javafx.scene.control.ChoiceBox} that is the
+	 * {@link javafx.scene.control.ChoiceBox#itemsProperty()} as configured in the
+	 * properties file on classpath
+	 * {@code /afxcontrolwrapper/javafx.scene.control.ChoiceBox.properties).}
+	 *
+	 * @return {@code true}, if a value property is available and accessible,
+	 *         {@code false} otherwise.
+	 */
+	public boolean supportsValues() {
+		return controlConfig.hasValuesObservableList();
+	}
+
+	/**
 	 * Gets the selection model from the wrapped control. In case the wrapped
 	 * control does not have a selection model, then {@code null} is returned.
 	 *
@@ -224,7 +260,7 @@ public class ControlWrapper extends NodeWrapper {
 	public <V> V getSelectedValue() {
 		final Control control = getWrapped();
 		if (controlConfig.hasSelectedValueProperty()) {
-			final Property<V> property = controlConfig.getSelectedValueProperty(control);
+			final ObservableValue<V> property = controlConfig.getSelectedValueProperty(control);
 			return property.getValue();
 		} else if (controlConfig.hasSelectedValuesObservableList()) {
 			final ObservableList<V> list = controlConfig.getSelectedValuesObservableList(control);
@@ -242,7 +278,7 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the selected value property, or {@code null}, in case the control
 	 *         does not have a selected value property.
 	 */
-	public <V> Property<V> getSelectedValueProperty() {
+	public <V> ObservableValue<V> getSelectedValueProperty() {
 		final Control control = getWrapped();
 		return controlConfig.hasSelectedValueProperty() ? controlConfig.getSelectedValueProperty(control) : null;
 	}
@@ -261,7 +297,7 @@ public class ControlWrapper extends NodeWrapper {
 		if (controlConfig.hasSelectedValuesObservableList()) {
 			return controlConfig.getSelectedValuesObservableList(control);
 		} else if (controlConfig.hasSelectedValueProperty()) {
-			final Property<V> property = controlConfig.getSelectedValueProperty(control);
+			final ObservableValue<V> property = controlConfig.getSelectedValueProperty(control);
 			final V value = property.getValue();
 			if (value == null) {
 				return FXCollections.emptyObservableList();
@@ -338,7 +374,7 @@ public class ControlWrapper extends NodeWrapper {
 	 * @param changeListener the change listener to add
 	 */
 	public <V> void addSelectedValueChangeListener(final ChangeListener<V> changeListener) {
-		final Property<V> selectedValueProperty = getSelectedValueProperty();
+		final ObservableValue<V> selectedValueProperty = getSelectedValueProperty();
 		if (selectedValueProperty != null) {
 			selectedValueProperty.addListener(changeListener);
 			addedSelectedValueChangeListener.add(changeListener);
@@ -350,7 +386,7 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void removeAllSelectedValueChangeListener() {
-		final Property<?> selectedValueProperty = getSelectedValueProperty();
+		final ObservableValue<?> selectedValueProperty = getSelectedValueProperty();
 		if (selectedValueProperty != null) {
 			for (final ChangeListener listener : addedSelectedValueChangeListener) {
 				selectedValueProperty.removeListener(listener);
@@ -401,6 +437,31 @@ public class ControlWrapper extends NodeWrapper {
 		}
 		final MultipleSelectionModel<?> multiSelectionModel = (MultipleSelectionModel<?>) selectionModel;
 		multiSelectionModel.setSelectionMode(SelectionMode.MULTIPLE);
+	}
+
+	/**
+	 * Returns the "on action" property of a control. In case this property is not
+	 * supported, {@code null} is returned.
+	 *
+	 * @return the "on action" property, or {@code null}, in case the property is
+	 *         not supported by the wrapped control
+	 */
+	@SuppressWarnings("unchecked")
+	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {
+		final Field field = ReflectionUtils.findField(getWrappedType(), ON_ACTION_FIELD_NAME);
+		if (field == null) {
+			return null;
+		}
+		final Object value = ReflectionUtils.getFieldValueByPropertyGetter(field, getWrapped());
+		if (value == null) {
+			return null;
+		}
+		if (!ObjectProperty.class.isAssignableFrom(value.getClass())) {
+			throw new IllegalStateException("OnAction property in control of type '"
+					+ getWrappedType().getCanonicalName() + "' has type '" + value.getClass().getCanonicalName()
+					+ "', expected was type '" + ObjectProperty.class.getCanonicalName() + "'!");
+		}
+		return (ObjectProperty<EventHandler<ActionEvent>>) value;
 	}
 
 	/**
@@ -517,8 +578,8 @@ public class ControlWrapper extends NodeWrapper {
 		}
 
 		@SuppressWarnings("unchecked")
-		public <V> Property<V> getSelectedValueProperty(final Control control) {
-			return ReflectionUtils.getNestedFieldValue(selectedValueProperty, control, Property.class);
+		public <V> ObservableValue<V> getSelectedValueProperty(final Control control) {
+			return ReflectionUtils.getNestedFieldValue(selectedValueProperty, control, ObservableValue.class);
 		}
 
 		public String getSelectedValuesObservableList() {

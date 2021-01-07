@@ -33,8 +33,26 @@ import java.lang.annotation.Target;
 import javafx.beans.property.BooleanProperty;
 
 /**
- * Annotated methods are invoked when one value or potentially multiple values
- * are selected in a control identified by {@link #controlId()}.
+ * Annotated methods are invoked when the user inputs a value in the referenced
+ * control identified by {@link #controlId()) and by that changes the value of
+ * the specified .
+ * <p>
+ * Annotated methods can be of the following signature:
+ * <ul>
+ * <li><tt>void methodName()</tt></li>
+ * <li><tt>void methodName(TYPE newValue)</tt></li>
+ * <li><tt>void methodName(TYPE newValue, TYPE oldValue, ObservableValue<TYPE>
+ * observableValue)</tt></li>
+ * <li><tt>void methodName(TYPE newValue, TYPE oldValue, ObservableValue<TYPE>
+ * observableValue)</tt></li>
+ * <li><tt>void methodName(ObservableList<TYPE> selectedValue)</tt></li>
+ * </ul>
+ * The above signatures are supported without requiring the use of the
+ * {@link AFXArgHint} annotation. In case you need to change the order of the
+ * arguments, you will need to specify hints for defining, which argument is the
+ * "new" value (use @{@link AFXArgHint} with {@link ArgumentHint#NEW_VALUE}) and
+ * which argument is the "old" value (use @{@link AFXArgHint} with
+ * {@link ArgumentHint#OLD_VALUE})
  *
  * @author koster
  *
@@ -42,15 +60,14 @@ import javafx.beans.property.BooleanProperty;
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface AFXOnValueSelected {
+public @interface AFXOnUserInput {
 
 	/**
-	 * ID of the control whose selection shall be observed for changes. Please note
-	 * that the given Id needs to be an existing node ID in the scene graph that
+	 * ID of the control whose value shall be observed for changes. Please note that
+	 * the given Id needs to be an existing node ID in the scene graph that
 	 * evaluates to a {@link Control}.
 	 *
-	 * @return the node ID of a control, whose selection shall be observed for
-	 *         changes.
+	 * @return the node ID of a control, whose value shall be observed for changes.
 	 */
 	public String controlId();
 
@@ -63,8 +80,8 @@ public @interface AFXOnValueSelected {
 	 * milliseconds.
 	 * <p>
 	 * This value can be used e.g. for reducing the number of method invocation
-	 * (e.g. for a TableView you might not want to have this method invoked on every
-	 * selection, but you might want to wait for multiple selections to be done).
+	 * (e.g. for a TextField you might not want to have this method invoked on every
+	 * key stroke, but you might want to wait for multiple changes).
 	 *
 	 * @return the timeout in milliseconds
 	 */

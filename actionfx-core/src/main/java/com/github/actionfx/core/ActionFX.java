@@ -51,25 +51,27 @@ import javafx.stage.Stage;
  * As ActionFX uses an internal bean container with dependency injection
  * support, it is recommended to wire all controllers with {@code @Inject}
  * instead of accessing them through this class (please note that there is also
- * support of Spring's bean container through ActionFX's {@code afx-spring-boot}
- * module).
+ * support of Spring's bean container through ActionFX's
+ * {@code actionfx-spring-boot} module).
  * <p>
  * <b>Using ActionFX:</b>
  * <p>
  * Before using this class, it needs to be setup in the {@code main()} or
  * {@link Application#init()} method for the specific application.
  * <p>
- * <b>Expample:</b> ActionFX actionFX =
- * ActionFX.builder().configurationClass(SampleApp.class).build();
+ * <b>Expample:</b>
  *
  * <pre>
- * <p>
- * After the setup, an instance of this class is retrieved throughout the application via:
+ * ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+ * </pre>
+ *
+ * After the setup, an instance of this class is retrieved throughout the
+ * application via:
  *
  * <pre>
  * ActionFX instance = ActionFX.getInstance();
  * </pre>
- * <p>
+ *
  * After the ActionFX instance is built, a component scan can be performed:
  *
  * <pre>

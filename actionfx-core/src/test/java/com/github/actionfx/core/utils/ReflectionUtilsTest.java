@@ -345,6 +345,17 @@ class ReflectionUtilsTest {
 		assertThat(method.getName(), equalTo("sayHello"));
 	}
 
+	@Test
+	void testFindMethod_inSuperClass() {
+		// WHEN
+		final Method method = ReflectionUtils.findMethod(DerivedFromClassWithField.class, "getField1");
+
+		// THEN
+		assertThat(method, notNullValue());
+		assertThat(method.getName(), equalTo("getField1"));
+
+	}
+
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {
 		assertThat(methods, notNullValue());
 		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList()), hasItems(exptectedFieldNames)); // hasItems

@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,8 @@ import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
 
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.scene.control.SelectionMode;
 
 /**
@@ -88,7 +91,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	void testCreateInstance_listenerTest_textField_allListenersAreActive() {
+	void testCreateInstance_wireOnUserInput_valueChangetextField_allListenersAreActive() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewControllerWithListener.class);
@@ -105,7 +108,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	void testCreateInstance_listenerTest_textField_onlyOneListenerIsActive_usingListenerActiveBooleanPropertyInAnnotation() {
+	void testCreateInstance_wireOnUserInput_valueChangetextField_onlyOneListenerIsActive_usingListenerActiveBooleanPropertyInAnnotation() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewControllerWithListener.class);
@@ -122,7 +125,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	void testCreateInstance_listenerTest_choiceBox() {
+	void testCreateInstance_wireOnUserInput_valueChangechoiceBox() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewControllerWithListener.class);
@@ -136,7 +139,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	void testCreateInstance_listenerTest_comboBox() {
+	void testCreateInstance_wireOnUserInput_valueChangecomboBox() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewControllerWithListener.class);
@@ -164,4 +167,89 @@ class ControllerInstantiationSupplierTest {
 		assertThat(controller.multiSelectionTable.getSelectionModel().getSelectionMode(),
 				equalTo(SelectionMode.MULTIPLE));
 	}
+
+	@Test
+	void testCreateInstance_wireOnAction() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN
+		assertThat(controller.actionButton.getOnAction(), notNullValue());
+
+		// and WHEN (fire action)
+		Event.fireEvent(controller.actionButton, new ActionEvent());
+
+		// and THEN (invocation was performed)
+		assertThat(controller.invocations, contains("onActionButtonClicked()"));
+	}
+
+	@Test
+	void testCreateInstance_wireOnAction_referencedControlDoesNotHaveOnActionProperty() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithWrongAFXOnAction> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithWrongAFXOnAction.class);
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> supplier.get());
+
+		// THEN
+		assertThat(ex.getMessage(), equalTo(
+				"Control with id='singleSelectionTable' and type 'javafx.scene.control.TableView' does not support an 'onAction' property! Please verify your @AFXOnAction annotation in controller class 'com.github.actionfx.core.container.instantiation.SampleViewControllerWithWrongAFXOnAction', method 'willNeverBeCalledAsOnActionIsWrong'!"));
+	}
+
+	@Test
+	void testCreateInstance_wireOnUserInput_selection_singleValueChange_inTableView() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		controller.singleSelectionTable.getItems().add("Item 1");
+		controller.singleSelectionTable.getItems().add("Item 2");
+		controller.singleSelectionTable.getItems().add("Item 3");
+		controller.singleSelectionTable.getSelectionModel().select("Item 2");
+
+		// THEN (only 1 method invocation is invoked)
+		assertThat(controller.invocations, contains("onSelectValueInSingleSelectionTable('Item 2')",
+				"onSelectValueInSingleSelectionTableWithList([Item 2])"));
+	}
+
+	@Test
+	void testCreateInstance_wireOnUserInput_selection_multiValueChange_inTableView() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		controller.multiSelectionTable.getItems().add("Item 1");
+		controller.multiSelectionTable.getItems().add("Item 2");
+		controller.multiSelectionTable.getItems().add("Item 3");
+		controller.multiSelectionTable.getSelectionModel().selectAll();
+
+		// THEN (only 1 method invocation is invoked)
+		assertThat(controller.invocations, contains("onSelectValueInMultiSelectionTable('Item 1','Item 2','Item 3')",
+				"onSelectValueInMultiSelectionTableWithFullArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)",
+				"onSelectValueInMultiSelectionTableWithAnnotatedArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)"));
+	}
+
+	@Test
+	void testCreateInstance_wireLoadControlData() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN (verify that dataLoadedSelectionTable has the items loaded from the
+		// method "loadData")
+		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+	}
+
 }

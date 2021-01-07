@@ -23,19 +23,23 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
-import com.github.actionfx.core.annotation.AFXOnValueChanged;
-import com.github.actionfx.core.annotation.AFXOnValueSelected;
+import com.github.actionfx.core.annotation.AFXLoadControlData;
+import com.github.actionfx.core.annotation.AFXOnAction;
+import com.github.actionfx.core.annotation.AFXOnUserInput;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
@@ -52,6 +56,10 @@ import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Control;
 
 /**
@@ -68,9 +76,11 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 
 	private final Class<T> controllerClass;
 
-	private static final Comparator<Method> AFXONVALUECHANGE_COMPARATOR = new AFXOnValueChangeAnnotatedMethodComparator();
+	private static final Comparator<Method> AFXONUSERINPUT_COMPARATOR = new OrderBasedAnnotatedMethodComparator<>(
+			AFXOnUserInput.class, AFXOnUserInput::controlId, AFXOnUserInput::order);
 
-	private static final Comparator<Method> AFXONVALUESELECTED_COMPARATOR = new AFXOnValueSelectedAnnotatedMethodComparator();
+	private static final Comparator<Method> AFXLOADCONTROLDATA_COMPARATOR = new OrderBasedAnnotatedMethodComparator<>(
+			AFXLoadControlData.class, AFXLoadControlData::controlId, AFXLoadControlData::order);
 
 	public ControllerInstantiationSupplier(final Class<T> controllerClass) {
 		this.controllerClass = prepareControllerClass(controllerClass);
@@ -132,15 +142,16 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Applies method-level annotations (e.g. {@link AFXOnValueChanged}.
+	 * Applies method-level annotations (e.g. {@link AFXOnUserInput}.
 	 *
 	 * @param instance the instance that is checked for ActionFX method level
 	 *                 annotations
 	 * @param view     the view that belongs to the controller
 	 */
 	protected void applyMethodLevelEventAnnotations(final Object instance, final View view) {
-		enableOnValueChangeActions(instance, view);
-		enableOnValueSelectedActions(instance, view);
+		wireOnActions(instance, view);
+		wireLoadControlData(instance, view);
+		wireOnUserInputActions(instance, view);
 	}
 
 	/**
@@ -154,24 +165,135 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Wires methods annotated with {@link AFXOnValueChanged} to the corresponding
+	 * Wires methods annotated with {@link AFXOnAction} to the corresponding
+	 * control.
+	 *
+	 * @param instance the instance holding the methods
+	 * @param view     the view that belongs to the controller
+	 */
+	private void wireOnActions(final Object instance, final View view) {
+		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
+				method -> method.getAnnotation(AFXOnAction.class) != null);
+		for (final Method method : methods) {
+			final AFXOnAction onAction = method.getAnnotation(AFXOnAction.class);
+			final ControlWrapper controlWrapper = createControlWrapper(onAction.controlId(), view);
+			final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = controlWrapper.getOnActionProperty();
+			if (onActionProperty == null) {
+				throw new IllegalStateException("Control with id='" + onAction.controlId() + "' and type '"
+						+ controlWrapper.getWrappedType().getCanonicalName()
+						+ "' does not support an 'onAction' property! Please verify your @AFXOnAction annotation in controller class '"
+						+ instance.getClass().getCanonicalName() + "', method '" + method.getName() + "'!");
+			}
+			onActionProperty.setValue(actionEvent -> {
+				final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
+						ParameterValue.of(actionEvent));
+				adapter.invoke();
+			});
+		}
+	}
+
+	/**
+	 * Wires methods annotated with {@link AFXOnUserInput} to the corresponding
 	 * value inside the control.
 	 *
 	 * @param instance the instance holding the methods
 	 * @param view     the view that belongs to the controller
 	 */
-	private void enableOnValueChangeActions(final Object instance, final View view) {
+	private void wireOnUserInputActions(final Object instance, final View view) {
 		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
-				method -> method.getAnnotation(AFXOnValueChanged.class) != null);
-		methods.sort(AFXONVALUECHANGE_COMPARATOR);
+				method -> method.getAnnotation(AFXOnUserInput.class) != null);
+		methods.sort(AFXONUSERINPUT_COMPARATOR);
 		for (final Method method : methods) {
-			final AFXOnValueChanged onValueChanged = method.getAnnotation(AFXOnValueChanged.class);
-			final BooleanProperty listenerActionBooleanProperty = lookupListenerActiveBooleanProperty(instance,
-					onValueChanged.listenerActiveBooleanProperty());
-			final ControlWrapper controlWrapper = createControlWrapper(onValueChanged.controlId(), view);
-			final TimedChangeListener<?> changeListener = createValueChangeListener(instance, method,
-					onValueChanged.timeoutMs(), listenerActionBooleanProperty);
-			controlWrapper.addValueChangeListener(changeListener);
+			final AFXOnUserInput onUserInput = method.getAnnotation(AFXOnUserInput.class);
+			final BooleanProperty listenerActionBooleanProperty = lookupBooleanProperty(instance,
+					onUserInput.listenerActiveBooleanProperty());
+			final ControlWrapper controlWrapper = createControlWrapper(onUserInput.controlId(), view);
+			// check, whether the wrapped control supports multi-selection or only single
+			// selection
+			if (controlWrapper.supportsMultiSelection()) {
+				final TimedListChangeListener<?> changeListener = createListChangeListener(instance, method,
+						onUserInput.timeoutMs(), listenerActionBooleanProperty, controlWrapper::getSelectedValues,
+						controlWrapper::getSelectedValue);
+				controlWrapper.addSelectedValuesChangeListener(changeListener);
+			} else if (controlWrapper.supportsSelection()) {
+				final TimedChangeListener<?> changeListener = createValueChangeListener(instance, method,
+						onUserInput.timeoutMs(), listenerActionBooleanProperty);
+				controlWrapper.addSelectedValueChangeListener(changeListener);
+			} else if (controlWrapper.supportsValue()) {
+				final TimedChangeListener<?> changeListener = createValueChangeListener(instance, method,
+						onUserInput.timeoutMs(), listenerActionBooleanProperty);
+				controlWrapper.addValueChangeListener(changeListener);
+			} else if (controlWrapper.supportsValues()) {
+				final TimedListChangeListener<?> changeListener = createListChangeListener(instance, method,
+						onUserInput.timeoutMs(), listenerActionBooleanProperty, controlWrapper::getValues,
+						controlWrapper::getValue);
+				controlWrapper.addValuesChangeListener(changeListener);
+			} else {
+				throw new IllegalStateException("Control with ID='" + onUserInput.controlId()
+						+ "' does not support user input listening! Please check your ActionFX annotations inside constroller '"
+						+ instance.getClass().getCanonicalName() + "'!");
+			}
+		}
+	}
+
+	/**
+	 * Wires methods annotated with {@link AFXLoadControlData} to the corresponding
+	 * value inside the control.
+	 *
+	 * @param instance the instance holding the methods
+	 * @param view     the view that belongs to the controller
+	 */
+	private void wireLoadControlData(final Object instance, final View view) {
+		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
+				method -> method.getAnnotation(AFXLoadControlData.class) != null);
+		methods.sort(AFXLOADCONTROLDATA_COMPARATOR);
+		for (final Method method : methods) {
+			final AFXLoadControlData loadControlData = method.getAnnotation(AFXLoadControlData.class);
+			final BooleanProperty loadingActiveBooleanProperty = lookupBooleanProperty(instance,
+					loadControlData.loadingActiveBooleanProperty());
+			final ControlWrapper controlWrapper = createControlWrapper(loadControlData.controlId(), view);
+			// check, whether the wrapped control supports multi-selection or only single
+			// selection
+			if (controlWrapper.supportsValues()) {
+				populateControlDataFromMethod(instance, method, loadingActiveBooleanProperty, controlWrapper);
+			} else {
+				throw new IllegalStateException("Control with ID='" + loadControlData.controlId()
+						+ "' does not support user input listening! Please check your ActionFX annotations inside constroller '"
+						+ instance.getClass().getCanonicalName() + "'!");
+			}
+		}
+
+	}
+
+	/**
+	 * Populates the control that is wrapped inside {@link ControlWrapper} with the
+	 * data that the given {@link Method} is returning.
+	 *
+	 * @param instance                     the instance holding the method
+	 * @param method                       the method that returns the control data
+	 * @param loadingActiveBooleanProperty an optional boolean property that
+	 *                                     signalizes, whether the data can be
+	 *                                     loaded (when set to {@code true})
+	 * @param controlWrapper               the wrapped control
+	 */
+	private void populateControlDataFromMethod(final Object instance, final Method method,
+			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper) {
+		final ObservableList<Object> valuesObservableList = controlWrapper.getValues();
+		final MethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance, method);
+		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
+			final List<Object> data = methodInvocationAdapter.invoke();
+			valuesObservableList.clear();
+			valuesObservableList.addAll(data);
+		}
+		if (loadingActiveBooleanProperty != null) {
+			// whenever value switches from false to true, we trigger a loading
+			loadingActiveBooleanProperty.addListener((observable, oldValue, newValue) -> {
+				if (Boolean.FALSE.equals(oldValue) && Boolean.TRUE.equals(newValue)) {
+					final List<Object> data = methodInvocationAdapter.invoke();
+					valuesObservableList.clear();
+					valuesObservableList.addAll(data);
+				}
+			});
 		}
 	}
 
@@ -200,21 +322,18 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	/**
 	 * Looks up a {@link BooleanProperty} inside the given {@code instance}.
 	 *
-	 * @param instance                          the instance
-	 * @param listenerActiveBooleanPropertyPath the property path (potentially
-	 *                                          nested) pointing to a
-	 *                                          {@link BooleanProperty}
+	 * @param instance            the instance
+	 * @param booleanPropertyPath the property path (potentially nested) pointing to
+	 *                            a {@link BooleanProperty}
 	 * @return the looked-up boolean property, or {@code null}, if the property can
 	 *         not be looked up
 	 */
-	private BooleanProperty lookupListenerActiveBooleanProperty(final Object instance,
-			final String listenerActiveBooleanPropertyPath) {
-		BooleanProperty listenerActionBooleanProperty = null;
-		if (!"".equals(listenerActiveBooleanPropertyPath)) {
-			listenerActionBooleanProperty = (BooleanProperty) ReflectionUtils
-					.getNestedFieldValue(listenerActiveBooleanPropertyPath, instance);
+	private BooleanProperty lookupBooleanProperty(final Object instance, final String booleanPropertyPath) {
+		BooleanProperty booleanProperty = null;
+		if (!"".equals(booleanPropertyPath)) {
+			booleanProperty = (BooleanProperty) ReflectionUtils.getNestedFieldValue(booleanPropertyPath, instance);
 		}
-		return listenerActionBooleanProperty;
+		return booleanProperty;
 	}
 
 	/**
@@ -233,7 +352,9 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private TimedChangeListener<?> createValueChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty) {
 		return new TimedChangeListener<>((observable, oldValue, newValue) -> {
-			final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
+			final MethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
+					ParameterValue.ofAllSelectedValues(
+							newValue == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(newValue))),
 					ParameterValue.ofNewValue(newValue), ParameterValue.ofOldValue(oldValue),
 					ParameterValue.of(observable));
 			adapter.invoke();
@@ -251,63 +372,44 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @param listenerActionBooleanProperty an optional boolean property that must
 	 *                                      be set to {@code true}, so that the
 	 *                                      change listener is executed
-	 * @param valuesSupplier                a supplier that gets the values to
-	 *                                      retrieve
+	 * @param allValuesSupplier             a supplier that gets all values that are
+	 *                                      selected
+	 * @param singleValueSupplier           a supplier that gets a single selected
+	 *                                      value (this is usually the last selected
+	 *                                      item)
 	 * @return
 	 */
 	private TimedListChangeListener<?> createListChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty,
-			final Supplier<?> valuesSupplier) {
+			final Supplier<List<Object>> allValuesSupplier, final Supplier<Object> singleValueSupplier) {
 		return new TimedListChangeListener<>(change -> {
 			final List<Object> addedList = new ArrayList<>();
 			final List<Object> removedList = new ArrayList<>();
 			while (change.next()) {
 				if (change.wasAdded()) {
 					addedList.addAll(change.getAddedSubList());
-				} else if (change.wasRemoved()) {
+				}
+				if (change.wasRemoved()) {
 					removedList.addAll(change.getRemoved());
 				}
 			}
 			change.reset();
-			final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
-					ParameterValue.ofAllSelectedValues(valuesSupplier.get()), ParameterValue.ofAddedValues(addedList),
-					ParameterValue.ofRemovedValues(removedList), ParameterValue.of(change));
+			final MethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
+					ParameterValue.ofAllSelectedValues(allValuesSupplier.get()),
+					ParameterValue.ofAddedValues(addedList), ParameterValue.ofRemovedValues(removedList),
+					ParameterValue.of(change), ParameterValue.of(singleValueSupplier.get()));
 			adapter.invoke();
 		}, timeoutMs, listenerActionBooleanProperty);
 	}
 
 	/**
-	 * Wires methods annotated with {@link AFXOnValueSelected} to the corresponding
-	 * value inside the control.
+	 * Creates a new {@link MethodInvocation} for the supplied {@code method} on the
+	 * given {@code instance}.
 	 *
-	 * @param instance the instance holding the methods
-	 * @param view     the view that belongs to the controller
 	 */
-	private void enableOnValueSelectedActions(final Object instance, final View view) {
-		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
-				method -> method.getAnnotation(AFXOnValueSelected.class) != null);
-		methods.sort(AFXONVALUESELECTED_COMPARATOR);
-		for (final Method method : methods) {
-			final AFXOnValueSelected onValueSelected = method.getAnnotation(AFXOnValueSelected.class);
-			final BooleanProperty listenerActionBooleanProperty = lookupListenerActiveBooleanProperty(instance,
-					onValueSelected.listenerActiveBooleanProperty());
-			final ControlWrapper controlWrapper = createControlWrapper(onValueSelected.controlId(), view);
-			// check, whether the wrapped control supports multi-selection or only single
-			// selection
-			if (controlWrapper.supportsMultiSelection()) {
-				final TimedListChangeListener<?> changeListener = createListChangeListener(instance, method,
-						onValueSelected.timeoutMs(), listenerActionBooleanProperty, controlWrapper::getSelectedValues);
-				controlWrapper.addSelectedValuesChangeListener(changeListener);
-			} else if (controlWrapper.supportsSelection()) {
-				final TimedChangeListener<?> changeListener = createValueChangeListener(instance, method,
-						onValueSelected.timeoutMs(), listenerActionBooleanProperty);
-				controlWrapper.addSelectedValueChangeListener(changeListener);
-			} else {
-				throw new IllegalStateException("Control with ID='" + onValueSelected.controlId()
-						+ "' does not support selection! Please check your ActionFX annotations inside constroller '"
-						+ instance.getClass().getCanonicalName() + "'!");
-			}
-		}
+	private MethodInvocationAdapter createMethodInvocationAdapter(final Object instance, final Method method,
+			final ParameterValue... parameterValues) {
+		return new MethodInvocationAdapter(instance, method, parameterValues);
 	}
 
 	/**
@@ -341,36 +443,28 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * Comparator implementation that orders methods according to the "order"
 	 * attribute among same controls.
 	 *
+	 * @param <A> the annotation type
 	 * @author koster
 	 *
 	 */
-	public static class AFXOnValueChangeAnnotatedMethodComparator implements Comparator<Method> {
+	public static class OrderBasedAnnotatedMethodComparator<A extends Annotation> implements Comparator<Method> {
+
+		private final Class<A> annotationClass;
+		private final Function<A, String> controlIdFunction;
+		private final Function<A, Integer> orderFunction;
+
+		public OrderBasedAnnotatedMethodComparator(final Class<A> annotationClass,
+				final Function<A, String> controlIdFunction, final Function<A, Integer> orderFunction) {
+			this.annotationClass = annotationClass;
+			this.controlIdFunction = controlIdFunction;
+			this.orderFunction = orderFunction;
+		}
 
 		@Override
 		public int compare(final Method o1, final Method o2) {
-			final AFXOnValueChanged c1 = o1.getAnnotation(AFXOnValueChanged.class);
-			final AFXOnValueChanged c2 = o2.getAnnotation(AFXOnValueChanged.class);
-			return Comparator.comparing(AFXOnValueChanged::controlId).thenComparing(AFXOnValueChanged::order)
-					.compare(c1, c2);
+			final A c1 = o1.getAnnotation(annotationClass);
+			final A c2 = o2.getAnnotation(annotationClass);
+			return Comparator.comparing(controlIdFunction).thenComparing(orderFunction).compare(c1, c2);
 		}
 	}
-
-	/**
-	 * Comparator implementation that orders methods according to the "order"
-	 * attribute among same controls.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class AFXOnValueSelectedAnnotatedMethodComparator implements Comparator<Method> {
-
-		@Override
-		public int compare(final Method o1, final Method o2) {
-			final AFXOnValueSelected c1 = o1.getAnnotation(AFXOnValueSelected.class);
-			final AFXOnValueSelected c2 = o2.getAnnotation(AFXOnValueSelected.class);
-			return Comparator.comparing(AFXOnValueSelected::controlId).thenComparing(AFXOnValueSelected::order)
-					.compare(c1, c2);
-		}
-	}
-
 }

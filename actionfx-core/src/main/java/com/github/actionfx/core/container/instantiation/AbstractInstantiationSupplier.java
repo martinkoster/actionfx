@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 
 import com.github.actionfx.core.utils.AFXUtils;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 /**
@@ -61,21 +62,25 @@ public abstract class AbstractInstantiationSupplier<T> implements Supplier<T> {
 	 * @return the created bean instance
 	 */
 	protected T createInstanceInJavaFXThread() {
-		try {
-			final Task<T> instantiationTask = new Task<>() {
-				@Override
-				protected T call() throws Exception {
-					return createInstance();
-				}
-
-			};
-			// execute the task in the JavaFX thread and wait for the result
-			return AFXUtils.runInFxThreadAndWait(instantiationTask);
-
-		} catch (InterruptedException | ExecutionException e) {
-			// Restore interrupted state...
-			Thread.currentThread().interrupt();
-			throw new IllegalStateException("Failed to instantiate class in JavaFX thread!", e);
+		// instance is create in JavaFX thread, because certain node e.g. WebView
+		// requires it.
+		if (Platform.isFxApplicationThread()) {
+			return createInstance();
+		} else {
+			try {
+				final Task<T> instantiationTask = new Task<>() {
+					@Override
+					protected T call() throws Exception {
+						return createInstance();
+					}
+				};
+				// execute the task in the JavaFX thread and wait for the result
+				return AFXUtils.runInFxThreadAndWait(instantiationTask);
+			} catch (InterruptedException | ExecutionException e) {
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
+				throw new IllegalStateException("Failed to instantiate class in JavaFX thread!", e);
+			}
 		}
 	}
 }

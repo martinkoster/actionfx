@@ -32,8 +32,8 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.interceptors.AFXActionMethodInterceptor;
 import com.github.actionfx.core.view.View;
@@ -76,7 +76,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
 	@Override
 	public void installAgent() {
-		if (agentInstalled) {
+		if (agentInstalled()) {
 			return;
 		}
 		final Instrumentation instrumentation = ByteBuddyAgent.install();
@@ -146,6 +146,10 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 	 *
 	 */
 	public static class AFXActionMethodInterceptorDelegator {
+
+		private AFXActionMethodInterceptorDelegator() {
+			// can not be instantiated
+		}
 
 		@RuntimeType
 		public static Object intercept(@SuperCall final Callable<?> callable, @This final Object instance,

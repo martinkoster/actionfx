@@ -24,6 +24,7 @@
 package com.github.actionfx.core.view.graph;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -40,10 +41,13 @@ import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -105,6 +109,8 @@ class ControlWrapperTest {
 		final Accordion accordion = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -120,6 +126,8 @@ class ControlWrapperTest {
 		final Accordion accordion = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -134,6 +142,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlButton();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Hello World");
@@ -148,6 +158,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlButtonBar();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -162,6 +174,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlCheckBox(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, false);
@@ -176,6 +190,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlCheckBox(true);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, true);
@@ -190,6 +206,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlChoiceBox(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -205,6 +223,8 @@ class ControlWrapperTest {
 		final ChoiceBox<String> cb = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Choice 2");
@@ -219,6 +239,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlColorPicker();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, Color.AZURE);
@@ -233,6 +255,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlComboBox(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -247,6 +271,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlComboBox(true);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Choice 2");
@@ -261,6 +287,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlDatePicker();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, LocalDate.of(2020, 12, 31));
@@ -275,6 +303,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlHyperlink();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "https://www.google.com");
@@ -289,6 +319,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlLabel();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Hello World");
@@ -304,6 +336,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlListView(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -318,6 +352,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlListView(false, "Choice 2");
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -332,6 +368,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlListView(true);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, null);
@@ -346,6 +384,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlListView(true, "Choice 2", "Choice 3");
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, null);
@@ -360,6 +400,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlMenuBar();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -375,6 +417,8 @@ class ControlWrapperTest {
 		final MenuButton button = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Menu 2");
@@ -389,6 +433,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlPagination();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -403,6 +449,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlPasswordField();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Password");
@@ -417,6 +465,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlProgressBar();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, 0.75);
@@ -431,6 +481,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlProgressIndicator();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, 0.75);
@@ -445,6 +497,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlRadioButton(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, false);
@@ -459,6 +513,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlRadioButton(true);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, true);
@@ -473,6 +529,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlScrollBar();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, 0.75);
@@ -487,6 +545,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlScrollPane();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -501,6 +561,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlSeparator();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -516,6 +578,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlSlider();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, 0.75);
@@ -530,6 +594,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlSpinner();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, 0.75);
@@ -545,6 +611,8 @@ class ControlWrapperTest {
 		final SplitMenuButton button = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Menu 2");
@@ -560,6 +628,8 @@ class ControlWrapperTest {
 		final SplitPane pane = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertThat(wrapper.getValues(), equalTo(pane.getItems()));
@@ -573,6 +643,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTableView(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -587,6 +659,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTableView(false, "Item 2");
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -601,6 +675,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTableView(true);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, null);
@@ -615,6 +691,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTableView(true, "Item 2", "Item 3");
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, null);
@@ -630,6 +708,8 @@ class ControlWrapperTest {
 		final TabPane pane = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -645,6 +725,8 @@ class ControlWrapperTest {
 		final TabPane pane = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -659,6 +741,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTextArea();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Hello World");
@@ -673,6 +757,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTextField();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Hello World");
@@ -687,6 +773,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlTitledPane();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Title 1");
@@ -701,6 +789,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlToggleButton(false);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, false);
@@ -715,6 +805,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlToggleButton(true);
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, true);
@@ -730,6 +822,8 @@ class ControlWrapperTest {
 		final ToolBar c = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
@@ -745,6 +839,8 @@ class ControlWrapperTest {
 		final TreeTableView<String> c = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, c.getRoot());
@@ -763,6 +859,8 @@ class ControlWrapperTest {
 		final TreeItem<String> root = c.getRoot();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, c.getRoot());
@@ -778,6 +876,8 @@ class ControlWrapperTest {
 		final TreeTableView<String> c = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, c.getRoot());
@@ -796,6 +896,8 @@ class ControlWrapperTest {
 		final TreeItem<String> root = c.getRoot();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, c.getRoot());
@@ -811,6 +913,8 @@ class ControlWrapperTest {
 		final TreeView<String> c = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, c.getRoot());
@@ -828,6 +932,8 @@ class ControlWrapperTest {
 		final TreeItem<String> root = c.getRoot();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, c.getRoot());
@@ -843,6 +949,8 @@ class ControlWrapperTest {
 		final TreeView<String> c = wrapper.getWrapped();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, c.getRoot());
@@ -860,6 +968,8 @@ class ControlWrapperTest {
 		final TreeItem<String> root = c.getRoot();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, c.getRoot());
@@ -874,6 +984,8 @@ class ControlWrapperTest {
 		final ControlWrapper wrapper = controlCustomControl();
 
 		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Hello World");
@@ -1041,6 +1153,18 @@ class ControlWrapperTest {
 		assertThat(changeListenerFired.get(), equalTo(false));
 	}
 
+	@Test
+	void testGetOnActionProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = controlButton();
+
+		// WHEN
+		final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = wrapper.getOnActionProperty();
+
+		// THEN
+		assertThat(onActionProperty, notNullValue());
+	}
+
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {
 		assertThat(wrapper.getValue(), equalTo(expectedValue));
 	}
@@ -1065,6 +1189,14 @@ class ControlWrapperTest {
 
 	private static void assertSupportsMultiSelection(final ControlWrapper wrapper, final boolean expected) {
 		assertThat(wrapper.supportsMultiSelection(), equalTo(expected));
+	}
+
+	private static void assertSupportsValue(final ControlWrapper wrapper, final boolean expected) {
+		assertThat(wrapper.supportsValue(), equalTo(expected));
+	}
+
+	private static void assertSupportsValues(final ControlWrapper wrapper, final boolean expected) {
+		assertThat(wrapper.supportsValues(), equalTo(expected));
 	}
 
 	private static <V> void assertSelectedValue(final ControlWrapper wrapper, final V expectedValue) {

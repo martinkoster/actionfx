@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javafx.beans.property.Property;
+import javafx.beans.value.ObservableValue;
 
 /**
  * Utils for handling reflections.
@@ -142,8 +143,10 @@ public class ReflectionUtils {
 		// itself - we just need to check the type that the caller wants to have
 		// returned
 		final String cleanedPropertyName = dotIndex == -1 ? propertyName : propertyName.substring(0, dotIndex);
-		if (Property.class.isAssignableFrom(expectedType)) {
-			// use "property-getter" for accessing the value
+		if (ObservableValue.class.isAssignableFrom(expectedType)) {
+			// use "property-getter" for accessing the value ("Property" implements
+			// "ObservableValue", so this
+			// branch is also executed for expectedType == "Property")
 			return (T) extractProperty(rootInstance, cleanedPropertyName);
 		} else {
 			// use regular "getter" for extracting the value
@@ -403,7 +406,7 @@ public class ReflectionUtils {
 	 * @return the Method object, or {@code null} if none found
 	 */
 	public static Method findMethod(final Class<?> clazz, final String name) {
-		return findMethod(clazz, name, new Class[0]);
+		return findMethod(clazz, name, new Class<?>[0]);
 	}
 
 	/**
@@ -421,9 +424,11 @@ public class ReflectionUtils {
 	public static Method findMethod(final Class<?> clazz, final String name, final Class<?>... paramTypes) {
 		Class<?> searchType = clazz;
 		while (searchType != null) {
-			final Method[] methods = searchType.isInterface() ? searchType.getMethods() : clazz.getDeclaredMethods();
+			final Method[] methods = searchType.isInterface() ? searchType.getMethods()
+					: searchType.getDeclaredMethods();
 			for (final Method method : methods) {
-				if (name.equals(method.getName()) && (paramTypes == null || hasSameParams(method, paramTypes))) {
+				if (name.equals(method.getName())
+						&& (paramTypes == null || paramTypes.length == 0 || hasSameParams(method, paramTypes))) {
 					return method;
 				}
 			}
@@ -578,7 +583,7 @@ public class ReflectionUtils {
 	 * @return the property value
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T> Property<T> extractProperty(final Object instance, final String propertyName) {
+	private static <T> ObservableValue<T> extractProperty(final Object instance, final String propertyName) {
 		final Class<?> clazz = instance.getClass();
 		final Field field = findField(clazz, propertyName);
 		if (field == null) {
@@ -590,7 +595,7 @@ public class ReflectionUtils {
 		final Method method = findMethod(clazz, propertyGetterMethodName(field));
 		if (method != null) {
 			// if getter-method is available, we take the value through the getter
-			return invokeMethod(method, instance, Property.class);
+			return invokeMethod(method, instance, ObservableValue.class);
 		} else {
 			return (Property<T>) getFieldValue(field, instance);
 		}
