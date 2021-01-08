@@ -3,6 +3,7 @@ plugins {
     id "java-library"
     id "com.bmuschko.nexus" version "${gradleNexusPlugin}"
     id "io.codearte.nexus-staging" version "${gradleNexusStagingPlugin}"
+    id "org.sonarqube" version "${sonarQubePlugin}"
 }
 
 wrapper {
@@ -18,6 +19,7 @@ configure(allprojects) { project ->
  
     apply plugin: "eclipse"
     apply plugin: "idea"
+    apply plugin: 'jacoco'
     apply plugin: "maven-publish"
     apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
@@ -188,7 +190,7 @@ configure(allprojects) { project ->
 
 ////////////////////////
 // Build / Publishing //
-	////////////////////////
+////////////////////////
 modifyPom {
     project {
         name 'actionfx'
@@ -228,3 +230,32 @@ configure(rootProject) {
 	}
 }
 
+////////////////////////
+// Code Quality		  //
+////////////////////////
+
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.enabled false
+        csv.enabled false
+    }
+}
+codeCoverageReport.dependsOn {
+    subprojects*.test
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "martinkoster_actionfx"
+    property "sonar.organization", "martinkoster"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}

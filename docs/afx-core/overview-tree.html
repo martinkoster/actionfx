@@ -105,6 +105,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li><a href="com/github/actionfx/core/instrumentation/package-tree.html">com.github.actionfx.core.instrumentation</a>, </li>
 <li><a href="com/github/actionfx/core/instrumentation/bytebuddy/package-tree.html">com.github.actionfx.core.instrumentation.bytebuddy</a>, </li>
 <li><a href="com/github/actionfx/core/instrumentation/interceptors/package-tree.html">com.github.actionfx.core.instrumentation.interceptors</a>, </li>
+<li><a href="com/github/actionfx/core/listener/package-tree.html">com.github.actionfx.core.listener</a>, </li>
 <li><a href="com/github/actionfx/core/utils/package-tree.html">com.github.actionfx.core.utils</a>, </li>
 <li><a href="com/github/actionfx/core/view/package-tree.html">com.github.actionfx.core.view</a>, </li>
 <li><a href="com/github/actionfx/core/view/graph/package-tree.html">com.github.actionfx.core.view.graph</a></li>
@@ -142,7 +143,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ClassPathScanningUtils.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">ClassPathScanningUtils</span></a></li>
 <li class="circle">com.github.actionfx.core.instrumentation.<a href="com/github/actionfx/core/instrumentation/ControllerWrapper.html" title="class in com.github.actionfx.core.instrumentation"><span class="typeNameLink">ControllerWrapper</span></a>&lt;T&gt;</li>
 <li class="circle">com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container"><span class="typeNameLink">DefaultBeanContainer</span></a> (implements com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a>)</li>
-<li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper</span></a></li>
+<li class="circle">com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">MethodInvocationAdapter</span></a></li>
+<li class="circle">com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">MethodInvocationAdapter.ParameterValue</span></a></li>
+<li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper</span></a>
+<ul>
+<li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">ControlWrapper</span></a></li>
+</ul>
+</li>
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.AnchorPaneAttacher.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper.AnchorPaneAttacher</span></a> (implements com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph">NodeWrapper.NodeAttacher</a>)</li>
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.BorderPaneAttacher.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper.BorderPaneAttacher</span></a> (implements com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph">NodeWrapper.NodeAttacher</a>)</li>
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.ColRowAttacher.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper.ColRowAttacher</span></a> (implements com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph">NodeWrapper.NodeAttacher</a>)</li>
@@ -151,6 +158,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.ListFirstAttacher.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper.ListFirstAttacher</span></a> (implements com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph">NodeWrapper.NodeAttacher</a>)</li>
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.ListLastAttacher.html" title="class in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper.ListLastAttacher</span></a> (implements com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph">NodeWrapper.NodeAttacher</a>)</li>
 <li class="circle">com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ReflectionUtils.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">ReflectionUtils</span></a></li>
+<li class="circle">com.github.actionfx.core.listener.<a href="com/github/actionfx/core/listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener"><span class="typeNameLink">TimedChangeListener</span></a>&lt;T&gt; (implements javafx.beans.value.ChangeListener&lt;T&gt;)</li>
+<li class="circle">com.github.actionfx.core.listener.<a href="com/github/actionfx/core/listener/TimedListChangeListener.html" title="class in com.github.actionfx.core.listener"><span class="typeNameLink">TimedListChangeListener</span></a>&lt;T&gt; (implements javafx.collections.ListChangeListener&lt;E&gt;)</li>
 <li class="circle">com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/ViewBuilder.html" title="class in com.github.actionfx.core.view"><span class="typeNameLink">ViewBuilder</span></a>&lt;T&gt;</li>
 </ul>
 </li>
@@ -163,6 +172,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container"><span class="typeNameLink">BeanContainerFacade</span></a></li>
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeVisitor.html" title="interface in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeVisitor</span></a></li>
 <li class="circle">com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph"><span class="typeNameLink">NodeWrapper.NodeAttacher</span></a></li>
+<li class="circle">com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils"><span class="typeNameLink">ReflectionUtils.FieldFilter</span></a></li>
+<li class="circle">com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ReflectionUtils.MethodFilter.html" title="interface in com.github.actionfx.core.utils"><span class="typeNameLink">ReflectionUtils.MethodFilter</span></a></li>
 <li class="circle">com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/View.html" title="interface in com.github.actionfx.core.view"><span class="typeNameLink">View</span></a></li>
 </ul>
 </section>
@@ -170,9 +181,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <h2 title="Annotation Type Hierarchy">Annotation Type Hierarchy</h2>
 <ul>
 <li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXApplication.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXApplication</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXArgHint.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXArgHint</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXController.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXController</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXEnableMultiSelection.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXEnableMultiSelection</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXNestedView</span></a> (implements java.lang.annotation.Annotation)</li>
-<li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXOnEvent.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXOnEvent</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXOnValueChanged.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXOnValueChanged</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXOnValueSelected.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXOnValueSelected</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXShowView.html" title="annotation in com.github.actionfx.core.annotation"><span class="typeNameLink">AFXShowView</span></a> (implements java.lang.annotation.Annotation)</li>
 </ul>
 </section>
@@ -185,6 +199,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul>
 <li class="circle">com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.ActionFXState.html" title="enum in com.github.actionfx.core"><span class="typeNameLink">ActionFX.ActionFXState</span></a></li>
 <li class="circle">com.github.actionfx.core.instrumentation.<a href="com/github/actionfx/core/instrumentation/ActionFXEnhancer.EnhancementStrategy.html" title="enum in com.github.actionfx.core.instrumentation"><span class="typeNameLink">ActionFXEnhancer.EnhancementStrategy</span></a></li>
+<li class="circle">com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/ArgumentHint.html" title="enum in com.github.actionfx.core.annotation"><span class="typeNameLink">ArgumentHint</span></a></li>
 <li class="circle">com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/BorderPanePosition.html" title="enum in com.github.actionfx.core.view"><span class="typeNameLink">BorderPanePosition</span></a></li>
 </ul>
 </li>

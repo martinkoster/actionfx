@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9};
+var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -89,7 +89,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -145,6 +145,40 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Class</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.FieldFilter</a></span></code></th>
+<td class="colLast">
+<div class="block">Callback optionally used to filter fields to be operated on by a field
+ callback.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="ReflectionUtils.MethodFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.MethodFilter</a></span></code></th>
+<td class="colLast">
+<div class="block">Callback optionally used to filter methods to be operated on by a method
+ callback.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
 <!-- ========== METHOD SUMMARY =========== -->
 <section role="region">
 <ul class="blockList">
@@ -194,6 +228,15 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>static java.util.List&lt;java.lang.reflect.Field&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findFields(java.lang.Class,com.github.actionfx.core.utils.ReflectionUtils.FieldFilter)">findFields</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+          <a href="ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.FieldFilter</a>&nbsp;filter)</code></th>
+<td class="colLast">
+<div class="block">Attempt to find all <code>field</code> on the supplied <code>Class</code> that
+ matches the supplied <a href="ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils"><code>ReflectionUtils.FieldFilter</code></a>.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static java.lang.reflect.Method</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findMethod(java.lang.Class,java.lang.String)">findMethod</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
           java.lang.String&nbsp;name)</code></th>
@@ -202,7 +245,7 @@ extends java.lang.Object</pre>
  and no parameters.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static java.lang.reflect.Method</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findMethod(java.lang.Class,java.lang.String,java.lang.Class...)">findMethod</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
           java.lang.String&nbsp;name,
@@ -212,22 +255,22 @@ extends java.lang.Object</pre>
  and parameter types.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static java.util.List&lt;java.lang.reflect.Method&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findPublicMethodsByPredicate(java.lang.Class,java.util.function.Predicate)">findPublicMethodsByPredicate</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
-                            java.util.function.Predicate&lt;java.lang.reflect.Method&gt;&nbsp;methodFilterPredicate)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findMethods(java.lang.Class,com.github.actionfx.core.utils.ReflectionUtils.MethodFilter)">findMethods</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+           <a href="ReflectionUtils.MethodFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.MethodFilter</a>&nbsp;methodFilter)</code></th>
 <td class="colLast">
 <div class="block">Finds all methods that match the given <code>methodFilterPredicate</code>.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static java.util.List&lt;java.lang.reflect.Method&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findPublicMethodsWithReturnType(java.lang.Class)">findPublicMethodsWithReturnType</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz)</code></th>
 <td class="colLast">
 <div class="block">Finds all public methods with a return type in a given <tt>clazz</tt>.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFieldValue(java.lang.reflect.Field,java.lang.Object)">getFieldValue</a></span>&#8203;(java.lang.reflect.Field&nbsp;field,
              java.lang.Object&nbsp;instance)</code></th>
@@ -235,7 +278,7 @@ extends java.lang.Object</pre>
 <div class="block">Gets the value from the supplied <code>Field</code> and <code>instance</code>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFieldValueByGetter(java.lang.reflect.Field,java.lang.Object)">getFieldValueByGetter</a></span>&#8203;(java.lang.reflect.Field&nbsp;field,
                      java.lang.Object&nbsp;instance)</code></th>
@@ -244,7 +287,7 @@ extends java.lang.Object</pre>
  trying to access the corresponding <code>getter</code> method.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFieldValueByPropertyGetter(java.lang.reflect.Field,java.lang.Object)">getFieldValueByPropertyGetter</a></span>&#8203;(java.lang.reflect.Field&nbsp;field,
                              java.lang.Object&nbsp;instance)</code></th>
@@ -253,7 +296,36 @@ extends java.lang.Object</pre>
  trying to access the corresponding <code>property-getter</code> method.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;javafx.beans.property.Property&lt;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNestedFieldProperty(java.lang.String,java.lang.Object)">getNestedFieldProperty</a></span>&#8203;(java.lang.String&nbsp;nestedPropertyPath,
+                      java.lang.Object&nbsp;rootInstance)</code></th>
+<td class="colLast">
+<div class="block">Retrieves a field value described by a nested path
+ (<code>nestedPropertyPath</code>.</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>static java.lang.Object</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNestedFieldValue(java.lang.String,java.lang.Object)">getNestedFieldValue</a></span>&#8203;(java.lang.String&nbsp;nestedPropertyPath,
+                   java.lang.Object&nbsp;rootInstance)</code></th>
+<td class="colLast">
+<div class="block">Retrieves a field value described by a nested path
+ (<code>nestedPropertyPath</code>.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNestedFieldValue(java.lang.String,java.lang.Object,java.lang.Class)">getNestedFieldValue</a></span>&#8203;(java.lang.String&nbsp;nestedPropertyPath,
+                   java.lang.Object&nbsp;rootInstance,
+                   java.lang.Class&lt;T&gt;&nbsp;expectedType)</code></th>
+<td class="colLast">
+<div class="block">Follows the given <code>nestedPropertyPath</code> along the given
+ <code>rootInstance</code> and extracts a value that is expected of given
+ <code>expectedType</code>.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#invokeMethod(java.lang.reflect.Method,java.lang.Object,java.lang.Class,java.lang.Object...)">invokeMethod</a></span>&#8203;(java.lang.reflect.Method&nbsp;method,
             java.lang.Object&nbsp;instance,
@@ -264,7 +336,7 @@ extends java.lang.Object</pre>
  the return type of type <code>returnType</code>.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setFieldValue(java.lang.reflect.Field,java.lang.Object,java.lang.Object)">setFieldValue</a></span>&#8203;(java.lang.reflect.Field&nbsp;field,
              java.lang.Object&nbsp;instance,
@@ -298,6 +370,89 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a id="getNestedFieldValue(java.lang.String,java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNestedFieldValue</h4>
+<pre class="methodSignature">public static&nbsp;java.lang.Object&nbsp;getNestedFieldValue&#8203;(java.lang.String&nbsp;nestedPropertyPath,
+                                                   java.lang.Object&nbsp;rootInstance)</pre>
+<div class="block">Retrieves a field value described by a nested path
+ (<code>nestedPropertyPath</code>.
+ <p>
+ In case the <code>nestedPathProperty</code> resolves to an instance of type
+ <code>Property</code>, the property value and not the property itself is returned
+ (because we do not do direct field access, but we use the corresponding
+ getter-method. Getter-methods on properties return the value, not the
+ property).
+ <p>
+ In case you need access to the <code>Property</code> instance itself, please use
+ method <a href="#getNestedFieldProperty(java.lang.String,java.lang.Object)"><code>getNestedFieldProperty(String, Object)</code></a>, which uses the
+ property-getter and not the regular getter for retrieving the field instance.
+ <p>
+ In case one of the path elements of the nested path evaluates to
+ <code>null</code>, <code>null</code> is returned by this method.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>nestedPropertyPath</code> - a nested path to a property</dd>
+<dd><code>rootInstance</code> - the instance that the nested property path is
+                           referring to</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the instance that is the provider of the filed</dd>
+</dl>
+</li>
+</ul>
+<a id="getNestedFieldProperty(java.lang.String,java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNestedFieldProperty</h4>
+<pre class="methodSignature">public static&nbsp;&lt;T&gt;&nbsp;javafx.beans.property.Property&lt;T&gt;&nbsp;getNestedFieldProperty&#8203;(java.lang.String&nbsp;nestedPropertyPath,
+                                                                           java.lang.Object&nbsp;rootInstance)</pre>
+<div class="block">Retrieves a field value described by a nested path
+ (<code>nestedPropertyPath</code>. The value is expected to be of type
+ <code>Property</code>.
+ <p>
+ Unlike method <a href="#getNestedFieldValue(java.lang.String,java.lang.Object)"><code>getNestedFieldValue(String, Object)</code></a>, this method uses
+ the "property-getter" method for accessing the property (which is
+ "propertyNameProperty()" for a property with name "propertyName").
+ <p>
+ In case one of the path elements of the nested path evaluates to
+ <code>null</code>, <code>null</code> is returned by this method.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>nestedPropertyPath</code> - a nested path to a property</dd>
+<dd><code>rootInstance</code> - the instance that the nested property path is
+                           referring to</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the instance that is the provider of the property</dd>
+</dl>
+</li>
+</ul>
+<a id="getNestedFieldValue(java.lang.String,java.lang.Object,java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNestedFieldValue</h4>
+<pre class="methodSignature">public static&nbsp;&lt;T&gt;&nbsp;T&nbsp;getNestedFieldValue&#8203;(java.lang.String&nbsp;nestedPropertyPath,
+                                        java.lang.Object&nbsp;rootInstance,
+                                        java.lang.Class&lt;T&gt;&nbsp;expectedType)</pre>
+<div class="block">Follows the given <code>nestedPropertyPath</code> along the given
+ <code>rootInstance</code> and extracts a value that is expected of given
+ <code>expectedType</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>nestedPropertyPath</code> - the nested property path</dd>
+<dd><code>rootInstance</code> - the instance holding the property</dd>
+<dd><code>expectedType</code> - the type that is expected</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the extracted value</dd>
+</dl>
+</li>
+</ul>
 <a id="getFieldValue(java.lang.reflect.Field,java.lang.Object)">
 <!--   -->
 </a>
@@ -437,6 +592,26 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a id="findFields(java.lang.Class,com.github.actionfx.core.utils.ReflectionUtils.FieldFilter)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findFields</h4>
+<pre class="methodSignature">public static&nbsp;java.util.List&lt;java.lang.reflect.Field&gt;&nbsp;findFields&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+                                                                 <a href="ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.FieldFilter</a>&nbsp;filter)</pre>
+<div class="block">Attempt to find all <code>field</code> on the supplied <code>Class</code> that
+ matches the supplied <a href="ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils"><code>ReflectionUtils.FieldFilter</code></a>. Searches all super-classes up to
+ <code>Object</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - the class to introspect</dd>
+<dd><code>filter</code> - the field filter that must evaluate to <code>true</code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the corresponding Field object, or <code>null</code> if not found</dd>
+</dl>
+</li>
+</ul>
 <a id="invokeMethod(java.lang.reflect.Method,java.lang.Object,java.lang.Class,java.lang.Object...)">
 <!--   -->
 </a>
@@ -521,7 +696,7 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>clazz</code> - the class to be checked for public methods</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <tt>java.util.List</tt> of methods</dd>
+<dd>a <code>List</code> of methods</dd>
 </dl>
 </li>
 </ul>
@@ -537,28 +712,28 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>clazz</code> - the class to be checked for public methods</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <tt>java.util.List</tt> of methods</dd>
+<dd>a <code>List</code> of methods</dd>
 </dl>
 </li>
 </ul>
-<a id="findPublicMethodsByPredicate(java.lang.Class,java.util.function.Predicate)">
+<a id="findMethods(java.lang.Class,com.github.actionfx.core.utils.ReflectionUtils.MethodFilter)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>findPublicMethodsByPredicate</h4>
-<pre class="methodSignature">public static&nbsp;java.util.List&lt;java.lang.reflect.Method&gt;&nbsp;findPublicMethodsByPredicate&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
-                                                                                    java.util.function.Predicate&lt;java.lang.reflect.Method&gt;&nbsp;methodFilterPredicate)</pre>
+<h4>findMethods</h4>
+<pre class="methodSignature">public static&nbsp;java.util.List&lt;java.lang.reflect.Method&gt;&nbsp;findMethods&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+                                                                   <a href="ReflectionUtils.MethodFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.MethodFilter</a>&nbsp;methodFilter)</pre>
 <div class="block">Finds all methods that match the given <code>methodFilterPredicate</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>clazz</code> - the class to be checked for public methods</dd>
-<dd><code>methodFilterPredicate</code> - the predicate acting as a public method filter.
-                              needs to evaluate to <tt>true</tt>.</dd>
-<dd><code>visited</code> - a set of classes already visited (in order to
-                              avoid cycles)</dd>
+<dd><code>methodFilter</code> - the predicate acting as a public method filter. needs to
+                     evaluate to <tt>true</tt>.</dd>
+<dd><code>visited</code> - a set of classes already visited (in order to avoid
+                     cycles)</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <tt>java.util.List</tt> of methods</dd>
+<dd>a <code>List</code> of methods</dd>
 </dl>
 </li>
 </ul>
@@ -614,7 +789,7 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

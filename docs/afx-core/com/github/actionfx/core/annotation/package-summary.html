@@ -100,6 +100,24 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul class="blockList">
 <li class="blockList">
 <table class="typeSummary">
+<caption><span>Enum Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Enum</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a></th>
+<td class="colLast">
+<div class="block">A hint for a method parameter that can help in case two different method
+ parameters have the same type.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
+<table class="typeSummary">
 <caption><span>Annotation Types Summary</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Annotation Type</th>
@@ -109,14 +127,28 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="AFXApplication.html" title="annotation in com.github.actionfx.core.annotation">AFXApplication</a></th>
 <td class="colLast">
-<div class="block">Annotation that can be applied to the main class of an ActionFX application.</div>
+<div class="block">Annotation that can be applied to the main class of an ActionFX application
+ for configuring it.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="AFXArgHint.html" title="annotation in com.github.actionfx.core.annotation">AFXArgHint</a></th>
+<td class="colLast">
+<div class="block">Annotation to apply "hints" to method arguments.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="AFXController.html" title="annotation in com.github.actionfx.core.annotation">AFXController</a></th>
 <td class="colLast">
-<div class="block">Annotation for ActionFX controllers to associate and manage a view togehter
+<div class="block">Annotation for ActionFX controllers to associate and manage a view together
  with it.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="AFXEnableMultiSelection.html" title="annotation in com.github.actionfx.core.annotation">AFXEnableMultiSelection</a></th>
+<td class="colLast">
+<div class="block">Annotation that can be applied at field level on a <code>Control</code>, in order
+ to enable a multi-selection on that annotated control.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -126,13 +158,20 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="rowColor">
-<th class="colFirst" scope="row"><a href="AFXOnEvent.html" title="annotation in com.github.actionfx.core.annotation">AFXOnEvent</a></th>
+<th class="colFirst" scope="row"><a href="AFXOnValueChanged.html" title="annotation in com.github.actionfx.core.annotation">AFXOnValueChanged</a></th>
 <td class="colLast">
-<div class="block">Annotation to be applied at method level that let's ActionFX wire the
- annotated method to the specified event.</div>
+<div class="block">Annotated methods are invoked when the value of the specified
+ {@link #controlId()) is changed.</div>
 </td>
 </tr>
 <tr class="altColor">
+<th class="colFirst" scope="row"><a href="AFXOnValueSelected.html" title="annotation in com.github.actionfx.core.annotation">AFXOnValueSelected</a></th>
+<td class="colLast">
+<div class="block">Annotated methods are invoked when one value or potentially multiple values
+ are selected in a control identified by <a href="AFXOnValueSelected.html#controlId()"><code>AFXOnValueSelected.controlId()</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="AFXShowView.html" title="annotation in com.github.actionfx.core.annotation">AFXShowView</a></th>
 <td class="colLast">
 <div class="block">Annotation to be applied at method level that allows to define which view to

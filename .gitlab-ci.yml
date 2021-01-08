@@ -3,6 +3,7 @@ image: adoptopenjdk/openjdk11:jdk-11.0.9.1_1-ubuntu
 stages:
   - build
   - test
+  - quality
     
 before_script:
 #  - echo `pwd` # debug
@@ -20,15 +21,38 @@ build:
     - ./gradlew assemble
   artifacts:
     paths:
-      - build/libs/*.jar
-      - afx-core/build/libs/*.jar
-      - afx-testing/build/libs/*.jar
-      - afx-spring-boot/build/libs/*.jar
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
     expire_in: 1 week
     
-test:
+unittest:
   stage: test
   script:
     - ./gradlew check
+  artifacts:
+    paths:
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
+    expire_in: 1 week
     
-
+reportCodeCoverage:
+  stage: quality
+  script:
+    - ./gradlew codeCoverageReport
+    -  bash <(curl -s https://codecov.io/bash) 
+    - ./gradlew sonarqube
+  artifacts:
+    paths:
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
+    expire_in: 1 week
+    

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.github.actionfx.sampleapp.core.app"},{"l":"com.github.actionfx.sampleapp.core.app.controller"},{"l":"com.github.actionfx.sampleapp.spring.app"},{"l":"com.github.actionfx.sampleapp.spring.app.controller"}]

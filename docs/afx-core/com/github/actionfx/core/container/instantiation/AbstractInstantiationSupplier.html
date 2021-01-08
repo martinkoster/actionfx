@@ -199,7 +199,7 @@ implements java.util.function.Supplier&lt;T&gt;</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected <a href="AbstractInstantiationSupplier.html" title="type parameter in AbstractInstantiationSupplier">T</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createInstanceInJavaFXThrad()">createInstanceInJavaFXThrad</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createInstanceInJavaFXThread()">createInstanceInJavaFXThread</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Creates a new, fresh instance based on the supplied bean definition.</div>
 </td>
@@ -278,13 +278,13 @@ implements java.util.function.Supplier&lt;T&gt;</pre>
 </dl>
 </li>
 </ul>
-<a id="createInstanceInJavaFXThrad()">
+<a id="createInstanceInJavaFXThread()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>createInstanceInJavaFXThrad</h4>
-<pre class="methodSignature">protected&nbsp;<a href="AbstractInstantiationSupplier.html" title="type parameter in AbstractInstantiationSupplier">T</a>&nbsp;createInstanceInJavaFXThrad()</pre>
+<h4>createInstanceInJavaFXThread</h4>
+<pre class="methodSignature">protected&nbsp;<a href="AbstractInstantiationSupplier.html" title="type parameter in AbstractInstantiationSupplier">T</a>&nbsp;createInstanceInJavaFXThread()</pre>
 <div class="block">Creates a new, fresh instance based on the supplied bean definition. This
  method ensures that instantiation is performed in the JavaFX thread, as this
  is required for certain view components (e.g. a WebView).</div>
