@@ -57,6 +57,12 @@ public class SampleViewControllerWithListener {
 	@FXML
 	protected TableView<String> dataLoadedSelectionTable;
 
+	@FXML
+	protected TableView<String> asyncDataLoadedSelectionTable;
+
+	// data loading initially deactivated
+	protected BooleanProperty loadDataActivated = new SimpleBooleanProperty(false);
+
 	@AFXOnAction(controlId = "actionButton")
 	public void onActionButtonClicked() {
 		invocations.add("onActionButtonClicked()");
@@ -64,6 +70,11 @@ public class SampleViewControllerWithListener {
 
 	@AFXLoadControlData(controlId = "dataLoadedSelectionTable")
 	public List<String> loadData() {
+		return Arrays.asList("Loaded 1", "Loaded 2", "Loaded 3");
+	}
+
+	@AFXLoadControlData(controlId = "asyncDataLoadedSelectionTable", async = true, loadingActiveBooleanProperty = "loadDataActivated")
+	public List<String> loadDataAsynchronously() {
 		return Arrays.asList("Loaded 1", "Loaded 2", "Loaded 3");
 	}
 

@@ -32,12 +32,19 @@ import static org.hamcrest.Matchers.hasSize;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * JUnit test case for {@link MethodInvocationAdapter}.
@@ -45,6 +52,7 @@ import com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue;
  * @author koster
  *
  */
+@ExtendWith(FxThreadForAllMonocleExtension.class)
 class MethodInvocationAdapterTest {
 
 	@Test
@@ -63,9 +71,9 @@ class MethodInvocationAdapterTest {
 	}
 
 	@Test
-	void testInvoke_withVoidMethodReturningInt() {
+	void testInvoke_withmethodReturningInt() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodReturningInt");
+		final MethodInvocationAdapter adapter = methodInvocationAdapter("methodReturningInt");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -199,6 +207,20 @@ class MethodInvocationAdapterTest {
 		assertThat(result, nullValue());
 	}
 
+	@Test
+	void testInvokeAsynchronously_withMethodReturningInt() {
+		// GIVEN
+		final MethodInvocationAdapter adapter = methodInvocationAdapter("methodReturningInt");
+		final IntegerProperty result = new SimpleIntegerProperty(0);
+
+		// WHEN
+		adapter.invokeAsynchronously(value -> result.set((int) value));
+
+		// THEN
+		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+		assertThat(result.get(), equalTo(42));
+	}
+
 	private static MethodInvocationAdapter methodInvocationAdapter(final String methodName) {
 		final ClassWithPublicMethods instance = new ClassWithPublicMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
@@ -225,7 +247,7 @@ class MethodInvocationAdapterTest {
 			setExecuted();
 		}
 
-		public int voidMethodReturningInt() {
+		public int methodReturningInt() {
 			setExecuted();
 			return 42;
 		}

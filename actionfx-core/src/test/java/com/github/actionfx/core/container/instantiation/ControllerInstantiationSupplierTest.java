@@ -29,11 +29,15 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
@@ -252,4 +256,24 @@ class ControllerInstantiationSupplierTest {
 		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
 	}
 
+	@Test
+	void testCreateInstance_wireLoadControlData_dataIsLoadedAsynchronously() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN (initially, data is empty, because the data loading flag is set to false
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+		assertThat(controller.asyncDataLoadedSelectionTable.getItems(), hasSize(0));
+
+		// and WHEN (we switch the loading flag to "true")
+		controller.loadDataActivated.set(true);
+
+		// and THEN
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+	}
 }

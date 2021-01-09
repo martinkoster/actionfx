@@ -119,6 +119,12 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 		}
 	}
 
+	/**
+	 * Creates an {@link FxmlView} instance for the given {@code controller}.
+	 *
+	 * @param controller the controller for that the view shall be created
+	 * @return the created view
+	 */
 	protected FxmlView createFxmlViewInstance(final Object controller) {
 		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
@@ -255,7 +261,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			// check, whether the wrapped control supports multi-selection or only single
 			// selection
 			if (controlWrapper.supportsValues()) {
-				populateControlDataFromMethod(instance, method, loadingActiveBooleanProperty, controlWrapper);
+				populateControlsObservableList(instance, method, loadingActiveBooleanProperty, controlWrapper,
+						loadControlData.async());
 			} else {
 				throw new IllegalStateException("Control with ID='" + loadControlData.controlId()
 						+ "' does not support user input listening! Please check your ActionFX annotations inside constroller '"
@@ -275,25 +282,55 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *                                     signalizes, whether the data can be
 	 *                                     loaded (when set to {@code true})
 	 * @param controlWrapper               the wrapped control
+	 * @param asynchronous                 {@code true},if the data shall be
+	 *                                     asynchronously loaded in a separate
+	 *                                     thread without blocking the JavaFX
+	 *                                     thread, {@code false},if it should be
+	 *                                     loaded in the same thread.
 	 */
-	private void populateControlDataFromMethod(final Object instance, final Method method,
-			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper) {
+	private void populateControlsObservableList(final Object instance, final Method method,
+			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper,
+			final boolean asynchronous) {
 		final ObservableList<Object> valuesObservableList = controlWrapper.getValues();
 		final MethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance, method);
 		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
-			final List<Object> data = methodInvocationAdapter.invoke();
-			valuesObservableList.clear();
-			valuesObservableList.addAll(data);
+			populateObservableList(valuesObservableList, methodInvocationAdapter, asynchronous);
 		}
 		if (loadingActiveBooleanProperty != null) {
 			// whenever value switches from false to true, we trigger a loading
 			loadingActiveBooleanProperty.addListener((observable, oldValue, newValue) -> {
 				if (Boolean.FALSE.equals(oldValue) && Boolean.TRUE.equals(newValue)) {
-					final List<Object> data = methodInvocationAdapter.invoke();
-					valuesObservableList.clear();
-					valuesObservableList.addAll(data);
+					populateObservableList(valuesObservableList, methodInvocationAdapter, asynchronous);
 				}
 			});
+		}
+	}
+
+	/**
+	 * Populates the given {@code observableList} with values from the supplied
+	 * {@code methodInvocationAdapter}.
+	 *
+	 * @param observableList          the observable list to populate with values
+	 *                                from the method invocation
+	 * @param methodInvocationAdapter the method invocation adapter that will
+	 *                                provide the values
+	 * @param asynchronous            {@code true},if the data shall be
+	 *                                asynchronously loaded in a separate thread
+	 *                                without blocking the JavaFX thread,
+	 *                                {@code false},if it should be loaded in the
+	 *                                same thread.
+	 */
+	private void populateObservableList(final ObservableList<Object> observableList,
+			final MethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
+		if (asynchronous) {
+			methodInvocationAdapter.invokeAsynchronously(data -> {
+				observableList.clear();
+				observableList.addAll(data);
+			});
+		} else {
+			final List<Object> data = methodInvocationAdapter.invoke();
+			observableList.clear();
+			observableList.addAll(data);
 		}
 	}
 

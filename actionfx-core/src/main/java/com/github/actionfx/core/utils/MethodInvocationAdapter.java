@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Consumer;
 
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.ArgumentHint;
@@ -98,6 +99,19 @@ public class MethodInvocationAdapter {
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new IllegalStateException("Invocation of method '" + method.getName() + "' failed!", e);
 		}
+	}
+
+	/**
+	 * Invokes the method in a separate thread and calls the consumer once the
+	 * result of the method invocation is available. The consumer is guaranteed to
+	 * be executed inside the JavaFX-thread.
+	 *
+	 * @param <T>      the return type of the method
+	 * @param consumer the consumer accepting the return value of the asynchronous
+	 *                 method invocation
+	 */
+	public <T> void invokeAsynchronously(final Consumer<T> consumer) {
+		AsyncUtils.executeAsynchronously(this::invoke, consumer);
 	}
 
 	public Object getInstance() {

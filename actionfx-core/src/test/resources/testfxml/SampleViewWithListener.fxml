@@ -35,6 +35,11 @@
                         <TableColumn prefWidth="75.0" text="C1" />
                      </columns>
                   </TableView>
+                  <TableView fx:id="asyncDataLoadedSelectionTable" prefHeight="200.0" prefWidth="200.0">
+                     <columns>
+                        <TableColumn prefWidth="75.0" text="C1" />
+                     </columns>
+                  </TableView>
                </children>
             </HBox>
          </children>

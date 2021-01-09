@@ -23,8 +23,13 @@
  */
 package com.github.actionfx.core.utils;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javafx.application.Platform;
 
 /**
  * Utils for performing tasks in an asynchronous fashion.
@@ -38,6 +43,20 @@ public class AsyncUtils {
 
 	private AsyncUtils() {
 		// class can not be instantiated
+	}
+
+	/**
+	 * Executes the given {@link Supplier} in a separate thread asynchronously, Once
+	 * the supplier is executed, the given {@link Consumer} is called with the
+	 * result of the {@link Supplier}. The call of the consumer is guaranteed to be
+	 * inside the JavaFX thread.
+	 *
+	 * @param <V>      the returned value of the supplier
+	 * @param supplier the supplier
+	 * @param consumer the consumer - called inside the JavaFX thread
+	 */
+	public static <V> void executeAsynchronously(final Supplier<V> supplier, final Consumer<V> consumer) {
+		CompletableFuture.supplyAsync(supplier, AFX_EXECUTOR_SERVICE).thenAcceptAsync(consumer, Platform::runLater);
 	}
 
 	/**
