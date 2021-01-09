@@ -147,7 +147,7 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the value property, or {@code null}, in case the control does not
 	 *         have a value property.
 	 */
-	public <V> Property<V> getValueProperty() {
+	public <V> ObservableValue<V> getValueProperty() {
 		final Control control = getWrapped();
 		return controlConfig.hasValueProperty() ? controlConfig.getValueProperty(control) : null;
 	}
@@ -386,7 +386,7 @@ public class ControlWrapper extends NodeWrapper {
 	 * @param changeListener the change listener to add
 	 */
 	public <V> void addValueChangeListener(final ChangeListener<V> changeListener) {
-		final Property<V> valueProperty = getValueProperty();
+		final ObservableValue<V> valueProperty = getValueProperty();
 		if (valueProperty != null) {
 			valueProperty.addListener(changeListener);
 			addedValueChangeListener.add(changeListener);
@@ -398,7 +398,7 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void removeAllValueChangeListener() {
-		final Property<?> valueProperty = getValueProperty();
+		final ObservableValue<?> valueProperty = getValueProperty();
 		if (valueProperty != null) {
 			for (final ChangeListener listener : addedValueChangeListener) {
 				valueProperty.removeListener(listener);

@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -40,6 +41,12 @@
                         <TableColumn prefWidth="75.0" text="C1" />
                      </columns>
                   </TableView>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TreeView fx:id="dataLoadedTreeView" prefHeight="200.0" prefWidth="200.0" />
+                  <TreeView fx:id="asyncDataLoadedTreeView" prefHeight="200.0" prefWidth="200.0" />
                </children>
             </HBox>
          </children>

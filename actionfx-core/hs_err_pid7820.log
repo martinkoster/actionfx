@@ -1,0 +1,21 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fd93d654375, pid=7820, tid=7836
+#
+# JRE version: OpenJDK Runtime Environment (15.0+36) (build 15+36-1562)
+# Java VM: OpenJDK 64-Bit Server VM (15+36-1562, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x4375]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x65
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %d %P %E" (or dumping to /home/koster/development/projects/actionfx/actionfx-core/core.7820)
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -XX:+ShowCodeDetailsInExceptionMessages -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:35637 -ea -javaagent:/home/koster/development/sts-4.8.0.RELEASE/configuration/org.eclipse.osgi/257/0/.cp/lib/javaagent-shaded.jar -Dfile.encoding=UTF-8 org.eclipse.jdt.internal.junit.runner.RemoteTestRunner -version 3 -port 42053 -testLoaderClass org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader -loaderpluginname org.eclipse.jdt.junit5.runtime -test com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplierTest:testCreateInstance_wireOnUserInput_selection_singleValueChange_inTableView -uniqueId [engine:junit-jupiter]/[class:com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplierTest]/[method:testCreateInstance_wireOnUserInput_selection_singleValueChange_inTableView()]
+
+Host: Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz, 4 cores, 9G, 

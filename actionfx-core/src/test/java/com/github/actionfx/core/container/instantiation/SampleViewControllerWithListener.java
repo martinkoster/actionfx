@@ -22,6 +22,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 
 @AFXController(viewId = "testId", fxml = "/testfxml/SampleViewWithListener.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {
 		"cssClass1", "cssClass2" })
@@ -61,7 +63,16 @@ public class SampleViewControllerWithListener {
 	protected TableView<String> asyncDataLoadedSelectionTable;
 
 	// data loading initially deactivated
-	protected BooleanProperty loadDataActivated = new SimpleBooleanProperty(false);
+	protected BooleanProperty loadDataForTableViewActivated = new SimpleBooleanProperty(false);
+
+	@FXML
+	protected TreeView<String> dataLoadedTreeView;
+
+	@FXML
+	protected TreeView<String> asyncDataLoadedTreeView;
+
+	// data loading initially deactivated
+	protected BooleanProperty loadDataForTreeViewActivated = new SimpleBooleanProperty(false);
 
 	@AFXOnAction(controlId = "actionButton")
 	public void onActionButtonClicked() {
@@ -69,13 +80,23 @@ public class SampleViewControllerWithListener {
 	}
 
 	@AFXLoadControlData(controlId = "dataLoadedSelectionTable")
-	public List<String> loadData() {
+	public List<String> loadTableViewData() {
 		return Arrays.asList("Loaded 1", "Loaded 2", "Loaded 3");
 	}
 
-	@AFXLoadControlData(controlId = "asyncDataLoadedSelectionTable", async = true, loadingActiveBooleanProperty = "loadDataActivated")
-	public List<String> loadDataAsynchronously() {
+	@AFXLoadControlData(controlId = "asyncDataLoadedSelectionTable", async = true, loadingActiveBooleanProperty = "loadDataForTableViewActivated")
+	public List<String> loadTableViewDataAsynchronously() {
 		return Arrays.asList("Loaded 1", "Loaded 2", "Loaded 3");
+	}
+
+	@AFXLoadControlData(controlId = "dataLoadedTreeView")
+	public TreeItem<String> loadTreeViewData() {
+		return new TreeItem<>("root");
+	}
+
+	@AFXLoadControlData(controlId = "asyncDataLoadedTreeView", async = true, loadingActiveBooleanProperty = "loadDataForTreeViewActivated")
+	public TreeItem<String> loadTreeViewDataAsynchronously() {
+		return new TreeItem<>("root");
 	}
 
 	// order 10: changes on textfield will trigger this method first

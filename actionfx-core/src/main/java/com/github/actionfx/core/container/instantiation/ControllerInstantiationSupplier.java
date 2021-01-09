@@ -57,6 +57,8 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WritableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -263,7 +265,11 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			if (controlWrapper.supportsValues()) {
 				populateControlsObservableList(instance, method, loadingActiveBooleanProperty, controlWrapper,
 						loadControlData.async());
+			} else if (controlWrapper.supportsValue()) {
+				populateControlsWritableValue(instance, method, loadingActiveBooleanProperty, controlWrapper,
+						loadControlData.async());
 			} else {
+
 				throw new IllegalStateException("Control with ID='" + loadControlData.controlId()
 						+ "' does not support user input listening! Please check your ActionFX annotations inside constroller '"
 						+ instance.getClass().getCanonicalName() + "'!");
@@ -274,7 +280,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 
 	/**
 	 * Populates the control that is wrapped inside {@link ControlWrapper} with the
-	 * data that the given {@link Method} is returning.
+	 * data that the given {@link Method} is returning.The value of the control is
+	 * expected to be of type {@link ObservableList}.
 	 *
 	 * @param instance                     the instance holding the method
 	 * @param method                       the method that returns the control data
@@ -331,6 +338,72 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			final List<Object> data = methodInvocationAdapter.invoke();
 			observableList.clear();
 			observableList.addAll(data);
+		}
+	}
+
+	/**
+	 * Populates the control that is wrapped inside {@link ControlWrapper} with the
+	 * data that the given {@link Method} is returning. The value of the control is
+	 * expected to be of type {@link WritableValue}.
+	 *
+	 * @param instance                     the instance holding the method
+	 * @param method                       the method that returns the control data
+	 * @param loadingActiveBooleanProperty an optional boolean property that
+	 *                                     signalizes, whether the data can be
+	 *                                     loaded (when set to {@code true})
+	 * @param controlWrapper               the wrapped control
+	 * @param asynchronous                 {@code true},if the data shall be
+	 *                                     asynchronously loaded in a separate
+	 *                                     thread without blocking the JavaFX
+	 *                                     thread, {@code false},if it should be
+	 *                                     loaded in the same thread.
+	 */
+	@SuppressWarnings("unchecked")
+	private void populateControlsWritableValue(final Object instance, final Method method,
+			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper,
+			final boolean asynchronous) {
+		final ObservableValue<Object> observable = controlWrapper.getValueProperty();
+		if (observable == null || !WritableValue.class.isAssignableFrom(observable.getClass())) {
+			throw new IllegalStateException("Value property of control with ID='" + controlWrapper.getId()
+					+ "' can not be populated with data from method '" + method.getName() + "' inside controller '"
+					+ instance.getClass().getCanonicalName() + "'! Is the control holding a writable value property?");
+		}
+		final MethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance, method);
+		final WritableValue<Object> writableValue = (WritableValue<Object>) observable;
+		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
+			populateWritableValue(writableValue, methodInvocationAdapter, asynchronous);
+		}
+		if (loadingActiveBooleanProperty != null) {
+			// whenever value switches from false to true, we trigger a loading
+			loadingActiveBooleanProperty.addListener((obs, oldValue, newValue) -> {
+				if (Boolean.FALSE.equals(oldValue) && Boolean.TRUE.equals(newValue)) {
+					populateWritableValue(writableValue, methodInvocationAdapter, asynchronous);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Populates the given {@code writableValue} with values from the supplied
+	 * {@code methodInvocationAdapter}.
+	 *
+	 * @param writableValue           the writable value to be populated with values
+	 *                                from the method invocation
+	 * @param methodInvocationAdapter the method invocation adapter that will
+	 *                                provide the values
+	 * @param asynchronous            {@code true},if the data shall be
+	 *                                asynchronously loaded in a separate thread
+	 *                                without blocking the JavaFX thread,
+	 *                                {@code false},if it should be loaded in the
+	 *                                same thread.
+	 */
+	private void populateWritableValue(final WritableValue<Object> writableValue,
+			final MethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
+		if (asynchronous) {
+			methodInvocationAdapter.invokeAsynchronously(writableValue::setValue);
+		} else {
+			final Object data = methodInvocationAdapter.invoke();
+			writableValue.setValue(data);
 		}
 	}
 

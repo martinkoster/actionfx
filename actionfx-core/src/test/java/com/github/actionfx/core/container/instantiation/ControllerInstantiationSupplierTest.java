@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -56,7 +57,6 @@ import javafx.scene.control.SelectionMode;
  * @author koster
  *
  */
-@TestInFxThread
 @ExtendWith(FxThreadForEachMonocleExtension.class)
 class ControllerInstantiationSupplierTest {
 
@@ -66,6 +66,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_viewCreationTest() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewController> supplier = new ControllerInstantiationSupplier<>(
@@ -95,6 +96,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_valueChangetextField_allListenersAreActive() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -112,6 +114,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_valueChangetextField_onlyOneListenerIsActive_usingListenerActiveBooleanPropertyInAnnotation() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -129,6 +132,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_valueChangechoiceBox() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -143,6 +147,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_valueChangecomboBox() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -157,6 +162,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_enableMultiSelectionControls() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -173,6 +179,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnAction() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -192,6 +199,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnAction_referencedControlDoesNotHaveOnActionProperty() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithWrongAFXOnAction> supplier = new ControllerInstantiationSupplier<>(
@@ -206,6 +214,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_selection_singleValueChange_inTableView() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -224,6 +233,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_selection_multiValueChange_inTableView() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
@@ -243,7 +253,8 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	void testCreateInstance_wireLoadControlData() {
+	@TestInFxThread
+	void testCreateInstance_wireLoadControlData_valueIsObservableList() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewControllerWithListener.class);
@@ -257,7 +268,7 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	void testCreateInstance_wireLoadControlData_dataIsLoadedAsynchronously() {
+	void testCreateInstance_wireLoadControlData_valueIsObservableList_dataIsLoadedAsynchronously() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
 				SampleViewControllerWithListener.class);
@@ -270,10 +281,48 @@ class ControllerInstantiationSupplierTest {
 		assertThat(controller.asyncDataLoadedSelectionTable.getItems(), hasSize(0));
 
 		// and WHEN (we switch the loading flag to "true")
-		controller.loadDataActivated.set(true);
+		controller.loadDataForTableViewActivated.set(true);
 
 		// and THEN
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
 		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+	}
+
+	@Test
+	@TestInFxThread
+	void testCreateInstance_wireLoadControlData_valueIsWritableValue() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN
+		assertThat(controller.dataLoadedTreeView.getRoot(), notNullValue());
+		assertThat(controller.dataLoadedTreeView.getRoot().getValue(), equalTo("root"));
+	}
+
+	@Test
+	void testCreateInstance_wireLoadControlData_valueIsWritableValue_dataIsLoadedAsynchronously() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN (initially, root value is empty, because the data loading flag is set to
+		// false
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+		assertThat(controller.asyncDataLoadedTreeView.getRoot(), nullValue());
+
+		// and WHEN (we switch the loading flag to "true")
+		controller.loadDataForTreeViewActivated.set(true);
+
+		// and THEN
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+		assertThat(controller.asyncDataLoadedTreeView.getRoot(), notNullValue());
+		assertThat(controller.asyncDataLoadedTreeView.getRoot().getValue(), equalTo("root"));
 	}
 }
