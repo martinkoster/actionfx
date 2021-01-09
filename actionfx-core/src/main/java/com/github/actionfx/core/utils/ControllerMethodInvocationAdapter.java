@@ -33,22 +33,31 @@ import java.util.ListIterator;
 import java.util.function.Consumer;
 
 import com.github.actionfx.core.annotation.AFXArgHint;
+import com.github.actionfx.core.annotation.AFXControlUserValue;
 import com.github.actionfx.core.annotation.ArgumentHint;
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
+import com.github.actionfx.core.view.View;
+import com.github.actionfx.core.view.graph.ControlWrapper;
+import com.github.actionfx.core.view.graph.NodeWrapper;
 
 /**
- * Adapter for invoking methods with variable method arguments.
+ * Adapter for invoking controller methods with variable method arguments.
  * <p>
  * This adapter tries to find the best match for method arguments based on a
  * supplied list of {@link ParameterValues}. In case two method arguments have
  * the same type, the annotation {@link AFXArgHint} is evaluated for some
  * further hints, which value to take for which method argument.
+ * <p>
+ * Additionally, method arguments are allowed to be annotated by
+ * {@link AFXControlUserValue}. In this case, the user value is retrieved from
+ * the referenced control and is used as method argument.
  *
  * @author koster
  *
  */
-public class MethodInvocationAdapter {
+public class ControllerMethodInvocationAdapter {
 
-	private final Object instance;
+	private final Object controller;
 
 	private final Method method;
 
@@ -58,13 +67,13 @@ public class MethodInvocationAdapter {
 	 * Constructor that accepts a method together with the holding {@code instance}
 	 * and candidates for method arguments.
 	 *
-	 * @param instance                 the instance holding the method
+	 * @param controller               the instance holding the method
 	 * @param method                   the method to execute
 	 * @param availableParameterValues parameter candidates
 	 */
-	public MethodInvocationAdapter(final Object instance, final Method method,
+	public ControllerMethodInvocationAdapter(final Object controller, final Method method,
 			final Object... availableParameterValues) {
-		this(instance, method, toParameterValues(availableParameterValues));
+		this(controller, method, toParameterValues(availableParameterValues));
 	}
 
 	/**
@@ -74,13 +83,13 @@ public class MethodInvocationAdapter {
 	 * want to distinguish between the two values (e.g. "old value" and "new
 	 * value").
 	 *
-	 * @param instance                 the instance holding the method
+	 * @param controller               the instance holding the method
 	 * @param method                   the method to execute
 	 * @param availableParameterValues parameter candidates
 	 */
-	public MethodInvocationAdapter(final Object instance, final Method method,
+	public ControllerMethodInvocationAdapter(final Object controller, final Method method,
 			final ParameterValue... availableParameterValues) {
-		this.instance = instance;
+		this.controller = controller;
 		this.method = method;
 		methodArguments = matchValuesToParameters(method.getParameters(),
 				availableParameterValues != null ? availableParameterValues : new ParameterValue[0]);
@@ -95,7 +104,7 @@ public class MethodInvocationAdapter {
 	@SuppressWarnings("unchecked")
 	public <T> T invoke() {
 		try {
-			return (T) method.invoke(instance, methodArguments);
+			return (T) method.invoke(controller, methodArguments);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new IllegalStateException("Invocation of method '" + method.getName() + "' failed!", e);
 		}
@@ -115,7 +124,7 @@ public class MethodInvocationAdapter {
 	}
 
 	public Object getInstance() {
-		return instance;
+		return controller;
 	}
 
 	public Method getMethod() {
@@ -136,7 +145,12 @@ public class MethodInvocationAdapter {
 		final List<ParameterValue> parameterValues = new ArrayList<>(Arrays.asList(availableParameterValues));
 		final Object[] values = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
-			values[i] = determineInstanceByParameter(parameters[i], parameterValues);
+			final AFXControlUserValue controlUserValue = parameters[i].getAnnotation(AFXControlUserValue.class);
+			if (controlUserValue != null) {
+				values[i] = determineInstanceFromControl(parameters[i], controlUserValue);
+			} else {
+				values[i] = determineInstanceForParameter(parameters[i], parameterValues);
+			}
 		}
 		return values;
 	}
@@ -151,8 +165,7 @@ public class MethodInvocationAdapter {
 	 * @return the instance matching the given {@code type}, or {@code null}, if no
 	 *         instance matches the given {@code type}
 	 */
-	private static Object determineInstanceByParameter(final Parameter parameter,
-			final List<ParameterValue> candidates) {
+	private Object determineInstanceForParameter(final Parameter parameter, final List<ParameterValue> candidates) {
 		if (candidates.isEmpty()) {
 			return null;
 		}
@@ -183,6 +196,45 @@ public class MethodInvocationAdapter {
 			candidates.remove(bestMatch);
 			return bestMatch.getValue();
 		}
+	}
+
+	/**
+	 * Determines an instance for the given {@code parameter} from a
+	 * {@link javafx.scene.control.Control} inside the view that is held be the
+	 * controller.
+	 *
+	 * @param parameter        the parameter to search a value for
+	 * @param controlUserValue the {@link AFXControlUserValue} annotation applied to
+	 *                         the method argument
+	 * @return the value retrieved from the control
+	 */
+	private Object determineInstanceFromControl(final Parameter parameter, final AFXControlUserValue controlUserValue) {
+		final View view = ControllerWrapper.getViewFrom(controller);
+		if (view == null) {
+			throw new IllegalStateException("There is no view associated with controller of type '"
+					+ controller.getClass().getCanonicalName() + "'!");
+		}
+		final NodeWrapper control = view.lookupNode(controlUserValue.controlId());
+		if (control == null) {
+			throw new IllegalStateException("There is no node with ID='" + controlUserValue.controlId()
+					+ "' inside the view associated with controller '" + controller.getClass().getCanonicalName()
+					+ "'!");
+		}
+		if (!javafx.scene.control.Control.class.isAssignableFrom(control.getWrappedType())) {
+			throw new IllegalStateException(
+					"Node with ID='" + controlUserValue.controlId() + "' inside the view hosted by controller '"
+							+ controller.getClass().getCanonicalName() + "' is not a javafx.scene.control.Control!");
+		}
+		final ControlWrapper controlWrapper = ControlWrapper.of(control.getWrapped());
+		final Object userValue = controlWrapper.getUserValue();
+		if (userValue != null && !parameter.getType().isAssignableFrom(userValue.getClass())) {
+			throw new IllegalStateException("User value retrieved for control with ID='" + controlUserValue.controlId()
+					+ "' inside the view hosted by controller '" + controller.getClass().getCanonicalName()
+					+ "' is not compatible with the method argument of type '" + parameter.getType().getCanonicalName()
+					+ "'! Control value is of type '" + userValue.getClass().getCanonicalName() + "'");
+
+		}
+		return userValue;
 	}
 
 	/**

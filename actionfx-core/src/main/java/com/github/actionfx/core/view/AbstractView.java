@@ -189,6 +189,12 @@ public abstract class AbstractView implements View {
 		return NodeWrapper.of(rootNode).getScene();
 	}
 
+	@Override
+	public NodeWrapper lookupNode(final String nodeId) {
+		final NodeWrapper wrappedRootNode = NodeWrapper.of(getRootNode());
+		return wrappedRootNode.lookup(nodeId);
+	}
+
 	/**
 	 * Initializes the given {@link Stage} with the parameters defined for this
 	 * view.

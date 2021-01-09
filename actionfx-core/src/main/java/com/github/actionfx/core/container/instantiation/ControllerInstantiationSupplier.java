@@ -46,8 +46,8 @@ import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.listener.TimedChangeListener;
 import com.github.actionfx.core.listener.TimedListChangeListener;
 import com.github.actionfx.core.utils.AnnotationUtils;
-import com.github.actionfx.core.utils.MethodInvocationAdapter;
-import com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter;
+import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
@@ -193,8 +193,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 						+ instance.getClass().getCanonicalName() + "', method '" + method.getName() + "'!");
 			}
 			onActionProperty.setValue(actionEvent -> {
-				final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
-						ParameterValue.of(actionEvent));
+				final ControllerMethodInvocationAdapter adapter = new ControllerMethodInvocationAdapter(instance,
+						method, ParameterValue.of(actionEvent));
 				adapter.invoke();
 			});
 		}
@@ -299,7 +299,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper,
 			final boolean asynchronous) {
 		final ObservableList<Object> valuesObservableList = controlWrapper.getValues();
-		final MethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance, method);
+		final ControllerMethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance,
+				method);
 		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
 			populateObservableList(valuesObservableList, methodInvocationAdapter, asynchronous);
 		}
@@ -328,7 +329,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *                                same thread.
 	 */
 	private void populateObservableList(final ObservableList<Object> observableList,
-			final MethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
+			final ControllerMethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
 		if (asynchronous) {
 			methodInvocationAdapter.invokeAsynchronously(data -> {
 				observableList.clear();
@@ -368,7 +369,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 					+ "' can not be populated with data from method '" + method.getName() + "' inside controller '"
 					+ instance.getClass().getCanonicalName() + "'! Is the control holding a writable value property?");
 		}
-		final MethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance, method);
+		final ControllerMethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance,
+				method);
 		final WritableValue<Object> writableValue = (WritableValue<Object>) observable;
 		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
 			populateWritableValue(writableValue, methodInvocationAdapter, asynchronous);
@@ -398,7 +400,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *                                same thread.
 	 */
 	private void populateWritableValue(final WritableValue<Object> writableValue,
-			final MethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
+			final ControllerMethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
 		if (asynchronous) {
 			methodInvocationAdapter.invokeAsynchronously(writableValue::setValue);
 		} else {
@@ -417,8 +419,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @return the control wrapper instance
 	 */
 	private ControlWrapper createControlWrapper(final String controlId, final View view) {
-		final NodeWrapper wrappedRootNode = NodeWrapper.of(view.getRootNode());
-		final NodeWrapper wrappedTargetNode = wrappedRootNode.lookup(controlId);
+		final NodeWrapper wrappedTargetNode = view.lookupNode(controlId);
 		if (wrappedTargetNode == null) {
 			throw new IllegalStateException("Node with id='" + controlId + "' does not exist!");
 		}
@@ -462,7 +463,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private TimedChangeListener<?> createValueChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty) {
 		return new TimedChangeListener<>((observable, oldValue, newValue) -> {
-			final MethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
+			final ControllerMethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
 					ParameterValue.ofAllSelectedValues(
 							newValue == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(newValue))),
 					ParameterValue.ofNewValue(newValue), ParameterValue.ofOldValue(oldValue),
@@ -504,7 +505,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 				}
 			}
 			change.reset();
-			final MethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
+			final ControllerMethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
 					ParameterValue.ofAllSelectedValues(allValuesSupplier.get()),
 					ParameterValue.ofAddedValues(addedList), ParameterValue.ofRemovedValues(removedList),
 					ParameterValue.of(change), ParameterValue.of(singleValueSupplier.get()));
@@ -517,9 +518,9 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * given {@code instance}.
 	 *
 	 */
-	private MethodInvocationAdapter createMethodInvocationAdapter(final Object instance, final Method method,
+	private ControllerMethodInvocationAdapter createMethodInvocationAdapter(final Object instance, final Method method,
 			final ParameterValue... parameterValues) {
-		return new MethodInvocationAdapter(instance, method, parameterValues);
+		return new ControllerMethodInvocationAdapter(instance, method, parameterValues);
 	}
 
 	/**

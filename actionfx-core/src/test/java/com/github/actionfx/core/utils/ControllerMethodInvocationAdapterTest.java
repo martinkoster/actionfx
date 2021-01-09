@@ -40,25 +40,25 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.ArgumentHint;
-import com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * JUnit test case for {@link MethodInvocationAdapter}.
+ * JUnit test case for {@link ControllerMethodInvocationAdapter}.
  *
  * @author koster
  *
  */
 @ExtendWith(FxThreadForAllMonocleExtension.class)
-class MethodInvocationAdapterTest {
+class ControllerMethodInvocationAdapterTest {
 
 	@Test
 	void testInvoke_withVoidMethod() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethod");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethod");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -73,7 +73,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withmethodReturningInt() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("methodReturningInt");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("methodReturningInt");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -88,7 +88,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithStringAndIntParameter() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithStringAndIntParameter");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithStringAndIntParameter");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -103,7 +103,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithOldAndNewValue() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithOldAndNewValue");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithOldAndNewValue");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -120,7 +120,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithNewAndOldValue() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithNewAndOldValue");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithNewAndOldValue");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -136,7 +136,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithWithTwoStrings_checkParameterConsumption() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithWithTwoStrings");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithWithTwoStrings");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -153,7 +153,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithSelected() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithSelected");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithSelected");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -171,7 +171,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithSelectedAddedRemovedLists() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithSelectedAddedRemovedLists");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithSelectedAddedRemovedLists");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -191,7 +191,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvoke_withVoidMethodWithRemovedAddedSelectedLists() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithRemovedAddedSelectedLists");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("voidMethodWithRemovedAddedSelectedLists");
 
 		// WHEN
 		final Object result = adapter.invoke();
@@ -210,7 +210,7 @@ class MethodInvocationAdapterTest {
 	@Test
 	void testInvokeAsynchronously_withMethodReturningInt() {
 		// GIVEN
-		final MethodInvocationAdapter adapter = methodInvocationAdapter("methodReturningInt");
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("methodReturningInt");
 		final IntegerProperty result = new SimpleIntegerProperty(0);
 
 		// WHEN
@@ -221,10 +221,10 @@ class MethodInvocationAdapterTest {
 		assertThat(result.get(), equalTo(42));
 	}
 
-	private static MethodInvocationAdapter methodInvocationAdapter(final String methodName) {
+	private static ControllerMethodInvocationAdapter methodInvocationAdapter(final String methodName) {
 		final ClassWithPublicMethods instance = new ClassWithPublicMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
-		return new MethodInvocationAdapter(instance, method, ParameterValue.of("Type-based Value 1"),
+		return new ControllerMethodInvocationAdapter(instance, method, ParameterValue.of("Type-based Value 1"),
 				ParameterValue.of("Type-based Value 2"), ParameterValue.of(Integer.valueOf(4711)),
 				ParameterValue.ofOldValue(Integer.valueOf(100)), ParameterValue.ofNewValue(Integer.valueOf(1000)),
 				ParameterValue.ofAllSelectedValues(List.of("selected")), ParameterValue.ofAddedValues(List.of("added")),
