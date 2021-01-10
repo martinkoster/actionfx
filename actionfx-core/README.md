@@ -6,6 +6,10 @@ Module | Description | API Documentation | Gradle Dependency
 ------ | ----------- | ----------------- | ----------
 [actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.1"`
 
+## Table of Contents
+
+
+
 ## Overview
 
 This module provides:
@@ -81,7 +85,7 @@ Once the ActionFX instance is configured and initialized with components, you ca
 	}
 ```
 
-## Defining an ActionFX controller
+## Implementing ActionFX controllers
 
 By using annotation [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) on a class, this class becomes an ActionFX controller. A controller is responsible for holding the actions that can be triggered from a view, preferably defined in an FXML document.
 
@@ -124,7 +128,7 @@ public class MainController {
 
 Please note that controller **must not be instantiated directly** via the `new` keyword, because ActionFX is enhancing the class in the background and is evaluating the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation.
 
-## Example of a Controller Definition with Nested Views
+### Example of a Controller Definition with Nested Views
 
 The following code snippet show how a controller definition can look like, while other controllers and their views are wired into the FXML-bassed view. 
 
@@ -173,8 +177,11 @@ public class MainController {
 ```
 Please note in the example above, the additional attribute `attachToNodeWithId` needs to be provided, so that ActionFX knows to which node the nested view needs to be attached to.
 
+### Annotations inside an ActionFX controller
 
-## Using @AFXShowView to navigate between views
+There are various annotations that you can apply to controller methods and fields that are reducing the amount of code that you need for wiring your controls and methods. In the following sections, an overview on the available annotations is provided.
+
+#### Annotation @AFXShowView (Method Annotation)
 
 The [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) can be applied at method-level to navigate between different views from inside a controller class.
 
@@ -187,3 +194,41 @@ Attribute | Description
 `showNestedViews` | The nested views to be displayed, when the method successfully terminates. This attribute allows to embed view into the current scene graph and `Stage`. Please take note, that this attribute must not be used together with `showView()` and `showInNewWindow()`.
 
 Please note that only *one* attribute must be used at the same time (they can not be combined).
+
+#### Annotation @AFXOnAction (Method Argument Annotation)
+
+The [@AFXOnAction](src/main/java/com/github/actionfx/core/annotation/AFXOnAction.java) is wiring the annotated method to the "onAction" property of the specified control. This annotation can be e.g. used to execute the annotated method, when the user clicks on a button.
+
+Annotated methods can be of the following signature:
+- `void methodName()`
+- `void methodName(javafx.event.ActionEvent event)`
+
+You can also combine this annotation with annotation [@AFXControlValue](#annotation--afxcontrolvalue--method-argument-annotation-):
+
+`void methodName(@AFXControlValue("usernameTextField") String username)`
+
+In this case, the user value entered in text field with ID usernameTextField' will be injected as method argument.
+
+#### Annotation @AFXLoadControlValue (Method Annotation)
+
+The [@AFXLoadControlValue](src/main/java/com/github/actionfx/core/annotation/AFXLoadControlValue.java)
+
+#### Annotation @AFXOnControlValueChange (Method Annotation)
+
+The [@AFXOnControlValueChange](src/main/java/com/github/actionfx/core/annotation/AFXOnControlValueChange.java)
+
+#### Annotation @AFXArgHint (Method Argument Annotation)
+
+The [@AFXArgHint](src/main/java/com/github/actionfx/core/annotation/AFXArgHint.java)
+
+#### Annotation @AFXControlValue (Method Argument Annotation)
+
+The [@AFXControlValue](src/main/java/com/github/actionfx/core/annotation/AFXControlValue.java)
+
+#### Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)
+
+The [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java)
+
+#### Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)
+
+The [@AFXEnableMultiSelection](src/main/java/com/github/actionfx/core/annotation/AFXEnableMultiSelection.java)
