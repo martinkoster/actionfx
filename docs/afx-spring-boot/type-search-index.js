@@ -1,1 +1,0 @@
-typeSearchIndex = [{"p":"com.github.actionfx.spring.container","l":"AFXApplicationContextInitializer"},{"p":"com.github.actionfx.spring.autoconfigure","l":"AFXAutoconfiguration"},{"l":"All Classes","url":"allclasses-index.html"},{"p":"com.github.actionfx.spring.container","l":"SpringBeanContainer"}]

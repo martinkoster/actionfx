@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -213,13 +213,20 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code><a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupNode(java.lang.String)">lookupNode</a></span>&#8203;(java.lang.String&nbsp;nodeId)</code></th>
+<td class="colLast">
+<div class="block">Looks up a node that carries the supplied <code>nodeId</code>.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show()">show</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Shows the view in a new stage / new window.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show(javafx.stage.Popup,javafx.stage.Window)">show</a></span>&#8203;(javafx.stage.Popup&nbsp;popup,
     javafx.stage.Window&nbsp;owner)</code></th>
@@ -227,14 +234,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Shows the view in the supplied <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show(javafx.stage.Stage)">show</a></span>&#8203;(javafx.stage.Stage&nbsp;stage)</code></th>
 <td class="colLast">
 <div class="block">Shows the view in the supplied <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showAndWait()">showAndWait</a></span>()</code></th>
 <td class="colLast">
@@ -415,7 +422,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <a id="getController()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getController</h4>
 <pre class="methodSignature">java.lang.Object&nbsp;getController()</pre>
@@ -423,6 +430,23 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the controller instance</dd>
+</dl>
+</li>
+</ul>
+<a id="lookupNode(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>lookupNode</h4>
+<pre class="methodSignature"><a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&nbsp;lookupNode&#8203;(java.lang.String&nbsp;nodeId)</pre>
+<div class="block">Looks up a node that carries the supplied <code>nodeId</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>nodeId</code> - the node ID</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the retrieved node, or <code>null</code>, in case there is no node with
+         the given <code>nodeId</code></dd>
 </dl>
 </li>
 </ul>

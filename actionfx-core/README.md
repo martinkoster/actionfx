@@ -4,7 +4,7 @@ The "actionfx-core" module consists of the core functionality of ActionFX.
 
 Module | Description | API Documentation | Gradle Dependency 
 ------ | ----------- | ----------------- | ----------
-[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.1"`
+[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.2"`
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ Module | Description | API Documentation | Gradle Dependency
     + [Example of a Controller Definition with Nested Views](#example-of-a-controller-definition-with-nested-views)
     + [Annotations inside an ActionFX controller](#annotations-inside-an-actionfx-controller)
       - [Annotation @AFXShowView (Method Annotation)](#annotation--afxshowview--method-annotation-)
-      - [Annotation AFXOnAction (Method Annotation)](#annotation-afxonaction--method-annotation-)
+      - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction--method-annotation-)
       - [Annotation @AFXLoadControlValue (Method Annotation)](#annotation--afxloadcontrolvalue--method-annotation-)
       - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation--afxoncontrolvaluechange--method-annotation-)
       - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation--afxarghint--method-argument-annotation-)

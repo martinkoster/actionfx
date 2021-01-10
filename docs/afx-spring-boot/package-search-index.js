@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.github.actionfx.spring.autoconfigure"},{"l":"com.github.actionfx.spring.container"}]
