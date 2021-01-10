@@ -33,26 +33,31 @@ import java.lang.annotation.Target;
 import javafx.beans.property.BooleanProperty;
 
 /**
- * Annotated methods are invoked when the user inputs a value in the referenced
- * control identified by {@link #controlId()) and by that changes the value of
- * the specified .
+ * Annotated methods are invoked when the user changes a value in the referenced
+ * control identified by {@link #controlId()).
  * <p>
  * Annotated methods can be of the following signature:
+ * <p>
+ * For controls with a single-value:
  * <ul>
  * <li><tt>void methodName()</tt></li>
  * <li><tt>void methodName(TYPE newValue)</tt></li>
- * <li><tt>void methodName(TYPE newValue, TYPE oldValue, ObservableValue<TYPE>
+ * <li><tt>void methodName(TYPE newValue, TYPE oldValue, ObservableValue&lt;TYPE&gt;
  * observableValue)</tt></li>
- * <li><tt>void methodName(TYPE newValue, TYPE oldValue, ObservableValue<TYPE>
- * observableValue)</tt></li>
- * <li><tt>void methodName(ObservableList<TYPE> selectedValue)</tt></li>
+ * </ul>
+ * <p>
+ * For controls with multi-values:
+ * <ul>
+ * <li><tt>void methodName()</tt></li>
+ * <li><tt>void methodName(ObservableList&lt;TYPE&gt; selectedValue)</tt></li>
+ * <li><tt>void methodName(ObservableList&lt;TYPE&gt; selectedValue, List&lt;TYPE&gt; addedList, List&lt;TYPE&gt; removedList, javafx.collections.ListChangeListener.Change change)</tt></li>
  * </ul>
  * The above signatures are supported without requiring the use of the
  * {@link AFXArgHint} annotation. In case you need to change the order of the
- * arguments, you will need to specify hints for defining, which argument is the
- * "new" value (use @{@link AFXArgHint} with {@link ArgumentHint#NEW_VALUE}) and
- * which argument is the "old" value (use @{@link AFXArgHint} with
- * {@link ArgumentHint#OLD_VALUE})
+ * arguments, you will need to specify hints for defining, which argument is
+ * e.g. the "new" value (use @{@link AFXArgHint} with
+ * {@link ArgumentHint#NEW_VALUE}) and which argument is the "old" value
+ * (use @{@link AFXArgHint} with {@link ArgumentHint#OLD_VALUE})
  *
  * @author koster
  *
@@ -60,7 +65,7 @@ import javafx.beans.property.BooleanProperty;
 @Retention(RUNTIME)
 @Documented
 @Target(ElementType.METHOD)
-public @interface AFXOnUserInput {
+public @interface AFXOnControlValueChange {
 
 	/**
 	 * ID of the control whose value shall be observed for changes. Please note that

@@ -40,6 +40,7 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Popup;
@@ -152,4 +153,19 @@ class FxmlViewTest {
 		assertThat(parent.getChildren(), hasSize(0));
 	}
 
+	@Test
+	void testLookupNode_nodeIsCached() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleViewWithNodeId.fxml", new TestController());
+		assertThat(view.lookupCache.entrySet(), hasSize(0));
+
+		// WHEN
+		final NodeWrapper textFieldWrapper = view.lookupNode("textField");
+
+		// THEN
+		assertThat(textFieldWrapper, notNullValue());
+		assertThat(textFieldWrapper.getWrapped(), instanceOf(TextField.class));
+		// check that the node is now cached!
+		assertThat(view.lookupCache.get("textField"), equalTo(textFieldWrapper));
+	}
 }

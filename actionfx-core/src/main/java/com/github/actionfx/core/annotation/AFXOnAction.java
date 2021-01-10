@@ -40,6 +40,12 @@ import java.lang.annotation.Target;
  * <li><tt>void methodName()</tt></li>
  * <li><tt>void methodName(javafx.event.ActionEvent event)</tt></li>
  * </ul>
+ * You can also combine this annotation with annotation {@link AFXControlValue}:
+ * <ul>
+ * <li><tt>void methodName(@AFXControlValue("usernameTextField") String username)</tt></li>
+ * </ul>
+ * In this case, the user value entered in text field with ID
+ * 'usernameTextField' will be injected as method argument.
  *
  * @author koster
  *

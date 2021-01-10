@@ -5,17 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.github.actionfx.core.annotation.AFXArgHint;
+import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
-import com.github.actionfx.core.annotation.AFXOnUserInput;
+import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.annotation.ArgumentHint;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -39,6 +41,12 @@ public class SampleViewControllerWithListener {
 
 	@FXML
 	protected Button actionButton;
+
+	@FXML
+	protected TextField actionButtonTextField;
+
+	@FXML
+	protected Button actionWithSubmissionButton;
 
 	@FXML
 	protected TextField textField;
@@ -79,6 +87,13 @@ public class SampleViewControllerWithListener {
 		invocations.add("onActionButtonClicked()");
 	}
 
+	@AFXOnAction(controlId = "actionWithSubmissionButton")
+	public void onActionWithSubmissionButtonClicked(final ActionEvent actionEvent,
+			@AFXControlValue("actionButtonTextField") final String text) {
+		invocations.add("onActionWithSubmissionButtonClicked(" + (actionEvent != null ? "ActionEvent" : "null") + ", '"
+				+ text + "')");
+	}
+
 	@AFXLoadControlData(controlId = "dataLoadedSelectionTable")
 	public List<String> loadTableViewData() {
 		return Arrays.asList("Loaded 1", "Loaded 2", "Loaded 3");
@@ -100,13 +115,13 @@ public class SampleViewControllerWithListener {
 	}
 
 	// order 10: changes on textfield will trigger this method first
-	@AFXOnUserInput(controlId = "textField", order = 10)
+	@AFXOnControlValueChange(controlId = "textField", order = 10)
 	public void onTextFieldValueChange(final String value) {
 		invocations.add("onTextFieldValueChange('" + value + "')");
 	}
 
 	// order 30: changes on textfield will trigger this method third
-	@AFXOnUserInput(controlId = "textField", order = 30, listenerActiveBooleanProperty = "listenerEnabled")
+	@AFXOnControlValueChange(controlId = "textField", order = 30, listenerActiveBooleanProperty = "listenerEnabled")
 	public void onTextFieldValueChangeWithAnnotatedArguments(@AFXArgHint(ArgumentHint.OLD_VALUE) final String oldValue,
 			@AFXArgHint(ArgumentHint.NEW_VALUE) final String newValue, final ObservableValue<String> observable) {
 		invocations.add("onTextFieldValueChangeWithAnnotatedArguments('" + oldValue + "', '" + newValue + "', "
@@ -114,39 +129,39 @@ public class SampleViewControllerWithListener {
 	}
 
 	// order 20: changes on textfield will trigger this method second
-	@AFXOnUserInput(controlId = "textField", order = 20, listenerActiveBooleanProperty = "listenerEnabled")
+	@AFXOnControlValueChange(controlId = "textField", order = 20, listenerActiveBooleanProperty = "listenerEnabled")
 	public void onTextFieldValueChangeWithNewAndOldValue(final String newValue, final String oldValue,
 			final ObservableValue<String> observable) {
 		invocations.add("onTextFieldValueChangeWithNewAndOldValue('" + newValue + "', '" + oldValue + "', "
 				+ (observable != null ? "ObservableValue" : "null") + ")");
 	}
 
-	@AFXOnUserInput(controlId = "choiceBox")
+	@AFXOnControlValueChange(controlId = "choiceBox")
 	public void onChoiceBoxValueChange(final String value) {
 		invocations.add("onChoiceBoxValueChange('" + value + "')");
 	}
 
-	@AFXOnUserInput(controlId = "comboBox")
+	@AFXOnControlValueChange(controlId = "comboBox")
 	public void onComboBoxValueChange(final String value) {
 		invocations.add("onComboBoxValueChange('" + value + "')");
 	}
 
-	@AFXOnUserInput(controlId = "singleSelectionTable", order = 1)
+	@AFXOnControlValueChange(controlId = "singleSelectionTable", order = 1)
 	public void onSelectValueInSingleSelectionTable(final String selected) {
 		invocations.add("onSelectValueInSingleSelectionTable('" + selected + "')");
 	}
 
-	@AFXOnUserInput(controlId = "singleSelectionTable", order = 2)
+	@AFXOnControlValueChange(controlId = "singleSelectionTable", order = 2)
 	public void onSelectValueInSingleSelectionTableWithList(final List<String> selected) {
 		invocations.add("onSelectValueInSingleSelectionTableWithList([" + String.join(",", selected) + "])");
 	}
 
-	@AFXOnUserInput(controlId = "multiSelectionTable", order = 1)
+	@AFXOnControlValueChange(controlId = "multiSelectionTable", order = 1)
 	public void onSelectValueInMultiSelectionTable(final List<String> selected) {
 		invocations.add("onSelectValueInMultiSelectionTable('" + String.join("','", selected) + "')");
 	}
 
-	@AFXOnUserInput(controlId = "multiSelectionTable", order = 2)
+	@AFXOnControlValueChange(controlId = "multiSelectionTable", order = 2)
 	public void onSelectValueInMultiSelectionTableWithFullArguments(final List<String> selected,
 			final List<String> added, final List<String> removed, final String lastSelected,
 			final ListChangeListener.Change<String> change) {
@@ -154,7 +169,7 @@ public class SampleViewControllerWithListener {
 				+ String.join(",", added) + "],[" + String.join(",", removed) + "],'" + lastSelected + "',change)");
 	}
 
-	@AFXOnUserInput(controlId = "multiSelectionTable", order = 3)
+	@AFXOnControlValueChange(controlId = "multiSelectionTable", order = 3)
 	public void onSelectValueInMultiSelectionTableWithAnnotatedArguments(
 			@AFXArgHint(ArgumentHint.ADDED_VALUES) final List<String> added,
 			@AFXArgHint(ArgumentHint.ALL_SELECTED) final List<String> selected,

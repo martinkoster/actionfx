@@ -215,6 +215,27 @@ class ControllerInstantiationSupplierTest {
 
 	@Test
 	@TestInFxThread
+	void testCreateInstance_wireOnAction_togetherWith_wireOnControlUserValue() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+
+		// THEN
+		assertThat(controller.actionWithSubmissionButton.getOnAction(), notNullValue());
+
+		// and WHEN (fire action)
+		Event.fireEvent(controller.actionWithSubmissionButton, new ActionEvent());
+
+		// and THEN (invocation was performed, with control user value injected into
+		// method)
+		assertThat(controller.invocations, contains("onActionWithSubmissionButtonClicked(ActionEvent, 'Hello World')"));
+	}
+
+	@Test
+	@TestInFxThread
 	void testCreateInstance_wireOnUserInput_selection_singleValueChange_inTableView() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(

@@ -24,7 +24,10 @@
 package com.github.actionfx.core.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.view.graph.NodeWrapper;
@@ -66,6 +69,10 @@ public abstract class AbstractView implements View {
 	protected String icon;
 
 	protected final List<String> stylesheets = new ArrayList<>();
+
+	// each view instance holds its lookup cache, so that consecutive lookups are
+	// not expensive (requires a tree traversal each time otherwise)
+	protected final Map<String, NodeWrapper> lookupCache = Collections.synchronizedMap(new HashMap<>());
 
 	@Override
 	public String getId() {
@@ -191,8 +198,10 @@ public abstract class AbstractView implements View {
 
 	@Override
 	public NodeWrapper lookupNode(final String nodeId) {
-		final NodeWrapper wrappedRootNode = NodeWrapper.of(getRootNode());
-		return wrappedRootNode.lookup(nodeId);
+		return lookupCache.computeIfAbsent(nodeId, key -> {
+			final NodeWrapper wrappedRootNode = NodeWrapper.of(getRootNode());
+			return wrappedRootNode.lookup(key);
+		});
 	}
 
 	/**

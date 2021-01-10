@@ -56,6 +56,8 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <Button fx:id="actionButton" mnemonicParsing="false" text="Action" />
+            <Button fx:id="actionWithSubmissionButton" mnemonicParsing="false" text="Action with Textfield Value Submission" />
+            <TextField fx:id="actionButtonTextField" text="Hello World" />
         </items>
       </ToolBar>
    </top>

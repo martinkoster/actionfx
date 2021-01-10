@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * from the ActionFX framework.
  * <p>
  * Following methods are eligible for arguments to be annotated by
- * {@link AFXControlUserValue}:
+ * {@link AFXControlValue}:
  * <ul>
  * <li>methods annotated by {@link AFXOnAction} (these methods are wired to an
  * "onAction" property of a control like a
@@ -51,7 +51,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface AFXControlUserValue {
+public @interface AFXControlValue {
 
 	/**
 	 * ID of the control whose value shall be bound to the annotated method argument
@@ -59,5 +59,5 @@ public @interface AFXControlUserValue {
 	 * @return the node ID of a control whose value shall be taken for the method
 	 *         argument
 	 */
-	public String controlId();
+	public String value();
 }

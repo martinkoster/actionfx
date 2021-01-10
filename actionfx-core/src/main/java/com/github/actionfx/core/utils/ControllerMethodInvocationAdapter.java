@@ -33,7 +33,7 @@ import java.util.ListIterator;
 import java.util.function.Consumer;
 
 import com.github.actionfx.core.annotation.AFXArgHint;
-import com.github.actionfx.core.annotation.AFXControlUserValue;
+import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.View;
@@ -49,7 +49,7 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
  * further hints, which value to take for which method argument.
  * <p>
  * Additionally, method arguments are allowed to be annotated by
- * {@link AFXControlUserValue}. In this case, the user value is retrieved from
+ * {@link AFXControlValue}. In this case, the user value is retrieved from
  * the referenced control and is used as method argument.
  *
  * @author koster
@@ -145,7 +145,7 @@ public class ControllerMethodInvocationAdapter {
 		final List<ParameterValue> parameterValues = new ArrayList<>(Arrays.asList(availableParameterValues));
 		final Object[] values = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
-			final AFXControlUserValue controlUserValue = parameters[i].getAnnotation(AFXControlUserValue.class);
+			final AFXControlValue controlUserValue = parameters[i].getAnnotation(AFXControlValue.class);
 			if (controlUserValue != null) {
 				values[i] = determineInstanceFromControl(parameters[i], controlUserValue);
 			} else {
@@ -204,31 +204,31 @@ public class ControllerMethodInvocationAdapter {
 	 * controller.
 	 *
 	 * @param parameter        the parameter to search a value for
-	 * @param controlUserValue the {@link AFXControlUserValue} annotation applied to
+	 * @param controlUserValue the {@link AFXControlValue} annotation applied to
 	 *                         the method argument
 	 * @return the value retrieved from the control
 	 */
-	private Object determineInstanceFromControl(final Parameter parameter, final AFXControlUserValue controlUserValue) {
+	private Object determineInstanceFromControl(final Parameter parameter, final AFXControlValue controlUserValue) {
 		final View view = ControllerWrapper.getViewFrom(controller);
 		if (view == null) {
 			throw new IllegalStateException("There is no view associated with controller of type '"
 					+ controller.getClass().getCanonicalName() + "'!");
 		}
-		final NodeWrapper control = view.lookupNode(controlUserValue.controlId());
+		final NodeWrapper control = view.lookupNode(controlUserValue.value());
 		if (control == null) {
-			throw new IllegalStateException("There is no node with ID='" + controlUserValue.controlId()
+			throw new IllegalStateException("There is no node with ID='" + controlUserValue.value()
 					+ "' inside the view associated with controller '" + controller.getClass().getCanonicalName()
 					+ "'!");
 		}
 		if (!javafx.scene.control.Control.class.isAssignableFrom(control.getWrappedType())) {
 			throw new IllegalStateException(
-					"Node with ID='" + controlUserValue.controlId() + "' inside the view hosted by controller '"
+					"Node with ID='" + controlUserValue.value() + "' inside the view hosted by controller '"
 							+ controller.getClass().getCanonicalName() + "' is not a javafx.scene.control.Control!");
 		}
 		final ControlWrapper controlWrapper = ControlWrapper.of(control.getWrapped());
 		final Object userValue = controlWrapper.getUserValue();
 		if (userValue != null && !parameter.getType().isAssignableFrom(userValue.getClass())) {
-			throw new IllegalStateException("User value retrieved for control with ID='" + controlUserValue.controlId()
+			throw new IllegalStateException("User value retrieved for control with ID='" + controlUserValue.value()
 					+ "' inside the view hosted by controller '" + controller.getClass().getCanonicalName()
 					+ "' is not compatible with the method argument of type '" + parameter.getType().getCanonicalName()
 					+ "'! Control value is of type '" + userValue.getClass().getCanonicalName() + "'");

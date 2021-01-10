@@ -39,7 +39,7 @@ import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
-import com.github.actionfx.core.annotation.AFXOnUserInput;
+import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
@@ -79,7 +79,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private final Class<T> controllerClass;
 
 	private static final Comparator<Method> AFXONUSERINPUT_COMPARATOR = new OrderBasedAnnotatedMethodComparator<>(
-			AFXOnUserInput.class, AFXOnUserInput::controlId, AFXOnUserInput::order);
+			AFXOnControlValueChange.class, AFXOnControlValueChange::controlId, AFXOnControlValueChange::order);
 
 	private static final Comparator<Method> AFXLOADCONTROLDATA_COMPARATOR = new OrderBasedAnnotatedMethodComparator<>(
 			AFXLoadControlData.class, AFXLoadControlData::controlId, AFXLoadControlData::order);
@@ -150,7 +150,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Applies method-level annotations (e.g. {@link AFXOnUserInput}.
+	 * Applies method-level annotations (e.g. {@link AFXOnControlValueChange}.
 	 *
 	 * @param instance the instance that is checked for ActionFX method level
 	 *                 annotations
@@ -201,7 +201,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Wires methods annotated with {@link AFXOnUserInput} to the corresponding
+	 * Wires methods annotated with {@link AFXOnControlValueChange} to the corresponding
 	 * value inside the control.
 	 *
 	 * @param instance the instance holding the methods
@@ -209,10 +209,10 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 */
 	private void wireOnUserInputActions(final Object instance, final View view) {
 		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
-				method -> method.getAnnotation(AFXOnUserInput.class) != null);
+				method -> method.getAnnotation(AFXOnControlValueChange.class) != null);
 		methods.sort(AFXONUSERINPUT_COMPARATOR);
 		for (final Method method : methods) {
-			final AFXOnUserInput onUserInput = method.getAnnotation(AFXOnUserInput.class);
+			final AFXOnControlValueChange onUserInput = method.getAnnotation(AFXOnControlValueChange.class);
 			final BooleanProperty listenerActionBooleanProperty = lookupBooleanProperty(instance,
 					onUserInput.listenerActiveBooleanProperty());
 			final ControlWrapper controlWrapper = createControlWrapper(onUserInput.controlId(), view);
