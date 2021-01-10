@@ -4,7 +4,27 @@ The "actionfx-core" module consists of the core functionality of ActionFX.
 
 Module | Description | API Documentation | Gradle Dependency 
 ------ | ----------- | ----------------- | ----------
-[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.1"`
+[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.2"`
+
+## Table of Contents
+
+- [Module "actionfx-core"](#module--actionfx-core-)
+  * [Table of Contents](#table-of-contents)
+  * [Overview](#overview)
+  * [Setting up ActionFX](#setting-up-actionfx)
+    + [Derive your JavaFX application from AbstractAFXApplication](#derive-your-javafx-application-from-abstractafxapplication)
+    + [Build your own instance of ActionFX during application startup](#build-your-own-instance-of-actionfx-during-application-startup)
+  * [Implementing ActionFX controllers](#implementing-actionfx-controllers)
+    + [Example of a Controller Definition with Nested Views](#example-of-a-controller-definition-with-nested-views)
+    + [Annotations inside an ActionFX controller](#annotations-inside-an-actionfx-controller)
+      - [Annotation @AFXShowView (Method Annotation)](#annotation--afxshowview--method-annotation-)
+      - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction--method-annotation-)
+      - [Annotation @AFXLoadControlValue (Method Annotation)](#annotation--afxloadcontrolvalue--method-annotation-)
+      - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation--afxoncontrolvaluechange--method-annotation-)
+      - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation--afxarghint--method-argument-annotation-)
+      - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation--afxcontrolvalue--method-argument-annotation-)
+      - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation--afxnestedview--field-annotation-for-fields-annotated-with--fxml-)
+      - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation--afxenablemultiselection--field-annotation-for-fields-annotated-with--fxml-)
 
 ## Overview
 
@@ -81,7 +101,7 @@ Once the ActionFX instance is configured and initialized with components, you ca
 	}
 ```
 
-## Defining an ActionFX controller
+## Implementing ActionFX controllers
 
 By using annotation [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) on a class, this class becomes an ActionFX controller. A controller is responsible for holding the actions that can be triggered from a view, preferably defined in an FXML document.
 
@@ -124,7 +144,7 @@ public class MainController {
 
 Please note that controller **must not be instantiated directly** via the `new` keyword, because ActionFX is enhancing the class in the background and is evaluating the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation.
 
-## Example of a Controller Definition with Nested Views
+### Example of a Controller Definition with Nested Views
 
 The following code snippet show how a controller definition can look like, while other controllers and their views are wired into the FXML-bassed view. 
 
@@ -174,16 +194,219 @@ public class MainController {
 Please note in the example above, the additional attribute `attachToNodeWithId` needs to be provided, so that ActionFX knows to which node the nested view needs to be attached to.
 
 
-## Using @AFXShowView to navigate between views
+### Annotations inside an ActionFX controller
+
+There are various annotations that you can apply to controller methods and fields that are reducing the amount of code that you need for wiring your controls and methods. In the following sections, an overview on the available annotations is provided.
+
+
+#### Annotation @AFXShowView (Method Annotation)
 
 The [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) can be applied at method-level to navigate between different views from inside a controller class.
 
 The annotation provides different options how the new view shall be displayed. The following attributes are available in [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java):
 
-Attribute | Description 
---------- | -----------
-`showView` |  The view to be displayed, when the method successfully terminates. This attribute competes with attribute `showNestedViews()`, while this attribute has higher precedence than `showNestedViews()` 
-`showInNewWindow` |  Determines whether the view defined in `showView()` shall be displayed in its own `Stage`. The specification of this attribute does not affect view transition in case the attribute `showNestedViews()` is given.
-`showNestedViews` | The nested views to be displayed, when the method successfully terminates. This attribute allows to embed view into the current scene graph and `Stage`. Please take note, that this attribute must not be used together with `showView()` and `showInNewWindow()`.
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`showView` 				|  The view to be displayed, when the method successfully terminates. This attribute competes with attribute `showNestedViews()`, while this attribute has higher precedence than `showNestedViews()` 
+`showInNewWindow` 		|  Determines whether the view defined in `showView()` shall be displayed in its own `Stage`. The specification of this attribute does not affect view transition in case the attribute `showNestedViews()` is given.
+`showNestedViews` 		| The nested views to be displayed, when the method successfully terminates. This attribute allows to embed view into the current scene graph and `Stage`. Please take note, that this attribute must not be used together with `showView()` and `showInNewWindow()`.
 
 Please note that only *one* attribute must be used at the same time (they can not be combined).
+
+**Example:**
+```java
+	@AFXShowView(showViewInNewWindow="detailsView")
+	public void actionMethod() {
+		// some further initialization goes here - or leave it just empty
+	}
+```
+
+#### Annotation @AFXOnAction (Method Annotation)
+
+The [@AFXOnAction](src/main/java/com/github/actionfx/core/annotation/AFXOnAction.java) is wiring the annotated method to the "onAction" property of the specified control. This annotation can be e.g. used to execute the annotated method, when the user clicks on a button.
+
+Annotated methods can be of the following signature:
+- `void methodName()`
+- `void methodName(javafx.event.ActionEvent event)`
+
+You can also combine this annotation with annotation `@AFXControlValue`:
+
+`void methodName(@AFXControlValue("usernameTextField") String username)`
+
+In this case, the user value entered in text field with ID usernameTextField' will be injected as method argument.
+
+The following attributes are available inside the annotation:
+
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`controlId`				| ID of the control whose action property shall be set to execute the annotated method.
+
+**Example:**
+```java
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
+		// do some action stuff
+	}
+```
+
+#### Annotation @AFXLoadControlValue (Method Annotation)
+
+The [@AFXLoadControlValue](src/main/java/com/github/actionfx/core/annotation/AFXLoadControlValue.java) annotation can  be applied to methods that return a value that is usable as value inside a referenced control (e.g. load all entities to be displayed inside a TableView or load a text to be displayed in a text area)
+
+It is possible perform the loading of data in an asynchronous fashion in a separate thread outside the JavaFX thread by using the attribute `async` (see below). 
+
+The following attributes are available inside the annotation:
+
+Attribute 						  	| Description 
+----------------------------------- | -------------------------------------------------
+`controlId`						| ID of the control whose values shall be loaded for by the annotated method
+`async`								| Optional flag that determines, whether the data shall be loaded in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. The data itself however is set again to the referenced control from inside the JavaFX thread. Default is `false`.
+`loadingActiveBooleanProperty`	| An optional expression that must resolve to a field of type `BooleanProperty`, if specified. The annotated method is only called after construction (before `@PostConstruct` initialization methods), the boolean property holds the value `true`. After construction time, the data is loaded, whenever the boolean property switches its value from `false` to `true`.
+`order`								| An optional order that can be specified to define the order of execution of the annotated method, in case more than one data loading routine is present inside the ActionFX controller.
+
+**Example:**
+```java
+	private BooleanProperty loadProductsBooleanProperty = new SimpleBooleanProperty(true);
+	...
+	@AFXLoadControlData(controlId = "productsTableView", async = true, loadingActiveBooleanProperty = "loadProductsBooleanProperty")
+	public List<Product> loadProductsAsynchronously() {
+		// loading logic for products goes here. E.g. load it from the data base
+	}
+```
+
+#### Annotation @AFXOnControlValueChange (Method Annotation)
+
+The [@AFXOnControlValueChange](src/main/java/com/github/actionfx/core/annotation/AFXOnControlValueChange.java) annotation is applied to methods, which are then invoked, when the user changes a value in the referenced control identified by the attribute `controlId`.
+
+Annotated methods can be of the following signature:
+
+For controls with a single-value (e.g. for texts in a `TextField` or a single-selection inside a `TableView`):
+
+- `void methodName()`
+- `void methodName(TYPE newValue)`
+- `void methodName(TYPE newValue, TYPE oldValue, ObservableValue<TYPE> observableValue)`
+
+For controls with multi-values (e.g. for a multi-selection inside a`TableView`):
+
+- `void methodName()`
+- `void methodName(ObservableList&lt;TYPE&gt; selectedValue)`
+- `void methodName(ObservableList&lt;TYPE&gt; selectedValue, List&lt;TYPE&gt; addedList, List&lt;TYPE&gt; removedList, javafx.collections.ListChangeListener.Change change)`
+
+The above signatures are supported without requiring the use of the [@AFXArgHint](src/main/java/com/github/actionfx/core/annotation/AFXArgHint.java) annotation. In case you need to change the order of the arguments, you will need to specify hints for defining, which argument is e.g. the "new" value (use `@AFXArgHint` with `ArgumentHint#NEW_VALUE`) and which argument is the "old" value
+  (use `AFXArgHint` with `ArgumentHint#OLD_VALUE`).
+
+The following attributes are available inside the annotation:
+
+Attribute 							| Description 
+----------------------------------- | -------------------------------------------------
+`controlId`						| ID of the control whose value shall be observed for changes. Please note that the given Id needs to be an existing node ID in the scene graph that evaluates to a `javafx.scene.control.Control`.
+`timeoutMs`						| An optional timeout in milliseconds that is waited after the value change in the control occurs. The default value is 0, i.e. means the method is immediately executed after the value change occurs. In case there is a positive value specified, there is only one method invocation for the last change event that occurred in the time between first change event and the given number of timeout milliseconds. This value can be used e.g. for reducing the number of method invocation (e.g. for a `TextField` you might not want to have this method invoked on every key stroke, but you might want to wait for multiple changes).
+`listenerActiveBooleanProperty`	| An optional expression that must resolve to a field of type `BooleanProperty`, if specified. The annotated method is only called, when the boolean property holds the value `true`. This attribute can be useful, when you want to activate the callback methods after a complete initialization of the JavaFX dialogue with values (and not before that).
+`order`								| An optional order that can be specified to define the order of execution of the annotated method, in case more than one method listens to changes of the same specific control. Lower order values will be executed before higher order values.
+
+For more details on how the attribute `timeoutMs` is realized, please refer to class [TimedChangeListener](src/main/java/com/github/actionfx/core/listener/TimedChangeListener.java) for single-value changes and class [TimedListChangeListener](src/main/java/com/github/actionfx/core/listener/TimedListChangeListener.java) for list changes. These classes can be also directly used for wiring change listeners to controls.
+
+**Example:**
+```java
+	private BooleanProperty listenerEnabled = new SimpleBooleanProperty(true);
+	...
+	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, listenerActiveBooleanProperty = "listenerEnabled")
+	public void onUsernameChange(final String newValue, final String oldValue, final ObservableValue<String> observable) {
+		// action on user name change goes here
+	}
+```
+
+#### Annotation @AFXArgHint (Method Argument Annotation)
+
+The [@AFXArgHint](src/main/java/com/github/actionfx/core/annotation/AFXArgHint.java) annotation helps other method-level annotations to recognize the "meaning" of a method argument. The value specified in this annotation is a "hint", which is required, when two method arguments have the same type. 
+
+The following attributes are available inside the annotation:
+
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`value`						| The hint value defines which semantic the annotated method parameter has. Supported values are `ArgumentHint.OLD_VALUE`, `ArgumentHint.NEW_VALUE`, `ArgumentHint.TYPE_BASED` (default) ,`ArgumentHint.ADDED_VALUES`,
+`ArgumentHint.REMOVED_VALUES`, `ArgumentHint.ALL_SELECTED`
+
+**Example:**
+```java
+	@AFXOnControlValueChange(controlId = "usernameTextField")
+	public void onUsernameChange(@AFXArgHint(ArgumentHint.OLD_VALUE) final String oldValue,
+			@AFXArgHint(ArgumentHint.NEW_VALUE) final String newValue, final ObservableValue<String> observable) {
+		// action on user name change goes here
+	}
+```
+
+#### Annotation @AFXControlValue (Method Argument Annotation)
+
+The [@AFXControlValue](src/main/java/com/github/actionfx/core/annotation/AFXControlValue.java) annotation is applied to method arguments to retrieve the user value from the specified control.
+
+This annotation can be applied to method arguments of methods that are called from the ActionFX framework.
+
+Following methods are eligible for arguments to be annotated by `@AFXControlValue`:
+- methods annotated by {@link AFXOnAction} (these methods are wired to an "onAction" property of a control like a `javafx.scene.control.Button`
+- methods annotated by `AFXLoadControlData` (these methods load data for a control inside the scene graph)
+- methods annotated by `AFXOnControlValueChange` (these methods are executed when a change of control's user value occurs)
+
+The following attributes are available inside the annotation:
+
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`value`						| ID of the control whose value shall be bound to the annotated method argument
+
+**Example:**
+```java
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
+		// do some action stuff
+	}
+```
+
+#### Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)
+
+The [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation defines a nested view to be embedded into a scene graph. Nested views can be used to composite the overall scene graph view.
+
+You can either use this annotation as part of an `AFXController` annotation, or you can apply it to a field that is also annotated by `@FXML`.
+
+The following attributes are available inside the annotation:
+
+Attribute 							| Description 
+----------------------------------- | -------------------------------------------------
+`refViewId` 						| The referenced view ID that shall nested in the view.
+`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used inside a `@AFXController` annotation. If used on a field annotated by `@FXML`, this value is irrelevant.
+`attachToIndex`					| Optional index referring to the target node's children list, where the view shall be attached to.
+`attachToColumn`					| Optional column index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInRow`.
+`attachToRow`						| Optional row index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInColum`.
+`attachToBorderPanePosition`		| Optional border pane position in case the target node is a `javafx.scene.layout.BorderPane`.
+`attachToAnchorLeft`				| Optional anchor left in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorBottom`.
+`attachToAnchorTop`				| Optional anchor top in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorLeft`, `attachToAnchorRight` and `attachToAnchorBottom`.
+`attachToAnchorRight`				|  Optional anchor right in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorLeft` and `attachToAnchorBottom`.
+`attachToAnchorBottom`			| Optional anchor bottom in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorLeft`.
+
+**Example:**
+```java
+	@AFXNestedView(refViewId = "productCatalogListView")
+	@FXML
+	private ScrollPane productListScrollPane;
+	...
+	@AFXNestedView(refViewId = "productDetailsView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
+	@FXML
+	private AnchorPane productDetailsAnchorPane;
+	...
+	@AFXNestedView(refViewId = "productDetailsView", attachToBorderPanePosition = BorderPanePosition.CENTER)
+	@FXML
+	private BorderPane shopingCartAnchorPane;
+```
+
+
+#### Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)
+
+The [@AFXEnableMultiSelection](src/main/java/com/github/actionfx/core/annotation/AFXEnableMultiSelection.java) annotation can be applied at field level on a `javafx.scene.control.Control`, in order to enable a multi-selection on that annotated control.
+
+This annotation can be e.g. applied to a field of type `javafx.scene.control.TableView`, so that the user can select multiple entries in that table view.
+
+**Example:**
+```java
+	@AFXEnableMultiSelection
+	@FXML
+	private TableView<String> multiSelectionTable;
+```

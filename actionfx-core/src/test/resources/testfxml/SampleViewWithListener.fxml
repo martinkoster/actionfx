@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -35,6 +36,17 @@
                         <TableColumn prefWidth="75.0" text="C1" />
                      </columns>
                   </TableView>
+                  <TableView fx:id="asyncDataLoadedSelectionTable" prefHeight="200.0" prefWidth="200.0">
+                     <columns>
+                        <TableColumn prefWidth="75.0" text="C1" />
+                     </columns>
+                  </TableView>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TreeView fx:id="dataLoadedTreeView" prefHeight="200.0" prefWidth="200.0" />
+                  <TreeView fx:id="asyncDataLoadedTreeView" prefHeight="200.0" prefWidth="200.0" />
                </children>
             </HBox>
          </children>
@@ -44,6 +56,8 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <Button fx:id="actionButton" mnemonicParsing="false" text="Action" />
+            <Button fx:id="actionWithSubmissionButton" mnemonicParsing="false" text="Action with Textfield Value Submission" />
+            <TextField fx:id="actionButtonTextField" text="Hello World" />
         </items>
       </ToolBar>
    </top>

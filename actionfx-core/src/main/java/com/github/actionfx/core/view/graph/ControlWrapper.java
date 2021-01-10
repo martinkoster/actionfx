@@ -147,7 +147,7 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the value property, or {@code null}, in case the control does not
 	 *         have a value property.
 	 */
-	public <V> Property<V> getValueProperty() {
+	public <V> ObservableValue<V> getValueProperty() {
 		final Control control = getWrapped();
 		return controlConfig.hasValueProperty() ? controlConfig.getValueProperty(control) : null;
 	}
@@ -311,13 +311,82 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
+	 * Gets the user value from the wrapped {@link Control}.
+	 * <p>
+	 * The user value is assumed to be one of the following (entries with higher
+	 * order are of higher priority):
+	 * <ul>
+	 * <li>in case the control supports multi-selection, the user value is the list
+	 * of selected items (e.g. the multi-selection inside a
+	 * {@link javafx.scene.control.TableView})</li>
+	 * <li>in case the control supports sinle-selection, the user value is the
+	 * single selected item (e.g. the single-selection inside a
+	 * {@link javafx.scene.control.TableView})</li>
+	 * <li>in case the control supports a single-value, the user value is the single
+	 * value (e.g. the "text" inside a {@link javafx.scene.control.TextField}
+	 * control)</li>
+	 * <li>in case the control supports a multi-values, the user value is the list
+	 * of values</li>
+	 * </ul>
+	 * The first matching rule wins for the extraction of the user value.
+	 */
+	public Object getUserValue() {
+		final Object observable = getUserValueAsObservable();
+		if (observable == null) {
+			return null;
+		}
+		if (isObservableList(observable)) {
+			// observableList is value and observable at the same time
+			return observable;
+		} else if (isObservableValue(observable)) {
+			// for ObservableValues, we need to extract the value
+			final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
+			return observableValue.getValue();
+		} else {
+			// we don't know the type...but we return it. it is up to the caller to decide
+			// what to do
+			return observable;
+		}
+	}
+
+	/**
+	 * Gets the user value as an observable, which is usually either an instance of
+	 * {@link ObservableValue} or of {@link ObservableList}. However, it is up to
+	 * the caller to do type checks on the return value.
+	 *
+	 * @return the value as an observable
+	 */
+	public Object getUserValueAsObservable() {
+		if (supportsMultiSelection()) {
+			return getSelectedValues();
+		} else if (supportsSelection()) {
+			return getSelectedValue();
+		} else if (supportsValue()) {
+			return getValueProperty();
+		} else if (supportsValues()) {
+			return getValues();
+		} else {
+			throw new IllegalStateException(
+					"Control with ID='" + getId() + "' does not support user value retrieval! ");
+		}
+	}
+
+	private boolean isObservableList(final Object observable) {
+		return ObservableList.class.isAssignableFrom(observable.getClass());
+	}
+
+	private boolean isObservableValue(final Object observable) {
+		return ObservableValue.class.isAssignableFrom(observable.getClass());
+	}
+
+	/**
 	 * Adds a change listener to the value of the wrapped {@link Control}.
 	 *
 	 * @param <V>            the value type
 	 * @param changeListener the change listener to add
 	 */
 	public <V> void addValueChangeListener(final ChangeListener<V> changeListener) {
-		final Property<V> valueProperty = getValueProperty();
+		final ObservableValue<V> valueProperty = getValueProperty();
 		if (valueProperty != null) {
 			valueProperty.addListener(changeListener);
 			addedValueChangeListener.add(changeListener);
@@ -329,7 +398,7 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void removeAllValueChangeListener() {
-		final Property<?> valueProperty = getValueProperty();
+		final ObservableValue<?> valueProperty = getValueProperty();
 		if (valueProperty != null) {
 			for (final ChangeListener listener : addedValueChangeListener) {
 				valueProperty.removeListener(listener);

@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.view;
 
+import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
 import javafx.scene.Parent;
@@ -131,4 +132,13 @@ public interface View {
 	 * @return the controller instance
 	 */
 	Object getController();
+
+	/**
+	 * Looks up a node that carries the supplied {@code nodeId}.
+	 *
+	 * @param nodeId the node ID
+	 * @return the retrieved node, or {@code null}, in case there is no node with
+	 *         the given {@code nodeId}
+	 */
+	NodeWrapper lookupNode(String nodeId);
 }

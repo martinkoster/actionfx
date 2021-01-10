@@ -169,16 +169,43 @@ extends java.lang.Enum&lt;<a href="ArgumentHint.html" title="enum in com.github.
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
+<th class="colFirst" scope="row"><code><span class="memberNameLink"><a href="#ADDED_VALUES">ADDED_VALUES</a></span></code></th>
+<td class="colLast">
+<div class="block">A list of added values for list changes (see
+ <code>ListChangeListener.Change.getAddedSubList()</code>).</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><code><span class="memberNameLink"><a href="#ALL_SELECTED">ALL_SELECTED</a></span></code></th>
+<td class="colLast">
+<div class="block">A list of all selected values.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><code><span class="memberNameLink"><a href="#NEW_VALUE">NEW_VALUE</a></span></code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">The "new" value of a single-value property (see
+ <code>ChangeListener.changed(javafx.beans.value.ObservableValue, Object, Object)</code>).</div>
+</td>
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><code><span class="memberNameLink"><a href="#OLD_VALUE">OLD_VALUE</a></span></code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">The "old" value of a single-value property (see
+ <code>ChangeListener.changed(javafx.beans.value.ObservableValue, Object, Object)</code>).</div>
+</td>
 </tr>
 <tr class="altColor">
+<th class="colFirst" scope="row"><code><span class="memberNameLink"><a href="#REMOVED_VALUES">REMOVED_VALUES</a></span></code></th>
+<td class="colLast">
+<div class="block">A list of removed values for list changes (see <code>ListChangeListener.Change.getRemoved()</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colFirst" scope="row"><code><span class="memberNameLink"><a href="#TYPE_BASED">TYPE_BASED</a></span></code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Method arguments are matched by type.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -251,6 +278,8 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>OLD_VALUE</h4>
 <pre>public static final&nbsp;<a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a> OLD_VALUE</pre>
+<div class="block">The "old" value of a single-value property (see
+ <code>ChangeListener.changed(javafx.beans.value.ObservableValue, Object, Object)</code>).</div>
 </li>
 </ul>
 <a id="NEW_VALUE">
@@ -260,15 +289,49 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>NEW_VALUE</h4>
 <pre>public static final&nbsp;<a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a> NEW_VALUE</pre>
+<div class="block">The "new" value of a single-value property (see
+ <code>ChangeListener.changed(javafx.beans.value.ObservableValue, Object, Object)</code>).</div>
 </li>
 </ul>
 <a id="TYPE_BASED">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>TYPE_BASED</h4>
 <pre>public static final&nbsp;<a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a> TYPE_BASED</pre>
+<div class="block">Method arguments are matched by type.</div>
+</li>
+</ul>
+<a id="ADDED_VALUES">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ADDED_VALUES</h4>
+<pre>public static final&nbsp;<a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a> ADDED_VALUES</pre>
+<div class="block">A list of added values for list changes (see
+ <code>ListChangeListener.Change.getAddedSubList()</code>).</div>
+</li>
+</ul>
+<a id="REMOVED_VALUES">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>REMOVED_VALUES</h4>
+<pre>public static final&nbsp;<a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a> REMOVED_VALUES</pre>
+<div class="block">A list of removed values for list changes (see <code>ListChangeListener.Change.getRemoved()</code>.</div>
+</li>
+</ul>
+<a id="ALL_SELECTED">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ALL_SELECTED</h4>
+<pre>public static final&nbsp;<a href="ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a> ALL_SELECTED</pre>
+<div class="block">A list of all selected values.</div>
 </li>
 </ul>
 </li>

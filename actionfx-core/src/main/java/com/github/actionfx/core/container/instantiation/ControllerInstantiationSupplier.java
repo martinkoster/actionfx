@@ -39,15 +39,15 @@ import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
-import com.github.actionfx.core.annotation.AFXOnUserInput;
+import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.listener.TimedChangeListener;
 import com.github.actionfx.core.listener.TimedListChangeListener;
 import com.github.actionfx.core.utils.AnnotationUtils;
-import com.github.actionfx.core.utils.MethodInvocationAdapter;
-import com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter;
+import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
@@ -57,6 +57,8 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WritableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -77,7 +79,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private final Class<T> controllerClass;
 
 	private static final Comparator<Method> AFXONUSERINPUT_COMPARATOR = new OrderBasedAnnotatedMethodComparator<>(
-			AFXOnUserInput.class, AFXOnUserInput::controlId, AFXOnUserInput::order);
+			AFXOnControlValueChange.class, AFXOnControlValueChange::controlId, AFXOnControlValueChange::order);
 
 	private static final Comparator<Method> AFXLOADCONTROLDATA_COMPARATOR = new OrderBasedAnnotatedMethodComparator<>(
 			AFXLoadControlData.class, AFXLoadControlData::controlId, AFXLoadControlData::order);
@@ -119,6 +121,12 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 		}
 	}
 
+	/**
+	 * Creates an {@link FxmlView} instance for the given {@code controller}.
+	 *
+	 * @param controller the controller for that the view shall be created
+	 * @return the created view
+	 */
 	protected FxmlView createFxmlViewInstance(final Object controller) {
 		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
@@ -142,7 +150,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Applies method-level annotations (e.g. {@link AFXOnUserInput}.
+	 * Applies method-level annotations (e.g. {@link AFXOnControlValueChange}.
 	 *
 	 * @param instance the instance that is checked for ActionFX method level
 	 *                 annotations
@@ -185,15 +193,15 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 						+ instance.getClass().getCanonicalName() + "', method '" + method.getName() + "'!");
 			}
 			onActionProperty.setValue(actionEvent -> {
-				final MethodInvocationAdapter adapter = new MethodInvocationAdapter(instance, method,
-						ParameterValue.of(actionEvent));
+				final ControllerMethodInvocationAdapter adapter = new ControllerMethodInvocationAdapter(instance,
+						method, ParameterValue.of(actionEvent));
 				adapter.invoke();
 			});
 		}
 	}
 
 	/**
-	 * Wires methods annotated with {@link AFXOnUserInput} to the corresponding
+	 * Wires methods annotated with {@link AFXOnControlValueChange} to the corresponding
 	 * value inside the control.
 	 *
 	 * @param instance the instance holding the methods
@@ -201,10 +209,10 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 */
 	private void wireOnUserInputActions(final Object instance, final View view) {
 		final List<Method> methods = ReflectionUtils.findMethods(instance.getClass(),
-				method -> method.getAnnotation(AFXOnUserInput.class) != null);
+				method -> method.getAnnotation(AFXOnControlValueChange.class) != null);
 		methods.sort(AFXONUSERINPUT_COMPARATOR);
 		for (final Method method : methods) {
-			final AFXOnUserInput onUserInput = method.getAnnotation(AFXOnUserInput.class);
+			final AFXOnControlValueChange onUserInput = method.getAnnotation(AFXOnControlValueChange.class);
 			final BooleanProperty listenerActionBooleanProperty = lookupBooleanProperty(instance,
 					onUserInput.listenerActiveBooleanProperty());
 			final ControlWrapper controlWrapper = createControlWrapper(onUserInput.controlId(), view);
@@ -255,8 +263,13 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			// check, whether the wrapped control supports multi-selection or only single
 			// selection
 			if (controlWrapper.supportsValues()) {
-				populateControlDataFromMethod(instance, method, loadingActiveBooleanProperty, controlWrapper);
+				populateControlsObservableList(instance, method, loadingActiveBooleanProperty, controlWrapper,
+						loadControlData.async());
+			} else if (controlWrapper.supportsValue()) {
+				populateControlsWritableValue(instance, method, loadingActiveBooleanProperty, controlWrapper,
+						loadControlData.async());
 			} else {
+
 				throw new IllegalStateException("Control with ID='" + loadControlData.controlId()
 						+ "' does not support user input listening! Please check your ActionFX annotations inside constroller '"
 						+ instance.getClass().getCanonicalName() + "'!");
@@ -267,7 +280,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 
 	/**
 	 * Populates the control that is wrapped inside {@link ControlWrapper} with the
-	 * data that the given {@link Method} is returning.
+	 * data that the given {@link Method} is returning.The value of the control is
+	 * expected to be of type {@link ObservableList}.
 	 *
 	 * @param instance                     the instance holding the method
 	 * @param method                       the method that returns the control data
@@ -275,25 +289,123 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *                                     signalizes, whether the data can be
 	 *                                     loaded (when set to {@code true})
 	 * @param controlWrapper               the wrapped control
+	 * @param asynchronous                 {@code true},if the data shall be
+	 *                                     asynchronously loaded in a separate
+	 *                                     thread without blocking the JavaFX
+	 *                                     thread, {@code false},if it should be
+	 *                                     loaded in the same thread.
 	 */
-	private void populateControlDataFromMethod(final Object instance, final Method method,
-			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper) {
+	private void populateControlsObservableList(final Object instance, final Method method,
+			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper,
+			final boolean asynchronous) {
 		final ObservableList<Object> valuesObservableList = controlWrapper.getValues();
-		final MethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance, method);
+		final ControllerMethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance,
+				method);
 		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
-			final List<Object> data = methodInvocationAdapter.invoke();
-			valuesObservableList.clear();
-			valuesObservableList.addAll(data);
+			populateObservableList(valuesObservableList, methodInvocationAdapter, asynchronous);
 		}
 		if (loadingActiveBooleanProperty != null) {
 			// whenever value switches from false to true, we trigger a loading
 			loadingActiveBooleanProperty.addListener((observable, oldValue, newValue) -> {
 				if (Boolean.FALSE.equals(oldValue) && Boolean.TRUE.equals(newValue)) {
-					final List<Object> data = methodInvocationAdapter.invoke();
-					valuesObservableList.clear();
-					valuesObservableList.addAll(data);
+					populateObservableList(valuesObservableList, methodInvocationAdapter, asynchronous);
 				}
 			});
+		}
+	}
+
+	/**
+	 * Populates the given {@code observableList} with values from the supplied
+	 * {@code methodInvocationAdapter}.
+	 *
+	 * @param observableList          the observable list to populate with values
+	 *                                from the method invocation
+	 * @param methodInvocationAdapter the method invocation adapter that will
+	 *                                provide the values
+	 * @param asynchronous            {@code true},if the data shall be
+	 *                                asynchronously loaded in a separate thread
+	 *                                without blocking the JavaFX thread,
+	 *                                {@code false},if it should be loaded in the
+	 *                                same thread.
+	 */
+	private void populateObservableList(final ObservableList<Object> observableList,
+			final ControllerMethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
+		if (asynchronous) {
+			methodInvocationAdapter.invokeAsynchronously(data -> {
+				observableList.clear();
+				observableList.addAll(data);
+			});
+		} else {
+			final List<Object> data = methodInvocationAdapter.invoke();
+			observableList.clear();
+			observableList.addAll(data);
+		}
+	}
+
+	/**
+	 * Populates the control that is wrapped inside {@link ControlWrapper} with the
+	 * data that the given {@link Method} is returning. The value of the control is
+	 * expected to be of type {@link WritableValue}.
+	 *
+	 * @param instance                     the instance holding the method
+	 * @param method                       the method that returns the control data
+	 * @param loadingActiveBooleanProperty an optional boolean property that
+	 *                                     signalizes, whether the data can be
+	 *                                     loaded (when set to {@code true})
+	 * @param controlWrapper               the wrapped control
+	 * @param asynchronous                 {@code true},if the data shall be
+	 *                                     asynchronously loaded in a separate
+	 *                                     thread without blocking the JavaFX
+	 *                                     thread, {@code false},if it should be
+	 *                                     loaded in the same thread.
+	 */
+	@SuppressWarnings("unchecked")
+	private void populateControlsWritableValue(final Object instance, final Method method,
+			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper,
+			final boolean asynchronous) {
+		final ObservableValue<Object> observable = controlWrapper.getValueProperty();
+		if (observable == null || !WritableValue.class.isAssignableFrom(observable.getClass())) {
+			throw new IllegalStateException("Value property of control with ID='" + controlWrapper.getId()
+					+ "' can not be populated with data from method '" + method.getName() + "' inside controller '"
+					+ instance.getClass().getCanonicalName() + "'! Is the control holding a writable value property?");
+		}
+		final ControllerMethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance,
+				method);
+		final WritableValue<Object> writableValue = (WritableValue<Object>) observable;
+		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {
+			populateWritableValue(writableValue, methodInvocationAdapter, asynchronous);
+		}
+		if (loadingActiveBooleanProperty != null) {
+			// whenever value switches from false to true, we trigger a loading
+			loadingActiveBooleanProperty.addListener((obs, oldValue, newValue) -> {
+				if (Boolean.FALSE.equals(oldValue) && Boolean.TRUE.equals(newValue)) {
+					populateWritableValue(writableValue, methodInvocationAdapter, asynchronous);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Populates the given {@code writableValue} with values from the supplied
+	 * {@code methodInvocationAdapter}.
+	 *
+	 * @param writableValue           the writable value to be populated with values
+	 *                                from the method invocation
+	 * @param methodInvocationAdapter the method invocation adapter that will
+	 *                                provide the values
+	 * @param asynchronous            {@code true},if the data shall be
+	 *                                asynchronously loaded in a separate thread
+	 *                                without blocking the JavaFX thread,
+	 *                                {@code false},if it should be loaded in the
+	 *                                same thread.
+	 */
+	private void populateWritableValue(final WritableValue<Object> writableValue,
+			final ControllerMethodInvocationAdapter methodInvocationAdapter, final boolean asynchronous) {
+		if (asynchronous) {
+			methodInvocationAdapter.invokeAsynchronously(writableValue::setValue);
+		} else {
+			final Object data = methodInvocationAdapter.invoke();
+			writableValue.setValue(data);
 		}
 	}
 
@@ -307,8 +419,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @return the control wrapper instance
 	 */
 	private ControlWrapper createControlWrapper(final String controlId, final View view) {
-		final NodeWrapper wrappedRootNode = NodeWrapper.of(view.getRootNode());
-		final NodeWrapper wrappedTargetNode = wrappedRootNode.lookup(controlId);
+		final NodeWrapper wrappedTargetNode = view.lookupNode(controlId);
 		if (wrappedTargetNode == null) {
 			throw new IllegalStateException("Node with id='" + controlId + "' does not exist!");
 		}
@@ -352,7 +463,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private TimedChangeListener<?> createValueChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty) {
 		return new TimedChangeListener<>((observable, oldValue, newValue) -> {
-			final MethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
+			final ControllerMethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
 					ParameterValue.ofAllSelectedValues(
 							newValue == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(newValue))),
 					ParameterValue.ofNewValue(newValue), ParameterValue.ofOldValue(oldValue),
@@ -394,7 +505,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 				}
 			}
 			change.reset();
-			final MethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
+			final ControllerMethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
 					ParameterValue.ofAllSelectedValues(allValuesSupplier.get()),
 					ParameterValue.ofAddedValues(addedList), ParameterValue.ofRemovedValues(removedList),
 					ParameterValue.of(change), ParameterValue.of(singleValueSupplier.get()));
@@ -407,9 +518,9 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * given {@code instance}.
 	 *
 	 */
-	private MethodInvocationAdapter createMethodInvocationAdapter(final Object instance, final Method method,
+	private ControllerMethodInvocationAdapter createMethodInvocationAdapter(final Object instance, final Method method,
 			final ParameterValue... parameterValues) {
-		return new MethodInvocationAdapter(instance, method, parameterValues);
+		return new ControllerMethodInvocationAdapter(instance, method, parameterValues);
 	}
 
 	/**
