@@ -245,6 +245,14 @@ Attribute 					| Description
 
 **Example:**
 ```java
+	// for the @AFXOnAction annotation to work, it is not required that the button is injected via @FXML
+	@FXML
+	private Button actionButton;
+	...
+	// for the @AFXControlValue annotation to work, it is not required that the text field is injected via @FXML
+	@FXML
+ 	private TextField usernameTextField;
+ 	...
 	@AFXOnAction(controlId = "actionButton")
 	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
 		// do some action stuff
@@ -268,6 +276,10 @@ Attribute 						  	| Description
 
 **Example:**
 ```java
+	// for the @AFXLoadControlData annotation to work, it is not required that the table view is injected via @FXML
+	@FXML
+ 	private TableView<Product> productsTableView;
+ 	...
 	private BooleanProperty loadProductsBooleanProperty = new SimpleBooleanProperty(true);
 	...
 	@AFXLoadControlData(controlId = "productsTableView", async = true, loadingActiveBooleanProperty = "loadProductsBooleanProperty")
@@ -310,9 +322,13 @@ For more details on how the attribute `timeoutMs` is realized, please refer to c
 
 **Example:**
 ```java
+	// for the @AFXOnControlValueChange annotation to work, it is not required that the text field is injected via @FXML
+	@FXML
+ 	private TextField usernameTextField;
+ 	...
 	private BooleanProperty listenerEnabled = new SimpleBooleanProperty(true);
 	...
-	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, listenerActiveBooleanProperty = "listenerEnabled")
+	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, timeoutMs = 300, listenerActiveBooleanProperty = "listenerEnabled")
 	public void onUsernameChange(final String newValue, final String oldValue, final ObservableValue<String> observable) {
 		// action on user name change goes here
 	}
@@ -455,7 +471,7 @@ As mentioned, for all JavaFX controls this works out-of-the box with ActionFX, a
 
 The following table explains, which property is accessed to retrieve the "user value" from:
 
-JavaFX Control 								| User Value (as path to the corresponding property))
+JavaFX Control 								| User Value (as path to the corresponding property / observable list)
 ------------------------------------------- | -----------------------------------------------------
 javafx.scene.control.Accordion 				| expandedPaneProperty()
 javafx.scene.control.Button					| textProperty()
