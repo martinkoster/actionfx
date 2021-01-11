@@ -46,7 +46,7 @@ reportCodeCoverage:
   script:
     - ./gradlew codeCoverageReport
     -  bash <(curl -s https://codecov.io/bash) 
-    - ./gradlew sonarqube
+    - ./gradlew jacocoTestReport sonarqube
   artifacts:
     paths:
       - build/
