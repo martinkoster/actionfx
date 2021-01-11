@@ -267,7 +267,7 @@ It is possible perform the loading of data in an asynchronous fashion in a separ
 
 The following attributes are available inside the annotation:
 
-Attribute 						  	| Description 
+Attribute                           | Description 
 ----------------------------------- | -------------------------------------------------
 `controlId`						| ID of the control whose values shall be loaded for by the annotated method
 `async`								| Optional flag that determines, whether the data shall be loaded in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. The data itself however is set again to the referenced control from inside the JavaFX thread. Default is `false`.
@@ -441,7 +441,7 @@ But what exactly does "user value" mean? Unlike other UI-technologies, JavaFX do
 
 ActionFX tries to mitigate this shortcoming by providing properties configuration files for all JavaFX controls in package `javafx.scene.control`. This configuration is interpreted by a central class in ActionFX: the [ControlWrapper](src/main/java/com/github/actionfx/core/view/graph/ControlWrapper.java) class.
 
-The properties file for an `javafx.scene.control.TreeView` is shown here as an example:
+The properties file for an `javafx.scene.control.TreeView` is shown here as an example (see other examples in folder [src/main/resources/afxcontrolwrapper](src/main/resources/afxcontrolwrapper):
 ```
 # Defines how to access a JavaFX control.
 #
@@ -449,11 +449,11 @@ The properties file for an `javafx.scene.control.TreeView` is shown here as an e
 #
 # Filename: /afxcontrolwrapper/<full-qualified-class-name>.properties
 # Supported property entries:
-# Property Key			        | Property Value					                         | Example Values
+# Property Key                  | Property Value                                             | Example Values
 # -------------------------------------------------------------------------------------------------------------------------------------------------------
-# valueProperty                 | Property name holding a single "value"				     | "text" (e.g. for TextField), "value" (e.g. for ComboBox)
+# valueProperty                 | Property name holding a single "value"                     | "text" (e.g. for TextField), "value" (e.g. for ComboBox)
 # valuesObservableList          | Name of an observable list holding all possible "values"   | "items" (e.g. for ComboBox)
-# selectionModelProperty        | Property name holding the "selectionModel"		         | "selectionModel" (e.g. for TableView)
+# selectionModelProperty        | Property name holding the "selectionModel"                 | "selectionModel" (e.g. for TableView)
 # selectedValueProperty         | Property name holding the select "value"                   | "selectionModel.selectedItem" (e.g. for TableView)
 # selectedValuesObservableList  | Name of an observable list holding all selected "values"   | "selectionModel.selectedItems" (e.g. for TableView)
 #
