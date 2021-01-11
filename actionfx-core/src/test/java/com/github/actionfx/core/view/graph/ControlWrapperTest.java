@@ -52,6 +52,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.SplitMenuButton;
@@ -262,6 +263,25 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Choice 2");
 		assertSelectedValues(wrapper, "Choice 2");
 		assertUserValue(wrapper, "Choice 2");
+	}
+
+	@Test
+	void testComboBox_valueManuallySpecified() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.comboBox(false);
+		final ComboBox<String> comboBox = wrapper.getWrapped();
+		comboBox.setValue("Manually entered");
+
+		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, true);
+		assertSupportsSelection(wrapper, true);
+		assertSupportsMultiSelection(wrapper, false);
+		assertValue(wrapper, "Manually entered");
+		assertValues(wrapper, "Choice 1", "Choice 2", "Choice 3");
+		assertSelectedValue(wrapper, "Manually entered");
+		assertSelectedValues(wrapper, "Manually entered");
+		assertUserValue(wrapper, "Manually entered");
 	}
 
 	@Test

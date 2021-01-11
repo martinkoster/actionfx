@@ -455,14 +455,15 @@ As mentioned, for all JavaFX controls this works out-of-the box with ActionFX, a
 
 The following table explains, which property is accessed to retrieve the "user value" from:
 
-JavaFX Control | User Value (as path to the corresponding property))
+JavaFX Control 								| User Value (as path to the corresponding property))
+------------------------------------------- | -----------------------------------------------------
 javafx.scene.control.Accordion 				| expandedPaneProperty()
 javafx.scene.control.Button					| textProperty()
 javafx.scene.control.ButtonBar				| (unsupported)
 javafx.scene.control.CheckBox				| selectedProperty()
 javafx.scene.control.ChoiceBox				| getSelectionModel().selectedItemProperty()
 javafx.scene.control.ColorPicker			| valueProperty()
-javafx.scene.control.ComboBox				| valueProperty()
+javafx.scene.control.ComboBox				| getSelectionModel().selectedItemProperty() (when user sets the "valueProperty", the selected item is set accordingly by JavaFX)
 javafx.scene.control.DatePicker				| valueProperty()
 javafx.scene.control.Hyperlink				| textProperty()
 javafx.scene.control.Label					| textProperty()
