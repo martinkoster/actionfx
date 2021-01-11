@@ -206,8 +206,8 @@ modifyPom {
 	
         licenses {
         	license {
-	            name 'The New BSD License'
-	            url 'https://opensource.org/licenses/BSD-2-Clause'
+	            name 'MIT License'
+	            url 'https://opensource.org/licenses/MIT'
                 distribution 'repo'
             }
         }
