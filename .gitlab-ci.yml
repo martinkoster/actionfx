@@ -45,8 +45,7 @@ reportCodeCoverage:
   stage: quality
   script:
     - ./gradlew codeCoverageReport
-    -  bash <(curl -s https://codecov.io/bash) 
-    - ./gradlew jacocoTestReport sonarqube
+    - ./gradlew sonarqube -x test
   artifacts:
     paths:
       - build/
