@@ -25,6 +25,7 @@ Module | Description | API Documentation | Gradle Dependency
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation--afxcontrolvalue--method-argument-annotation-)
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation--afxnestedview--field-annotation-for-fields-annotated-with--fxml-)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation--afxenablemultiselection--field-annotation-for-fields-annotated-with--fxml-)
+    + [User Value of Controls](#user-value-of-controls)
 
 ## Overview
 
@@ -34,7 +35,8 @@ This module provides:
 - Controller definitions via the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation, declaring FXML-based views.
 - Support for nested views: It is possible to embed further views into a view via the [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation, either as part of the controller definition in [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) or by applying the [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation on @FXML annotated view components.
 - Byte-code enhancement via [ActionFXByteBuddyEnhancer](src/main/java/com/github/actionfx/core/instrumentation/bytebuddy/ActionFXByteBuddyEnhancer.java) facilities in order to enhance controller classes and to allow aspect-oriented programming. Two strategies are supported: byte-code enhancement via a Java agent installed at runtime, or enhancement by sub-classing. 
-- Methods annotated by [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) are intercepted and after successful method invocation, the desired view is shown (either as nested view in the current scene graph by attaching the sub-view or by displaying the view in a new stage).
+- Annotations are provided that can be used inside ActionFX controllers to wire JavaFX controls to controller methods. No more tons of code like `tableView.getSelectionModel().getSelectedItem().addChangeListener((observable, oldValue, newValue) -> onTableViewSelect(newValue));`. This makes the code more readable and maintainable.
+- Methods annotated by [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) can be used to implement a flow between view. Those annotated methods are intercepted and after successful method invocation, the desired view is shown (either as nested view in the current scene graph by attaching the sub-view or by displaying the view in a new stage).
 
 
 ## Setting up ActionFX
@@ -168,7 +170,6 @@ public class MainController {
 	public void initialize() {
 		// some custom initialization goes here
 	}
-	
 }
 ```
 
@@ -191,6 +192,7 @@ public class MainController {
 	}
 }
 ```
+
 Please note in the example above, the additional attribute `attachToNodeWithId` needs to be provided, so that ActionFX knows to which node the nested view needs to be attached to.
 
 
@@ -243,6 +245,14 @@ Attribute 					| Description
 
 **Example:**
 ```java
+	// for the @AFXOnAction annotation to work, it is not required that the button is injected via @FXML
+	@FXML
+	private Button actionButton;
+	...
+	// for the @AFXControlValue annotation to work, it is not required that the text field is injected via @FXML
+	@FXML
+ 	private TextField usernameTextField;
+ 	...
 	@AFXOnAction(controlId = "actionButton")
 	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
 		// do some action stuff
@@ -257,7 +267,7 @@ It is possible perform the loading of data in an asynchronous fashion in a separ
 
 The following attributes are available inside the annotation:
 
-Attribute 						  	| Description 
+Attribute                           | Description 
 ----------------------------------- | -------------------------------------------------
 `controlId`						| ID of the control whose values shall be loaded for by the annotated method
 `async`								| Optional flag that determines, whether the data shall be loaded in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. The data itself however is set again to the referenced control from inside the JavaFX thread. Default is `false`.
@@ -266,6 +276,10 @@ Attribute 						  	| Description
 
 **Example:**
 ```java
+	// for the @AFXLoadControlData annotation to work, it is not required that the table view is injected via @FXML
+	@FXML
+ 	private TableView<Product> productsTableView;
+ 	...
 	private BooleanProperty loadProductsBooleanProperty = new SimpleBooleanProperty(true);
 	...
 	@AFXLoadControlData(controlId = "productsTableView", async = true, loadingActiveBooleanProperty = "loadProductsBooleanProperty")
@@ -289,8 +303,8 @@ For controls with a single-value (e.g. for texts in a `TextField` or a single-se
 For controls with multi-values (e.g. for a multi-selection inside a`TableView`):
 
 - `void methodName()`
-- `void methodName(ObservableList&lt;TYPE&gt; selectedValue)`
-- `void methodName(ObservableList&lt;TYPE&gt; selectedValue, List&lt;TYPE&gt; addedList, List&lt;TYPE&gt; removedList, javafx.collections.ListChangeListener.Change change)`
+- `void methodName(ObservableList<TYPE> selectedValue)`
+- `void methodName(ObservableList<TYPE> selectedValue, List<TYPE> addedList, List<TYPE> removedList, javafx.collections.ListChangeListener.Change change)`
 
 The above signatures are supported without requiring the use of the [@AFXArgHint](src/main/java/com/github/actionfx/core/annotation/AFXArgHint.java) annotation. In case you need to change the order of the arguments, you will need to specify hints for defining, which argument is e.g. the "new" value (use `@AFXArgHint` with `ArgumentHint#NEW_VALUE`) and which argument is the "old" value
   (use `AFXArgHint` with `ArgumentHint#OLD_VALUE`).
@@ -308,9 +322,13 @@ For more details on how the attribute `timeoutMs` is realized, please refer to c
 
 **Example:**
 ```java
+	// for the @AFXOnControlValueChange annotation to work, it is not required that the text field is injected via @FXML
+	@FXML
+ 	private TextField usernameTextField;
+ 	...
 	private BooleanProperty listenerEnabled = new SimpleBooleanProperty(true);
 	...
-	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, listenerActiveBooleanProperty = "listenerEnabled")
+	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, timeoutMs = 300, listenerActiveBooleanProperty = "listenerEnabled")
 	public void onUsernameChange(final String newValue, final String oldValue, final ObservableValue<String> observable) {
 		// action on user name change goes here
 	}
@@ -324,8 +342,7 @@ The following attributes are available inside the annotation:
 
 Attribute 					| Description 
 --------------------------- | -------------------------------------------------
-`value`						| The hint value defines which semantic the annotated method parameter has. Supported values are `ArgumentHint.OLD_VALUE`, `ArgumentHint.NEW_VALUE`, `ArgumentHint.TYPE_BASED` (default) ,`ArgumentHint.ADDED_VALUES`,
-`ArgumentHint.REMOVED_VALUES`, `ArgumentHint.ALL_SELECTED`
+`value`						| The hint value defines which semantic the annotated method parameter has. Supported values are `ArgumentHint.OLD_VALUE`, `ArgumentHint.NEW_VALUE`, `ArgumentHint.TYPE_BASED` (default) ,`ArgumentHint.ADDED_VALUES`, `ArgumentHint.REMOVED_VALUES`, `ArgumentHint.ALL_SELECTED`
 
 **Example:**
 ```java
@@ -343,7 +360,7 @@ The [@AFXControlValue](src/main/java/com/github/actionfx/core/annotation/AFXCont
 This annotation can be applied to method arguments of methods that are called from the ActionFX framework.
 
 Following methods are eligible for arguments to be annotated by `@AFXControlValue`:
-- methods annotated by {@link AFXOnAction} (these methods are wired to an "onAction" property of a control like a `javafx.scene.control.Button`
+- methods annotated by `AFXOnAction` (these methods are wired to an "onAction" property of a control like a `javafx.scene.control.Button`
 - methods annotated by `AFXLoadControlData` (these methods load data for a control inside the scene graph)
 - methods annotated by `AFXOnControlValueChange` (these methods are executed when a change of control's user value occurs)
 
@@ -379,7 +396,7 @@ Attribute 							| Description
 `attachToBorderPanePosition`		| Optional border pane position in case the target node is a `javafx.scene.layout.BorderPane`.
 `attachToAnchorLeft`				| Optional anchor left in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorBottom`.
 `attachToAnchorTop`				| Optional anchor top in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorLeft`, `attachToAnchorRight` and `attachToAnchorBottom`.
-`attachToAnchorRight`				|  Optional anchor right in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorLeft` and `attachToAnchorBottom`.
+`attachToAnchorRight`				|  Optional anchor right in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorLeft` and `attachToAnchorBottom`.
 `attachToAnchorBottom`			| Optional anchor bottom in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorLeft`.
 
 **Example:**
@@ -395,6 +412,10 @@ Attribute 							| Description
 	@AFXNestedView(refViewId = "productDetailsView", attachToBorderPanePosition = BorderPanePosition.CENTER)
 	@FXML
 	private BorderPane shopingCartAnchorPane;
+	...
+	@AFXNestedView(refViewId = "productFeedbackView", attachToColumn = 3, attachInRow = 2)
+	@FXML
+	private GridPane productFeedbackGridPane;
 ```
 
 
@@ -410,3 +431,79 @@ This annotation can be e.g. applied to a field of type `javafx.scene.control.Tab
 	@FXML
 	private TableView<String> multiSelectionTable;
 ```
+
+
+### User Value of Controls
+
+In the previous sections, it was shown that user selected values can be injected into methods e.g. by using the `@AFXControlValue` annotation or that you can listen to changes of control values via the `@AFXOnControlValueChange` annotation.
+
+But what exactly does "user value" mean? Unlike other UI-technologies, JavaFX does not have a consistent class hierarchy to retrieve a "user value". Also, there is no "value property" in the controls.
+
+ActionFX tries to mitigate this shortcoming by providing properties configuration files for all JavaFX controls in package `javafx.scene.control`. This configuration is interpreted by a central class in ActionFX: the [ControlWrapper](src/main/java/com/github/actionfx/core/view/graph/ControlWrapper.java) class.
+
+The properties file for an `javafx.scene.control.TreeView` is shown here as an example (see other examples in folder [src/main/resources/afxcontrolwrapper](src/main/resources/afxcontrolwrapper) ):
+```
+# Defines how to access a JavaFX control.
+#
+# In case you have a custom control not taken directly taken from JavaFX, you can create the following file:
+#
+# Filename: /afxcontrolwrapper/<full-qualified-class-name>.properties
+# Supported property entries:
+# Property Key                  | Property Value                                             | Example Values
+# -------------------------------------------------------------------------------------------------------------------------------------------------------
+# valueProperty                 | Property name holding a single "value"                     | "text" (e.g. for TextField), "value" (e.g. for ComboBox)
+# valuesObservableList          | Name of an observable list holding all possible "values"   | "items" (e.g. for ComboBox)
+# selectionModelProperty        | Property name holding the "selectionModel"                 | "selectionModel" (e.g. for TableView)
+# selectedValueProperty         | Property name holding the select "value"                   | "selectionModel.selectedItem" (e.g. for TableView)
+# selectedValuesObservableList  | Name of an observable list holding all selected "values"   | "selectionModel.selectedItems" (e.g. for TableView)
+#
+#  In case a certain property is not supported by the control (e.g. no support for a "SelectionModel"), then the property must be left empty.
+#
+valueProperty=root
+valuesObservableList=
+selectionModelProperty=selectionModel
+selectedValueProperty=selectionModel.selectedItem
+selectedValuesObservableList=selectionModel.selectedItems
+```
+In case you have a custom control implemented or you are using a 3rd party controls library, you can provide a properties file in the following location in the classpath: `/afxcontrolwrapper/<full-qualified-class-name>.properties`
+
+As mentioned, for all JavaFX controls this works out-of-the box with ActionFX, as there are configurations provided for each JavaFX control.
+
+The following table explains, which property is accessed to retrieve the "user value" from:
+
+JavaFX Control 								| User Value (as path to the corresponding property / observable list)
+------------------------------------------- | -----------------------------------------------------
+javafx.scene.control.Accordion 				| expandedPaneProperty()
+javafx.scene.control.Button					| textProperty()
+javafx.scene.control.ButtonBar				| (unsupported)
+javafx.scene.control.CheckBox				| selectedProperty()
+javafx.scene.control.ChoiceBox				| getSelectionModel().selectedItemProperty()
+javafx.scene.control.ColorPicker			| valueProperty()
+javafx.scene.control.ComboBox				| getSelectionModel().selectedItemProperty() (when user sets the "valueProperty", the selected item is set accordingly by JavaFX)
+javafx.scene.control.DatePicker				| valueProperty()
+javafx.scene.control.Hyperlink				| textProperty()
+javafx.scene.control.Label					| textProperty()
+javafx.scene.control.ListView				| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
+javafx.scene.control.MenuBar				| (unsupported)
+javafx.scene.control.MenuButton				| textProperty()
+javafx.scene.control.Pagination				| (unsupported)
+javafx.scene.control.PasswordField			| textProperty()
+javafx.scene.control.ProgressBar			| progressProperty()
+javafx.scene.control.ProgressIndicator		| progressProperty()
+javafx.scene.control.RadioButton			| selectedProperty()
+javafx.scene.control.ScrollBar				| valueProperty()
+javafx.scene.control.ScrollPane				| (unsupported)
+javafx.scene.control.Separator				| (unsupported)
+javafx.scene.control.Slider					| valueProperty()
+javafx.scene.control.Spinner				| valueProperty()
+javafx.scene.control.SplitMenuButton		| textProperty()
+javafx.scene.control.SplitPane				| itemsProperty()
+javafx.scene.control.TableView				| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
+javafx.scene.control.TabPane				| getSelectionModel().selectedItemProperty()
+javafx.scene.control.TextArea				| textProperty()
+javafx.scene.control.TextField				| textProperty()
+javafx.scene.control.TitledPane				| textProperty()
+javafx.scene.control.ToggleButton			| selectedProperty()
+javafx.scene.control.ToolBar				| itemsProperty()
+javafx.scene.control.TreeTableView			| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
+javafx.scene.control.TreeView				| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)

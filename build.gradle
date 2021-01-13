@@ -206,8 +206,8 @@ modifyPom {
 	
         licenses {
         	license {
-	            name 'The New BSD License'
-	            url 'https://opensource.org/licenses/BSD-2-Clause'
+	            name 'MIT License'
+	            url 'https://opensource.org/licenses/MIT'
                 distribution 'repo'
             }
         }
@@ -243,7 +243,7 @@ task codeCoverageReport(type: JacocoReport) {
 
     reports {
         xml.enabled true
-        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        xml.destination file("${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
         html.enabled false
         csv.enabled false
     }
@@ -257,5 +257,6 @@ sonarqube {
     property "sonar.projectKey", "martinkoster_actionfx"
     property "sonar.organization", "martinkoster"
     property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
   }
 }
