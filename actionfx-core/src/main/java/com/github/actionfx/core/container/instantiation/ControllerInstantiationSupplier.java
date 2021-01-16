@@ -602,32 +602,34 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * to the nodes.
 	 */
 	protected void attachNestedViews(final Object controller) {
-		final Map<AFXNestedView, Field> annotatedFieldMap = AnnotationUtils.findAnnotatedFields(controller.getClass(),
-				AFXNestedView.class, true);
+		final Map<Field, List<AFXNestedView>> annotatedFieldMap = AnnotationUtils
+				.findAnnotatedFields(controller.getClass(), AFXNestedView.class, true);
 		if (annotatedFieldMap.isEmpty()) {
 			return;
 		}
 		final ActionFX actionFX = ActionFX.getInstance();
 		for (final var entry : annotatedFieldMap.entrySet()) {
-			final AFXNestedView nestedView = entry.getKey();
-			final Field field = entry.getValue();
+			final Field field = entry.getKey();
+			final List<AFXNestedView> nestedViews = entry.getValue();
 
-			// get view to attach
-			final View viewToAttach = actionFX.getView(nestedView.refViewId());
-			if (viewToAttach == null) {
-				throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
-						+ "' does not exist, can not embed it for controller class '"
-						+ controller.getClass().getCanonicalName() + "'!");
-			}
-			final Object fieldValue = ReflectionUtils.getFieldValue(field, controller);
-			if (fieldValue == null) {
-				throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
-						+ "' can not be attached to field with name='" + field.getName()
-						+ "', the field value is null!");
+			// get views to attach
+			for (final AFXNestedView nestedView : nestedViews) {
+				final View viewToAttach = actionFX.getView(nestedView.refViewId());
+				if (viewToAttach == null) {
+					throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
+							+ "' does not exist, can not embed it for controller class '"
+							+ controller.getClass().getCanonicalName() + "'!");
+				}
+				final Object fieldValue = ReflectionUtils.getFieldValue(field, controller);
+				if (fieldValue == null) {
+					throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
+							+ "' can not be attached to field with name='" + field.getName()
+							+ "', the field value is null!");
 
+				}
+				final NodeWrapper target = NodeWrapper.of(fieldValue);
+				target.attachNode(viewToAttach.getRootNode(), NodeWrapper.nodeAttacherFor(target, nestedView));
 			}
-			final NodeWrapper target = NodeWrapper.of(fieldValue);
-			target.attachNode(viewToAttach.getRootNode(), NodeWrapper.nodeAttacherFor(target, nestedView));
 		}
 	}
 

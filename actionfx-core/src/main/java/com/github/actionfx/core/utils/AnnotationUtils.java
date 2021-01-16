@@ -109,6 +109,26 @@ public class AnnotationUtils {
 	}
 
 	/**
+	 * Finds all annotations on the given {@code element}. This method is intended
+	 * for repeatable annotations.In case the annotation is not present on
+	 * {@code field}, {@code null} is returned.
+	 *
+	 * @param <A>            the annotation type
+	 * @param element        the annotated element (class, method, field) to check
+	 * @param annotationType the annotation class
+	 * @return the list of annotations, or an empty list, in case the
+	 *         {@code element} does not carry the expected annotation
+	 */
+	public static <A extends Annotation> List<A> findAllAnnotations(final AnnotatedElement element,
+			final Class<A> annotationType) {
+		final A[] annotations = element.getAnnotationsByType(annotationType);
+		if (annotations == null || annotations.length == 0) {
+			return new ArrayList<>();
+		}
+		return Arrays.asList(annotations);
+	}
+
+	/**
 	 * Invokes all methods on the supplied {@code instance} that carry the given
 	 * {@code annotationClass}.
 	 *
@@ -135,7 +155,8 @@ public class AnnotationUtils {
 
 	/**
 	 * Extracts all fields annotated by <tt>annotationClazz</tt> in class
-	 * <tt>clazz</tt> and returns a map.
+	 * <tt>clazz</tt> and returns a map, where the key is the field itself and the
+	 * value is the list of annotations (which may be repeatable).
 	 *
 	 * @param clazz             the class to be checked for annotated fields
 	 * @param annotationClazz   the annotation class to be looked up for
@@ -143,23 +164,23 @@ public class AnnotationUtils {
 	 *                          be scanned or not
 	 * @param comparator        an optional <tt>Comparator</tt> instance for sorting
 	 *                          the resulting map
-	 * @return a map, where the key is the instance of the the annotation and the
-	 *         value the <tt>Field</tt>
+	 * @return a map, where the key is the field instance and the value is the list
+	 *         of retrieved annotations (annotations can be repeatable)
 	 */
-	public static <T extends Annotation> Map<T, Field> findAnnotatedFields(final Class<?> clazz,
-			final Class<T> annotationClazz, final boolean checkSuperClasses, final Comparator<T> comparator) {
-		Map<T, Field> fieldMap;
+	public static <T extends Annotation> Map<Field, List<T>> findAnnotatedFields(final Class<?> clazz,
+			final Class<T> annotationClazz, final boolean checkSuperClasses, final Comparator<Field> comparator) {
+		Map<Field, List<T>> fieldMap;
 		if (comparator != null) {
 			fieldMap = new TreeMap<>(comparator);
 		} else {
 			fieldMap = new HashMap<>();
 		}
-		final Field[] fields = clazz.getDeclaredFields();
+		final Field[] fields = ReflectionUtils.getDeclaredFields(clazz);
 		if (fields != null) {
 			for (final Field field : fields) {
-				final T a = findAnnotation(field, annotationClazz);
-				if (a != null) {
-					fieldMap.put(a, field);
+				final List<T> annotationList = findAllAnnotations(field, annotationClazz);
+				if (!annotationList.isEmpty()) {
+					fieldMap.put(field, annotationList);
 				}
 			}
 		}
@@ -171,16 +192,17 @@ public class AnnotationUtils {
 
 	/**
 	 * Extracts all fields annotated by <tt>annotationClazz</tt> in class
-	 * <tt>clazz</tt> and returns a map.
+	 * <tt>clazz</tt> and returns a map. Because annotations may be repeatable, the
+	 * value of the returned map is a list.
 	 *
 	 * @param clazz             the class to be checked for annotated fields
 	 * @param annotationClazz   the annotation class to be looked up for
 	 * @param checkSuperClasses flag, that determines, whether super classes shall
 	 *                          be scanned or not
-	 * @return a map, where the key is the instance of the the annotation and the
-	 *         value the <tt>Field</tt>
+	 * @return a map, where the key is the field and the value is the list of the
+	 *         (repeatable) annotations.
 	 */
-	public static <T extends Annotation> Map<T, Field> findAnnotatedFields(final Class<?> clazz,
+	public static <T extends Annotation> Map<Field, List<T>> findAnnotatedFields(final Class<?> clazz,
 			final Class<T> annotationClazz, final boolean checkSuperClasses) {
 		return findAnnotatedFields(clazz, annotationClazz, checkSuperClasses, null);
 	}

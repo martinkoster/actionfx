@@ -352,7 +352,7 @@ public class ReflectionUtils {
 	 * @throws IllegalStateException if introspection fails
 	 * @see Class#getDeclaredFields()
 	 */
-	private static Field[] getDeclaredFields(final Class<?> clazz) {
+	public static Field[] getDeclaredFields(final Class<?> clazz) {
 		Field[] result = DECLARED_FIELD_CACHE.get(clazz);
 		if (result == null) {
 			try {

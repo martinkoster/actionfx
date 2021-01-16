@@ -104,8 +104,11 @@ class ActionFXIntegrationTest {
 		final ControllerWithNestedviewOnField controller = actionFX
 				.getController(ControllerWithNestedviewOnField.class);
 
-		// THEN
+		// THEN (2 AFXNestedView annotations are evaluated)
 		assertThat(controller.mainBorderPane, notNullValue());
+		assertThat(controller.mainBorderPane.getTop(), notNullValue());
+		assertThat(controller.mainBorderPane.getTop(), instanceOf(BorderPane.class));
+
 		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
 		assertThat(controller.mainBorderPane.getCenter(), instanceOf(TitledPane.class));
 	}

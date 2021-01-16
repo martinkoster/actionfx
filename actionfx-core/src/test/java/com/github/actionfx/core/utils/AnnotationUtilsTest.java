@@ -33,8 +33,10 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -150,45 +152,45 @@ class AnnotationUtilsTest {
 	@Test
 	void testFindAnnotatedFields_noSuperclassScanning() {
 		// WHEN
-		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
+		final Map<Field, List<SomeFieldAnnotation>> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
 				false);
 
 		// THEN
-		thenAssertFieldsInAnyOrder(fieldMap.values(), ANNOTATED_FIELDS_WITHOUT_SUPER_CLASS);
+		thenAssertFieldsInAnyOrder(fieldMap.keySet(), ANNOTATED_FIELDS_WITHOUT_SUPER_CLASS);
 	}
 
 	@Test
 	void testFindAnnotatedFields_withSuperclassScanning() {
 		// WHEN
-		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
+		final Map<Field, List<SomeFieldAnnotation>> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
 				true);
 
 		// THEN
-		thenAssertFieldsInAnyOrder(fieldMap.values(), ANNOTATED_FIELDS_WITH_SUPER_CLASS);
+		thenAssertFieldsInAnyOrder(fieldMap.keySet(), ANNOTATED_FIELDS_WITH_SUPER_CLASS);
 	}
 
 	@Test
 	void testFindAnnotatedFields_withComparatorAscending() {
 		// WHEN
-		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
+		final Map<Field, List<SomeFieldAnnotation>> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
-				true, (o1, o2) -> o1.value().compareTo(o2.value()));
+				true, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 
 		// THEN
-		thenAssertTestAnnotationInSortedOrder(fieldMap.keySet(), "1", "2");
+		thenAssertFieldsInExactOrder(fieldMap.keySet(), ANNOTATED_FIELDS_WITH_SUPER_CLASS);
 	}
 
 	@Test
 	void testFindAnnotatedFields_withComparatorDescending() {
 		// WHEN
-		final Map<SomeFieldAnnotation, Field> fieldMap = AnnotationUtils.findAnnotatedFields(
+		final Map<Field, List<SomeFieldAnnotation>> fieldMap = AnnotationUtils.findAnnotatedFields(
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, SomeFieldAnnotation.class,
-				true, (o1, o2) -> o2.value().compareTo(o1.value()));
+				true, (o1, o2) -> o2.getName().compareTo(o1.getName()));
 
 		// THEN
-		thenAssertTestAnnotationInSortedOrder(fieldMap.keySet(), "2", "1");
+		thenAssertFieldsInReverseOrder(fieldMap.keySet(), ANNOTATED_FIELDS_WITH_SUPER_CLASS);
 	}
 
 	@Test
@@ -213,17 +215,24 @@ class AnnotationUtilsTest {
 		thenAssertFieldsInAnyOrder(fields, ANNOTATED_FIELDS_WITH_SUPER_CLASS);
 	}
 
-	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final List<String> exptectedFieldNames) {
-		assertThat(methods, notNullValue());
-		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList()),
+	private void thenAssertFieldsInAnyOrder(final Collection<Field> fields, final List<String> exptectedFieldNames) {
+		assertThat(fields, notNullValue());
+		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList()),
 				hasItems(exptectedFieldNames.toArray())); // hasItems instead of containsInAnyOrder, because Jacoco
 															// dynamically adds fields :(
 	}
 
-	private void thenAssertTestAnnotationInSortedOrder(final Collection<SomeFieldAnnotation> testAnnotations,
-			final String... exptectedOrderValues) {
-		assertThat(testAnnotations, notNullValue());
-		assertThat(testAnnotations.stream().map(SomeFieldAnnotation::value).collect(Collectors.toList()),
-				contains(exptectedOrderValues));
+	private void thenAssertFieldsInExactOrder(final Collection<Field> fields, final List<String> exptectedFieldNames) {
+		assertThat(fields, notNullValue());
+		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList()),
+				contains(exptectedFieldNames.toArray()));
+	}
+
+	private void thenAssertFieldsInReverseOrder(final Collection<Field> fields,
+			final List<String> exptectedFieldNames) {
+		final List<String> reversed = new ArrayList<>(exptectedFieldNames);
+		Collections.reverse(reversed);
+		assertThat(fields, notNullValue());
+		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList()), contains(reversed.toArray()));
 	}
 }

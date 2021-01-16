@@ -39,7 +39,8 @@ import javafx.scene.layout.BorderPane;
 @AFXController(viewId = "viewWithNestedView", fxml = "/testfxml/ViewWithNestedView.fxml", maximized = true)
 public class ControllerWithNestedviewOnField {
 
-	@AFXNestedView(refViewId = "titledPaneView", attachToBorderPanePosition = BorderPanePosition.CENTER)
+	@AFXNestedView(refViewId = "borderPaneTopView", attachToBorderPanePosition = BorderPanePosition.TOP)
+	@AFXNestedView(refViewId = "borderPaneCenterView", attachToBorderPanePosition = BorderPanePosition.CENTER)
 	@FXML
 	public BorderPane mainBorderPane;
 

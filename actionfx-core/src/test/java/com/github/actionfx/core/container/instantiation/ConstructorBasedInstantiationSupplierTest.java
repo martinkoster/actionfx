@@ -68,6 +68,10 @@ class ConstructorBasedInstantiationSupplierTest {
 
 		private final String value;
 
+		public String getValue() {
+			return value;
+		}
+
 		public ClassWithoutDefaultConstructor(final String value) {
 			this.value = value;
 		}
