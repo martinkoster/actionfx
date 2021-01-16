@@ -26,6 +26,7 @@ package com.github.actionfx.core;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -43,6 +44,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class ActionFXIntegrationTest {
@@ -106,6 +108,24 @@ class ActionFXIntegrationTest {
 		assertThat(controller.mainBorderPane, notNullValue());
 		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
 		assertThat(controller.mainBorderPane.getCenter(), instanceOf(TitledPane.class));
+	}
+
+	@Test
+	@TestInFxThread
+	void testDisplayMainView() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).build();
+		actionFX.scanForActionFXComponents();
+		final Stage stage = new Stage();
+
+		// WHEN
+		actionFX.displayMainView(stage);
+
+		// THEN (stage holds scene which in turn holds the view)
+		assertThat(stage.getScene(), notNullValue());
+		assertThat(stage.getScene().getRoot(), notNullValue());
+		assertThat(stage.getScene().getRoot(), instanceOf(BorderPane.class));
+		assertThat(actionFX.getPrimaryStage(), sameInstance(stage));
 	}
 
 }

@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -31,12 +32,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.github.actionfx.core.ActionFX.ActionFXBuilder;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
@@ -78,6 +82,17 @@ class ActionFXTest {
 	}
 
 	@Test
+	void testBuilder_minimal_withConfigurationClass_invalidConfigurationClass() {
+		// GIVEN
+		final ActionFXBuilder builder = ActionFX.builder();
+
+		// WHEN and THEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> builder.configurationClass(AppClassWithoutAFXApplicationAnnotation.class));
+		assertThat(ex.getMessage(), containsString("or its super-classes are not annotated with @AFXApplication"));
+	}
+
+	@Test
 	void testBuilder_configurative() {
 		// GIVEN
 		final ActionFXEnhancer enhancer = Mockito.mock(ActionFXEnhancer.class);
@@ -112,6 +127,21 @@ class ActionFXTest {
 		// WHEN and THEN (
 		assertThat(actionFX, notNullValue());
 		assertThrows(IllegalStateException.class, () -> ActionFX.builder().build());
+	}
+
+	@Test
+	void testBuilder_uncaughtExceptionHandler() {
+		// GIVEN
+		final UncaughtExceptionHandler handler = (t, e) -> {
+		};
+
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().uncaughtExceptionHandler(handler).build();
+
+		// THEN
+		assertThat(actionFX, notNullValue());
+		assertThat(Thread.getDefaultUncaughtExceptionHandler(), sameInstance(handler));
+
 	}
 
 	@Test
@@ -160,6 +190,10 @@ class ActionFXTest {
 
 		// THEN (another call to scanComponents results in an exception)
 		assertThrows(IllegalStateException.class, () -> actionFX.scanForActionFXComponents());
+	}
+
+	public static class AppClassWithoutAFXApplicationAnnotation {
+
 	}
 
 }
