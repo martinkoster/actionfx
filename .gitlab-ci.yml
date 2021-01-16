@@ -40,6 +40,19 @@ unittest:
       - actionfx-spring-boot/build/
       - actionfx-app-sample/build/
     expire_in: 1 week
+
+integrationtest:
+  stage: test
+  script:
+    - ./gradlew integrationTest
+  artifacts:
+    paths:
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
+    expire_in: 1 week
     
 reportCodeCoverage:
   stage: quality
