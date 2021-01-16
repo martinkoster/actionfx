@@ -28,6 +28,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,8 @@ public class AnnotationUtils {
 	 * @param <A>            the annotation type
 	 * @param clazz          the class to check
 	 * @param annotationType the annotation class
-	 * @return
+	 * @return the annotation, or {@code null}, if the annotation is not present on
+	 *         the given class.
 	 */
 	public static <A extends Annotation> A findAnnotation(final Class<?> clazz, final Class<A> annotationType) {
 		final A annotation = clazz.getAnnotation(annotationType);
@@ -66,6 +68,30 @@ public class AnnotationUtils {
 		}
 		// annotation not present? we return null.
 		return null;
+	}
+
+	/**
+	 * Finds all annotations on the given {@code clazz}. In case the annotation is
+	 * not present on {@code clazz}, the super classes of {@code clazz} are also
+	 * checked. This method supports repeatable annotations.
+	 *
+	 * @param <A>            the annotation type
+	 * @param clazz          the class to check
+	 * @param annotationType the annotation class
+	 * @return all found annotations, or an empty list, if the annotation is not
+	 *         present on any of the classes of the class hierarchy.
+	 */
+	public static <A extends Annotation> List<A> findAllAnnotations(final Class<?> clazz,
+			final Class<A> annotationType) {
+		final List<A> result = new ArrayList<>();
+		final A[] annotations = clazz.getAnnotationsByType(annotationType);
+		if (annotations != null) {
+			result.addAll(Arrays.asList(annotations));
+		}
+		if (clazz.getSuperclass() != null) {
+			result.addAll(findAllAnnotations(clazz.getSuperclass(), annotationType));
+		}
+		return result;
 	}
 
 	/**

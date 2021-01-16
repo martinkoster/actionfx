@@ -1,12 +1,15 @@
 package com.github.actionfx.core.instrumentation.interceptors;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.annotation.AFXNestedView;
 import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.View;
@@ -106,10 +109,13 @@ public class AFXActionMethodInterceptor {
 	 * @param method                 the intercepted method
 	 * @param methodInvocationResult the result of the intercepted method
 	 */
+	@SuppressWarnings("unchecked")
 	private static void showNestedViews(final AFXShowView afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
 		final View currentView = ControllerWrapper.getViewFrom(instance);
-		ViewBuilder.embedNestedViews(currentView, afxAction.showNestedViews());
+		final AFXNestedView[] nestedViews = afxAction.showNestedViews();
+		ViewBuilder.embedNestedViews(currentView,
+				nestedViews != null ? Arrays.asList(nestedViews) : Collections.EMPTY_LIST);
 	}
 
 	/**

@@ -40,7 +40,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.view.View;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
@@ -79,13 +78,14 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 
 		// THEN
 		final MainController controller = container.getBean("mainController");
-		final View view = container.getBean("mainView");
 		final ActionFX actionFX = container.getBean(ActionFX.class);
 		final PrototypeScopedController prototypeScopedController = container.getBean(PrototypeScopedController.class);
 
 		assertThat(controller, notNullValue());
-		assertThat(controller.getMainView(), notNullValue());
-		assertThat(controller.getMainView(), sameInstance(view)); // view is a singleton!
+		// final View view = container.getBean("mainView");
+		// assertThat(controller.getMainView(), notNullValue());
+		// assertThat(controller.getMainView(), sameInstance(view)); // view is a
+		// singleton!
 		assertThat(controller.getPrototypeScopedController(), notNullValue());
 		// controller is prototyped! so instances must be different!
 		assertThat(controller.getPrototypeScopedController(), not(sameInstance(prototypeScopedController)));

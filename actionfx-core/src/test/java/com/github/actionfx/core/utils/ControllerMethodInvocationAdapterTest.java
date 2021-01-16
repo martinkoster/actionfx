@@ -23,12 +23,14 @@
  */
 package com.github.actionfx.core.utils;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -47,7 +49,6 @@ import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.view.FxmlView;
-import com.github.actionfx.core.view.TestController;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.IntegerProperty;
@@ -253,8 +254,44 @@ class ControllerMethodInvocationAdapterTest {
 		assertThat(result, nullValue());
 	}
 
+	@Test
+	void testInvoke_withVoidMethodWithInjectedControlArguments_butControllerHasNoView() {
+		// WHEN and THEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> methodInvocationAdapterWithoutView("voidMethodWithInjectedControlArguments"));
+		assertThat(ex.getMessage(), containsString("There is no view associated with controller of type"));
+	}
+
+	@Test
+	void testInvoke_withVoidMethodWithInjectedControlArguments_butMethodArgumentHasUnknownControlId() {
+		// WHEN and THEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> methodInvocationAdapter("voidMethodWithUnknownControlIdArguments"));
+		assertThat(ex.getMessage(), containsString(
+				"There is no node with ID='someUnknownControl' inside the view associated with controller"));
+	}
+
+	@Test
+	void testInvoke_withVoidMethodWithInjectedControlArguments_butReferencedNodeIsNotOfTypeControl() {
+		// WHEN and THEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> methodInvocationAdapter("voidMethodWithTypeIsNotControl"));
+		assertThat(ex.getMessage(), containsString("Node with ID='vbox' inside the view hosted by controller"));
+		assertThat(ex.getMessage(), containsString("is not a javafx.scene.control.Control!"));
+	}
+
+	@Test
+	void testInvoke_withVoidMethodWithInjectedControlArguments_butMethodArgumentIsOfIncompatibleType() {
+		// WHEN and THEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> methodInvocationAdapter("voidMethodWithInjectedControlArgumentsOfIncompatibleType"));
+		assertThat(ex.getMessage(), containsString("User value retrieved for control with ID='textField'"));
+		assertThat(ex.getMessage(),
+				containsString(" is not compatible with the method argument of type 'java.util.List'!"));
+	}
+
 	private static ControllerMethodInvocationAdapter methodInvocationAdapter(final String methodName) {
-		final ClassWithPublicMethods instance = createEnhancedInstance();
+		final ClassWithPublicMethods instance = createEnhancedInstance(true);
 		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
 		return new ControllerMethodInvocationAdapter(instance, method, ParameterValue.of("Type-based Value 1"),
 				ParameterValue.of("Type-based Value 2"), ParameterValue.of(Integer.valueOf(4711)),
@@ -263,28 +300,39 @@ class ControllerMethodInvocationAdapterTest {
 				ParameterValue.ofRemovedValues(List.of("removed")));
 	}
 
+	private static ControllerMethodInvocationAdapter methodInvocationAdapterWithoutView(final String methodName) {
+		final ClassWithPublicMethods instance = createEnhancedInstance(false);
+		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
+		return new ControllerMethodInvocationAdapter(instance, method);
+	}
+
 	/**
 	 * We need to inject a new field with name "_view", so that we can test or
 	 * invocation adapter.
 	 *
+	 * @param createView {@code true}, if a view shall be created and
+	 *                   injected,{@code false}, if the view shall be set to
+	 *                   {@code null}.
 	 * @return the instance of the enhanced class
 	 */
-	private static ClassWithPublicMethods createEnhancedInstance() {
+	private static ClassWithPublicMethods createEnhancedInstance(final boolean createView) {
 		final ActionFXByteBuddyEnhancer enhancer = new ActionFXByteBuddyEnhancer();
 		try {
 			final ClassWithPublicMethods instance = (ClassWithPublicMethods) enhancer
 					.enhanceClass(ClassWithPublicMethods.class).getDeclaredConstructor().newInstance();
-			final FxmlView view = new FxmlView("testId", "/testfxml/ControllerMethodInvocationAdapterTestView.fxml",
-					new TestController());
-			final ListView<String> listView = view.lookupNode("listView").getWrapped();
-			listView.getItems().add("List Item 1");
-			listView.getItems().add("List Item 2");
-			listView.getItems().add("List Item 3");
-			// select 2 and 3
-			listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			listView.getSelectionModel().select("List Item 2");
-			listView.getSelectionModel().select("List Item 3");
-			ControllerWrapper.setViewOn(instance, view);
+			if (createView) {
+				final FxmlView view = new FxmlView("testId", "/testfxml/ControllerMethodInvocationAdapterTestView.fxml",
+						instance);
+				final ListView<String> listView = view.lookupNode("listView").getWrapped();
+				listView.getItems().add("List Item 1");
+				listView.getItems().add("List Item 2");
+				listView.getItems().add("List Item 3");
+				// select 2 and 3
+				listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+				listView.getSelectionModel().select("List Item 2");
+				listView.getSelectionModel().select("List Item 3");
+				ControllerWrapper.setViewOn(instance, view);
+			}
 			return instance;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
@@ -366,6 +414,20 @@ class ControllerMethodInvocationAdapterTest {
 				@AFXControlValue("listView") final List<String> selectedEntries) {
 			invokedArguments.add(textValue);
 			invokedArguments.add(selectedEntries);
+			setExecuted();
+		}
+
+		public void voidMethodWithUnknownControlIdArguments(
+				@AFXControlValue("someUnknownControl") final String textValue) {
+			setExecuted();
+		}
+
+		public void voidMethodWithTypeIsNotControl(@AFXControlValue("vbox") final String textValue) {
+			setExecuted();
+		}
+
+		public void voidMethodWithInjectedControlArgumentsOfIncompatibleType(
+				@AFXControlValue("textField") final List<String> selectedEntries) {
 			setExecuted();
 		}
 

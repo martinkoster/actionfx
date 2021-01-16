@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,28 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
-
-import com.github.actionfx.core.utils.AFXUtils;
+package com.github.actionfx.core.test;
 
 /**
- * {@link View} implementation that uses FXML for describing the view.
+ * Base class with @RepeatableAnnotation.
  *
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
+@RepeatableAnnotation(1)
+@RepeatableAnnotation(2)
+@RepeatableAnnotation(3)
+public class ClassWithRepeableAnnotations {
 
-	private final Object controller;
-
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller);
-		this.controller = controller;
-	}
-
-	@Override
-	public Object getController() {
-		return controller;
-	}
 }

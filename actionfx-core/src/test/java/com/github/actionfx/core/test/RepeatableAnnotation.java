@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,28 +21,26 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
+package com.github.actionfx.core.test;
 
-import com.github.actionfx.core.utils.AFXUtils;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * {@link View} implementation that uses FXML for describing the view.
- *
- * @author koster
- *
- */
-public class FxmlView extends AbstractView {
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	private final Object controller;
+import com.github.actionfx.core.test.RepeatableAnnotation.RepeatableAnnotations;
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller);
-		this.controller = controller;
-	}
+@Repeatable(RepeatableAnnotations.class)
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface RepeatableAnnotation {
+	public int value();
 
-	@Override
-	public Object getController() {
-		return controller;
+	@Retention(RUNTIME)
+	@Target(TYPE)
+	@interface RepeatableAnnotations {
+		RepeatableAnnotation[] value();
 	}
 }
