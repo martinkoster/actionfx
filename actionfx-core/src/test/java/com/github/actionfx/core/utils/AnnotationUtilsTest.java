@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.utils;
 
@@ -29,6 +29,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -41,17 +43,20 @@ import javax.annotation.PostConstruct;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.actionfx.core.test.ClassDerivedFromClassWithRepeatableAnnotations;
 import com.github.actionfx.core.test.ClassDerivedFromClassWithSomeAnnotation;
 import com.github.actionfx.core.test.ClassWithPostConstructAnnotation;
 import com.github.actionfx.core.test.ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation;
+import com.github.actionfx.core.test.ClassWithRepeableAnnotations;
 import com.github.actionfx.core.test.ClassWithSomeAnnotation;
 import com.github.actionfx.core.test.ClassWithoutSomeAnnotation;
+import com.github.actionfx.core.test.RepeatableAnnotation;
 import com.github.actionfx.core.test.SomeAnnotation;
 import com.github.actionfx.core.test.SomeFieldAnnotation;
 
 /**
  * JUnit test case for {@link AnnotationUtils}.
- * 
+ *
  * @author koster
  *
  */
@@ -82,9 +87,43 @@ class AnnotationUtilsTest {
 	}
 
 	@Test
+	void testFindAllAnnotations() {
+		// WHEN
+		final List<RepeatableAnnotation> list = AnnotationUtils.findAllAnnotations(ClassWithRepeableAnnotations.class,
+				RepeatableAnnotation.class);
+
+		// THEN
+		assertThat(list, hasSize(3));
+		assertThat(list.stream().map(RepeatableAnnotation::value).collect(Collectors.toList()),
+				containsInAnyOrder(1, 2, 3));
+	}
+
+	@Test
+	void testFindAllAnnotations_foundOnSuperClass() {
+		// WHEN
+		final List<RepeatableAnnotation> list = AnnotationUtils
+				.findAllAnnotations(ClassDerivedFromClassWithRepeatableAnnotations.class, RepeatableAnnotation.class);
+
+		// THEN
+		assertThat(list, hasSize(4));
+		assertThat(list.stream().map(RepeatableAnnotation::value).collect(Collectors.toList()),
+				containsInAnyOrder(1, 2, 3, 4));
+	}
+
+	@Test
+	void testFindAllAnnotations_annotationNotPresent() {
+		// WHEN
+		final List<RepeatableAnnotation> list = AnnotationUtils.findAllAnnotations(ClassWithoutSomeAnnotation.class,
+				RepeatableAnnotation.class);
+
+		// THEN
+		assertThat(list, hasSize(0));
+	}
+
+	@Test
 	void testInvokeMethodWithAnnotation_withoutClassHierarchy() {
 		// GIVEN
-		ClassWithPostConstructAnnotation instance = new ClassWithPostConstructAnnotation();
+		final ClassWithPostConstructAnnotation instance = new ClassWithPostConstructAnnotation();
 
 		// WHEN
 		AnnotationUtils.invokeMethodWithAnnotation(ClassWithPostConstructAnnotation.class, instance,
@@ -97,7 +136,7 @@ class AnnotationUtilsTest {
 	@Test
 	void testInvokeMethodWithAnnotation_withClassHierarchy() {
 		// GIVEN
-		ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation instance = new ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation();
+		final ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation instance = new ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation();
 
 		// WHEN
 		AnnotationUtils.invokeMethodWithAnnotation(

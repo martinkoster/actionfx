@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -38,6 +40,7 @@ import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
+import com.github.actionfx.core.annotation.AFXNestedView;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
@@ -45,6 +48,7 @@ import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStra
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.listener.TimedChangeListener;
 import com.github.actionfx.core.listener.TimedListChangeListener;
+import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter;
 import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
@@ -55,11 +59,13 @@ import com.github.actionfx.core.view.ViewBuilder;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.WritableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Control;
@@ -89,6 +95,39 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
+	 * Creates a new, fresh instance based on the supplied bean definition. This
+	 * method ensures that instantiation is performed in the JavaFX thread, as this
+	 * is required for certain view components (e.g. a WebView).
+	 *
+	 * @param <T>            the bean type
+	 * @param beanDefinition the bean definition
+	 * @return the created bean instance
+	 */
+	@Override
+	protected T createInstance() {
+		// instance is create in JavaFX thread, because certain node e.g. WebView
+		// requires it.
+		if (Platform.isFxApplicationThread()) {
+			return createControllerInstance();
+		} else {
+			try {
+				final Task<T> instantiationTask = new Task<>() {
+					@Override
+					protected T call() throws Exception {
+						return createControllerInstance();
+					}
+				};
+				// execute the task in the JavaFX thread and wait for the result
+				return AFXUtils.runInFxThreadAndWait(instantiationTask);
+			} catch (InterruptedException | ExecutionException e) {
+				// Restore interrupted state...
+				Thread.currentThread().interrupt();
+				throw new IllegalStateException("Failed to instantiate class in JavaFX thread!", e);
+			}
+		}
+	}
+
+	/**
 	 * Prepares the {@code controllerClass} to use. In case the sub-classing
 	 * enhancement strategy is configured, a dynamic sub-class is created by using
 	 * the configure {@link ActionFXEnhancer}.
@@ -98,18 +137,24 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *         the ActionFX configuration
 	 */
 	@SuppressWarnings("unchecked")
-	protected Class<T> prepareControllerClass(final Class<T> controllerClass) {
+	private Class<T> prepareControllerClass(final Class<T> controllerClass) {
 		final ActionFX actionFX = ActionFX.getInstance();
 		return actionFX.getEnhancementStrategy() == EnhancementStrategy.SUBCLASSING
 				? (Class<T>) actionFX.getEnhancer().enhanceClass(controllerClass)
 				: controllerClass;
 	}
 
-	@Override
-	protected T createInstance() {
+	/**
+	 * Creates the controller instance and wires all applied annotations to the
+	 * controller.
+	 *
+	 * @return the instantiated controller
+	 */
+	private T createControllerInstance() {
 		try {
 			final T controller = controllerClass.getDeclaredConstructor().newInstance();
 			final FxmlView fxmlView = createFxmlViewInstance(controller);
+			attachNestedViews(controller);
 			injectView(controller, fxmlView);
 			applyFieldLevelAnnotations(controller);
 			applyMethodLevelEventAnnotations(controller, fxmlView);
@@ -127,15 +172,17 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @param controller the controller for that the view shall be created
 	 * @return the created view
 	 */
-	protected FxmlView createFxmlViewInstance(final Object controller) {
+	private FxmlView createFxmlViewInstance(final Object controller) {
 		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
 		final ViewBuilder<FxmlView> builder = new ViewBuilder<>(fxmlView);
+		final List<AFXNestedView> nestedViews = AnnotationUtils.findAllAnnotations(controllerClass,
+				AFXNestedView.class);
 		return builder.posX(afxController.posX()).posY(afxController.posY()).width(afxController.width())
 				.height(afxController.height()).maximized(afxController.maximized())
 				.modalDialogue(afxController.modal()).icon(afxController.icon())
-				.stylesheets(afxController.stylesheets()).nestedViews(afxController.nestedViews())
-				.windowTitle(afxController.title()).getView();
+				.stylesheets(afxController.stylesheets()).nestedViews(nestedViews).windowTitle(afxController.title())
+				.getView();
 	}
 
 	/**
@@ -145,7 +192,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @param controller the controller
 	 * @param view       the view
 	 */
-	protected void injectView(final T controller, final View view) {
+	private void injectView(final T controller, final View view) {
 		ControllerWrapper.setViewOn(controller, view);
 	}
 
@@ -156,7 +203,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 *                 annotations
 	 * @param view     the view that belongs to the controller
 	 */
-	protected void applyMethodLevelEventAnnotations(final Object instance, final View view) {
+	private void applyMethodLevelEventAnnotations(final Object instance, final View view) {
 		wireOnActions(instance, view);
 		wireLoadControlData(instance, view);
 		wireOnUserInputActions(instance, view);
@@ -168,7 +215,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 * @param instance the instance that is checked for ActionFX field level
 	 *                 annotations
 	 */
-	protected void applyFieldLevelAnnotations(final Object instance) {
+	private void applyFieldLevelAnnotations(final Object instance) {
 		enableMultiSelectionControls(instance);
 	}
 
@@ -201,8 +248,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Wires methods annotated with {@link AFXOnControlValueChange} to the corresponding
-	 * value inside the control.
+	 * Wires methods annotated with {@link AFXOnControlValueChange} to the
+	 * corresponding value inside the control.
 	 *
 	 * @param instance the instance holding the methods
 	 * @param view     the view that belongs to the controller
@@ -547,6 +594,40 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 			}
 			final ControlWrapper controlWrapper = new ControlWrapper((Control) fieldValue);
 			controlWrapper.enableMultiSelection();
+		}
+	}
+
+	/**
+	 * Checks for fields annotated by {@link AFXNestedView} and attaches these views
+	 * to the nodes.
+	 */
+	protected void attachNestedViews(final Object controller) {
+		final Map<AFXNestedView, Field> annotatedFieldMap = AnnotationUtils.findAnnotatedFields(controller.getClass(),
+				AFXNestedView.class, true);
+		if (annotatedFieldMap.isEmpty()) {
+			return;
+		}
+		final ActionFX actionFX = ActionFX.getInstance();
+		for (final var entry : annotatedFieldMap.entrySet()) {
+			final AFXNestedView nestedView = entry.getKey();
+			final Field field = entry.getValue();
+
+			// get view to attach
+			final View viewToAttach = actionFX.getView(nestedView.refViewId());
+			if (viewToAttach == null) {
+				throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
+						+ "' does not exist, can not embed it for controller class '"
+						+ controller.getClass().getCanonicalName() + "'!");
+			}
+			final Object fieldValue = ReflectionUtils.getFieldValue(field, controller);
+			if (fieldValue == null) {
+				throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
+						+ "' can not be attached to field with name='" + field.getName()
+						+ "', the field value is null!");
+
+			}
+			final NodeWrapper target = NodeWrapper.of(fieldValue);
+			target.attachNode(viewToAttach.getRootNode(), NodeWrapper.nodeAttacherFor(target, nestedView));
 		}
 	}
 

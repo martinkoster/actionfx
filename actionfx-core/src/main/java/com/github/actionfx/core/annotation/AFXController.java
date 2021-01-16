@@ -148,11 +148,4 @@ public @interface AFXController {
 	 * @return a list of CSS classpath locations. Default is an empty array.
 	 */
 	public String[] stylesheets() default {};
-
-	/**
-	 * An optional list of nested views that shall be embedded in the view.
-	 *
-	 * @return the nested views to be embedded
-	 */
-	public AFXNestedView[] nestedViews() default {};
 }

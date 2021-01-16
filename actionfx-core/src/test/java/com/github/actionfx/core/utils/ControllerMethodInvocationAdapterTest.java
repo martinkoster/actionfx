@@ -45,9 +45,9 @@ import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
+import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.view.FxmlView;
-import com.github.actionfx.core.view.TestController;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.IntegerProperty;

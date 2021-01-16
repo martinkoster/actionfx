@@ -124,7 +124,6 @@ Attribute | Description | Default Value
 `singleton` | Determines whether the view (and by that the controller) is managed as singleton or not. If the view is not a singleton, the view is newly created whenever it is requested. | `true`
 `lazyInit` |  Flag that controls the initialization of the view and controller. If set to `true`, view components are lazily initialized at the point the view is really required and requested from the bean container. If set to `false`, the view components are initialized at the startup of the ActionFX application, when the bean container of ActionFX is initialized. Although lazy loading should be preferred, disabling of lazy loading makes sense, when you want to have a fail-early fail-fast pattern and exceptions during view initializations should/must be thrown at application startup (and not later, when you already work with the application). | `true`
 `stylesheets` | Which stylesheets shall be applied to the scene? This array contains a list of classpath locations to CSS files. | `{}`
-`nestedViews` | An optional list of nested views that shall be embedded in the view. | `{}`
 
 After defining the controller and scanning for ActionFX components (see previous chapters on how to setup ActionFX), an instance of the controller is retrieved by:
 
@@ -178,12 +177,10 @@ Please note that the fields annotated by [@AFXNestedView](src/main/java/com/gith
 The following example shows how to use nested views in the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation:
 
 ```java
-@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true,
-	nestedViews = {
-		@AFXNestedView(refViewId = "productCatalogListView", attachToNodeWithId="productListScrollPane"),
-		@AFXNestedView(refViewId = "productDetailsView", attachToNodeWithId="productDetailsAnchorPane", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0),
-		@AFXNestedView(refViewId = "shoppingCartView", attachToNodeWithId="shoppingCartAnchorPane", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
-})
+@AFXNestedView(refViewId = "productCatalogListView", attachToNodeWithId="productListScrollPane")
+@AFXNestedView(refViewId = "productDetailsView", attachToNodeWithId="productDetailsAnchorPane", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
+@AFXNestedView(refViewId = "shoppingCartView", attachToNodeWithId="shoppingCartAnchorPane", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
+@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true)
 public class MainController {
 
 	@PostConstruct
@@ -378,7 +375,7 @@ Attribute 					| Description
 	}
 ```
 
-#### Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)
+#### Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML, Class Annotation for classes annotated with @AFXController)
 
 The [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation defines a nested view to be embedded into a scene graph. Nested views can be used to composite the overall scene graph view.
 

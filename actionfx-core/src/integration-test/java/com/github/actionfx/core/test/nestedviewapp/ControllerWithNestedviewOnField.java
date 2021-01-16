@@ -21,28 +21,26 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
+package com.github.actionfx.core.test.nestedviewapp;
 
-import com.github.actionfx.core.utils.AFXUtils;
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXNestedView;
+import com.github.actionfx.core.view.BorderPanePosition;
+
+import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 
 /**
- * {@link View} implementation that uses FXML for describing the view.
+ * Test controller that has a nested view at field level.
  *
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
+@AFXController(viewId = "viewWithNestedView", fxml = "/testfxml/ViewWithNestedView.fxml", maximized = true)
+public class ControllerWithNestedviewOnField {
 
-	private final Object controller;
+	@AFXNestedView(refViewId = "titledPaneView", attachToBorderPanePosition = BorderPanePosition.CENTER)
+	@FXML
+	public BorderPane mainBorderPane;
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller);
-		this.controller = controller;
-	}
-
-	@Override
-	public Object getController() {
-		return controller;
-	}
 }

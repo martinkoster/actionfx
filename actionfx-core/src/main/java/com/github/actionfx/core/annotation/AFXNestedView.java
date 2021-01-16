@@ -24,10 +24,12 @@
 package com.github.actionfx.core.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.github.actionfx.core.annotation.AFXNestedView.AFXNestedViews;
 import com.github.actionfx.core.view.BorderPanePosition;
 
 import javafx.scene.layout.AnchorPane;
@@ -35,16 +37,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 /**
- * Annotation to define a nested view. Nested views can be used to composite the
- * overall scene graph view.
+ * Repeatable annotation to define a nested view. Nested views can be used to
+ * composite the overall scene graph view.
  * <p>
- * You can either use this annotation as part of an {@link AFXController}
- * annotation, or you can apply it to a field that is also annotated by
- * {@code @FXML}.
+ * You can either use this annotation on a class that is additionally annotated
+ * by {@link AFXController} annotation, or you can apply it to a field that is
+ * also annotated by {@code @FXML}. On class-level, this annotation is
+ * repeatable and can define one or many views to nest.
  *
  * @author MartinKoster
  *
  */
+@Repeatable(AFXNestedViews.class)
 @Target({ ElementType.TYPE, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXNestedView {
@@ -138,5 +142,19 @@ public @interface AFXNestedView {
 	 * @return the bottom anchor
 	 */
 	public double attachToAnchorBottom() default -1;
+
+	/**
+	 * Annotation to make {@link AFXNestedView} repeatable. This annotation is not
+	 * intended for direct use in application code.
+	 *
+	 * @author MartinKoster
+	 *
+	 */
+	@Target({ ElementType.TYPE, ElementType.FIELD })
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AFXNestedViews {
+
+		AFXNestedView[] value();
+	}
 
 }

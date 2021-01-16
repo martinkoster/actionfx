@@ -25,6 +25,7 @@ package com.github.actionfx.core.view;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXNestedView;
@@ -127,7 +128,7 @@ public class ViewBuilder<T extends AbstractView> {
 	 * @param nestedViews the nested views to embed into the {@link View} under
 	 *                    construction.
 	 */
-	public ViewBuilder<T> nestedViews(final AFXNestedView[] nestedViews) {
+	public ViewBuilder<T> nestedViews(final List<AFXNestedView> nestedViews) {
 		embedNestedViews(view, nestedViews);
 		return this;
 	}
@@ -142,8 +143,8 @@ public class ViewBuilder<T extends AbstractView> {
 	 * @param view        the view that acts as target for the nested views
 	 * @param nestedViews the nested views to embed into the supplied {@code view}.
 	 */
-	public static void embedNestedViews(final View view, final AFXNestedView[] nestedViews) {
-		if (nestedViews == null || nestedViews.length == 0) {
+	public static void embedNestedViews(final View view, final List<AFXNestedView> nestedViews) {
+		if (nestedViews.isEmpty()) {
 			return;
 		}
 		final ActionFX actionFX = ActionFX.getInstance();
