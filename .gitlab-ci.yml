@@ -24,6 +24,7 @@ build:
       - build/
       - actionfx-core/build/
       - actionfx-testing/build/
+      - actionfx-controlsfx/build/
       - actionfx-spring-boot/build/
       - actionfx-app-sample/build/
     expire_in: 1 week
@@ -37,6 +38,7 @@ unittest:
       - build/
       - actionfx-core/build/
       - actionfx-testing/build/
+      - actionfx-controlsfx/build/
       - actionfx-spring-boot/build/
       - actionfx-app-sample/build/
     expire_in: 1 week
@@ -50,6 +52,7 @@ integrationtest:
       - build/
       - actionfx-core/build/
       - actionfx-testing/build/
+      - actionfx-controlsfx/build/
       - actionfx-spring-boot/build/
       - actionfx-app-sample/build/
     expire_in: 1 week
@@ -64,6 +67,7 @@ reportCodeCoverage:
       - build/
       - actionfx-core/build/
       - actionfx-testing/build/
+      - actionfx-controlsfx/build/
       - actionfx-spring-boot/build/
       - actionfx-app-sample/build/
     expire_in: 1 week
