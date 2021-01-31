@@ -592,7 +592,7 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 						+ "' is annotated by @AFXEnableMultiSelection, but field value is not of type 'javafx.scene.control.Control'!");
 
 			}
-			final ControlWrapper controlWrapper = new ControlWrapper((Control) fieldValue);
+			final ControlWrapper controlWrapper = ControlWrapper.of((Control) fieldValue);
 			controlWrapper.enableMultiSelection();
 		}
 	}

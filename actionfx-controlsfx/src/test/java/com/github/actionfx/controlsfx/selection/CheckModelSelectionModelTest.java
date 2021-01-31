@@ -25,7 +25,9 @@ package com.github.actionfx.controlsfx.selection;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -37,13 +39,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 /**
- * JUnit test case for {@link CheckModelWrapper}.
+ * JUnit test case for {@link CheckModelSelectionModel}.
  *
  * @author koster
  *
  */
 @ExtendWith(FxThreadForAllMonocleExtension.class)
-class CheckModelWrapperTest {
+class CheckModelSelectionModelTest {
 
 	private static final String ITEM_1 = "item-1";
 
@@ -53,19 +55,19 @@ class CheckModelWrapperTest {
 
 	private CheckComboBox<String> checkComboBox;
 
-	private CheckModelWrapper<String> wrapper;
+	private CheckModelSelectionModel<String> wrapper;
 
 	@BeforeEach
-	public void onSetup() {
+	void onSetup() {
 		checkComboBox = new CheckComboBox<>();
 		checkComboBox.getItems().add(ITEM_1);
 		checkComboBox.getItems().add(ITEM_2);
 		checkComboBox.getItems().add(ITEM_3);
-		wrapper = new CheckModelWrapper<>(checkComboBox.getCheckModel(), checkComboBox.getItems());
+		wrapper = new CheckModelSelectionModel<>(checkComboBox.getCheckModel(), checkComboBox.getItems());
 	}
 
 	@Test
-	public void testSelectIndicesAndSelectedItems_selectSingleItem() {
+	void testSelectIndicesAndSelectedItems_selectSingleItem() {
 		// WHEN
 		wrapper.selectIndices(0);
 
@@ -73,10 +75,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_1));
+		assertThat(wrapper.getSelectedIndex(), equalTo(0));
 	}
 
 	@Test
-	public void testSelectIndicesAndSelectedItems_selectMultipleItems() {
+	void testSelectIndicesAndSelectedItems_selectMultipleItems() {
 		// WHEN
 		wrapper.selectIndices(1, 2);
 
@@ -84,10 +88,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1, 2));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2, ITEM_3));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
 	}
 
 	@Test
-	public void testCheckAndSelectedItems_singleCheck() {
+	void testCheckAndSelectedItems_singleCheck() {
 		// WHEN
 		checkComboBox.getCheckModel().check(0);
 
@@ -95,10 +101,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_1));
+		assertThat(wrapper.getSelectedIndex(), equalTo(0));
 	}
 
 	@Test
-	public void testCheckAndSelectedItems_multipleCheck() {
+	void testCheckAndSelectedItems_multipleCheck() {
 		// WHEN
 		checkComboBox.getCheckModel().check(1);
 		checkComboBox.getCheckModel().check(2);
@@ -107,10 +115,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1, 2));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2, ITEM_3));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
 	}
 
 	@Test
-	public void testSelectAll() {
+	void testSelectAll() {
 		// WHEN
 		wrapper.selectAll();
 
@@ -118,10 +128,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0, 1, 2));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1, ITEM_2, ITEM_3));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
 	}
 
 	@Test
-	public void testSelectFirst() {
+	void testSelectFirst() {
 		// WHEN
 		wrapper.selectFirst();
 
@@ -129,10 +141,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_1));
+		assertThat(wrapper.getSelectedIndex(), equalTo(0));
 	}
 
 	@Test
-	public void testSelectLast() {
+	void testSelectLast() {
 		// WHEN
 		wrapper.selectLast();
 
@@ -140,10 +154,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_3));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
 	}
 
 	@Test
-	public void testClearAndSelect() {
+	void testClearAndSelect() {
 		// GIVEN
 		wrapper.selectFirst();
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
@@ -156,10 +172,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_2));
+		assertThat(wrapper.getSelectedIndex(), equalTo(1));
 	}
 
 	@Test
-	public void testSelectByIndex() {
+	void testSelectByIndex() {
 		// WHEN
 		wrapper.select(2);
 
@@ -167,10 +185,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_3));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
 	}
 
 	@Test
-	public void testSelectByValue() {
+	void testSelectByValue() {
 		// WHEN
 		wrapper.select(ITEM_2);
 
@@ -178,10 +198,12 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1));
 		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2));
+		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_2));
+		assertThat(wrapper.getSelectedIndex(), equalTo(1));
 	}
 
 	@Test
-	public void testClearSelectionByIndex() {
+	void testClearSelectionByIndex() {
 		// GIVEN
 		wrapper.selectFirst();
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
@@ -193,10 +215,12 @@ class CheckModelWrapperTest {
 		// THEN
 		assertThat(wrapper.getSelectedIndices(), hasSize(0));
 		assertThat(wrapper.getSelectedItems(), hasSize(0));
+		assertThat(wrapper.getSelectedItem(), nullValue());
+		assertThat(wrapper.getSelectedIndex(), equalTo(-1));
 	}
 
 	@Test
-	public void testClearSelection() {
+	void testClearSelection() {
 		// GIVEN
 		wrapper.selectIndices(0, 1);
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
@@ -208,10 +232,12 @@ class CheckModelWrapperTest {
 		// THEN
 		assertThat(wrapper.getSelectedIndices(), hasSize(0));
 		assertThat(wrapper.getSelectedItems(), hasSize(0));
+		assertThat(wrapper.getSelectedItem(), nullValue());
+		assertThat(wrapper.getSelectedIndex(), equalTo(-1));
 	}
 
 	@Test
-	public void testIsSelected() {
+	void testIsSelected() {
 		// GIVEN
 		wrapper.select(2);
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
@@ -224,7 +250,7 @@ class CheckModelWrapperTest {
 	}
 
 	@Test
-	public void testSelectionIndexUniqueness() {
+	void testSelectionIndexUniqueness() {
 		// WHEN
 		wrapper.select(2);
 		wrapper.select(2); // select again - we don't want the entry to be twice in the selected index list
@@ -233,7 +259,67 @@ class CheckModelWrapperTest {
 		assertThat(wrapper.getSelectedIndices(), notNullValue());
 		assertThat(wrapper.getSelectedIndices(), hasSize(1));
 		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
 		assertThat(wrapper.isSelected(2), equalTo(true));
 	}
 
+	@Test
+	void testSelectPrevious() {
+		// GIVEN
+		wrapper.select(1);
+
+		// WHEN
+		wrapper.selectPrevious();
+
+		// THEN
+		assertThat(wrapper.getSelectedIndices(), contains(1, 0));
+		assertThat(wrapper.getSelectedItems(), contains("item-2", "item-1"));
+		assertThat(wrapper.getSelectedIndex(), equalTo(0));
+		assertThat(wrapper.getSelectedItem(), equalTo("item-1"));
+	}
+
+	@Test
+	void testSelectPrevious_noPreviousAvailable() {
+		// GIVEN
+		wrapper.select(0);
+
+		// WHEN
+		wrapper.selectPrevious();
+
+		// THEN
+		assertThat(wrapper.getSelectedIndices(), contains(0));
+		assertThat(wrapper.getSelectedItems(), contains("item-1"));
+		assertThat(wrapper.getSelectedIndex(), equalTo(0));
+		assertThat(wrapper.getSelectedItem(), equalTo("item-1"));
+	}
+
+	@Test
+	void testSelectNext() {
+		// GIVEN
+		wrapper.select(1);
+
+		// WHEN
+		wrapper.selectNext();
+
+		// THEN
+		assertThat(wrapper.getSelectedIndices(), contains(1, 2));
+		assertThat(wrapper.getSelectedItems(), contains("item-2", "item-3"));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedItem(), equalTo("item-3"));
+	}
+
+	@Test
+	void testSelectNext_noNextAvailable() {
+		// GIVEN
+		wrapper.select(2);
+
+		// WHEN
+		wrapper.selectNext();
+
+		// THEN
+		assertThat(wrapper.getSelectedIndices(), contains(2));
+		assertThat(wrapper.getSelectedItems(), contains("item-3"));
+		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedItem(), equalTo("item-3"));
+	}
 }

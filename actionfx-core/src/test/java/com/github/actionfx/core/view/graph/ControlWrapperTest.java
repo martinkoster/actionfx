@@ -25,7 +25,9 @@ package com.github.actionfx.core.view.graph;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -40,6 +42,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.collections.ValueChangeAwareObservableList;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
@@ -48,13 +51,16 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
@@ -76,15 +82,30 @@ import javafx.scene.paint.Color;
 class ControlWrapperTest {
 
 	@Test
+	void testOf_returnsIdenticalInstance_forSameControl() {
+		// GIVEN
+		final CheckBox checkBox = new CheckBox();
+
+		// WHEN
+		final ControlWrapper wrapperOne = ControlWrapper.of(checkBox);
+		final ControlWrapper wrapperTwo = ControlWrapper.of(checkBox);
+
+		// THEN
+		assertThat(wrapperOne, notNullValue());
+		assertThat(wrapperTwo, notNullValue());
+		assertThat(wrapperOne, sameInstance(wrapperTwo));
+	}
+
+	@Test
 	void testAccordion_noSelection() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlWrapperProvider.accordion(false);
 		final Accordion accordion = wrapper.getWrapped();
 
 		// WHEN and THEN
-		assertSupportsValue(wrapper, false);
+		assertSupportsValue(wrapper, true);
 		assertSupportsValues(wrapper, true);
-		assertSupportsSelection(wrapper, true);
+		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
 		assertValues(wrapper, accordion.getPanes().get(0), accordion.getPanes().get(1));
@@ -100,14 +121,14 @@ class ControlWrapperTest {
 		final Accordion accordion = wrapper.getWrapped();
 
 		// WHEN and THEN
-		assertSupportsValue(wrapper, false);
+		assertSupportsValue(wrapper, true);
 		assertSupportsValues(wrapper, true);
-		assertSupportsSelection(wrapper, true);
+		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertValue(wrapper, null);
+		assertValue(wrapper, accordion.getPanes().get(0));
 		assertValues(wrapper, accordion.getPanes().get(0), accordion.getPanes().get(1));
-		assertSelectedValue(wrapper, accordion.getPanes().get(0));
-		assertSelectedValues(wrapper, accordion.getPanes().get(0));
+		assertSelectedValue(wrapper, null);
+		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, accordion.getPanes().get(0));
 	}
 
@@ -142,7 +163,7 @@ class ControlWrapperTest {
 		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		asserUserValueIsNotSupported(wrapper);
+		assertUserValueIsNotSupported(wrapper);
 	}
 
 	@Test
@@ -200,7 +221,6 @@ class ControlWrapperTest {
 	void testChoiceBox_secondEntrySelected() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlWrapperProvider.choiceBox(true);
-		final ChoiceBox<String> cb = wrapper.getWrapped();
 
 		// WHEN and THEN
 		assertSupportsValue(wrapper, true);
@@ -209,7 +229,7 @@ class ControlWrapperTest {
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Choice 2");
 		assertValues(wrapper, "Choice 1", "Choice 2", "Choice 3");
-		assertSelectedValue(wrapper, cb.getItems().get(1));
+		assertSelectedValue(wrapper, "Choice 2");
 		assertSelectedValues(wrapper, "Choice 2");
 		assertUserValue(wrapper, "Choice 2");
 	}
@@ -418,7 +438,7 @@ class ControlWrapperTest {
 		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		asserUserValueIsNotSupported(wrapper);
+		assertUserValueIsNotSupported(wrapper);
 	}
 
 	@Test
@@ -453,7 +473,7 @@ class ControlWrapperTest {
 		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		asserUserValueIsNotSupported(wrapper);
+		assertUserValueIsNotSupported(wrapper);
 	}
 
 	@Test
@@ -572,7 +592,7 @@ class ControlWrapperTest {
 		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		asserUserValueIsNotSupported(wrapper);
+		assertUserValueIsNotSupported(wrapper);
 	}
 
 	@Test
@@ -589,7 +609,7 @@ class ControlWrapperTest {
 		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		asserUserValueIsNotSupported(wrapper);
+		assertUserValueIsNotSupported(wrapper);
 	}
 
 	@Test
@@ -1029,14 +1049,82 @@ class ControlWrapperTest {
 
 		// WHEN and THEN
 		assertSupportsValue(wrapper, true);
-		assertSupportsValues(wrapper, false);
-		assertSupportsSelection(wrapper, false);
-		assertSupportsMultiSelection(wrapper, false);
+		assertSupportsValues(wrapper, true);
+		assertSupportsSelection(wrapper, true);
+		assertSupportsMultiSelection(wrapper, true);
 		assertValue(wrapper, "Hello World");
-		assertValuesAreEmpty(wrapper);
+		assertValues(wrapper, "", "", "");
 		assertSelectedValue(wrapper, null);
-		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, "Hello World");
+		assertSelectedValues(wrapper, "Selected Value");// comes from CustomSelectionModelWrapper
+		assertUserValue(wrapper, Arrays.asList("Selected Value")); // comes from CustomSelectionModelWrapper
+	}
+
+	@Test
+	void testCustomControl_commaSeparatedList_asObservableValueList() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.customControl();
+		final CustomControl cc = wrapper.getWrapped();
+		cc.setValueOne("one");
+		cc.setValueTwo("two");
+		cc.setValueThree("three");
+
+		// WHEN
+		final ObservableList<String> values = wrapper.getValues();
+
+		// THEN
+		assertThat(values, instanceOf(ValueChangeAwareObservableList.class));
+		assertThat(values, contains("one", "two", "three"));
+	}
+
+	@Test
+	void testCustomControlWithObservableList_asSelectionModel() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.customControlWithObservableList();
+
+		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
+		assertSupportsSelection(wrapper, true);
+		assertSupportsMultiSelection(wrapper, true);
+		assertValue(wrapper, null);
+		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertSelectedValue(wrapper, null);
+		assertSelectedValuesAreEmpty(wrapper);// comes from ObservableListSelectionModel
+		assertUserValue(wrapper, Collections.emptyList()); // comes from ObservableListSelectionModel
+	}
+
+	@Test
+	void testCustomControlWithObservableList_asSelectionModel_selectIntoTargetItems() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.customControlWithObservableList();
+		final CustomControlWithObservableList cc = wrapper.getWrapped();
+		cc.getTargetItems().add("Item 2");
+		cc.getTargetItems().add("Item 3");
+
+		// WHEN and THEN
+		assertSupportsValue(wrapper, false);
+		assertSupportsValues(wrapper, true);
+		assertSupportsSelection(wrapper, true);
+		assertSupportsMultiSelection(wrapper, true);
+		assertValue(wrapper, null);
+		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertSelectedValue(wrapper, "Item 3");
+		assertSelectedValues(wrapper, "Item 2", "Item 3"); // comes from ObservableListSelectionModel
+		assertUserValue(wrapper, Arrays.asList("Item 2", "Item 3")); // comes from ObservableListSelectionModel
+	}
+
+	@Test
+	void testGetSelectionModel_customSelectionModel_isWrapped() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.customControl();
+		final CustomControl control = wrapper.getWrapped();
+
+		// WHEN and THEN
+		assertThat(wrapper.getSelectionModel(), notNullValue());
+		assertThat(wrapper.getSelectionModel(), instanceOf(CustomSelectionModelWrapper.class));
+		final SelectionModel<String> selectionModel = wrapper.getSelectionModel();
+		final CustomSelectionModelWrapper selectionModelWrapper = (CustomSelectionModelWrapper) selectionModel;
+		assertThat(selectionModelWrapper.getCustomSelectionModel(), sameInstance(control.getCustomSelectionModel()));
 	}
 
 	@Test
@@ -1275,7 +1363,7 @@ class ControlWrapperTest {
 		}
 	}
 
-	private static void asserUserValueIsNotSupported(final ControlWrapper wrapper) {
+	private static void assertUserValueIsNotSupported(final ControlWrapper wrapper) {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getUserValue());
 		assertThat(ex.getMessage(), containsString("does not support user value retrieval!"));
 	}

@@ -31,38 +31,41 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SelectionModel;
 
 /**
  * Wrapper for a ControlsFX {@link CheckModel} that allows it to be treated the
  * same way as a JavaFX {@link SelectionModel}. This class allows access to
- * checked values the same way as through a {@link SelectionModel}.
+ * checked values through {@link MultipleSelectionModel#getSelectedItems()}.
  *
  * @author koster
  */
-public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements ListChangeListener<T> {
+public class CheckModelSelectionModel<T> extends MultipleSelectionModel<T> implements ListChangeListener<T> {
 
 	private final CheckModel<T> checkModel;
 
-	private final List<T> items;
+	private final ObservableList<T> items;
 
 	private final ObservableList<Integer> selectedIndices = FXCollections.observableArrayList();
 
 	private final ObservableList<T> selectedItems = FXCollections.observableArrayList();
 
-	public CheckModelWrapper(final CheckModel<T> checkModel, final List<T> items) {
+	public CheckModelSelectionModel(final CheckModel<T> checkModel, final ObservableList<T> items) {
 		this.checkModel = checkModel;
 		this.items = items;
 		this.checkModel.getCheckedItems().addListener(this);
-
+		setSelectionMode(SelectionMode.MULTIPLE);
 		final ObservableList<T> checkedItems = checkModel.getCheckedItems();
-		if (checkedItems != null) {
-			this.selectedItems.addAll(checkedItems);
-			for (int i = 0; i < checkedItems.size(); i++) {
-				this.selectedIndices.add(Integer.valueOf(i));
-			}
+		this.selectedItems.addAll(checkedItems);
+		if (!selectedItems.isEmpty()) {
+			setSelectedItem(selectedItems.get(selectedItems.size() - 1));
+			setSelectedIndex(checkedItems.size() - 1);
 		}
+		for (int i = 0; i < checkedItems.size(); i++) {
+			this.selectedIndices.add(Integer.valueOf(i));
 
+		}
 	}
 
 	@Override
@@ -80,7 +83,7 @@ public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements L
 		this.checkModel.check(this.items.get(index));
 		if (indices != null) {
 			for (final int i : indices) {
-				this.checkModel.check(this.items.get(i));
+				select(this.items.get(i));
 			}
 		}
 	}
@@ -93,13 +96,13 @@ public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements L
 	@Override
 	public void selectFirst() {
 		final T item = this.items.get(0);
-		this.checkModel.check(item);
+		select(item);
 	}
 
 	@Override
 	public void selectLast() {
 		final T item = this.items.get(this.items.size() - 1);
-		this.checkModel.check(item);
+		select(item);
 	}
 
 	@Override
@@ -111,7 +114,7 @@ public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements L
 	@Override
 	public void select(final int index) {
 		final T item = this.items.get(index);
-		this.checkModel.check(item);
+		select(item);
 	}
 
 	@Override
@@ -143,12 +146,18 @@ public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements L
 
 	@Override
 	public void selectPrevious() {
-		// not required
+		final int index = getSelectedIndex();
+		if (index > 0) {
+			select(index - 1);
+		}
 	}
 
 	@Override
 	public void selectNext() {
-		// not required
+		final int index = getSelectedIndex();
+		if (index < items.size() - 1) {
+			select(index + 1);
+		}
 	}
 
 	/**
@@ -161,9 +170,12 @@ public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements L
 		final int index = this.items.indexOf(item);
 		if (index != -1 && !this.selectedIndices.contains(index)) {
 			this.selectedIndices.add(index);
+			setSelectedIndex(index);
 		}
 		if (!this.selectedItems.contains(item)) {
 			this.selectedItems.add(item);
+			setSelectedItem(item); // also save selection as "single selection", so that this property contains the
+									// last selected item
 		}
 	}
 
@@ -176,9 +188,13 @@ public class CheckModelWrapper<T> extends MultipleSelectionModel<T> implements L
 		final int index = this.items.indexOf(item);
 		if (index != -1 && this.selectedIndices.contains(index)) {
 			this.selectedIndices.remove(Integer.valueOf(index));
+			setSelectedIndex(selectedIndices.isEmpty() ? -1 : selectedIndices.get(selectedIndices.size() - 1));
 		}
 		if (this.selectedItems.contains(item)) {
 			this.selectedItems.remove(item);
+			if (item.equals(getSelectedItem())) {
+				setSelectedItem(selectedItems.isEmpty() ? null : selectedItems.get(selectedItems.size() - 1));
+			}
 		}
 	}
 

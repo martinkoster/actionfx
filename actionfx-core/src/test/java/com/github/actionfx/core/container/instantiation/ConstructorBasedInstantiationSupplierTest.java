@@ -24,6 +24,7 @@
 package com.github.actionfx.core.container.instantiation;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,13 +51,62 @@ class ConstructorBasedInstantiationSupplierTest {
 
 	@Test
 	void testGet_classHasNoDefaultConstructor() {
-		// GIVEN
-		final ConstructorBasedInstantiationSupplier<ClassWithoutDefaultConstructor> supplier = new ConstructorBasedInstantiationSupplier<>(
-				ClassWithoutDefaultConstructor.class);
-
 		// WHEN and THEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> supplier.get());
-		assertThat(ex.getMessage(), containsString("Is there a no-arg constructor present?"));
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> new ConstructorBasedInstantiationSupplier<>(ClassWithoutDefaultConstructor.class));
+		assertThat(ex.getMessage(), containsString("Unable to locate a matching constructor in class"));
+	}
+
+	@Test
+	void testGet_constructorMatchesMaximumNumberOfArguments_allTypesDirectlyMatch() {
+		// GIVEN
+		final ConstructorBasedInstantiationSupplier<ClassWithMultipleConstructor> supplier = new ConstructorBasedInstantiationSupplier<>(
+				ClassWithMultipleConstructor.class, Integer.valueOf(42), "Hello World", Long.valueOf(1000));
+
+		// WHEN
+		final ClassWithMultipleConstructor instance = supplier.get();
+
+		// THEN
+		assertThat(instance, notNullValue());
+		assertThat(instance.getConstructorInvoked(), equalTo("ClassWithMultipleConstructor(42, Hello World, 1000)"));
+	}
+
+	@Test
+	void testGet_constructorMatchesMaximumNumberOfArguments_superTypeMatchesArgument() {
+		// GIVEN
+		final ConstructorBasedInstantiationSupplier<ClassWithMultipleConstructor> supplier = new ConstructorBasedInstantiationSupplier<>(
+				ClassWithMultipleConstructor.class, Integer.valueOf(42), "Hello World", Integer.valueOf(500));
+
+		// WHEN
+		final ClassWithMultipleConstructor instance = supplier.get();
+
+		// THEN
+		assertThat(instance, notNullValue());
+		assertThat(instance.getConstructorInvoked(),
+				equalTo("ClassWithMultipleConstructorWithNumVal(42, Hello World, 500)"));
+	}
+
+	@Test
+	void testGet_constructorWithLessArgumentsSelected() {
+		// GIVEN
+		final ConstructorBasedInstantiationSupplier<ClassWithMultipleConstructor> supplier = new ConstructorBasedInstantiationSupplier<>(
+				ClassWithMultipleConstructor.class, Integer.valueOf(42), "Hello World", new Object[] {});
+
+		// WHEN
+		final ClassWithMultipleConstructor instance = supplier.get();
+
+		// THEN
+		assertThat(instance, notNullValue());
+		assertThat(instance.getConstructorInvoked(), equalTo("ClassWithMultipleConstructor(42, Hello World)"));
+	}
+
+	@Test
+	void testGet_constructorHasMoreArgumentsThanProvided() {
+		// WHEN and THEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> new ConstructorBasedInstantiationSupplier<>(ClassWithoutDefaultConstructor.class,
+						Integer.valueOf(42)));
+		assertThat(ex.getMessage(), containsString("Unable to locate a matching constructor in class"));
 	}
 
 	public static class ClassWithDefaultConstructor {
@@ -74,6 +124,28 @@ class ConstructorBasedInstantiationSupplierTest {
 
 		public ClassWithoutDefaultConstructor(final String value) {
 			this.value = value;
+		}
+	}
+
+	public static class ClassWithMultipleConstructor {
+
+		private String constructorInvoked = "";
+
+		public ClassWithMultipleConstructor(final Integer intVal, final String strVal, final Long longVal) {
+			constructorInvoked = "ClassWithMultipleConstructor(" + intVal + ", " + strVal + ", " + longVal + ")";
+		}
+
+		public ClassWithMultipleConstructor(final Integer intVal, final String strVal, final Number numVal) {
+			constructorInvoked = "ClassWithMultipleConstructorWithNumVal(" + intVal + ", " + strVal + ", " + numVal
+					+ ")";
+		}
+
+		public ClassWithMultipleConstructor(final Integer intVal, final String strVal) {
+			constructorInvoked = "ClassWithMultipleConstructor(" + intVal + ", " + strVal + ")";
+		}
+
+		public String getConstructorInvoked() {
+			return constructorInvoked;
 		}
 	}
 }
