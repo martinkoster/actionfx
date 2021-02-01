@@ -37,6 +37,7 @@ import java.util.List;
 
 import org.controlsfx.control.CheckTreeView;
 import org.controlsfx.control.PropertySheet.Item;
+import org.controlsfx.control.WorldMapView;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -601,16 +602,15 @@ class ControlsFXControlWrapperTest {
 		final ControlWrapper wrapper = ControlsFXControlProvider.statusBar();
 
 		// WHEN and THEN
-		assertSupportsValue(wrapper, false);
-		assertSupportsValues(wrapper, true);
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertValue(wrapper, null);
-		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertValue(wrapper, 0.75);
+		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList("Item 1", "Item 2", "Item 3"));
-
+		assertUserValue(wrapper, 0.75);
 	}
 
 	@Test
@@ -624,11 +624,11 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertThat(wrapper.getValues(), instanceOf(ObservableList.class));
+		assertThat((ObservableList<?>) wrapper.getValues(), hasSize(1));
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList("Item 1", "Item 2", "Item 3"));
-
+		assertThat(wrapper.getUserValue(), instanceOf(ObservableList.class));
 	}
 
 	@Test
@@ -637,16 +637,15 @@ class ControlsFXControlWrapperTest {
 		final ControlWrapper wrapper = ControlsFXControlProvider.customPasswordField();
 
 		// WHEN and THEN
-		assertSupportsValue(wrapper, false);
-		assertSupportsValues(wrapper, true);
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertValue(wrapper, null);
-		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertValue(wrapper, "Password");
+		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList("Item 1", "Item 2", "Item 3"));
-
+		assertUserValue(wrapper, "Password");
 	}
 
 	@Test
@@ -655,40 +654,57 @@ class ControlsFXControlWrapperTest {
 		final ControlWrapper wrapper = ControlsFXControlProvider.customTextField();
 
 		// WHEN and THEN
-		assertSupportsValue(wrapper, false);
-		assertSupportsValues(wrapper, true);
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertValue(wrapper, null);
-		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertValue(wrapper, "Hello World");
+		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList("Item 1", "Item 2", "Item 3"));
-
+		assertUserValue(wrapper, "Hello World");
 	}
 
 	@Test
-	void testToggleSwitch() {
+	void testToggleSwitch_notSelected() {
 		// GIVEN
-		final ControlWrapper wrapper = ControlsFXControlProvider.toggleSwitch();
+		final ControlWrapper wrapper = ControlsFXControlProvider.toggleSwitch(false);
 
 		// WHEN and THEN
-		assertSupportsValue(wrapper, false);
-		assertSupportsValues(wrapper, true);
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertValue(wrapper, null);
-		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertValue(wrapper, false);
+		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList("Item 1", "Item 2", "Item 3"));
-
+		assertUserValue(wrapper, false);
 	}
 
+	@Test
+	void testToggleSwitch_selected() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlsFXControlProvider.toggleSwitch(true);
+
+		// WHEN and THEN
+		assertSupportsValue(wrapper, true);
+		assertSupportsValues(wrapper, false);
+		assertSupportsSelection(wrapper, false);
+		assertSupportsMultiSelection(wrapper, false);
+		assertValue(wrapper, true);
+		assertValuesAreEmpty(wrapper);
+		assertSelectedValue(wrapper, null);
+		assertSelectedValuesAreEmpty(wrapper);
+		assertUserValue(wrapper, true);
+	}
+
+	@SuppressWarnings("unchecked")
 	@Test
 	void testWorldMapView() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlsFXControlProvider.worldMapView();
+		final WorldMapView wmv = wrapper.getWrapped();
 
 		// WHEN and THEN
 		assertSupportsValue(wrapper, false);
@@ -696,11 +712,10 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
+		assertValues(wrapper, wmv.getSelectedCountries(), wmv.getSelectedLocations());
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList("Item 1", "Item 2", "Item 3"));
-
+		assertUserValue(wrapper, Arrays.asList(wmv.getSelectedCountries(), wmv.getSelectedLocations()));
 	}
 
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {

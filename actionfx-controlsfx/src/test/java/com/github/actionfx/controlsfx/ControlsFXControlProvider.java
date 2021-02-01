@@ -55,12 +55,15 @@ import org.controlsfx.control.StatusBar;
 import org.controlsfx.control.TaskProgressView;
 import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.control.WorldMapView;
+import org.controlsfx.control.WorldMapView.Country;
+import org.controlsfx.control.WorldMapView.Location;
 import org.controlsfx.control.textfield.CustomPasswordField;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.ToggleButton;
@@ -304,31 +307,43 @@ public class ControlsFXControlProvider {
 
 	public static ControlWrapper statusBar() {
 		final StatusBar c = new StatusBar();
+		c.setProgress(0.75);
 		return new ControlWrapper(c);
 	}
 
 	public static ControlWrapper taskProgressView() {
 		final TaskProgressView<Task<?>> c = new TaskProgressView<>();
+		c.getTasks().add(new Task<Integer>() {
+			@Override
+			protected Integer call() throws Exception {
+				return null;
+			}
+		});
 		return new ControlWrapper(c);
 	}
 
 	public static ControlWrapper customPasswordField() {
 		final CustomPasswordField c = new CustomPasswordField();
+		c.setText("Password");
 		return new ControlWrapper(c);
 	}
 
 	public static ControlWrapper customTextField() {
 		final CustomTextField c = new CustomTextField();
+		c.setText("Hello World");
 		return new ControlWrapper(c);
 	}
 
-	public static ControlWrapper toggleSwitch() {
+	public static ControlWrapper toggleSwitch(final boolean selected) {
 		final ToggleSwitch c = new ToggleSwitch();
+		c.setSelected(selected);
 		return new ControlWrapper(c);
 	}
 
 	public static ControlWrapper worldMapView() {
 		final WorldMapView c = new WorldMapView();
+		c.setSelectedCountries(FXCollections.observableArrayList(Country.DE));
+		c.setSelectedLocations(FXCollections.observableArrayList(new Location("test", 42.0, 21.0)));
 		return new ControlWrapper(c);
 	}
 
