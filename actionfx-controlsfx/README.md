@@ -16,7 +16,7 @@ Please note that ControlsFX `org.controlsfx.control.CheckModel` is wrapped with 
 
 ## User Values of ControlsFX controls
 
-The following table explains, which property is accessed to retrieve the "user value" from (e.g. for annotations `@AFX`):
+The following table explains, which property is accessed to retrieve the "user value" from (e.g. for annotations `@AFXControlValue`):
 
 JavaFX Control 											| User Value (as path to the corresponding property / observable list)
 ------------------------------------------------------- | -----------------------------------------------------
