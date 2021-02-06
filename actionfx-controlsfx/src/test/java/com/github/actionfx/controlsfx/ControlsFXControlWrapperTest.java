@@ -43,7 +43,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.testing.annotation.TestInFxThread;
-import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -54,7 +54,7 @@ import javafx.scene.control.TreeItem;
  * @author koster
  *
  */
-@ExtendWith(FxThreadForAllMonocleExtension.class)
+@ExtendWith(FxThreadForEachMonocleExtension.class)
 @TestInFxThread
 class ControlsFXControlWrapperTest {
 
