@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":2,"i1":2,"i2":2,"i3":2,"i4":2,"i5":4,"i6":2,"i7":2,"i8":1,"i9":4,"i10":2,"i11":32,"i12":32,"i13":32,"i14":32,"i15":32,"i16":32,"i17":32,"i18":32,"i19":32,"i20":32,"i21":2,"i22":2,"i23":4,"i24":2,"i25":1,"i26":4,"i27":2,"i28":2,"i29":2,"i30":2,"i31":2,"i32":2,"i33":2,"i34":2,"i35":2,"i36":2,"i37":1,"i38":2,"i39":2,"i40":2,"i41":2,"i42":2,"i43":2,"i44":2,"i45":2,"i46":1,"i47":2,"i48":1,"i49":1,"i50":2,"i51":2,"i52":1,"i53":2};
+var data = {"i0":2,"i1":2,"i2":2,"i3":2,"i4":2,"i5":4,"i6":2,"i7":2,"i8":1,"i9":4,"i10":2,"i11":32,"i12":32,"i13":32,"i14":32,"i15":32,"i16":32,"i17":32,"i18":32,"i19":32,"i20":32,"i21":32,"i22":32,"i23":32,"i24":2,"i25":2,"i26":4,"i27":2,"i28":1,"i29":4,"i30":2,"i31":2,"i32":2,"i33":2,"i34":2,"i35":2,"i36":2,"i37":2,"i38":2,"i39":2,"i40":2,"i41":2,"i42":2,"i43":1,"i44":2,"i45":2,"i46":2,"i47":2,"i48":2,"i49":2,"i50":2,"i51":2,"i52":1,"i53":2,"i54":2,"i55":1,"i56":1,"i57":2,"i58":2,"i59":2,"i60":2,"i61":1,"i62":2};
 var tabs = {65535:["t0","All Classes"],1:["t1","Interface Summary"],2:["t2","Class Summary"],4:["t3","Enum Summary"],32:["t6","Annotation Types Summary"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -224,17 +224,23 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr id="i17" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a></td>
 <th class="colLast" scope="row">
-<div class="block">Annotation to define a nested view.</div>
+<div class="block">Repeatable annotation to define a nested view.</div>
 </th>
 </tr>
 <tr id="i18" class="altColor">
+<td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXNestedView.AFXNestedViews.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView.AFXNestedViews</a></td>
+<th class="colLast" scope="row">
+<div class="block">Annotation to make <a href="com/github/actionfx/core/annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a> repeatable.</div>
+</th>
+</tr>
+<tr id="i19" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXOnAction.html" title="annotation in com.github.actionfx.core.annotation">AFXOnAction</a></td>
 <th class="colLast" scope="row">
 <div class="block">Annotated methods are invoked when the control specified with fires
  <code>ActionEvent</code>.</div>
 </th>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXOnControlValueChange.html" title="annotation in com.github.actionfx.core.annotation">AFXOnControlValueChange</a></td>
 <th class="colLast" scope="row">
 <div class="block">Annotated methods are invoked when the user changes a value in the referenced
@@ -251,147 +257,179 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  </div>
 </th>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
+<td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXOnValueChanged.html" title="annotation in com.github.actionfx.core.annotation">AFXOnValueChanged</a></td>
+<th class="colLast" scope="row">
+<div class="block">Annotated methods are invoked when the value of the specified
+ {@link #controlId()) is changed.</div>
+</th>
+</tr>
+<tr id="i22" class="altColor">
+<td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXOnValueSelected.html" title="annotation in com.github.actionfx.core.annotation">AFXOnValueSelected</a></td>
+<th class="colLast" scope="row">
+<div class="block">Annotated methods are invoked when one value or potentially multiple values
+ are selected in a control identified by <a href="com/github/actionfx/core/annotation/AFXOnValueSelected.html#controlId()"><code>AFXOnValueSelected.controlId()</code></a>.</div>
+</th>
+</tr>
+<tr id="i23" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/annotation/AFXShowView.html" title="annotation in com.github.actionfx.core.annotation">AFXShowView</a></td>
 <th class="colLast" scope="row">
 <div class="block">Annotation to be applied at method level that allows to define which view to
  be displayed after successful method invocation.</div>
 </th>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/AFXUtils.html" title="class in com.github.actionfx.core.utils">AFXUtils</a></td>
 <th class="colLast" scope="row">
 <div class="block">Util-class for working with JavaFX.</div>
 </th>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/AnnotationUtils.html" title="class in com.github.actionfx.core.utils">AnnotationUtils</a></td>
 <th class="colLast" scope="row">
 <div class="block">Utils class for working with annotations.</div>
 </th>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/annotation/ArgumentHint.html" title="enum in com.github.actionfx.core.annotation">ArgumentHint</a></td>
 <th class="colLast" scope="row">
 <div class="block">A hint for a method parameter that can help in case two different method
  parameters have the same type.</div>
 </th>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/AsyncUtils.html" title="class in com.github.actionfx.core.utils">AsyncUtils</a></td>
 <th class="colLast" scope="row">
 <div class="block">Utils for performing tasks in an asynchronous fashion.</div>
 </th>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></td>
 <th class="colLast" scope="row">
 <div class="block">Facade for accessing a bean container holding necessary view and controller
  instances.</div>
 </th>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/BorderPanePosition.html" title="enum in com.github.actionfx.core.view">BorderPanePosition</a></td>
 <th class="colLast" scope="row">
 <div class="block">Describes the position in a <code>BorderPane</code>.</div>
 </th>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/ClassPathScanningUtils.html" title="class in com.github.actionfx.core.utils">ClassPathScanningUtils</a></td>
 <th class="colLast" scope="row">
 <div class="block">Utils for scanning the classpath.</div>
 </th>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/container/instantiation/ConstructorBasedInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ConstructorBasedInstantiationSupplier</a>&lt;<a href="com/github/actionfx/core/container/instantiation/ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Instantiation supplier that uses defined constructors of given class.</div>
 </th>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier</a>&lt;<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Instantiation supplier for controller instances.</div>
 </th>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator</a>&lt;<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="type parameter in ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator">A</a> extends java.lang.annotation.Annotation&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Comparator implementation that orders methods according to the "order"
  attribute among same controls.</div>
 </th>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter</a></td>
 <th class="colLast" scope="row">
 <div class="block">Adapter for invoking controller methods with variable method arguments.</div>
 </th>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></td>
 <th class="colLast" scope="row">
 <div class="block">A representation of a method parameter, together with a <code>ParameterHint</code></div>
 </th>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/instrumentation/ControllerWrapper.html" title="class in com.github.actionfx.core.instrumentation">ControllerWrapper</a>&lt;<a href="com/github/actionfx/core/instrumentation/ControllerWrapper.html" title="type parameter in ControllerWrapper">T</a>&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Wrapper class around a JavaFX controller that is enhanced either with an
  instrumentation agent or via sub-classing.</div>
 </th>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a></td>
 <th class="colLast" scope="row">
 <div class="block">Wrapper around a <code>Control</code> in order to have a unique access to its
  values.</div>
 </th>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></td>
 <th class="colLast" scope="row">
 <div class="block">Default implementation of a bean container using an underlying hash map as
  bean cache.</div>
 </th>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i39" class="rowColor">
+<td class="colFirst"><a href="com/github/actionfx/core/utils/ExceptionUtils.html" title="class in com.github.actionfx.core.utils">ExceptionUtils</a></td>
+<th class="colLast" scope="row">
+<div class="block">Utils for working with exceptions in ActionFX.</div>
+</th>
+</tr>
+<tr id="i40" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/FxmlView.html" title="class in com.github.actionfx.core.view">FxmlView</a></td>
 <th class="colLast" scope="row">
 <div class="block"><a href="com/github/actionfx/core/view/View.html" title="interface in com.github.actionfx.core.view"><code>View</code></a> implementation that uses FXML for describing the view.</div>
 </th>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i41" class="rowColor">
+<td class="colFirst"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></td>
+<th class="colLast" scope="row">
+<div class="block">Adapter for invoking methods with variable method arguments.</div>
+</th>
+</tr>
+<tr id="i42" class="altColor">
+<td class="colFirst"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></td>
+<th class="colLast" scope="row">
+<div class="block">A representation of a method parameter, together with a <code>ParameterHint</code></div>
+</th>
+</tr>
+<tr id="i43" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeVisitor.html" title="interface in com.github.actionfx.core.view.graph">NodeVisitor</a></td>
 <th class="colLast" scope="row">
 <div class="block">Functional handler for applying some logic during scene graph traversal.</div>
 </th>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></td>
 <th class="colLast" scope="row">
 <div class="block">Wrapper around a <code>Node</code> (or other objects inside a scene graph, e.g.</div>
 </th>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.AnchorPaneAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.AnchorPaneAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Attacher that positions a node inside an <code>AnchorPane</code>.</div>
 </th>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.BorderPaneAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.BorderPaneAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Attacher that positions a node in a <code>BorderPane</code>.</div>
 </th>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.ColRowAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.ColRowAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Specialized attacher for <code>GridPane</code> nodes, where the node can be
  attached at a specified column and row.</div>
 </th>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.DefaultAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.DefaultAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Simple attacher that supports single child wrapper like <code>ScrollPane</code>
@@ -399,72 +437,93 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  <code>Parent</code>.</div>
 </th>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.ListAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.ListAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Attaches a node to a list at a specified position.</div>
 </th>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.ListFirstAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.ListFirstAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Attaches a node as first element to a list.</div>
 </th>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.ListLastAttacher.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper.ListLastAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Attaches a node as last element to a list.</div>
 </th>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/graph/NodeWrapper.NodeAttacher.html" title="interface in com.github.actionfx.core.view.graph">NodeWrapper.NodeAttacher</a></td>
 <th class="colLast" scope="row">
 <div class="block">Interface for attaching a node to the node wrapper's children at a specified
  position.</div>
 </th>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i53" class="rowColor">
+<td class="colFirst"><a href="com/github/actionfx/core/selection/ObservableListSelectionModel.html" title="class in com.github.actionfx.core.selection">ObservableListSelectionModel</a>&lt;<a href="com/github/actionfx/core/selection/ObservableListSelectionModel.html" title="type parameter in ObservableListSelectionModel">T</a>&gt;</td>
+<th class="colLast" scope="row">
+<div class="block">Wrapper for an <code>ObservableList</code> to access the items of this list as a
+ <code>SelectionModel</code>.</div>
+</th>
+</tr>
+<tr id="i54" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/ReflectionUtils.html" title="class in com.github.actionfx.core.utils">ReflectionUtils</a></td>
 <th class="colLast" scope="row">
 <div class="block">Utils for handling reflections.</div>
 </th>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/ReflectionUtils.FieldFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.FieldFilter</a></td>
 <th class="colLast" scope="row">
 <div class="block">Callback optionally used to filter fields to be operated on by a field
  callback.</div>
 </th>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/utils/ReflectionUtils.MethodFilter.html" title="interface in com.github.actionfx.core.utils">ReflectionUtils.MethodFilter</a></td>
 <th class="colLast" scope="row">
 <div class="block">Callback optionally used to filter methods to be operated on by a method
  callback.</div>
 </th>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener">TimedChangeListener</a>&lt;<a href="com/github/actionfx/core/listener/TimedChangeListener.html" title="type parameter in TimedChangeListener">T</a>&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Implementation of the <code>ChangeListener</code> interface that schedules a
  delayed action after the event occurs.</div>
 </th>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/listener/TimedListChangeListener.html" title="class in com.github.actionfx.core.listener">TimedListChangeListener</a>&lt;<a href="com/github/actionfx/core/listener/TimedListChangeListener.html" title="type parameter in TimedListChangeListener">T</a>&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Implementation of the <code>ListChangeListener</code> interface that schedules a
  delayed action after the event occurs.</div>
 </th>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i59" class="rowColor">
+<td class="colFirst"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a>&lt;<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="type parameter in ValueChangeAwareObservableList">E</a>&gt;</td>
+<th class="colLast" scope="row">
+<div class="block">Special implementation of <code>ObservableList</code> that is aware when values of
+ list elements are changing.</div>
+</th>
+</tr>
+<tr id="i60" class="altColor">
+<td class="colFirst"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.SingleValueChange.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList.SingleValueChange</a>&lt;<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.SingleValueChange.html" title="type parameter in ValueChangeAwareObservableList.SingleValueChange">E</a>&gt;</td>
+<th class="colLast" scope="row">
+<div class="block">Implementation of <code>ListChangeListener.Change</code> that represents a "list change", when values
+ of the list are updated.</div>
+</th>
+</tr>
+<tr id="i61" class="rowColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/View.html" title="interface in com.github.actionfx.core.view">View</a></td>
 <th class="colLast" scope="row">
 <div class="block">Interface for JavaFX views.</div>
 </th>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i62" class="altColor">
 <td class="colFirst"><a href="com/github/actionfx/core/view/ViewBuilder.html" title="class in com.github.actionfx.core.view">ViewBuilder</a>&lt;<a href="com/github/actionfx/core/view/ViewBuilder.html" title="type parameter in ViewBuilder">T</a> extends <a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a>&gt;</td>
 <th class="colLast" scope="row">
 <div class="block">Builder for setting up instances derived from <a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view"><code>AbstractView</code></a>.</div>
