@@ -169,6 +169,14 @@ public class ControlsFXControlProvider {
 	}
 
 	public static ControlWrapper listSelectionView(final String... selectedItems) {
+		// in CI environment, the first instantiation of this class fails
+		// with an "UnsatisfiedLinkError to "javafx_font_pango" - however the second
+		// succeeds...
+		try {
+			new ListSelectionView<>();
+		} catch (final Throwable t) {
+			// do nothing
+		}
 		final ListSelectionView<String> c = new ListSelectionView<>();
 		c.getSourceItems().add("Item 1");
 		c.getSourceItems().add("Item 2");

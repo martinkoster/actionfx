@@ -38,7 +38,6 @@ import java.util.List;
 import org.controlsfx.control.CheckTreeView;
 import org.controlsfx.control.PropertySheet.Item;
 import org.controlsfx.control.WorldMapView;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -58,15 +57,6 @@ import javafx.scene.control.TreeItem;
 @ExtendWith(FxThreadForEachMonocleExtension.class)
 @TestInFxThread
 class ControlsFXControlWrapperTest {
-
-	@BeforeEach
-	void setup() {
-		try {
-			ControlsFXControlProvider.listSelectionView();
-		} catch (final Throwable t) {
-			// do nothing
-		}
-	}
 
 	@Test
 	void testBreadCrumbButton() {
