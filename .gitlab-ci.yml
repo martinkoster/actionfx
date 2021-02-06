@@ -1,4 +1,4 @@
-image: adoptopenjdk/openjdk11:jdk-11.0.10_9-centos
+image: adoptopenjdk/openjdk11:jdk-11.0.10_9-debian
     
 stages:
   - build
