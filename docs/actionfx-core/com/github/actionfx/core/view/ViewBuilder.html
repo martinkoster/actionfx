@@ -190,8 +190,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#embedNestedViews(com.github.actionfx.core.view.View,com.github.actionfx.core.annotation.AFXNestedView%5B%5D)">embedNestedViews</a></span>&#8203;(<a href="View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
-                <a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>[]&nbsp;nestedViews)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#embedNestedViews(com.github.actionfx.core.view.View,java.util.List)">embedNestedViews</a></span>&#8203;(<a href="View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
+                java.util.List&lt;<a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>&gt;&nbsp;nestedViews)</code></th>
 <td class="colLast">
 <div class="block">Embeds the given <a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a>s into the supplied <a href="View.html" title="interface in com.github.actionfx.core.view"><code>View</code></a>.</div>
 </td>
@@ -228,7 +228,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="ViewBuilder.html" title="class in com.github.actionfx.core.view">ViewBuilder</a>&lt;<a href="ViewBuilder.html" title="type parameter in ViewBuilder">T</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#nestedViews(com.github.actionfx.core.annotation.AFXNestedView%5B%5D)">nestedViews</a></span>&#8203;(<a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>[]&nbsp;nestedViews)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#nestedViews(java.util.List)">nestedViews</a></span>&#8203;(java.util.List&lt;<a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>&gt;&nbsp;nestedViews)</code></th>
 <td class="colLast">
 <div class="block">Embeds the given <a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a>s into the <a href="View.html" title="interface in com.github.actionfx.core.view"><code>View</code></a> under
  construction.</div>
@@ -414,13 +414,13 @@ extends java.lang.Object</pre>
 <pre class="methodSignature">public&nbsp;<a href="ViewBuilder.html" title="class in com.github.actionfx.core.view">ViewBuilder</a>&lt;<a href="ViewBuilder.html" title="type parameter in ViewBuilder">T</a>&gt;&nbsp;stylesheets&#8203;(java.lang.String[]&nbsp;stylesheets)</pre>
 </li>
 </ul>
-<a id="nestedViews(com.github.actionfx.core.annotation.AFXNestedView[])">
+<a id="nestedViews(java.util.List)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>nestedViews</h4>
-<pre class="methodSignature">public&nbsp;<a href="ViewBuilder.html" title="class in com.github.actionfx.core.view">ViewBuilder</a>&lt;<a href="ViewBuilder.html" title="type parameter in ViewBuilder">T</a>&gt;&nbsp;nestedViews&#8203;(<a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>[]&nbsp;nestedViews)</pre>
+<pre class="methodSignature">public&nbsp;<a href="ViewBuilder.html" title="class in com.github.actionfx.core.view">ViewBuilder</a>&lt;<a href="ViewBuilder.html" title="type parameter in ViewBuilder">T</a>&gt;&nbsp;nestedViews&#8203;(java.util.List&lt;<a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>&gt;&nbsp;nestedViews)</pre>
 <div class="block">Embeds the given <a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a>s into the <a href="View.html" title="interface in com.github.actionfx.core.view"><code>View</code></a> under
  construction.</div>
 <dl>
@@ -439,14 +439,14 @@ extends java.lang.Object</pre>
 <pre class="methodSignature">public&nbsp;<a href="ViewBuilder.html" title="type parameter in ViewBuilder">T</a>&nbsp;getView()</pre>
 </li>
 </ul>
-<a id="embedNestedViews(com.github.actionfx.core.view.View,com.github.actionfx.core.annotation.AFXNestedView[])">
+<a id="embedNestedViews(com.github.actionfx.core.view.View,java.util.List)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>embedNestedViews</h4>
 <pre class="methodSignature">public static&nbsp;void&nbsp;embedNestedViews&#8203;(<a href="View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
-                                    <a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>[]&nbsp;nestedViews)</pre>
+                                    java.util.List&lt;<a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a>&gt;&nbsp;nestedViews)</pre>
 <div class="block">Embeds the given <a href="../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a>s into the supplied <a href="View.html" title="interface in com.github.actionfx.core.view"><code>View</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

@@ -149,7 +149,23 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  /afxcontrolwrapper/<full-canonical-control-class-name>.properties
  </pre>
 
- Example: /afxcontrolwrapper/javafx.scene.control.TextField.properties</div>
+ Example: /afxcontrolwrapper/javafx.scene.control.TextField.properties
+ <p>
+ For third party library integration it is also required to wrap the
+ library-specific "selection model", so that it can be accessed like a
+ <code>SelectionModel</code>. This is required for example for integrating
+ ControlsFX and their controls using a "CheckModel".
+ <p>
+ In case you need to wrap a third party library "selection model", just create
+ a properties under following location on the classpath:
+
+ <pre>
+  afxcontrolwrapper/<full-canonical-classname-of-third-party-selection-model>.properties
+ </pre>
+
+ Inside the properties, specify a single property "wrapperClass" that holds
+ the fully qualified class name of the wrapper that is expected to implement
+ the JavaFX interface <code>SelectionModel</code>.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>koster</dd>
@@ -193,8 +209,19 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTROL_PROPERTIES_PATH">CONTROL_PROPERTIES_PATH</a></span></code></th>
-<td class="colLast">&nbsp;</td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PROPERTIES_TEMPLATE">PROPERTIES_TEMPLATE</a></span></code></th>
+<td class="colLast">
+<div class="block">expected location of the control configuration properties, where "%s" is the
+ full canonical class name of the control.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#USER_PROPERTIES_KEY">USER_PROPERTIES_KEY</a></span></code></th>
+<td class="colLast">
+<div class="block">Key to <code>Node.getProperties()</code> under that an instance of this control
+ wrapper is stored after construction.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -456,16 +483,29 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a id="CONTROL_PROPERTIES_PATH">
+<a id="USER_PROPERTIES_KEY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>USER_PROPERTIES_KEY</h4>
+<pre>public static final&nbsp;java.lang.String USER_PROPERTIES_KEY</pre>
+<div class="block">Key to <code>Node.getProperties()</code> under that an instance of this control
+ wrapper is stored after construction.</div>
+</li>
+</ul>
+<a id="PROPERTIES_TEMPLATE">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>CONTROL_PROPERTIES_PATH</h4>
-<pre>public static final&nbsp;java.lang.String CONTROL_PROPERTIES_PATH</pre>
+<h4>PROPERTIES_TEMPLATE</h4>
+<pre>public static final&nbsp;java.lang.String PROPERTIES_TEMPLATE</pre>
+<div class="block">expected location of the control configuration properties, where "%s" is the
+ full canonical class name of the control.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../../constant-values.html#com.github.actionfx.core.view.graph.ControlWrapper.CONTROL_PROPERTIES_PATH">Constant Field Values</a></dd>
+<dd><a href="../../../../../../constant-values.html#com.github.actionfx.core.view.graph.ControlWrapper.PROPERTIES_TEMPLATE">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -505,7 +545,18 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <li class="blockList">
 <h4>of</h4>
 <pre class="methodSignature">public static&nbsp;<a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a>&nbsp;of&#8203;(javafx.scene.control.Control&nbsp;control)</pre>
-<div class="block">Convenient factory method for creating a <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> instance.</div>
+<div class="block">Convenient factory method for creating a <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> instance.
+ <p>
+ This method tries to retrieve the <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> instance from the
+ user properties of the supplied <code>Control</code>. If there is no instance of
+ type <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> present, a new instance is returned.
+ <p>
+ This mechanism ensures that you can work always with the same instance of
+ <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> for the same instance of a <code>Control</code>. This might
+ be especially desirable, when you added listeners to values and you want to
+ remove all listener again through e.g.
+ <a href="#removeAllValueChangeListener()"><code>removeAllValueChangeListener()</code></a> without holding a reference to the
+ added listener.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>control</code> - the control to wrap</dd>
@@ -598,7 +649,9 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <li class="blockList">
 <h4>supportsSelection</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;supportsSelection()</pre>
-<div class="block">Checks, whether the control supports a selection of values.</div>
+<div class="block">Checks, whether the control supports a selection of values. This requires
+ that the control exposes a <code>SelectionModel</code> or something that can be
+ wrapped to a <code>SelectionModel</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd><code>true</code>, if the control supports a selection of values,

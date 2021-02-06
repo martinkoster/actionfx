@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,6 +63,72 @@ public class ReflectionUtils {
 	}
 
 	/**
+	 * Instantiates the given {@code clazz} by using the constructor that is suited
+	 * for the supplied {@code constructorArguments}.
+	 *
+	 * @param <T>                  the instance type
+	 * @param clazz                the class to instation
+	 * @param constructorArguments the arguments to pass to the constructor. Leave
+	 *                             this parameter empty for invoking the default,
+	 *                             no-arg constructor. <b>Please note:</b> If
+	 *                             constructor arguments are provided, no argument
+	 *                             must be {@code null}. The type of the constructor
+	 *                             argument is used to identify the proper
+	 *                             constructor to invoke. This mechanism is not
+	 *                             possible with {@code null} value constructor
+	 *                             arguments.
+	 * @return the created instance
+	 */
+	public static <T> T instantiateClass(final Class<T> clazz, final Object... constructorArguments) {
+		if (constructorArguments.length == 0) {
+			try {
+				return clazz.getDeclaredConstructor().newInstance();
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e) {
+				throw new IllegalArgumentException("Can not invoke default no-arg constructor for class '"
+						+ clazz.getCanonicalName() + "'! Is it existing and public?", e);
+			}
+		} else {
+			final Class<?>[] argumentTypes = new Class[constructorArguments.length];
+			for (int i = 0; i < constructorArguments.length; i++) {
+				argumentTypes[i] = constructorArguments[i].getClass();
+			}
+			Constructor<T> constructor;
+			try {
+				constructor = clazz.getDeclaredConstructor(argumentTypes);
+				return constructor.newInstance(constructorArguments);
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e) {
+				throw new IllegalArgumentException("Can not invoke constructor for class '" + clazz.getCanonicalName()
+						+ "' accepting the given arguments. ", e);
+			}
+		}
+	}
+
+	/**
+	 * Extracts all super classes and all interfaces that the given {@code clazz} is
+	 * implementing.
+	 *
+	 * @param <T>   the class type
+	 * @param clazz the class
+	 * @return all super classes and interfaces the given {@code clazz} is
+	 *         implementing
+	 */
+	public static Set<Class<?>> getAllSuperClassesAndInterfaces(final Class<?> clazz) {
+		final Set<Class<?>> result = new HashSet<>();
+		result.add(clazz);
+		if (clazz.getInterfaces() != null && clazz.getInterfaces().length > 0) {
+			for (final Class<?> iface : clazz.getInterfaces()) {
+				result.addAll(getAllSuperClassesAndInterfaces(iface));
+			}
+		}
+		if (clazz.getSuperclass() != null) {
+			result.addAll(getAllSuperClassesAndInterfaces(clazz.getSuperclass()));
+		}
+		return result;
+	}
+
+	/**
 	 * Retrieves a field value described by a nested path
 	 * ({@code nestedPropertyPath}.
 	 * <p>
@@ -90,7 +157,7 @@ public class ReflectionUtils {
 	/**
 	 * Retrieves a field value described by a nested path
 	 * ({@code nestedPropertyPath}. The value is expected to be of type
-	 * {@link Property}.
+	 * {@link ObservableValue}.
 	 * <p>
 	 * Unlike method {@link #getNestedFieldValue(String, Object)}, this method uses
 	 * the "property-getter" method for accessing the property (which is
@@ -105,8 +172,9 @@ public class ReflectionUtils {
 	 * @return the instance that is the provider of the property
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Property<T> getNestedFieldProperty(final String nestedPropertyPath, final Object rootInstance) {
-		return getNestedFieldValue(nestedPropertyPath, rootInstance, Property.class);
+	public static <T> ObservableValue<T> getNestedFieldProperty(final String nestedPropertyPath,
+			final Object rootInstance) {
+		return getNestedFieldValue(nestedPropertyPath, rootInstance, ObservableValue.class);
 	}
 
 	/**
@@ -174,7 +242,7 @@ public class ReflectionUtils {
 		return AccessController.doPrivileged((PrivilegedAction<?>) () -> {
 			final boolean wasAccessible = field.canAccess(instance);
 			try {
-				field.setAccessible(true);
+				field.setAccessible(true); // NOSONAR
 				return field.get(instance);
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
 				throw new IllegalStateException("Cannot get value from field: " + field, ex);
@@ -256,8 +324,8 @@ public class ReflectionUtils {
 		AccessController.doPrivileged((PrivilegedAction<?>) () -> {
 			final boolean wasAccessible = field.canAccess(instance);
 			try {
-				field.setAccessible(true);
-				field.set(instance, value);
+				field.setAccessible(true); // NOSONAR
+				field.set(instance, value); // NOSONAR
 				return null; // return nothing...
 			} catch (IllegalArgumentException | IllegalAccessException ex) {
 				throw new IllegalStateException("Cannot set field: " + field + " with value " + value, ex);
@@ -385,7 +453,7 @@ public class ReflectionUtils {
 		return (T) AccessController.doPrivileged((PrivilegedAction<?>) () -> {
 			final boolean wasAccessible = method.canAccess(instance);
 			try {
-				method.setAccessible(true);
+				method.setAccessible(true); // NOSONAR
 				return method.invoke(instance, arguments);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				throw new IllegalStateException("Problem invoking method '" + method.getName() + "'!", ex);

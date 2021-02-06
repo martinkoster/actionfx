@@ -4,7 +4,7 @@ The "actionfx-core" module consists of the core functionality of ActionFX.
 
 Module | Description | API Documentation | Gradle Dependency 
 ------ | ----------- | ----------------- | ----------
-[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.2"`
+[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "0.0.2"`
 
 ## Table of Contents
 
@@ -451,16 +451,12 @@ The properties file for an `javafx.scene.control.TreeView` is shown here as an e
 # valueProperty                 | Property name holding a single "value"                     | "text" (e.g. for TextField), "value" (e.g. for ComboBox)
 # valuesObservableList          | Name of an observable list holding all possible "values"   | "items" (e.g. for ComboBox)
 # selectionModelProperty        | Property name holding the "selectionModel"                 | "selectionModel" (e.g. for TableView)
-# selectedValueProperty         | Property name holding the select "value"                   | "selectionModel.selectedItem" (e.g. for TableView)
-# selectedValuesObservableList  | Name of an observable list holding all selected "values"   | "selectionModel.selectedItems" (e.g. for TableView)
 #
 #  In case a certain property is not supported by the control (e.g. no support for a "SelectionModel"), then the property must be left empty.
 #
 valueProperty=root
 valuesObservableList=
 selectionModelProperty=selectionModel
-selectedValueProperty=selectionModel.selectedItem
-selectedValuesObservableList=selectionModel.selectedItems
 ```
 In case you have a custom control implemented or you are using a 3rd party controls library, you can provide a properties file in the following location in the classpath: `/afxcontrolwrapper/<full-qualified-class-name>.properties`
 

@@ -143,7 +143,7 @@ public class ActionFX {
 	 * application-specific instance of {@link ActionFX}.
 	 */
 	private ActionFX() {
-		instance = this;
+		instance = this; // NOSONAR
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class ActionFX {
 		// initialize exception handling
 		Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		// after configuration and instance creation, the state transfers to CONFIGURED
-		actionFXState = ActionFXState.CONFIGURED;
+		actionFXState = ActionFXState.CONFIGURED;// NOSONAR
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class ActionFX {
 	private void scanForActionFXComponentsInternal() {
 		// let's let the bean container implementation do the work
 		beanContainer.populateContainer(scanPackage);
-		actionFXState = ActionFXState.INITIALIZED;
+		actionFXState = ActionFXState.INITIALIZED;// NOSONAR
 	}
 
 	/**
@@ -372,8 +372,8 @@ public class ActionFX {
 	 */
 	@SuppressFBWarnings(justification = "Design Decision")
 	public void reset() {
-		instance = null;
-		actionFXState = ActionFXState.UNINITIALIZED;
+		instance = null;// NOSONAR
+		actionFXState = ActionFXState.UNINITIALIZED;// NOSONAR
 	}
 
 	/**

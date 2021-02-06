@@ -116,15 +116,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul class="blockList">
 <li class="blockList">
 <hr>
-<pre>@Target({TYPE,FIELD})
+<pre>@Repeatable(<a href="AFXNestedView.AFXNestedViews.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedViews.class</a>)
+@Target({TYPE,FIELD})
 @Retention(RUNTIME)
 public @interface <span class="memberNameLabel">AFXNestedView</span></pre>
-<div class="block">Annotation to define a nested view. Nested views can be used to composite the
- overall scene graph view.
+<div class="block">Repeatable annotation to define a nested view. Nested views can be used to
+ composite the overall scene graph view.
  <p>
- You can either use this annotation as part of an <a href="AFXController.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXController</code></a>
- annotation, or you can apply it to a field that is also annotated by
- <code>@FXML</code>.</div>
+ You can either use this annotation on a class that is additionally annotated
+ by <a href="AFXController.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXController</code></a> annotation, or you can apply it to a field that is
+ also annotated by <code>@FXML</code>. On class-level, this annotation is
+ repeatable and can define one or many views to nest.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>MartinKoster</dd>

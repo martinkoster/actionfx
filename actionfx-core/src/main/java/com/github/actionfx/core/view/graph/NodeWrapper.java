@@ -37,7 +37,6 @@ import com.github.actionfx.core.annotation.AFXNestedView;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.BorderPanePosition;
-import com.sun.javafx.beans.IDProperty;
 
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
@@ -116,8 +115,7 @@ public class NodeWrapper {
 
 	/**
 	 * Gets the ID of the wrapped node. In case the node does not inherit from
-	 * {@link Node}, we try to access the ID field of the wrapped type by reading
-	 * out the {@link IDProperty} annotation.
+	 * {@link Node}, we try to access a field with name "id" of the wrapped type.
 	 *
 	 * @return the ID of the wrapped node.
 	 */
@@ -126,7 +124,7 @@ public class NodeWrapper {
 		if (isOfType(Node.class)) {
 			return ((Node) wrapped).getId();
 		} else {
-			// we look up the IDProperty annotation, e.g. for "Tab"s
+			// we look up the "id" field, e.g. for "Tab"s
 			final Field idField = lookupIdField(getWrappedType());
 			if (idField == null) {
 				// no ID field? so we don't have any ID here...
@@ -646,9 +644,8 @@ public class NodeWrapper {
 	}
 
 	/**
-	 * Looks up the ID field of the given node class. The annotation
-	 * {@link IDProperty} is considered for looking up the field.
-	 *
+	 * Looks up the ID field of the given node class.
+	 * 
 	 * @param nodeClass the node class to check for the ID field
 	 * @return the field containing the node's ID
 	 * @throws IllegalStateException in case {@code nodeClass} has no ID property
@@ -656,10 +653,8 @@ public class NodeWrapper {
 	private Field lookupIdField(final Class<?> nodeClass) {
 		Field idField = ID_FIELD_CACHE.get(nodeClass);
 		if (idField == null) {
-			// check, if the node class holds a IDProperty
-			final IDProperty idProperty = AnnotationUtils.findAnnotation(nodeClass, IDProperty.class);
-			final String fieldName = idProperty != null ? idProperty.value() : "id";
-			idField = ReflectionUtils.findField(nodeClass, fieldName);
+			// check, if the class holds an "id" field
+			idField = ReflectionUtils.findField(nodeClass, "id");
 			if (idField == null) {
 				// no ID field
 				return null;

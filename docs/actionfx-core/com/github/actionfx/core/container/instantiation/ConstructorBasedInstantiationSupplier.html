@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10};
+var data = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -172,8 +172,11 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.Class)">ConstructorBasedInstantiationSupplier</a></span>&#8203;(java.lang.Class&lt;<a href="ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&gt;&nbsp;clazz)</code></th>
-<td class="colLast">&nbsp;</td>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.Class,java.lang.Object...)">ConstructorBasedInstantiationSupplier</a></span>&#8203;(java.lang.Class&lt;<a href="ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&gt;&nbsp;clazz,
+                                     java.lang.Object...&nbsp;constructorArguments)</code></th>
+<td class="colLast">
+<div class="block">Accepts the class to instantiate together with <code>constructorArguments</code>.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -200,13 +203,20 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <div class="block">Method to implement for</div>
 </td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resolveConstructorAndArguments(java.lang.Object...)">resolveConstructorAndArguments</a></span>&#8203;(java.lang.Object...&nbsp;constructorArguments)</code></th>
+<td class="colLast">
+<div class="block">Find the best fitting constructor for the supplied constructor arguments.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.com.github.actionfx.core.container.instantiation.AbstractInstantiationSupplier">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.github.actionfx.core.container.instantiation.<a href="AbstractInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">AbstractInstantiationSupplier</a></h3>
-<code><a href="AbstractInstantiationSupplier.html#createInstanceInJavaFXThread()">createInstanceInJavaFXThread</a>, <a href="AbstractInstantiationSupplier.html#get()">get</a></code></li>
+<code><a href="AbstractInstantiationSupplier.html#get()">get</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
@@ -231,13 +241,22 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(java.lang.Class)">
+<a id="&lt;init&gt;(java.lang.Class,java.lang.Object...)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ConstructorBasedInstantiationSupplier</h4>
-<pre>public&nbsp;ConstructorBasedInstantiationSupplier&#8203;(java.lang.Class&lt;<a href="ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&gt;&nbsp;clazz)</pre>
+<pre>public&nbsp;ConstructorBasedInstantiationSupplier&#8203;(java.lang.Class&lt;<a href="ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&gt;&nbsp;clazz,
+                                             java.lang.Object...&nbsp;constructorArguments)</pre>
+<div class="block">Accepts the class to instantiate together with <code>constructorArguments</code>.
+ Leave the <code>constructorArguments</code> empty to invoke the default no-arg
+ constructor.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - the class to instantiate</dd>
+<dd><code>constructorArguments</code> - the constructor arguments</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -253,7 +272,7 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <a id="createInstance()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>createInstance</h4>
 <pre class="methodSignature">protected&nbsp;<a href="ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&nbsp;createInstance()</pre>
@@ -263,6 +282,20 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="AbstractInstantiationSupplier.html#createInstance()">createInstance</a></code>&nbsp;in class&nbsp;<code><a href="AbstractInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">AbstractInstantiationSupplier</a>&lt;<a href="ConstructorBasedInstantiationSupplier.html" title="type parameter in ConstructorBasedInstantiationSupplier">T</a>&gt;</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+</dl>
+</li>
+</ul>
+<a id="resolveConstructorAndArguments(java.lang.Object...)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>resolveConstructorAndArguments</h4>
+<pre class="methodSignature">protected&nbsp;void&nbsp;resolveConstructorAndArguments&#8203;(java.lang.Object...&nbsp;constructorArguments)</pre>
+<div class="block">Find the best fitting constructor for the supplied constructor arguments.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>the</code> - available constructor arguments</dd>
 </dl>
 </li>
 </ul>

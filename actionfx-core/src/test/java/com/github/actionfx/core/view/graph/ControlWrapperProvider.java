@@ -375,4 +375,12 @@ public class ControlWrapperProvider {
 		return new ControlWrapper(c);
 	}
 
+	public static ControlWrapper customControlWithObservableList() {
+		final CustomControlWithObservableList c = new CustomControlWithObservableList();
+		c.getSourceItems().add("Item 1");
+		c.getSourceItems().add("Item 2");
+		c.getSourceItems().add("Item 3");
+		return new ControlWrapper(c);
+	}
+
 }

@@ -1,0 +1,64 @@
+plugins {
+    id("org.openjfx.javafxplugin") version "0.0.9"
+}
+
+description = "actionfx-controlsfx: This module contains an integration of the ControlsFX (https://github.com/controlsfx/controlsfx) framework into ActionFX."
+
+dependencies {
+	
+        // JAVAFX DEPENDENCIES    
+        javafx {
+            version = "${javafxVersion}"
+            modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
+        }
+
+        api project(":actionfx-core")
+        api group: "org.controlsfx", name: "controlsfx", version: "${controlsfxVersion}"
+
+        
+        testImplementation project(":actionfx-testing")
+}
+
+test {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+integrationTest {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+////////////////////////
+// Build / Publishing //
+////////////////////////
+modifyPom {
+    project {
+        name 'ActionFX: actionfx-controlsfx'
+        description 'Integration of ControlsFX into ActionFX'
+        url 'https://https://github.com/martinkoster/actionfx'
+        inceptionYear '2020'
+	
+        scm {
+            url 'https://https://github.com/martinkoster/actionfx'
+            connection 'scm:https://github.com/martinkoster/actionfx.git'
+            developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
+        }
+	
+        licenses {
+            license {
+	            name 'MIT License'
+	            url 'https://opensource.org/licenses/MIT'
+                distribution 'repo'
+            }
+        }
+	
+        developers {
+            developer {
+                id 'martinkoster'
+                name 'Martin Koster'
+                email 'koster@gmx.de'
+            }
+        }
+    }
+}

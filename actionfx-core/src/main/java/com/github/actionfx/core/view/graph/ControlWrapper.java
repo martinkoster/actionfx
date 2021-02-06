@@ -32,14 +32,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.actionfx.core.collections.ValueChangeAwareObservableList;
+import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.utils.ReflectionUtils;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -47,6 +49,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
@@ -64,11 +67,39 @@ import javafx.scene.control.SelectionModel;
  * </pre>
  *
  * Example: /afxcontrolwrapper/javafx.scene.control.TextField.properties
+ * <p>
+ * For third party library integration it is also required to wrap the
+ * library-specific "selection model", so that it can be accessed like a
+ * {@code SelectionModel}. This is required for example for integrating
+ * ControlsFX and their controls using a "CheckModel".
+ * <p>
+ * In case you need to wrap a third party library "selection model", just create
+ * a properties under following location on the classpath:
+ *
+ * <pre>
+ *  afxcontrolwrapper/<full-canonical-classname-of-third-party-selection-model>.properties
+ * </pre>
+ *
+ * Inside the properties, specify a single property "wrapperClass" that holds
+ * the fully qualified class name of the wrapper that is expected to implement
+ * the JavaFX interface {@link SelectionModel}.
  *
  * @author koster
- *
- */
+ **/
+
 public class ControlWrapper extends NodeWrapper {
+
+	/**
+	 * Key to {@link Node#getProperties()} under that an instance of this control
+	 * wrapper is stored after construction.
+	 */
+	public static final String USER_PROPERTIES_KEY = ControlWrapper.class.getCanonicalName();
+
+	/**
+	 * expected location of the control configuration properties, where "%s" is the
+	 * full canonical class name of the control.
+	 */
+	public static final String PROPERTIES_TEMPLATE = "/afxcontrolwrapper/%s.properties";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ControlWrapper.class);
 
@@ -76,18 +107,21 @@ public class ControlWrapper extends NodeWrapper {
 	private static final Map<Class<? extends Control>, ControlConfig> CONTROL_CONFIG_CACHE = Collections
 			.synchronizedMap(new HashMap<>());
 
+	// cache for selection model wrapper classes (used for integrating 3rd party
+	// libraries like ControlsFX (CheckModel is wrapped)
+	private static final Map<Class<?>, Class<? extends SelectionModel<?>>> SELECTION_MODEL_WRAPPER = Collections
+			.synchronizedMap(new HashMap<>());
+
 	// the field name of the "onAction" property inside controls that do support it
 	private static final String ON_ACTION_FIELD_NAME = "onAction";
 
+	// property keys that are expected in a control-specific properties file
 	private static final String PROPERTY_KEY_VALUE_PROPERTY = "valueProperty";
 	private static final String PROPERTY_KEY_VALUES_OBSERVABLE_LIST = "valuesObservableList";
 	private static final String PROPERTY_KEY_SELECTION_MODEL_PROPERTY = "selectionModelProperty";
-	private static final String PROPERTY_KEY_SELECTED_VALUE_PROPERTY = "selectedValueProperty";
-	private static final String PROPERTY_KEY_SELECTED_VALUES_OBSERVABLE_LIST = "selectedValuesObservableList";
 
-	// expected location of the control configurationn properties, where "%s" is the
-	// full canonical class name of the control
-	public static final String CONTROL_PROPERTIES_PATH = "/afxcontrolwrapper/%s.properties";
+	// property keys that are expected for a selection model wrapper
+	private static final String PROPERTY_KEY_WRAPPER_CLASS = "wrapperClass";
 
 	private final ControlConfig controlConfig;
 
@@ -97,19 +131,42 @@ public class ControlWrapper extends NodeWrapper {
 	private final List<ChangeListener<?>> addedSelectedValueChangeListener = new ArrayList<>();
 	private final List<ListChangeListener<?>> addedSelectedValuesChangeListener = new ArrayList<>();
 
+	// properties extracted from the wrapped control - lazily loaded when accessed
+	// through the corresponding getter
+	private ObservableValue<?> valueProperty;
+	private ObservableList<?> valuesObservableList;
+	private SelectionModel<?> selectionModel;
+
 	public ControlWrapper(final Control control) {
 		super(control);
 		controlConfig = retrieveControlConfig(control.getClass());
+		// cache the instance in the node
+		control.getProperties().put(USER_PROPERTIES_KEY, this);
 	}
 
 	/**
 	 * Convenient factory method for creating a {@link ControlWrapper} instance.
+	 * <p>
+	 * This method tries to retrieve the {@link ControlWrapper} instance from the
+	 * user properties of the supplied {@link Control}. If there is no instance of
+	 * type {@link ControlWrapper} present, a new instance is returned.
+	 * <p>
+	 * This mechanism ensures that you can work always with the same instance of
+	 * {@link ControlWrapper} for the same instance of a {@link Control}. This might
+	 * be especially desirable, when you added listeners to values and you want to
+	 * remove all listener again through e.g.
+	 * {@link #removeAllValueChangeListener()} without holding a reference to the
+	 * added listener.
 	 *
 	 * @param control the control to wrap
 	 * @return the control wrapper instance
 	 */
 	public static ControlWrapper of(final Control control) {
-		return new ControlWrapper(control);
+		ControlWrapper wrapper = (ControlWrapper) control.getProperties().get(USER_PROPERTIES_KEY);
+		if (wrapper == null) {
+			wrapper = new ControlWrapper(control);
+		}
+		return wrapper;
 	}
 
 	/**
@@ -130,14 +187,12 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the current value
 	 */
 	public <V> V getValue() {
-		final Control control = getWrapped();
-		if (controlConfig.hasValueProperty()) {
-			final Property<V> property = controlConfig.getValueProperty(control);
-			return property.getValue();
-		} else {
-			// values are not supported - we return null here...
-			return null;
+		final ObservableValue<V> observableValue = getValueProperty();
+		if (observableValue != null) {
+			return observableValue.getValue();
 		}
+		// values are not supported - we return null here...
+		return null;
 	}
 
 	/**
@@ -147,9 +202,13 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the value property, or {@code null}, in case the control does not
 	 *         have a value property.
 	 */
+	@SuppressWarnings("unchecked")
 	public <V> ObservableValue<V> getValueProperty() {
-		final Control control = getWrapped();
-		return controlConfig.hasValueProperty() ? controlConfig.getValueProperty(control) : null;
+		if (valueProperty == null) {
+			final Control control = getWrapped();
+			valueProperty = controlConfig.hasValueProperty() ? controlConfig.getValueProperty(control) : null;
+		}
+		return (ObservableValue<V>) valueProperty;
 	}
 
 	/**
@@ -157,14 +216,18 @@ public class ControlWrapper extends NodeWrapper {
 	 *
 	 * @return all allowed values of the underlying wrapped {@link Control}.
 	 */
+	@SuppressWarnings("unchecked")
 	public <V> ObservableList<V> getValues() {
-		final Control control = getWrapped();
-		if (controlConfig.hasValuesObservableList()) {
-			return controlConfig.getValuesObservableList(control);
-		} else {
-			// values are not supported - we return an empty list here...
-			return FXCollections.emptyObservableList();
+		if (valuesObservableList == null) {
+			final Control control = getWrapped();
+			if (controlConfig.hasValuesObservableList()) {
+				valuesObservableList = controlConfig.getValuesObservableList(control);
+			} else {
+				// values are not supported - we return an empty list here...
+				valuesObservableList = FXCollections.emptyObservableList();
+			}
 		}
+		return (ObservableList<V>) valuesObservableList;
 	}
 
 	/**
@@ -178,14 +241,15 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Checks, whether the control supports a selection of values.
+	 * Checks, whether the control supports a selection of values. This requires
+	 * that the control exposes a {@link SelectionModel} or something that can be
+	 * wrapped to a {@link SelectionModel}.
 	 *
 	 * @return {@code true}, if the control supports a selection of values,
 	 *         {@code false} otherwise.
 	 */
 	public boolean supportsSelection() {
-		return controlConfig.hasSelectionModelProperty() || controlConfig.hasSelectedValueProperty()
-				|| controlConfig.hasSelectedValuesObservableList();
+		return controlConfig.hasSelectionModelProperty();
 	}
 
 	/**
@@ -196,11 +260,11 @@ public class ControlWrapper extends NodeWrapper {
 	 *         {@code false} otherwise.
 	 */
 	public boolean supportsMultiSelection() {
-		final SelectionModel<?> selectionModel = getSelectionModel();
-		if (selectionModel == null || !MultipleSelectionModel.class.isAssignableFrom(selectionModel.getClass())) {
+		final SelectionModel<?> model = getSelectionModel();
+		if (model == null || !MultipleSelectionModel.class.isAssignableFrom(model.getClass())) {
 			return false;
 		}
-		final MultipleSelectionModel<?> multipleSelectionModel = (MultipleSelectionModel<?>) selectionModel;
+		final MultipleSelectionModel<?> multipleSelectionModel = (MultipleSelectionModel<?>) model;
 		return multipleSelectionModel.getSelectionMode() == SelectionMode.MULTIPLE;
 	}
 
@@ -245,10 +309,48 @@ public class ControlWrapper extends NodeWrapper {
 		if (!supportsSelectionModelProperty()) {
 			return null;
 		}
+		if (selectionModel == null) {
+			selectionModel = lookupSelectionModel();
+		}
+		return (SelectionModel<V>) selectionModel;
+	}
+
+	/**
+	 * Looks up the underlying {@link SelectionModel} from the wrapped control.
+	 * <p>
+	 * The field value that is resolved from "selectionModelProperty" can be of the
+	 * following types:
+	 * <ul>
+	 * <li>{@link SelectionModel} or {@code null}: In this case we found our
+	 * "selection model" and we will return it.
+	 * <li>any other type: we are checking, if there is a properties-file for this
+	 * type that holds a "wrapperClass"-property. In this case, the custom selection
+	 * model is wrapped into that class</li>
+	 * </ul>
+	 *
+	 * @return the looked up {@link SelectionModel}, or {@code null}, in case the
+	 *         property is "empty"
+	 */
+	private SelectionModel<?> lookupSelectionModel() {
 		final Control control = getWrapped();
-		final Property<SelectionModel<Object>> selectionModelProperty = controlConfig
-				.getSelectionModelProperty(control);
-		return (SelectionModel<V>) selectionModelProperty.getValue();
+		final Object controlSpecificSelectionModel = controlConfig.getSelectionModel(control);
+		if (controlSpecificSelectionModel == null
+				|| SelectionModel.class.isAssignableFrom(controlSpecificSelectionModel.getClass())) {
+			return (SelectionModel<?>) controlSpecificSelectionModel;
+		} else {
+			// Check for a wrapper class so that we can wrap the unknown "selection model"
+			// into a JavaFX SelectionModel
+			final Class<? extends SelectionModel<?>> selectionModelWrapperClass = getSelectionModelWrapperClass(
+					controlSpecificSelectionModel.getClass());
+			if (selectionModelWrapperClass == null) {
+				throw new IllegalStateException("Unable to access class '"
+						+ controlSpecificSelectionModel.getClass().getCanonicalName()
+						+ "' as a javafx.scene.control.SelectionModel, is the properties configuration for the control to wrap correct?");
+			}
+			final ConstructorBasedInstantiationSupplier<? extends SelectionModel<?>> instantiationSupplier = new ConstructorBasedInstantiationSupplier<>(
+					selectionModelWrapperClass, controlSpecificSelectionModel, getValues());
+			return instantiationSupplier.get();
+		}
 	}
 
 	/**
@@ -257,16 +359,13 @@ public class ControlWrapper extends NodeWrapper {
 	 *
 	 * @return the currently selected value
 	 */
+	@SuppressWarnings("unchecked")
 	public <V> V getSelectedValue() {
-		final Control control = getWrapped();
-		if (controlConfig.hasSelectedValueProperty()) {
-			final ObservableValue<V> property = controlConfig.getSelectedValueProperty(control);
-			return property.getValue();
-		} else if (controlConfig.hasSelectedValuesObservableList()) {
-			final ObservableList<V> list = controlConfig.getSelectedValuesObservableList(control);
-			return list != null && !list.isEmpty() ? list.get(0) : null;
+		if (controlConfig.hasSelectionModelProperty()) {
+			final SelectionModel<?> model = getSelectionModel();
+			return model != null ? (V) model.getSelectedItem() : null;
 		} else {
-			// values are not supported - we return null here...
+			// selection of values are not supported - we return null here...
 			return null;
 		}
 	}
@@ -278,9 +377,15 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the selected value property, or {@code null}, in case the control
 	 *         does not have a selected value property.
 	 */
+	@SuppressWarnings("unchecked")
 	public <V> ObservableValue<V> getSelectedValueProperty() {
-		final Control control = getWrapped();
-		return controlConfig.hasSelectedValueProperty() ? controlConfig.getSelectedValueProperty(control) : null;
+		if (controlConfig.hasSelectionModelProperty()) {
+			final SelectionModel<?> model = getSelectionModel();
+			return model != null ? (ObservableValue<V>) model.selectedItemProperty() : null;
+		} else {
+			// selection of values are not supported - we return null here...
+			return null;
+		}
 	}
 
 	/**
@@ -293,20 +398,16 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	@SuppressWarnings("unchecked")
 	public <V> ObservableList<V> getSelectedValues() {
-		final Control control = getWrapped();
-		if (controlConfig.hasSelectedValuesObservableList()) {
-			return controlConfig.getSelectedValuesObservableList(control);
-		} else if (controlConfig.hasSelectedValueProperty()) {
-			final ObservableValue<V> property = controlConfig.getSelectedValueProperty(control);
-			final V value = property.getValue();
-			if (value == null) {
-				return FXCollections.emptyObservableList();
-			} else {
-				return FXCollections.observableArrayList(value);
-			}
-		} else {
-			// values are not supported - we return an empty list here...
+		final SelectionModel<?> model = getSelectionModel();
+		if (model == null) {
 			return FXCollections.emptyObservableList();
+		}
+		if (MultipleSelectionModel.class.isAssignableFrom(model.getClass())) {
+			return ((MultipleSelectionModel<V>) model).getSelectedItems();
+		} else {
+			final V selectionItem = (V) model.getSelectedItem();
+			return selectionItem != null ? FXCollections.observableArrayList(selectionItem)
+					: FXCollections.emptyObservableList();
 		}
 	}
 
@@ -386,9 +487,9 @@ public class ControlWrapper extends NodeWrapper {
 	 * @param changeListener the change listener to add
 	 */
 	public <V> void addValueChangeListener(final ChangeListener<V> changeListener) {
-		final ObservableValue<V> valueProperty = getValueProperty();
-		if (valueProperty != null) {
-			valueProperty.addListener(changeListener);
+		final ObservableValue<V> observableValue = getValueProperty();
+		if (observableValue != null) {
+			observableValue.addListener(changeListener);
 			addedValueChangeListener.add(changeListener);
 		}
 	}
@@ -398,10 +499,10 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void removeAllValueChangeListener() {
-		final ObservableValue<?> valueProperty = getValueProperty();
-		if (valueProperty != null) {
+		final ObservableValue<?> observableValue = getValueProperty();
+		if (observableValue != null) {
 			for (final ChangeListener listener : addedValueChangeListener) {
-				valueProperty.removeListener(listener);
+				observableValue.removeListener(listener);
 			}
 			addedValueChangeListener.clear();
 		}
@@ -415,9 +516,9 @@ public class ControlWrapper extends NodeWrapper {
 	 * @param changeListener the list change listener to add
 	 */
 	public <V> void addValuesChangeListener(final ListChangeListener<V> changeListener) {
-		final ObservableList<V> valuesObservableList = getValues();
-		if (valuesObservableList != null) {
-			valuesObservableList.addListener(changeListener);
+		final ObservableList<V> observableList = getValues();
+		if (observableList != null) {
+			observableList.addListener(changeListener);
 			addedValuesChangeListener.add(changeListener);
 		}
 	}
@@ -427,10 +528,10 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void removeAllValuesChangeListener() {
-		final ObservableList<?> valuesObservableList = getValues();
-		if (valuesObservableList != null) {
+		final ObservableList<?> observableList = getValues();
+		if (observableList != null) {
 			for (final ListChangeListener listener : addedValuesChangeListener) {
-				valuesObservableList.removeListener(listener);
+				observableList.removeListener(listener);
 			}
 			addedValuesChangeListener.clear();
 		}
@@ -500,11 +601,11 @@ public class ControlWrapper extends NodeWrapper {
 	 * different type, calling this method has no effect on the wrapped control.
 	 */
 	public void enableMultiSelection() {
-		final SelectionModel<?> selectionModel = getSelectionModel();
-		if (selectionModel == null || !MultipleSelectionModel.class.isAssignableFrom(selectionModel.getClass())) {
+		final SelectionModel<?> model = getSelectionModel();
+		if (model == null || !MultipleSelectionModel.class.isAssignableFrom(model.getClass())) {
 			return;
 		}
-		final MultipleSelectionModel<?> multiSelectionModel = (MultipleSelectionModel<?>) selectionModel;
+		final MultipleSelectionModel<?> multiSelectionModel = (MultipleSelectionModel<?>) model;
 		multiSelectionModel.setSelectionMode(SelectionMode.MULTIPLE);
 	}
 
@@ -543,20 +644,53 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	private ControlConfig retrieveControlConfig(final Class<? extends Control> clazz) {
 		// check the cache first in order to avoid unnecessary IO-operations
-		if (CONTROL_CONFIG_CACHE.containsKey(clazz)) {
-			return CONTROL_CONFIG_CACHE.get(clazz);
-		}
-		ControlConfig result = null;
-		final String configPropertiesPath = String.format(CONTROL_PROPERTIES_PATH, clazz.getCanonicalName());
-		try (InputStream inputStream = ControlWrapper.class.getResourceAsStream(configPropertiesPath)) {
-			final Properties controlConfigProperties = new Properties();
-			controlConfigProperties.load(inputStream);
-			result = mapToControlConfig(controlConfigProperties);
-		} catch (final IOException e) {
-			LOG.warn("File '{}' does not exist or can not be read.", configPropertiesPath);
-		}
-		CONTROL_CONFIG_CACHE.put(clazz, result);
-		return result;
+		return CONTROL_CONFIG_CACHE.computeIfAbsent(clazz, controlClass -> {
+			final String configPropertiesPath = String.format(PROPERTIES_TEMPLATE, controlClass.getCanonicalName());
+			try (InputStream inputStream = ControlWrapper.class.getResourceAsStream(configPropertiesPath)) {
+				final Properties controlConfigProperties = new Properties();
+				controlConfigProperties.load(inputStream);
+				return mapToControlConfig(controlConfigProperties);
+			} catch (final IOException e) {
+				LOG.warn("File '{}' does not exist or can not be read.", configPropertiesPath);
+			}
+			return null;
+		});
+	}
+
+	/**
+	 * Determines a wrapper class for a third party selection model. This
+	 * functionality is not used in the ActionFX core library, but is required to
+	 * integrate further third party libraries like ControlsFX which has a
+	 * "CheckModel" as "selection model".
+	 *
+	 * @param thirdPartySelectionModelClass the third party selection model class
+	 * @return the wrapper class, or {@code null}, if there is no wrapper
+	 *         configured.
+	 */
+	@SuppressWarnings("unchecked")
+	private Class<? extends SelectionModel<?>> getSelectionModelWrapperClass(
+			final Class<?> thirdPartySelectionModelClass) {
+		return SELECTION_MODEL_WRAPPER.computeIfAbsent(thirdPartySelectionModelClass, selectionModelClass -> {
+			final Set<Class<?>> classesToCheck = ReflectionUtils.getAllSuperClassesAndInterfaces(selectionModelClass);
+			for (final Class<?> clazz : classesToCheck) {
+				final String configPropertiesPath = String.format(PROPERTIES_TEMPLATE, clazz.getCanonicalName());
+				try (InputStream inputStream = ControlWrapper.class.getResourceAsStream(configPropertiesPath)) {
+					if (inputStream == null) {
+						continue;
+					}
+					final Properties controlConfigProperties = new Properties();
+					controlConfigProperties.load(inputStream);
+					return (Class<? extends SelectionModel<?>>) Class
+							.forName(controlConfigProperties.getProperty(PROPERTY_KEY_WRAPPER_CLASS));
+				} catch (final IOException e) {
+					LOG.debug("File '{}' does not exist or can not be read.", configPropertiesPath);
+				} catch (final ClassNotFoundException e) {
+					LOG.debug("Wrapper class can not be loaded because it does not exist!", e);
+				}
+			}
+			// no properties found?
+			return null;
+		});
 	}
 
 	/**
@@ -566,11 +700,9 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return the control config
 	 */
 	private ControlConfig mapToControlConfig(final Properties properties) {
-		return new ControlConfig(properties.getProperty(PROPERTY_KEY_VALUE_PROPERTY, ""),
-				properties.getProperty(PROPERTY_KEY_VALUES_OBSERVABLE_LIST, ""),
-				properties.getProperty(PROPERTY_KEY_SELECTION_MODEL_PROPERTY, ""),
-				properties.getProperty(PROPERTY_KEY_SELECTED_VALUE_PROPERTY, ""),
-				properties.getProperty(PROPERTY_KEY_SELECTED_VALUES_OBSERVABLE_LIST, ""));
+		return new ControlConfig(properties.getProperty(PROPERTY_KEY_VALUE_PROPERTY, "").trim(),
+				properties.getProperty(PROPERTY_KEY_VALUES_OBSERVABLE_LIST, "").trim(),
+				properties.getProperty(PROPERTY_KEY_SELECTION_MODEL_PROPERTY, "").trim());
 	}
 
 	/**
@@ -587,81 +719,51 @@ public class ControlWrapper extends NodeWrapper {
 
 		private final String selectionModelProperty;
 
-		private final String selectedValueProperty;
-
-		private final String selectedValuesObservableList;
-
 		public ControlConfig(final String valueProperty, final String valuesObservableList,
-				final String selectionModelProperty, final String selectedValueProperty,
-				final String selectedValuesObservableList) {
+				final String selectionModelProperty) {
 			this.valueProperty = valueProperty;
 			this.valuesObservableList = valuesObservableList;
 			this.selectionModelProperty = selectionModelProperty;
-			this.selectedValueProperty = selectedValueProperty;
-			this.selectedValuesObservableList = selectedValuesObservableList;
-		}
-
-		public String getValueProperty() {
-			return valueProperty;
 		}
 
 		public boolean hasValueProperty() {
-			return hasValue(getValueProperty());
+			return hasValue(valueProperty);
 		}
 
-		public <V> Property<V> getValueProperty(final Control control) {
+		public <V> ObservableValue<V> getValueProperty(final Control control) {
 			return ReflectionUtils.getNestedFieldProperty(valueProperty, control);
 		}
 
-		public String getValuesObservableList() {
-			return valuesObservableList;
-		}
-
 		public boolean hasValuesObservableList() {
-			return hasValue(getValuesObservableList());
+			return hasValue(valuesObservableList);
 		}
 
 		@SuppressWarnings("unchecked")
 		public <V> ObservableList<V> getValuesObservableList(final Control control) {
-			return ReflectionUtils.getNestedFieldValue(valuesObservableList, control, ObservableList.class);
-		}
-
-		public String getSelectionModelProperty() {
-			return selectionModelProperty;
+			// check, if the property holds a comma-separated list of single properties to
+			// combine in an observable list
+			if (valuesObservableList.contains(",")) {
+				final String[] propertyNames = valuesObservableList.split(",");
+				final List<ObservableValue<V>> observableValues = new ArrayList<>();
+				for (final String propertyName : propertyNames) {
+					final ObservableValue<V> observable = ReflectionUtils.getNestedFieldProperty(propertyName.trim(),
+							control);
+					if (observable != null) {
+						observableValues.add(observable);
+					}
+				}
+				return new ValueChangeAwareObservableList<>(observableValues);
+			} else {
+				return ReflectionUtils.getNestedFieldValue(valuesObservableList, control, ObservableList.class);
+			}
 		}
 
 		public boolean hasSelectionModelProperty() {
-			return hasValue(getSelectionModelProperty());
+			return hasValue(selectionModelProperty);
 		}
 
-		public <V> Property<SelectionModel<V>> getSelectionModelProperty(final Control control) {
-			return ReflectionUtils.getNestedFieldProperty(selectionModelProperty, control);
-		}
-
-		public String getSelectedValueProperty() {
-			return selectedValueProperty;
-		}
-
-		public boolean hasSelectedValueProperty() {
-			return hasValue(getSelectedValueProperty());
-		}
-
-		@SuppressWarnings("unchecked")
-		public <V> ObservableValue<V> getSelectedValueProperty(final Control control) {
-			return ReflectionUtils.getNestedFieldValue(selectedValueProperty, control, ObservableValue.class);
-		}
-
-		public String getSelectedValuesObservableList() {
-			return selectedValuesObservableList;
-		}
-
-		public boolean hasSelectedValuesObservableList() {
-			return hasValue(getSelectedValuesObservableList());
-		}
-
-		@SuppressWarnings("unchecked")
-		public <V> ObservableList<V> getSelectedValuesObservableList(final Control control) {
-			return ReflectionUtils.getNestedFieldValue(selectedValuesObservableList, control, ObservableList.class);
+		public Object getSelectionModel(final Control control) {
+			return ReflectionUtils.getNestedFieldValue(selectionModelProperty, control, Object.class);
 		}
 
 		private boolean hasValue(final String value) {

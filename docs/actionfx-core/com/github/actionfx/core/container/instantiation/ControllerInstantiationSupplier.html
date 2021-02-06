@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var data = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -221,46 +221,17 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#applyFieldLevelAnnotations(java.lang.Object)">applyFieldLevelAnnotations</a></span>&#8203;(java.lang.Object&nbsp;instance)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#attachNestedViews(java.lang.Object)">attachNestedViews</a></span>&#8203;(java.lang.Object&nbsp;controller)</code></th>
 <td class="colLast">
-<div class="block">Applies field-level annotations (e.g.</div>
+<div class="block">Checks for fields annotated by <a href="../../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a> and attaches these views
+ to the nodes.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#applyMethodLevelEventAnnotations(java.lang.Object,com.github.actionfx.core.view.View)">applyMethodLevelEventAnnotations</a></span>&#8203;(java.lang.Object&nbsp;instance,
-                                <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</code></th>
-<td class="colLast">
-<div class="block">Applies method-level annotations (e.g.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>protected <a href="../../view/FxmlView.html" title="class in com.github.actionfx.core.view">FxmlView</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createFxmlViewInstance(java.lang.Object)">createFxmlViewInstance</a></span>&#8203;(java.lang.Object&nbsp;controller)</code></th>
-<td class="colLast">
-<div class="block">Creates an <a href="../../view/FxmlView.html" title="class in com.github.actionfx.core.view"><code>FxmlView</code></a> instance for the given <code>controller</code>.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected <a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createInstance()">createInstance</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Method to implement for</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#injectView(T,com.github.actionfx.core.view.View)">injectView</a></span>&#8203;(<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&nbsp;controller,
-          <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</code></th>
-<td class="colLast">
-<div class="block">Injects the view into the supplied controller.</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>protected java.lang.Class&lt;<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#prepareControllerClass(java.lang.Class)">prepareControllerClass</a></span>&#8203;(java.lang.Class&lt;<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt;&nbsp;controllerClass)</code></th>
-<td class="colLast">
-<div class="block">Prepares the <code>controllerClass</code> to use.</div>
+<div class="block">Creates a new, fresh instance based on the supplied bean definition.</div>
 </td>
 </tr>
 </table>
@@ -269,7 +240,7 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.github.actionfx.core.container.instantiation.<a href="AbstractInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">AbstractInstantiationSupplier</a></h3>
-<code><a href="AbstractInstantiationSupplier.html#createInstanceInJavaFXThread()">createInstanceInJavaFXThread</a>, <a href="AbstractInstantiationSupplier.html#get()">get</a></code></li>
+<code><a href="AbstractInstantiationSupplier.html#get()">get</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
@@ -313,25 +284,6 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="prepareControllerClass(java.lang.Class)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>prepareControllerClass</h4>
-<pre class="methodSignature">protected&nbsp;java.lang.Class&lt;<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt;&nbsp;prepareControllerClass&#8203;(java.lang.Class&lt;<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt;&nbsp;controllerClass)</pre>
-<div class="block">Prepares the <code>controllerClass</code> to use. In case the sub-classing
- enhancement strategy is configured, a dynamic sub-class is created by using
- the configure <a href="../../instrumentation/ActionFXEnhancer.html" title="interface in com.github.actionfx.core.instrumentation"><code>ActionFXEnhancer</code></a>.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>controllerClass</code> - the controller class to prepare</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the prepared controller class, potentially sub-classes depending on
-         the ActionFX configuration</dd>
-</dl>
-</li>
-</ul>
 <a id="createInstance()">
 <!--   -->
 </a>
@@ -339,80 +291,30 @@ extends <a href="AbstractInstantiationSupplier.html" title="class in com.github.
 <li class="blockList">
 <h4>createInstance</h4>
 <pre class="methodSignature">protected&nbsp;<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&nbsp;createInstance()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="AbstractInstantiationSupplier.html#createInstance()">AbstractInstantiationSupplier</a></code></span></div>
-<div class="block">Method to implement for</div>
+<div class="block">Creates a new, fresh instance based on the supplied bean definition. This
+ method ensures that instantiation is performed in the JavaFX thread, as this
+ is required for certain view components (e.g. a WebView).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="AbstractInstantiationSupplier.html#createInstance()">createInstance</a></code>&nbsp;in class&nbsp;<code><a href="AbstractInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">AbstractInstantiationSupplier</a>&lt;<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt;</code></dd>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the bean type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beanDefinition</code> - the bean definition</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>the created bean instance</dd>
 </dl>
 </li>
 </ul>
-<a id="createFxmlViewInstance(java.lang.Object)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createFxmlViewInstance</h4>
-<pre class="methodSignature">protected&nbsp;<a href="../../view/FxmlView.html" title="class in com.github.actionfx.core.view">FxmlView</a>&nbsp;createFxmlViewInstance&#8203;(java.lang.Object&nbsp;controller)</pre>
-<div class="block">Creates an <a href="../../view/FxmlView.html" title="class in com.github.actionfx.core.view"><code>FxmlView</code></a> instance for the given <code>controller</code>.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>controller</code> - the controller for that the view shall be created</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the created view</dd>
-</dl>
-</li>
-</ul>
-<a id="injectView(java.lang.Object,com.github.actionfx.core.view.View)">
-<!--   -->
-</a><a id="injectView(T,com.github.actionfx.core.view.View)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>injectView</h4>
-<pre class="methodSignature">protected&nbsp;void&nbsp;injectView&#8203;(<a href="ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&nbsp;controller,
-                          <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</pre>
-<div class="block">Injects the view into the supplied controller. Please note that the
- controller is expected to be enhanced with a field of name "_view".</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>controller</code> - the controller</dd>
-<dd><code>view</code> - the view</dd>
-</dl>
-</li>
-</ul>
-<a id="applyMethodLevelEventAnnotations(java.lang.Object,com.github.actionfx.core.view.View)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>applyMethodLevelEventAnnotations</h4>
-<pre class="methodSignature">protected&nbsp;void&nbsp;applyMethodLevelEventAnnotations&#8203;(java.lang.Object&nbsp;instance,
-                                                <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</pre>
-<div class="block">Applies method-level annotations (e.g. <a href="../../annotation/AFXOnControlValueChange.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXOnControlValueChange</code></a>.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>instance</code> - the instance that is checked for ActionFX method level
-                 annotations</dd>
-<dd><code>view</code> - the view that belongs to the controller</dd>
-</dl>
-</li>
-</ul>
-<a id="applyFieldLevelAnnotations(java.lang.Object)">
+<a id="attachNestedViews(java.lang.Object)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>applyFieldLevelAnnotations</h4>
-<pre class="methodSignature">protected&nbsp;void&nbsp;applyFieldLevelAnnotations&#8203;(java.lang.Object&nbsp;instance)</pre>
-<div class="block">Applies field-level annotations (e.g. <a href="../../annotation/AFXEnableMultiSelection.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXEnableMultiSelection</code></a>.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>instance</code> - the instance that is checked for ActionFX field level
-                 annotations</dd>
-</dl>
+<h4>attachNestedViews</h4>
+<pre class="methodSignature">protected&nbsp;void&nbsp;attachNestedViews&#8203;(java.lang.Object&nbsp;controller)</pre>
+<div class="block">Checks for fields annotated by <a href="../../annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a> and attaches these views
+ to the nodes.</div>
 </li>
 </ul>
 </li>

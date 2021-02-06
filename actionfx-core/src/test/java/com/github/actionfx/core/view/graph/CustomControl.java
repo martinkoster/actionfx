@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.view.graph;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Control;
@@ -37,6 +39,16 @@ public class CustomControl extends Control {
 
 	private StringProperty customValue;
 
+	private StringProperty valueOne;
+
+	private StringProperty valueTwo;
+
+	private StringProperty valueThree;
+
+	// custom selection model that does not implement
+	// "javafx.scene.control.SelectionModel". The instance is wrapped!
+	private ObjectProperty<CustomSelectionModel> customSelectionModel;
+
 	public final StringProperty customValueProperty() {
 		if (customValue == null) {
 			customValue = new SimpleStringProperty();
@@ -50,6 +62,66 @@ public class CustomControl extends Control {
 
 	public final void setCustomValue(final String value) {
 		customValueProperty().set(value);
+	}
+
+	public final ObjectProperty<CustomSelectionModel> customSelectionModelProperty() {
+		if (customSelectionModel == null) {
+			customSelectionModel = new SimpleObjectProperty<>(new CustomSelectionModel());
+		}
+		return customSelectionModel;
+	}
+
+	public final CustomSelectionModel getCustomSelectionModel() {
+		return customSelectionModelProperty().get();
+	}
+
+	public final void setCustomSelectionModel(final CustomSelectionModel customSelectionModel) {
+		customSelectionModelProperty().set(customSelectionModel);
+	}
+
+	public final StringProperty valueOneProperty() {
+		if (valueOne == null) {
+			valueOne = new SimpleStringProperty("");
+		}
+		return valueOne;
+	}
+
+	public final String getValueOne() {
+		return valueOneProperty().get();
+	}
+
+	public final void setValueOne(final String valueOne) {
+		valueOneProperty().set(valueOne);
+	}
+
+	public final StringProperty valueTwoProperty() {
+		if (valueTwo == null) {
+			valueTwo = new SimpleStringProperty("");
+		}
+		return valueTwo;
+	}
+
+	public final String getValueTwo() {
+		return valueTwoProperty().get();
+	}
+
+	public final void setValueTwo(final String valueTwo) {
+		valueTwoProperty().set(valueTwo);
+	}
+
+	public final StringProperty valueThreeProperty() {
+		if (valueThree == null) {
+			valueThree = new SimpleStringProperty("");
+		}
+		return valueThree;
+	}
+
+	public final String getValueThree() {
+		return valueThreeProperty().get();
+	}
+
+	public final void setValueThree(final String valueThree) {
+		valueThreeProperty().set(valueThree);
 	}
 
 }

@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -31,12 +32,14 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -60,6 +63,71 @@ class ReflectionUtilsTest {
 
 	private static final List<String> ALL_PUBLIC_METHOD_WITH_RETURN_TYPE_NAMES = Arrays
 			.asList("isIninitialized1Invoked", "isIninitialized2Invoked");
+
+	@Test
+	void testInstantiateClass_defaultNoArgConstructor() {
+		// WHEN
+		final ClassWithDefaultConstructor instance = ReflectionUtils
+				.instantiateClass(ClassWithDefaultConstructor.class);
+
+		// THEN
+		assertThat(instance, notNullValue());
+	}
+
+	@Test
+	void testInstantiateClass_defaultNoArgConstructor_emptyArraySupplied() {
+		// WHEN
+		final ClassWithDefaultConstructor instance = ReflectionUtils.instantiateClass(ClassWithDefaultConstructor.class,
+				new Object[0]);
+
+		// THEN
+		assertThat(instance, notNullValue());
+	}
+
+	@Test
+	void testInstantiateClass_defaultNoArgConstructorNotPresent() {
+		// WHEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> ReflectionUtils.instantiateClass(ClassWithConstructorArguments.class));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Can not invoke default no-arg constructor for class"));
+	}
+
+	@Test
+	void testInstantiateClass_constructorWithArguments() {
+		// WHEN
+		final ClassWithConstructorArguments instance = ReflectionUtils
+				.instantiateClass(ClassWithConstructorArguments.class, "Hello World", Integer.valueOf(42));
+
+		// THEN
+		assertThat(instance, notNullValue());
+		assertThat(instance.getString(), equalTo("Hello World"));
+		assertThat(instance.getInteger(), equalTo(Integer.valueOf(42)));
+	}
+
+	@Test
+	void testInstantiateClass_constructorWithArgumentsNotPresent() {
+		// WHEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> ReflectionUtils.instantiateClass(ClassWithConstructorArguments.class, Integer.valueOf(42),
+						"Wrong order of arguments"));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Can not invoke constructor for class"));
+
+	}
+
+	@Test
+	void testGetAllSuperClassesAndInterfaces() {
+		// WHEN
+		final Set<Class<?>> result = ReflectionUtils
+				.getAllSuperClassesAndInterfaces(ClassWithSuperClassAndInterface.class);
+
+		// THEN
+		assertThat(result, containsInAnyOrder(ClassWithSuperClassAndInterface.class, SuperClassWithInterface.class,
+				Interface1.class, Interface2.class, Interface3.class, Object.class));
+	}
 
 	@Test
 	void getNestedFieldValue_pathIsNotNested() {
@@ -472,6 +540,7 @@ class ReflectionUtilsTest {
 
 		private final StringValueType fieldWithGetter;
 
+		@SuppressWarnings("unused")
 		private final StringValueType fieldWithoutGetter;
 
 		public NestedElement(final StringValueType fieldWithGetter, final StringValueType fieldWithoutGetter) {
@@ -495,6 +564,7 @@ class ReflectionUtilsTest {
 
 		private final StringPropertyType fieldWithGetter;
 
+		@SuppressWarnings("unused")
 		private final StringPropertyType fieldWithoutGetter;
 
 		public NestedElementWithProperties(final StringPropertyType fieldWithGetter,
@@ -548,6 +618,91 @@ class ReflectionUtilsTest {
 		public Property<String> valueProperty() {
 			return value;
 		}
+	}
+
+	/**
+	 * Class that has the default no-arg constructor.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ClassWithDefaultConstructor {
+	}
+
+	/**
+	 * Class that has a constructor that requires arguments.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ClassWithConstructorArguments {
+
+		private final String string;
+
+		private final Integer integer;
+
+		public ClassWithConstructorArguments(final String string, final Integer integer) {
+			this.string = string;
+			this.integer = integer;
+		}
+
+		public String getString() {
+			return string;
+		}
+
+		public Integer getInteger() {
+			return integer;
+		}
+	}
+
+	/**
+	 * Simple interface.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static interface Interface1 {
+
+	}
+
+	/**
+	 * Simple interface extending another interface.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static interface Interface2 extends Interface3 {
+
+	}
+
+	/**
+	 * Simple interface.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static interface Interface3 {
+
+	}
+
+	/**
+	 * Class that extends a super class and also implements an interface.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ClassWithSuperClassAndInterface extends SuperClassWithInterface implements Interface1 {
+
+	}
+
+	/**
+	 * A class acting as a super class that also implements an interface.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class SuperClassWithInterface implements Interface2 {
+
 	}
 
 }

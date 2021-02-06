@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9};
+var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -170,7 +170,23 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static &lt;T extends java.lang.annotation.Annotation&gt;<br>java.util.Map&lt;T,&#8203;java.lang.reflect.Field&gt;</code></td>
+<td class="colFirst"><code>static &lt;A extends java.lang.annotation.Annotation&gt;<br>java.util.List&lt;A&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findAllAnnotations(java.lang.Class,java.lang.Class)">findAllAnnotations</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+                  java.lang.Class&lt;A&gt;&nbsp;annotationType)</code></th>
+<td class="colLast">
+<div class="block">Finds all annotations on the given <code>clazz</code>.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>static &lt;A extends java.lang.annotation.Annotation&gt;<br>java.util.List&lt;A&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findAllAnnotations(java.lang.reflect.AnnotatedElement,java.lang.Class)">findAllAnnotations</a></span>&#8203;(java.lang.reflect.AnnotatedElement&nbsp;element,
+                  java.lang.Class&lt;A&gt;&nbsp;annotationType)</code></th>
+<td class="colLast">
+<div class="block">Finds all annotations on the given <code>element</code>.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.annotation.Annotation&gt;<br>java.util.Map&lt;java.lang.reflect.Field,&#8203;java.util.List&lt;T&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findAnnotatedFields(java.lang.Class,java.lang.Class,boolean)">findAnnotatedFields</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
                    java.lang.Class&lt;T&gt;&nbsp;annotationClazz,
                    boolean&nbsp;checkSuperClasses)</code></th>
@@ -179,18 +195,19 @@ extends java.lang.Object</pre>
  <tt>clazz</tt> and returns a map.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>static &lt;T extends java.lang.annotation.Annotation&gt;<br>java.util.Map&lt;T,&#8203;java.lang.reflect.Field&gt;</code></td>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.annotation.Annotation&gt;<br>java.util.Map&lt;java.lang.reflect.Field,&#8203;java.util.List&lt;T&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findAnnotatedFields(java.lang.Class,java.lang.Class,boolean,java.util.Comparator)">findAnnotatedFields</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
                    java.lang.Class&lt;T&gt;&nbsp;annotationClazz,
                    boolean&nbsp;checkSuperClasses,
-                   java.util.Comparator&lt;T&gt;&nbsp;comparator)</code></th>
+                   java.util.Comparator&lt;java.lang.reflect.Field&gt;&nbsp;comparator)</code></th>
 <td class="colLast">
 <div class="block">Extracts all fields annotated by <tt>annotationClazz</tt> in class
- <tt>clazz</tt> and returns a map.</div>
+ <tt>clazz</tt> and returns a map, where the key is the field itself and the
+ value is the list of annotations (which may be repeatable).</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static &lt;A extends java.lang.annotation.Annotation&gt;<br>A</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findAnnotation(java.lang.Class,java.lang.Class)">findAnnotation</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
               java.lang.Class&lt;A&gt;&nbsp;annotationType)</code></th>
@@ -198,7 +215,7 @@ extends java.lang.Object</pre>
 <div class="block">Finds an annotation on the given <code>clazz</code>.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static &lt;A extends java.lang.annotation.Annotation&gt;<br>A</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findAnnotation(java.lang.reflect.AnnotatedElement,java.lang.Class)">findAnnotation</a></span>&#8203;(java.lang.reflect.AnnotatedElement&nbsp;element,
               java.lang.Class&lt;A&gt;&nbsp;annotationType)</code></th>
@@ -206,7 +223,7 @@ extends java.lang.Object</pre>
 <div class="block">Finds an annotation on the given <code>element</code>.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static &lt;A extends java.lang.annotation.Annotation&gt;<br>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#invokeMethodWithAnnotation(java.lang.Class,java.lang.Object,java.lang.Class)">invokeMethodWithAnnotation</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
                           java.lang.Object&nbsp;instance,
@@ -258,6 +275,31 @@ extends java.lang.Object</pre>
 <dd><code>clazz</code> - the class to check</dd>
 <dd><code>annotationType</code> - the annotation class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>the annotation, or <code>null</code>, if the annotation is not present on
+         the given class.</dd>
+</dl>
+</li>
+</ul>
+<a id="findAllAnnotations(java.lang.Class,java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findAllAnnotations</h4>
+<pre class="methodSignature">public static&nbsp;&lt;A extends java.lang.annotation.Annotation&gt;&nbsp;java.util.List&lt;A&gt;&nbsp;findAllAnnotations&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+                                                                                               java.lang.Class&lt;A&gt;&nbsp;annotationType)</pre>
+<div class="block">Finds all annotations on the given <code>clazz</code>. In case the annotation is
+ not present on <code>clazz</code>, the super classes of <code>clazz</code> are also
+ checked. This method supports repeatable annotations.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>A</code> - the annotation type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - the class to check</dd>
+<dd><code>annotationType</code> - the annotation class</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>all found annotations, or an empty list, if the annotation is not
+         present on any of the classes of the class hierarchy.</dd>
 </dl>
 </li>
 </ul>
@@ -279,6 +321,29 @@ extends java.lang.Object</pre>
 <dd><code>annotationType</code> - the annotation class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the annotation instance</dd>
+</dl>
+</li>
+</ul>
+<a id="findAllAnnotations(java.lang.reflect.AnnotatedElement,java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findAllAnnotations</h4>
+<pre class="methodSignature">public static&nbsp;&lt;A extends java.lang.annotation.Annotation&gt;&nbsp;java.util.List&lt;A&gt;&nbsp;findAllAnnotations&#8203;(java.lang.reflect.AnnotatedElement&nbsp;element,
+                                                                                               java.lang.Class&lt;A&gt;&nbsp;annotationType)</pre>
+<div class="block">Finds all annotations on the given <code>element</code>. This method is intended
+ for repeatable annotations.In case the annotation is not present on
+ <code>field</code>, <code>null</code> is returned.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>A</code> - the annotation type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>element</code> - the annotated element (class, method, field) to check</dd>
+<dd><code>annotationType</code> - the annotation class</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the list of annotations, or an empty list, in case the
+         <code>element</code> does not carry the expected annotation</dd>
 </dl>
 </li>
 </ul>
@@ -311,12 +376,13 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>findAnnotatedFields</h4>
-<pre class="methodSignature">public static&nbsp;&lt;T extends java.lang.annotation.Annotation&gt;&nbsp;java.util.Map&lt;T,&#8203;java.lang.reflect.Field&gt;&nbsp;findAnnotatedFields&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
-                                                                                                                             java.lang.Class&lt;T&gt;&nbsp;annotationClazz,
-                                                                                                                             boolean&nbsp;checkSuperClasses,
-                                                                                                                             java.util.Comparator&lt;T&gt;&nbsp;comparator)</pre>
+<pre class="methodSignature">public static&nbsp;&lt;T extends java.lang.annotation.Annotation&gt;&nbsp;java.util.Map&lt;java.lang.reflect.Field,&#8203;java.util.List&lt;T&gt;&gt;&nbsp;findAnnotatedFields&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+                                                                                                                                             java.lang.Class&lt;T&gt;&nbsp;annotationClazz,
+                                                                                                                                             boolean&nbsp;checkSuperClasses,
+                                                                                                                                             java.util.Comparator&lt;java.lang.reflect.Field&gt;&nbsp;comparator)</pre>
 <div class="block">Extracts all fields annotated by <tt>annotationClazz</tt> in class
- <tt>clazz</tt> and returns a map.</div>
+ <tt>clazz</tt> and returns a map, where the key is the field itself and the
+ value is the list of annotations (which may be repeatable).</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>clazz</code> - the class to be checked for annotated fields</dd>
@@ -326,8 +392,8 @@ extends java.lang.Object</pre>
 <dd><code>comparator</code> - an optional <tt>Comparator</tt> instance for sorting
                           the resulting map</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a map, where the key is the instance of the the annotation and the
-         value the <tt>Field</tt></dd>
+<dd>a map, where the key is the field instance and the value is the list
+         of retrieved annotations (annotations can be repeatable)</dd>
 </dl>
 </li>
 </ul>
@@ -337,11 +403,12 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>findAnnotatedFields</h4>
-<pre class="methodSignature">public static&nbsp;&lt;T extends java.lang.annotation.Annotation&gt;&nbsp;java.util.Map&lt;T,&#8203;java.lang.reflect.Field&gt;&nbsp;findAnnotatedFields&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
-                                                                                                                             java.lang.Class&lt;T&gt;&nbsp;annotationClazz,
-                                                                                                                             boolean&nbsp;checkSuperClasses)</pre>
+<pre class="methodSignature">public static&nbsp;&lt;T extends java.lang.annotation.Annotation&gt;&nbsp;java.util.Map&lt;java.lang.reflect.Field,&#8203;java.util.List&lt;T&gt;&gt;&nbsp;findAnnotatedFields&#8203;(java.lang.Class&lt;?&gt;&nbsp;clazz,
+                                                                                                                                             java.lang.Class&lt;T&gt;&nbsp;annotationClazz,
+                                                                                                                                             boolean&nbsp;checkSuperClasses)</pre>
 <div class="block">Extracts all fields annotated by <tt>annotationClazz</tt> in class
- <tt>clazz</tt> and returns a map.</div>
+ <tt>clazz</tt> and returns a map. Because annotations may be repeatable, the
+ value of the returned map is a list.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>clazz</code> - the class to be checked for annotated fields</dd>
@@ -349,8 +416,8 @@ extends java.lang.Object</pre>
 <dd><code>checkSuperClasses</code> - flag, that determines, whether super classes shall
                           be scanned or not</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a map, where the key is the instance of the the annotation and the
-         value the <tt>Field</tt></dd>
+<dd>a map, where the key is the field and the value is the list of the
+         (repeatable) annotations.</dd>
 </dl>
 </li>
 </ul>

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.testing.junit5;
 
@@ -86,7 +86,7 @@ import javafx.stage.Stage;
  * nodes instantiated outside of the test method itself. This will fail, if the
  * toolkit is not yet initialized.
  *
- * 
+ *
  * @author MartinKoster
  */
 public abstract class AbstractHeadlessMonocleExtension extends FxRobot implements BeforeAllCallback, AfterEachCallback,
@@ -97,36 +97,37 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 	private ApplicationFixture applicationFixture;
 
 	@Override
-	public Object createTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext extensionContext) {
+	public Object createTestInstance(final TestInstanceFactoryContext factoryContext,
+			final ExtensionContext extensionContext) {
 		// initialize toolkit here! we need the JavaFX toolkit in case the construction
 		// of the instance instantiates Nodes!
 		try {
 			FxToolkit.registerPrimaryStage();
-		} catch (TimeoutException e) {
+		} catch (final TimeoutException e) {
 			throw new TestInstantiationException("Can not initialize JavaFX toolkit!", e);
 		}
 		try {
-			Optional<Object> outerInstance = factoryContext.getOuterInstance();
-			Class<?> testClass = factoryContext.getTestClass();
+			final Optional<Object> outerInstance = factoryContext.getOuterInstance();
+			final Class<?> testClass = factoryContext.getTestClass();
 			if (outerInstance.isPresent()) {
 				return newInstance(testClass, outerInstance.get());
 			} else {
 				return newInstance(testClass);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new TestInstantiationException(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-		List<Method> init = new ArrayList<>();
-		List<Method> start = new ArrayList<>();
-		List<Method> stop = new ArrayList<>();
-		Class<?> testClass = testInstance.getClass();
-		Method[] methods = testClass.getDeclaredMethods();
-		for (Method method : methods) {
-			method.setAccessible(true);
+	public void postProcessTestInstance(final Object testInstance, final ExtensionContext context) throws Exception {
+		final List<Method> init = new ArrayList<>();
+		final List<Method> start = new ArrayList<>();
+		final List<Method> stop = new ArrayList<>();
+		final Class<?> testClass = testInstance.getClass();
+		final Method[] methods = testClass.getDeclaredMethods();
+		for (final Method method : methods) {
+			method.setAccessible(true); // NOSONAR
 			if (method.isAnnotationPresent(Init.class)) {
 				init.add(validateInitMethod(method));
 			}
@@ -137,8 +138,8 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 				stop.add(validateStopMethod(method));
 			}
 		}
-		Field[] fields = testClass.getDeclaredFields();
-		for (Field field : fields) {
+		final Field[] fields = testClass.getDeclaredFields();
+		for (final Field field : fields) {
 			if (field.getType().isAssignableFrom(FxRobot.class)) {
 				setField(testInstance, field, this);
 			}
@@ -160,7 +161,7 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		// launch JavaFX application
 		try {
 			FxToolkit.setupApplication(() -> new ApplicationAdapter(applicationFixture));
-		} catch (TimeoutException e) {
+		} catch (final TimeoutException e) {
 			throw new IllegalStateException("Unable to start JavaFX application!", e);
 		}
 	}
@@ -172,7 +173,7 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		try {
 			// shutdown JavaFX application and thread
 			FxToolkit.cleanupApplication(new ApplicationAdapter(applicationFixture));
-		} catch (TimeoutException e) {
+		} catch (final TimeoutException e) {
 			throw new IllegalStateException("Unable to stop JavaFX application!", e);
 		}
 	}
@@ -182,9 +183,8 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		System.setProperty("glass.platform", "Monocle");
 		System.setProperty("monocle.platform", "Headless");
 		System.setProperty("prism.order", "sw");
-		System.setProperty("prism.useFontConfig", "true");
-		System.setProperty("prism.text", "native");
-		System.setProperty("prism.lcdtext", "false");
+		System.setProperty("prism.text", "t2k");
+		System.setProperty("headless.geometry", "1600x1200-32");
 	}
 
 	@Override
@@ -203,35 +203,35 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 	}
 
 	@Override
-	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+	public boolean supportsParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) {
 		return parameterContext.getParameter().getType().isAssignableFrom(FxRobot.class);
 	}
 
 	@Override
-	public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+	public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) {
 		return this;
 	}
 
 	@Override
-	public void afterEach(ExtensionContext context) throws Exception {
+	public void afterEach(final ExtensionContext context) throws Exception {
 		// Cleaning the remaining UI events (e.g. a mouse press that is still waiting
 		// for a mouse release)
 		// Not cleaning these events may have side-effects on the next UI tests
-		release(new KeyCode[0]);
-		release(new MouseButton[0]);
+		release(new KeyCode[0]); // NOSONAR
+		release(new MouseButton[0]); // NOSONAR
 		// Required to wait for the end of the UI events processing
 		WaitForAsyncUtils.waitForFxEvents();
 	}
 
-	private Method validateInitMethod(Method initMethod) {
+	private Method validateInitMethod(final Method initMethod) {
 		if (initMethod.getParameterCount() != 0) {
 			throw new IllegalStateException("Method annotated with @Init should have no arguments");
 		}
 		return initMethod;
 	}
 
-	private Method validateStartMethod(Method startMethod) {
-		Class<?>[] parameterTypes = startMethod.getParameterTypes();
+	private Method validateStartMethod(final Method startMethod) {
+		final Class<?>[] parameterTypes = startMethod.getParameterTypes();
 		if (parameterTypes.length != 1 || !parameterTypes[0].isAssignableFrom(javafx.stage.Stage.class)) {
 			throw new IllegalStateException(
 					"Method annotated with @Start should have one argument of type " + "javafx.stage.Stage");
@@ -239,18 +239,18 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		return startMethod;
 	}
 
-	private Method validateStopMethod(Method stopMethod) {
+	private Method validateStopMethod(final Method stopMethod) {
 		if (stopMethod.getParameterCount() != 0) {
 			throw new IllegalStateException("Method annotated with @Stop should have no arguments");
 		}
 		return stopMethod;
 	}
 
-	private void setField(Object instance, Field field, Object val) throws IllegalAccessException {
-		boolean wasAccessible = field.canAccess(instance);
+	private void setField(final Object instance, final Field field, final Object val) throws IllegalAccessException {
+		final boolean wasAccessible = field.canAccess(instance);
 		try {
-			field.setAccessible(true);
-			field.set(instance, val);
+			field.setAccessible(true); // NOSONAR
+			field.set(instance, val); // NOSONAR
 		} finally {
 			field.setAccessible(wasAccessible);
 		}
@@ -263,8 +263,8 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		private final List<Method> start;
 		private final List<Method> stop;
 
-		private AnnotationBasedApplicationFixture(Object testInstance, List<Method> init, List<Method> start,
-				List<Method> stop) {
+		private AnnotationBasedApplicationFixture(final Object testInstance, final List<Method> init,
+				final List<Method> start, final List<Method> stop) {
 			this.testInstance = testInstance;
 			this.init = init;
 			this.start = start;
@@ -273,21 +273,21 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 
 		@Override
 		public void init() throws InvocationTargetException, IllegalAccessException {
-			for (Method method : init) {
+			for (final Method method : init) {
 				method.invoke(testInstance);
 			}
 		}
 
 		@Override
-		public void start(Stage stage) throws InvocationTargetException, IllegalAccessException {
-			for (Method method : start) {
+		public void start(final Stage stage) throws InvocationTargetException, IllegalAccessException {
+			for (final Method method : start) {
 				method.invoke(testInstance, stage);
 			}
 		}
 
 		@Override
 		public void stop() throws InvocationTargetException, IllegalAccessException {
-			for (Method method : stop) {
+			for (final Method method : stop) {
 				method.invoke(testInstance);
 			}
 		}
@@ -300,8 +300,7 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 	 *
 	 * @param invocation the intercepted test method invocation
 	 */
-	private void proceedInFxThread(final Invocation<Void> invocation)
-			throws InterruptedException, ExecutionException, Throwable {
+	private void proceedInFxThread(final Invocation<Void> invocation) throws Throwable {
 		final AtomicReference<Throwable> throwable = new AtomicReference<>();
 
 		// explicit run and wait since the test should only continue

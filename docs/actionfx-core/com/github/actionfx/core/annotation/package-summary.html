@@ -168,17 +168,23 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView</a></th>
 <td class="colLast">
-<div class="block">Annotation to define a nested view.</div>
+<div class="block">Repeatable annotation to define a nested view.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="AFXNestedView.AFXNestedViews.html" title="annotation in com.github.actionfx.core.annotation">AFXNestedView.AFXNestedViews</a></th>
+<td class="colLast">
+<div class="block">Annotation to make <a href="AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a> repeatable.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="AFXOnAction.html" title="annotation in com.github.actionfx.core.annotation">AFXOnAction</a></th>
 <td class="colLast">
 <div class="block">Annotated methods are invoked when the control specified with fires
  <code>ActionEvent</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="AFXOnControlValueChange.html" title="annotation in com.github.actionfx.core.annotation">AFXOnControlValueChange</a></th>
 <td class="colLast">
 <div class="block">Annotated methods are invoked when the user changes a value in the referenced
@@ -195,7 +201,21 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  </div>
 </td>
 </tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="AFXOnValueChanged.html" title="annotation in com.github.actionfx.core.annotation">AFXOnValueChanged</a></th>
+<td class="colLast">
+<div class="block">Annotated methods are invoked when the value of the specified
+ {@link #controlId()) is changed.</div>
+</td>
+</tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="AFXOnValueSelected.html" title="annotation in com.github.actionfx.core.annotation">AFXOnValueSelected</a></th>
+<td class="colLast">
+<div class="block">Annotated methods are invoked when one value or potentially multiple values
+ are selected in a control identified by <a href="AFXOnValueSelected.html#controlId()"><code>AFXOnValueSelected.controlId()</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="AFXShowView.html" title="annotation in com.github.actionfx.core.annotation">AFXShowView</a></th>
 <td class="colLast">
 <div class="block">Annotation to be applied at method level that allows to define which view to
