@@ -727,11 +727,6 @@ class ControlsFXControlWrapperTest {
 		assertThat(wrapper.getValues(), contains(expectedValues));
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <V> void assertValues(final List<V> actualValues, final V... expectedValues) {
-		assertThat(actualValues, contains(expectedValues));
-	}
-
 	private static <V> void assertValuesAreEmpty(final ControlWrapper wrapper) {
 		assertThat(wrapper.getValues(), hasSize(0));
 	}

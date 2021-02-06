@@ -32,7 +32,6 @@ build:
 unittest:
   stage: test
   script:
-    - apt-get install libfreetype6 fontconfig
     - ./gradlew check
   artifacts:
     paths:

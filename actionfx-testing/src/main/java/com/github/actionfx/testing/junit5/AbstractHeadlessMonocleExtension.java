@@ -183,9 +183,8 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		System.setProperty("glass.platform", "Monocle");
 		System.setProperty("monocle.platform", "Headless");
 		System.setProperty("prism.order", "sw");
-		System.setProperty("prism.useFontConfig", "true");
-		System.setProperty("prism.text", "native");
-		System.setProperty("prism.lcdtext", "false");
+		System.setProperty("prism.text", "t2k");
+		System.setProperty("headless.geometry", "1600x1200-32");
 	}
 
 	@Override
@@ -218,8 +217,8 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		// Cleaning the remaining UI events (e.g. a mouse press that is still waiting
 		// for a mouse release)
 		// Not cleaning these events may have side-effects on the next UI tests
-		release(new KeyCode[0]);
-		release(new MouseButton[0]);
+		release(new KeyCode[0]); // NOSONAR
+		release(new MouseButton[0]); // NOSONAR
 		// Required to wait for the end of the UI events processing
 		WaitForAsyncUtils.waitForFxEvents();
 	}
@@ -301,8 +300,7 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 	 *
 	 * @param invocation the intercepted test method invocation
 	 */
-	private void proceedInFxThread(final Invocation<Void> invocation)
-			throws InterruptedException, ExecutionException, Throwable {
+	private void proceedInFxThread(final Invocation<Void> invocation) throws Throwable {
 		final AtomicReference<Throwable> throwable = new AtomicReference<>();
 
 		// explicit run and wait since the test should only continue
