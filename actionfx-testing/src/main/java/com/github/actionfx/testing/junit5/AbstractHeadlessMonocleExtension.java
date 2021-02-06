@@ -184,7 +184,7 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 		System.setProperty("monocle.platform", "Headless");
 		System.setProperty("prism.order", "sw");
 		System.setProperty("prism.useFontConfig", "true");
-		System.setProperty("prism.text", "t2k");
+		System.setProperty("prism.text", "native");
 		System.setProperty("prism.lcdtext", "false");
 	}
 
