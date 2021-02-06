@@ -1,4 +1,4 @@
-image: adoptopenjdk/openjdk11:jdk-11.0.10_9-debian
+image: adoptopenjdk/openjdk11:jdk-11.0.10_9-ubuntu
     
 stages:
   - build
@@ -32,6 +32,7 @@ build:
 unittest:
   stage: test
   script:
+    - apt-get install libfreetype6 fontconfig fonts-dejavu
     - ./gradlew check
   artifacts:
     paths:
