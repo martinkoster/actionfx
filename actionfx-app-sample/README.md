@@ -20,7 +20,7 @@ As a further demo case, the sample application leverages ControlsFX' `org.contro
 
 ### Starting the application with ActionFX' default bean container
 
-For using ActionFX' default bean container, we derive your JavaFX class from [AbstractAFXApplication](../actionfx-core/src/main/java/com/github/actionfx/core/app/AbstractAFXApplication.java).
+For using ActionFX' default bean container, we derive our JavaFX class from [AbstractAFXApplication](../actionfx-core/src/main/java/com/github/actionfx/core/app/AbstractAFXApplication.java).
 
 With the annotation [@AFXApplication](../actionfx-core/src/main/java/com/github/actionfx/core/annotation/AFXApplication.java), we define the root package name for scanning for controllers and the main view to display after application startup.
 
@@ -85,7 +85,7 @@ The following sections describe all controller and view for the demo book applic
 
 The main controller glues together the different views that are relevant for the book store application: the book catalogue and the shopping cart.
 
-By using the `@AFXNestedView` annotation, we attach the the views into the annotated field of type `javafx.scene.layout.BorderPane`.
+By using the `@AFXNestedView` annotation, we attach the views into the annotated field of type `javafx.scene.layout.BorderPane`.
 
 ```java
 @AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true, icon = "/images/book.png", title = "The Book Store")
