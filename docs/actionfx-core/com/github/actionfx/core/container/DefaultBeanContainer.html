@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -90,7 +90,7 @@ loadScripts(document, 'script');</script>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -154,6 +154,23 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a id="fields.inherited.from.class.com.github.actionfx.core.container.BeanContainerFacade">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.github.actionfx.core.container.<a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></h3>
+<code><a href="BeanContainerFacade.html#ACTIONFX_BEANNAME">ACTIONFX_BEANNAME</a>, <a href="BeanContainerFacade.html#LOCALE_BEANNAME">LOCALE_BEANNAME</a>, <a href="BeanContainerFacade.html#LOCALE_PROPERTY_BEANNAME">LOCALE_PROPERTY_BEANNAME</a></code></li>
+</ul>
+</li>
+</ul>
+</section>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <section role="region">
 <ul class="blockList">
@@ -237,27 +254,36 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#instatiateNonLazyBeans()">instatiateNonLazyBeans</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#instantiateNonLazyBeans()">instantiateNonLazyBeans</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Instantiate all non-lazy beans.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#populateContainer(java.lang.String)">populateContainer</a></span>&#8203;(java.lang.String&nbsp;rootPackage)</code></th>
-<td class="colLast">
-<div class="block">Populates the container with view components by scanning the given
- <code>rootPackage</code> and its subpackages for annotated classes relevant for
- ActionFX.</div>
-</td>
-</tr>
-<tr id="i8" class="altColor">
 <td class="colFirst"><code>protected &lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resolveBean(java.lang.String,java.lang.Class)">resolveBean</a></span>&#8203;(java.lang.String&nbsp;id,
            java.lang.Class&lt;?&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Tries to resolve the ID and / or type to a bean by using the internal
  <code>DefaultBeanContainer.BeanResolutionFunction</code>.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.util.ResourceBundle</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resolveResourceBundle(java.lang.Class,java.util.Locale)">resolveResourceBundle</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;controllerClass,
+                     java.util.Locale&nbsp;locale)</code></th>
+<td class="colLast">
+<div class="block">Retrieves the resource bundle holding internationalized texts for the given
+ <code>controllerClass</code> and supplied <code>Locale</code>.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#runComponentScan(java.lang.String)">runComponentScan</a></span>&#8203;(java.lang.String&nbsp;rootPackage)</code></th>
+<td class="colLast">
+<div class="block">Populates the container with view components by scanning the given
+ <code>rootPackage</code> and its subpackages for annotated classes relevant for
+ ActionFX.</div>
 </td>
 </tr>
 </table>
@@ -310,20 +336,20 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="populateContainer(java.lang.String)">
+<a id="runComponentScan(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>populateContainer</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;populateContainer&#8203;(java.lang.String&nbsp;rootPackage)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BeanContainerFacade.html#populateContainer(java.lang.String)">BeanContainerFacade</a></code></span></div>
+<h4>runComponentScan</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;runComponentScan&#8203;(java.lang.String&nbsp;rootPackage)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BeanContainerFacade.html#runComponentScan(java.lang.String)">BeanContainerFacade</a></code></span></div>
 <div class="block">Populates the container with view components by scanning the given
  <code>rootPackage</code> and its subpackages for annotated classes relevant for
  ActionFX.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="BeanContainerFacade.html#populateContainer(java.lang.String)">populateContainer</a></code>&nbsp;in interface&nbsp;<code><a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></dd>
+<dd><code><a href="BeanContainerFacade.html#runComponentScan(java.lang.String)">runComponentScan</a></code>&nbsp;in interface&nbsp;<code><a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>rootPackage</code> - the root package that acts as source for view components</dd>
 </dl>
@@ -413,6 +439,29 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 </dl>
 </li>
 </ul>
+<a id="resolveResourceBundle(java.lang.Class,java.util.Locale)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>resolveResourceBundle</h4>
+<pre class="methodSignature">public&nbsp;java.util.ResourceBundle&nbsp;resolveResourceBundle&#8203;(java.lang.Class&lt;?&gt;&nbsp;controllerClass,
+                                                      java.util.Locale&nbsp;locale)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BeanContainerFacade.html#resolveResourceBundle(java.lang.Class,java.util.Locale)">BeanContainerFacade</a></code></span></div>
+<div class="block">Retrieves the resource bundle holding internationalized texts for the given
+ <code>controllerClass</code> and supplied <code>Locale</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="BeanContainerFacade.html#resolveResourceBundle(java.lang.Class,java.util.Locale)">resolveResourceBundle</a></code>&nbsp;in interface&nbsp;<code><a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>controllerClass</code> - the controller class for that the resource bundle
+                        shall be retrieved</dd>
+<dd><code>locale</code> - the locale</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the resolved resource bundle</dd>
+</dl>
+</li>
+</ul>
 <a id="getBeanByDefinition(com.github.actionfx.core.container.DefaultBeanContainer.BeanDefinition)">
 <!--   -->
 </a>
@@ -477,13 +526,13 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 </dl>
 </li>
 </ul>
-<a id="instatiateNonLazyBeans()">
+<a id="instantiateNonLazyBeans()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>instatiateNonLazyBeans</h4>
-<pre class="methodSignature">protected&nbsp;void&nbsp;instatiateNonLazyBeans()</pre>
+<h4>instantiateNonLazyBeans</h4>
+<pre class="methodSignature">protected&nbsp;void&nbsp;instantiateNonLazyBeans()</pre>
 <div class="block">Instantiate all non-lazy beans.</div>
 </li>
 </ul>
@@ -540,7 +589,7 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

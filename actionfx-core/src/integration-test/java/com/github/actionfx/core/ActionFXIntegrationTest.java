@@ -26,9 +26,13 @@ package com.github.actionfx.core;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +40,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.test.nestedviewapp.ControllerWithNestedviewOnField;
 import com.github.actionfx.core.test.nestedviewapp.NestedViewApp;
+import com.github.actionfx.core.test.nestedviewapp.NestedViewController;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
@@ -102,7 +107,7 @@ class ActionFXIntegrationTest {
 
 		// WHEN
 		final ControllerWithNestedviewOnField controller = actionFX
-				.getController(ControllerWithNestedviewOnField.class);
+				.getBean(ControllerWithNestedviewOnField.class);
 
 		// THEN (2 AFXNestedView annotations are evaluated)
 		assertThat(controller.mainBorderPane, notNullValue());
@@ -129,6 +134,65 @@ class ActionFXIntegrationTest {
 		assertThat(stage.getScene().getRoot(), notNullValue());
 		assertThat(stage.getScene().getRoot(), instanceOf(BorderPane.class));
 		assertThat(actionFX.getPrimaryStage(), sameInstance(stage));
+	}
+
+	@Test
+	void testGetControllerResourceBundle_byControllerId() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final ResourceBundle bundle = actionFX.getControllerResourceBundle("nestedViewController");
+
+		// THEN
+		assertThat(bundle, notNullValue());
+		assertThat(bundle.getString("label.text"), equalTo("Hello Default World"));
+	}
+
+	@Test
+	void testGetControllerResourceBundle_byControllerId_butControllerIdDoesNotExist() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final ResourceBundle bundle = actionFX.getControllerResourceBundle("fantasyController");
+
+		// THEN
+		assertThat(bundle, nullValue());
+	}
+
+	@Test
+	void testGetControllerResourceBundle_byControllerClass() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final ResourceBundle bundle = actionFX.getControllerResourceBundle(NestedViewController.class);
+
+		// THEN
+		assertThat(bundle, notNullValue());
+		assertThat(bundle.getString("label.text"), equalTo("Hello Default World"));
+	}
+
+	@Test
+	void testCheckActionFXBeanInjection() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final NestedViewController controller = actionFX.getBean(NestedViewController.class);
+
+		// THEN
+		assertThat(controller, notNullValue());
+		assertThat(controller.getLocale(), notNullValue());
+		assertThat(controller.getLocale(), equalTo(Locale.US));
+		assertThat(controller.getObservableLocale(), notNullValue());
+		assertThat(controller.getObservableLocale().getValue(), equalTo(Locale.US));
+		assertThat(controller.getActionFX(), sameInstance(ActionFX.getInstance()));
 	}
 
 }

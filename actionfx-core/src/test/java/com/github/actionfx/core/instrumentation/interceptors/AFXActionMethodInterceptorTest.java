@@ -74,9 +74,9 @@ class AFXActionMethodInterceptorTest {
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewTwoInNewStage");
 		final AFXShowView afxAction = findAnnotation(method);
-		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
+		final ControllerOne controllerOne = ActionFX.getInstance().getBean(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
-		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
+		final ControllerTwo controllerTwo = ActionFX.getInstance().getBean(ControllerTwo.class);
 		final View viewOfControllerTwo = ControllerWrapper.of(controllerTwo).getView();
 		// display view in a stage
 		final Stage primaryStage = new Stage();
@@ -98,9 +98,9 @@ class AFXActionMethodInterceptorTest {
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewTwoInSameWindow");
 		final AFXShowView afxAction = findAnnotation(method);
-		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
+		final ControllerOne controllerOne = ActionFX.getInstance().getBean(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
-		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
+		final ControllerTwo controllerTwo = ActionFX.getInstance().getBean(ControllerTwo.class);
 		final View viewOfControllerTwo = ControllerWrapper.of(controllerTwo).getView();
 		// display view in a stage
 		final Stage primaryStage = new Stage();
@@ -121,9 +121,9 @@ class AFXActionMethodInterceptorTest {
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewTwoInSameWindow");
 		final AFXShowView afxAction = findAnnotation(method);
-		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
+		final ControllerOne controllerOne = ActionFX.getInstance().getBean(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
-		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
+		final ControllerTwo controllerTwo = ActionFX.getInstance().getBean(ControllerTwo.class);
 		final View viewOfControllerTwo = ControllerWrapper.of(controllerTwo).getView();
 		// display view in a Popup
 		final Popup popup = new Popup();
@@ -145,9 +145,9 @@ class AFXActionMethodInterceptorTest {
 		final Callable<?> callable = Mockito.mock(Callable.class);
 		final Method method = findMethod(ControllerOne.class, "showViewAsNested");
 		final AFXShowView afxAction = findAnnotation(method);
-		final ControllerOne controllerOne = ActionFX.getInstance().getController(ControllerOne.class);
+		final ControllerOne controllerOne = ActionFX.getInstance().getBean(ControllerOne.class);
 		final View viewOfControllerOne = ControllerWrapper.of(controllerOne).getView();
-		final ControllerTwo controllerTwo = ActionFX.getInstance().getController(ControllerTwo.class);
+		final ControllerTwo controllerTwo = ActionFX.getInstance().getBean(ControllerTwo.class);
 		final View viewOfControllerTwo = ControllerWrapper.of(controllerTwo).getView();
 		// display view in a stage
 		final Stage primaryStage = new Stage();

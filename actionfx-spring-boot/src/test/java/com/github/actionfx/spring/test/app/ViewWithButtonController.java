@@ -21,26 +21,39 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
-
-import javax.annotation.PostConstruct;
+package com.github.actionfx.spring.test.app;
 
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXOnAction;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
+import javafx.scene.control.Button;
 
-@AFXController(viewId = "productCatalogListView", fxml = "/fxml/ProductCatalogListView.fxml")
-public class ProductCatalogController {
+/**
+ * Test controller.
+ *
+ * @author koster
+ *
+ */
+@AFXController(fxml = "/testfxml/ViewWithButton.fxml", viewId = "viewWithButton")
+public class ViewWithButtonController extends AbstractController {
+
+	private boolean actionFired = false;
 
 	@FXML
-	private ListView<String> productListView;
+	private Button actionFXButton;
 
-	@PostConstruct
-	public void initializeView() {
-		productListView.getItems().add("Product 1");
-		productListView.getItems().add("Product 2");
-		productListView.getItems().add("Product 3");
+	@AFXOnAction(controlId = "actionFXButton")
+	public void actionMethod() {
+		actionFired = true;
+	}
+
+	public boolean isActionFired() {
+		return actionFired;
+	}
+
+	public Button getActionFXButton() {
+		return actionFXButton;
 	}
 
 }

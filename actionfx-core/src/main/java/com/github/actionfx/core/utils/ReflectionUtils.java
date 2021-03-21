@@ -262,7 +262,7 @@ public class ReflectionUtils {
 	 */
 	public static Object getFieldValueByGetter(final Field field, final Object instance) {
 		final Method method = findMethod(instance.getClass(), getterMethodName(field));
-		return invokeMethod(method, instance, Object.class);
+		return invokeMethod(method, instance);
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class ReflectionUtils {
 	 */
 	public static Object getFieldValueByPropertyGetter(final Field field, final Object instance) {
 		final Method method = findMethod(instance.getClass(), propertyGetterMethodName(field));
-		return invokeMethod(method, instance, Object.class);
+		return invokeMethod(method, instance);
 	}
 
 	/**
@@ -294,6 +294,19 @@ public class ReflectionUtils {
 	private static String getterMethodName(final Field field) {
 		final String fieldName = field.getName();
 		return (field.getType().equals(boolean.class) ? "is" : "get") + fieldName.substring(0, 1).toUpperCase()
+				+ (fieldName.length() > 1 ? fieldName.substring(1, fieldName.length()) : "");
+	}
+
+	/**
+	 * Constructs the {@code setter}-method name for the supplied {@link field}
+	 *
+	 * @param field the field for that the {@code setter}-method name shall be
+	 *              constructed
+	 * @return the {@code setter}-method name
+	 */
+	private static String setterMethodName(final Field field) {
+		final String fieldName = field.getName();
+		return "set" + fieldName.substring(0, 1).toUpperCase()
 				+ (fieldName.length() > 1 ? fieldName.substring(1, fieldName.length()) : "");
 	}
 
@@ -333,6 +346,18 @@ public class ReflectionUtils {
 				field.setAccessible(wasAccessible);
 			}
 		});
+	}
+
+	/**
+	 * Sets the {@code field} value by calling the proper "setter" method.
+	 *
+	 * @param field    the field whose value shall be set through the "setter"
+	 * @param instance the instance holding the field value
+	 * @param value    the value to set
+	 */
+	public static void setFieldValueBySetter(final Field field, final Object instance, final Object value) {
+		final Method method = findMethod(instance.getClass(), setterMethodName(field));
+		invokeMethod(method, instance, value);
 	}
 
 	/**
@@ -448,13 +473,16 @@ public class ReflectionUtils {
 	 *         methods.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T invokeMethod(final Method method, final Object instance, final Class<T> returnType,
-			final Object... arguments) {
+	public static <T> T invokeMethod(final Method method, final Object instance, final Object... arguments) {
 		return (T) AccessController.doPrivileged((PrivilegedAction<?>) () -> {
 			final boolean wasAccessible = method.canAccess(instance);
 			try {
 				method.setAccessible(true); // NOSONAR
-				return method.invoke(instance, arguments);
+				if (arguments.length == 0) {
+					return method.invoke(instance);
+				} else {
+					return method.invoke(instance, arguments);
+				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				throw new IllegalStateException("Problem invoking method '" + method.getName() + "'!", ex);
 			} finally {
@@ -629,7 +657,7 @@ public class ReflectionUtils {
 		final Method method = findMethod(clazz, getterMethodName(field));
 		if (method != null) {
 			// if getter-method is available, we take the value through the getter
-			return invokeMethod(method, instance, Object.class);
+			return invokeMethod(method, instance);
 		} else {
 			return getFieldValue(field, instance);
 		}
@@ -663,7 +691,7 @@ public class ReflectionUtils {
 		final Method method = findMethod(clazz, propertyGetterMethodName(field));
 		if (method != null) {
 			// if getter-method is available, we take the value through the getter
-			return invokeMethod(method, instance, ObservableValue.class);
+			return invokeMethod(method, instance);
 		} else {
 			return (Property<T>) getFieldValue(field, instance);
 		}

@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.spring.container;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -32,7 +34,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
@@ -57,7 +61,7 @@ import com.github.actionfx.core.view.View;
  */
 public class SpringBeanContainer implements BeanContainerFacade {
 
-	private static Logger LOG = LoggerFactory.getLogger(SpringBeanContainer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SpringBeanContainer.class);
 
 	private final BeanDefinitionRegistry beanDefinitionRegistry;
 
@@ -78,9 +82,9 @@ public class SpringBeanContainer implements BeanContainerFacade {
 	}
 
 	@Override
-	public void populateContainer(final String rootPackage) {
+	public void runComponentScan(final String rootPackage) {
 
-		// scan for FxController annotations...
+		// scan for AFXController annotations...
 		final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(
 				false);
 		scanner.addIncludeFilter(new AnnotationTypeFilter(AFXController.class));
@@ -158,9 +162,36 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		return (T) applicationContext.getBean(id);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getBean(final Class<T> beanClass) {
 		return applicationContext.getBean(beanClass);
+	}
+
+	/**
+	 * Resolves to a {@link ResourceBundle} for the given {@code controllerClass}.
+	 * <p>
+	 * The logic is as follows: In case the controller class does not hold a
+	 * resource base name under {@link AFXController#resourcesBasename()}, it is
+	 * expected that Spring's central {@link MessageSource} holds all
+	 * internationalized texts. In that case we wrap the {@link MessageSource} in a
+	 * {@link MessageSourceResourceBundle}, so that it can be accessed by JavaFX.
+	 * <p>
+	 * In case a base name is provided under
+	 * {@link AFXController#resourcesBasename()}, then the regular
+	 * {@link ResourceBundle} is returned as it would be in a non-Spring setup.
+	 *
+	 */
+	@Override
+	public ResourceBundle resolveResourceBundle(final Class<?> controllerClass, final Locale locale) {
+		final MessageSource messageSource = applicationContext.getBean(MessageSource.class);
+		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
+		// in case there is no resourceBasename on the controller, we return Spring
+		// message source as we expect that
+		// it holds the messages
+		if (afxController == null || "".equals(afxController.resourcesBasename())) {
+			return new MessageSourceResourceBundle(messageSource, locale);
+		}
+		final String baseName = afxController.resourcesBasename();
+		return ResourceBundle.getBundle(baseName, locale);
 	}
 }

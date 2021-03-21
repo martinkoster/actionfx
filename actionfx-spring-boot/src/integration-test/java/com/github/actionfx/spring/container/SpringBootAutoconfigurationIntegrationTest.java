@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.spring.container;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -43,7 +44,11 @@ import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
+import com.github.actionfx.spring.test.app.ViewWithButtonController;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 
 /**
  * JUnit integration test case for Spring Boot autoconfiguration and especially
@@ -82,16 +87,12 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 
 		// THEN (make sure that also the applicationContextInitializer has been setup
 		// properly)
-		final MainController controller = actionFX.getController("mainController");
+		final MainController controller = actionFX.getBean("mainController");
 		final PrototypeScopedController prototypeScopedController = actionFX
-				.getController(PrototypeScopedController.class);
+				.getBean(PrototypeScopedController.class);
 
 		assertThat(controller, notNullValue());
 
-		// final View view = actionFX.getView("mainView");
-		// assertThat(controller.getMainView(), notNullValue());
-		// assertThat(controller.getMainView(), sameInstance(view)); // view is a
-		// singleton!
 		assertThat(controller.getPrototypeScopedController(), notNullValue());
 		// controller is prototyped! so instances must be different!
 		assertThat(controller.getPrototypeScopedController(), not(sameInstance(prototypeScopedController)));
@@ -99,6 +100,19 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		// check, that @Autowired-annotated field in abstract base class is resolved
 		assertThat(controller.getActionFX(), notNullValue());
 		assertThat(controller.getActionFX(), sameInstance(actionFX)); // type is still a singleton!
+	}
+
+	@Test
+	void testControllerBeanPostProcessor() {
+		// GIVEN
+		final ViewWithButtonController controller = applicationContext.getBean(ViewWithButtonController.class);
+
+		// WHEN (actionMethod is wired to ActionFX button by
+		// ControllerBeanPostProcessor)
+		Event.fireEvent(controller.getActionFXButton(), new ActionEvent());
+
+		// THEN
+		assertThat(controller.isActionFired(), equalTo(true));
 	}
 
 	@Override

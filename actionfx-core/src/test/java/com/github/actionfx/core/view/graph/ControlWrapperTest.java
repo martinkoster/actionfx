@@ -52,6 +52,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
@@ -1296,6 +1297,33 @@ class ControlWrapperTest {
 
 		// THEN
 		assertThat(onActionProperty, notNullValue());
+	}
+
+	@Test
+	void testSetValues_useAFilteredList() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.tableView(false);
+		final FilteredList<String> filteredList = new FilteredList<>(wrapper.getValues());
+
+		// WHEN
+		wrapper.setValues(filteredList);
+
+		// THEN
+		assertThat(wrapper.getValues(), sameInstance(filteredList));
+	}
+
+	@Test
+	void testSetValues_valuesAreNotSupported() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+		final FilteredList<String> filteredList = new FilteredList<>(wrapper.getValues());
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> wrapper.setValues(filteredList));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("has no 'values' property that can be set!"));
 	}
 
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {

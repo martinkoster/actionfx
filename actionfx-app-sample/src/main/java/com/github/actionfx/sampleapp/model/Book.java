@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,29 +21,50 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
+package com.github.actionfx.sampleapp.model;
 
-import javax.inject.Inject;
+/**
+ * Sample domain class.
+ *
+ * @author koster
+ *
+ */
+public class Book {
 
-import com.github.actionfx.core.annotation.AFXController;
+	private String title;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+	private String category;
 
-@AFXController(viewId = "productDetailsView", fxml = "/fxml/ProductDetailsView.fxml")
-public class ProductDetailsController {
+	private String price;
 
-	@Inject
-	private ShoppingCartController shoppingCartController;
-
-	@FXML
-	private Button addToShoppingCartButton;
-
-	@FXML
-	private Label productLabel;
-
-	public void addToShoppingCart() {
-		shoppingCartController.addToShoppingCart("Test");
+	public Book(final String title, final String category, final String price) {
+		this.title = title;
+		this.category = category;
+		this.price = price;
 	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(final String title) {
+		this.title = title;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(final String category) {
+		this.category = category;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(final String price) {
+		this.price = price;
+	}
+
 }

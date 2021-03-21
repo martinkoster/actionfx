@@ -148,4 +148,18 @@ public @interface AFXController {
 	 * @return a list of CSS classpath locations. Default is an empty array.
 	 */
 	public String[] stylesheets() default {};
+
+	/**
+	 * Defines the location of {@link java.util.ResourceBundle} files in case the
+	 * loaded view for the annotated controller relies on the presence of the
+	 * resource bundles for internationalization. Important to note for resource
+	 * properties is that you need to use the dot-notation to specify the location.
+	 * So for example the properties file reside in classpath location
+	 * <tt>/i18n/SomeResource_en_UK.properties</tt>, the appropriate
+	 * {@code #resourcesBasename()} would be <tt>i18n.SomeResource</tt>.
+	 *
+	 * @return the resource bundle base name using the dot-notation (package-based,
+	 *         not folder-based)
+	 */
+	public String resourcesBasename() default "";
 }

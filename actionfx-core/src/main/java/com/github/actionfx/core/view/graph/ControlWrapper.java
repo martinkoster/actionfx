@@ -610,6 +610,24 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
+	 * Sets the given {@code valueList} as "values" to the underlying control.
+	 * Please note that the underlying control must allow setting an observable list
+	 * under the "values" attribute.
+	 *
+	 * @param <V>       the value type
+	 * @param valueList the value list to set
+	 */
+	public <V> void setValues(final ObservableList<V> valueList) {
+		if (controlConfig.hasValuesObservableList()) {
+			controlConfig.setValuesObservableList(getWrapped(), valueList);
+			valuesObservableList = valueList;
+		} else {
+			throw new IllegalStateException("Control of type '" + getWrappedType().getCanonicalName()
+					+ "' has no 'values' property that can be set!");
+		}
+	}
+
+	/**
 	 * Returns the "on action" property of a control. In case this property is not
 	 * supported, {@code null} is returned.
 	 *
@@ -756,6 +774,11 @@ public class ControlWrapper extends NodeWrapper {
 			} else {
 				return ReflectionUtils.getNestedFieldValue(valuesObservableList, control, ObservableList.class);
 			}
+		}
+
+		public <V> void setValuesObservableList(final Control control, final ObservableList<V> values) {
+			final Field field = ReflectionUtils.findField(control.getClass(), valuesObservableList);
+			ReflectionUtils.setFieldValueBySetter(field, control, values);
 		}
 
 		public boolean hasSelectionModelProperty() {

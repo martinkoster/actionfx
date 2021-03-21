@@ -121,6 +121,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Central handler for working with ActionFX.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#ACTIONFX_BEANNAME">ACTIONFX_BEANNAME</a></span> - Static variable in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
+<dd>
+<div class="block">The bean name of ActionFX itself.</div>
+</dd>
 <dt><a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core"><span class="typeNameLink">ActionFX.ActionFXBuilder</span></a> - Class in <a href="com/github/actionfx/core/package-summary.html">com.github.actionfx.core</a></dt>
 <dd>
 <div class="block">Builder for setting up the singleton instance of <a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a>.</div>
@@ -364,7 +368,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Overriding methods must be able to attach the supplied <code>node</code> to the
  node wrapper.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html#attachNestedViews(java.lang.Object)">attachNestedViews(Object)</a></span> - Method in class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html#attachNestedViews(java.lang.Object)">attachNestedViews(Object)</a></span> - Method in class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor</a></dt>
 <dd>
 <div class="block">Checks for fields annotated by <a href="com/github/actionfx/core/annotation/AFXNestedView.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView</code></a> and attaches these views
  to the nodes.</div>
@@ -509,7 +513,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="com/github/actionfx/core/view/graph/package-summary.html">com.github.actionfx.core.view.graph</a> - package com.github.actionfx.core.view.graph</dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html#compare(java.lang.reflect.Method,java.lang.reflect.Method)">compare(Method, Method)</a></span> - Method in class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html#compare(java.lang.reflect.Method,java.lang.reflect.Method)">compare(Method, Method)</a></span> - Method in class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html#configurationClass(java.lang.Class)">configurationClass(Class&lt;?&gt;)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></dt>
 <dd>
@@ -554,17 +558,27 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">ID of the control whose selection shall be observed for changes.</div>
 </dd>
+<dt><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html" title="class in com.github.actionfx.core.container.instantiation"><span class="typeNameLink">ControllerInstancePostProcessor</span></a> - Class in <a href="com/github/actionfx/core/container/instantiation/package-summary.html">com.github.actionfx.core.container.instantiation</a></dt>
+<dd>
+<div class="block">Post-processor for controller instances that is invoked after view creation
+ and dependency injection, but before potential
+ <code>@PostConstruct</code>-annotated methods.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html#%3Cinit%3E()">ControllerInstancePostProcessor()</a></span> - Constructor for class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation"><span class="typeNameLink">ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator</span></a>&lt;<a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html" title="type parameter in ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator">A</a> extends java.lang.annotation.Annotation&gt; - Class in <a href="com/github/actionfx/core/container/instantiation/package-summary.html">com.github.actionfx.core.container.instantiation</a></dt>
+<dd>
+<div class="block">Comparator implementation that orders methods according to the "order"
+ attribute among same controls.</div>
+</dd>
 <dt><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation"><span class="typeNameLink">ControllerInstantiationSupplier</span></a>&lt;<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="type parameter in ControllerInstantiationSupplier">T</a>&gt; - Class in <a href="com/github/actionfx/core/container/instantiation/package-summary.html">com.github.actionfx.core.container.instantiation</a></dt>
 <dd>
 <div class="block">Instantiation supplier for controller instances.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html#%3Cinit%3E(java.lang.Class)">ControllerInstantiationSupplier(Class&lt;T&gt;)</a></span> - Constructor for class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation"><span class="typeNameLink">ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator</span></a>&lt;<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="type parameter in ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator">A</a> extends java.lang.annotation.Annotation&gt; - Class in <a href="com/github/actionfx/core/container/instantiation/package-summary.html">com.github.actionfx.core.container.instantiation</a></dt>
-<dd>
-<div class="block">Comparator implementation that orders methods according to the "order"
- attribute among same controls.</div>
-</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html#%3Cinit%3E(java.lang.Class,java.util.ResourceBundle)">ControllerInstantiationSupplier(Class&lt;T&gt;, ResourceBundle)</a></span> - Constructor for class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">ControllerMethodInvocationAdapter</span></a> - Class in <a href="com/github/actionfx/core/utils/package-summary.html">com.github.actionfx.core.utils</a></dt>
 <dd>
 <div class="block">Adapter for invoking controller methods with variable method arguments.</div>
@@ -714,8 +728,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#equals(java.lang.Object)">equals(Object)</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#equals(java.lang.Object)">equals(Object)</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/actionfx/core/utils/ExceptionUtils.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">ExceptionUtils</span></a> - Class in <a href="com/github/actionfx/core/utils/package-summary.html">com.github.actionfx.core.utils</a></dt>
 <dd>
 <div class="block">Utils for working with exceptions in ActionFX.</div>
@@ -837,6 +849,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/FxmlView.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.Object)">FxmlView(String, String, Object)</a></span> - Constructor for class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/FxmlView.html" title="class in com.github.actionfx.core.view">FxmlView</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/FxmlView.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.Object,java.util.ResourceBundle)">FxmlView(String, String, Object, ResourceBundle)</a></span> - Constructor for class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/FxmlView.html" title="class in com.github.actionfx.core.view">FxmlView</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a id="I:G">
 <!--   -->
@@ -852,6 +866,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Extracts all super classes and all interfaces that the given <code>clazz</code> is
  implementing.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getBean(java.lang.Class)">getBean(Class&lt;T&gt;)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
+<dd>
+<div class="block">Gets the controller defined by the supplied <code>controllerClass</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#getBean(java.lang.Class)">getBean(Class&lt;T&gt;)</a></span> - Method in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
 <dd>
 <div class="block">Gets a bean from the underlying bean container by the bean type described by
@@ -859,6 +877,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html#getBean(java.lang.Class)">getBean(Class&lt;T&gt;)</a></span> - Method in class com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getBean(java.lang.String)">getBean(String)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
+<dd>
+<div class="block">Gets the controller by the supplied <code>controllerId</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#getBean(java.lang.String)">getBean(String)</a></span> - Method in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
 <dd>
 <div class="block">Gets a bean from the underlying bean container by ID.</div>
@@ -883,13 +905,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Gets the controller instance that handles actions from this view.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getController(java.lang.Class)">getController(Class&lt;T&gt;)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getControllerResourceBundle(java.lang.Class)">getControllerResourceBundle(Class&lt;?&gt;)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
 <dd>
-<div class="block">Gets the controller defined by the supplied <code>controllerClass</code>.</div>
+<div class="block">Gets the <code>ResourceBundle</code> that is used internationalization of the view
+ associated with the given <code>controllerClass</code>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getController(java.lang.String)">getController(String)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getControllerResourceBundle(java.lang.String)">getControllerResourceBundle(String)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
 <dd>
-<div class="block">Gets the controller by the supplied <code>controllerId</code>.</div>
+<div class="block">Gets the <code>ResourceBundle</code> that is used internationalization of the view
+ associated with the controller identified by <code>controllerId</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ReflectionUtils.html#getDeclaredFields(java.lang.Class)">getDeclaredFields(Class&lt;?&gt;)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ReflectionUtils.html" title="class in com.github.actionfx.core.utils">ReflectionUtils</a></dt>
 <dd>
@@ -925,8 +949,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#getHint()">getHint()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#getHint()">getHint()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/AbstractView.html#getIcon()">getIcon()</a></span> - Method in class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/AbstractView.html#getId()">getId()</a></span> - Method in class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></dt>
@@ -945,8 +967,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html#getInstance()">getInstance()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#getInstance()">getInstance()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getMainView()">getMainView()</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
 <dd>
 <div class="block">Returns the main view of the application.</div>
@@ -957,8 +977,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  <code>Stage</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html#getMethod()">getMethod()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#getMethod()">getMethod()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ReflectionUtils.html#getNestedFieldProperty(java.lang.String,java.lang.Object)">getNestedFieldProperty(String, Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ReflectionUtils.html" title="class in com.github.actionfx.core.utils">ReflectionUtils</a></dt>
 <dd>
@@ -982,6 +1000,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.SingleValueChange.html#getNewValue()">getNewValue()</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.SingleValueChange.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList.SingleValueChange</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getObservableLocale()">getObservableLocale()</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
+<dd>
+<div class="block">Gets the locale as an <code>ObservableValue</code> If not set by
+ <a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html#observableLocale"><code>ActionFX.ActionFXBuilder.observableLocale</code></a>, the default implementation will
+ return the <code>Locale.getDefault()</code> locale.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.SingleValueChange.html#getObservableValue()">getObservableValue()</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.SingleValueChange.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList.SingleValueChange</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html#getObservableValues()">getObservableValues()</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a></dt>
@@ -1064,8 +1088,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#getType()">getType()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#getType()">getType()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.html#getUncaughtExceptionHandler()">getUncaughtExceptionHandler()</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></dt>
+<dd>
+<div class="block">Gets the <code>Thread.UncaughtExceptionHandler</code>, if set.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/graph/ControlWrapper.html#getUserValue()">getUserValue()</a></span> - Method in class com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a></dt>
 <dd>
 <div class="block">Gets the user value from the wrapped <code>Control</code>.</div>
@@ -1076,8 +1102,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  <code>ObservableValue</code> or of <code>ObservableList</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#getValue()">getValue()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#getValue()">getValue()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/graph/ControlWrapper.html#getValue()">getValue()</a></span> - Method in class com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a></dt>
 <dd>
@@ -1147,8 +1171,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#hashCode()">hashCode()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#hashCode()">hashCode()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/AbstractView.html#height">height</a></span> - Variable in class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/annotation/AFXController.html#height()">height()</a></span> - Method in annotation type com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXController.html" title="annotation in com.github.actionfx.core.annotation">AFXController</a></dt>
@@ -1213,7 +1235,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Instantiates the given <code>clazz</code> by using the constructor that is suited
  for the supplied <code>constructorArguments</code>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html#instatiateNonLazyBeans()">instatiateNonLazyBeans()</a></span> - Method in class com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html#instantiateNonLazyBeans()">instantiateNonLazyBeans()</a></span> - Method in class com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></dt>
 <dd>
 <div class="block">Instantiate all non-lazy beans.</div>
 </dd>
@@ -1222,10 +1244,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/instrumentation/interceptors/AFXActionMethodInterceptor.html#interceptAFXAction(com.github.actionfx.core.annotation.AFXShowView,java.util.concurrent.Callable,java.lang.Object,java.lang.reflect.Method,java.lang.Object...)">interceptAFXAction(AFXShowView, Callable&lt;?&gt;, Object, Method, Object...)</a></span> - Static method in class com.github.actionfx.core.instrumentation.interceptors.<a href="com/github/actionfx/core/instrumentation/interceptors/AFXActionMethodInterceptor.html" title="class in com.github.actionfx.core.instrumentation.interceptors">AFXActionMethodInterceptor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html#invoke()">invoke()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter</a></dt>
-<dd>
-<div class="block">Invokes the method.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#invoke()">invoke()</a></span> - Method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
 <dd>
 <div class="block">Invokes the method.</div>
 </dd>
@@ -1350,6 +1368,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Loads an FXML file from the given <code>fxmlPath</code>, setting
  <code>controller</code> as its backing controller.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/AFXUtils.html#loadFxml(java.lang.String,java.lang.Object,java.util.ResourceBundle)">loadFxml(String, Object, ResourceBundle)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/AFXUtils.html" title="class in com.github.actionfx.core.utils">AFXUtils</a></dt>
+<dd>
+<div class="block">Loads an FXML file from the given <code>fxmlPath</code>, setting
+ <code>controller</code> as its backing controller.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/AFXUtils.html#loadImage(java.lang.String)">loadImage(String)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/AFXUtils.html" title="class in com.github.actionfx.core.utils">AFXUtils</a></dt>
 <dd>
 <div class="block">Loads an image from the supplied <code>classpathLocation</code>.</div>
@@ -1358,6 +1381,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">An optional expression that must resolve to a field of type
  <code>BooleanProperty</code>, if specified.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html#locale(java.util.Locale)">locale(Locale)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></dt>
+<dd>
+<div class="block">Configures an <code>Locale</code> for internationalization.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#LOCALE_BEANNAME">LOCALE_BEANNAME</a></span> - Static variable in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
+<dd>
+<div class="block">The bean name of the application <code>Locale</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#LOCALE_PROPERTY_BEANNAME">LOCALE_PROPERTY_BEANNAME</a></span> - Static variable in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
+<dd>
+<div class="block">The bean name of an <code>ObservableValue</code> holding the application locale.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/graph/NodeWrapper.html#lookup(java.lang.String)">lookup(String)</a></span> - Method in class com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></dt>
 <dd>
@@ -1402,24 +1437,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/ViewBuilder.html#maximized(boolean)">maximized(boolean)</a></span> - Method in class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/ViewBuilder.html" title="class in com.github.actionfx.core.view">ViewBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">MethodInvocationAdapter</span></a> - Class in <a href="com/github/actionfx/core/utils/package-summary.html">com.github.actionfx.core.utils</a></dt>
-<dd>
-<div class="block">Adapter for invoking methods with variable method arguments.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#%3Cinit%3E(java.lang.Object,java.lang.reflect.Method,com.github.actionfx.core.utils.MethodInvocationAdapter.ParameterValue...)">MethodInvocationAdapter(Object, Method, MethodInvocationAdapter.ParameterValue...)</a></span> - Constructor for class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
-<dd>
-<div class="block">Constructor that accepts a method together with the holding <code>instance</code>
- and candidates for method arguments of type <a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils"><code>MethodInvocationAdapter.ParameterValue</code></a>.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#%3Cinit%3E(java.lang.Object,java.lang.reflect.Method,java.lang.Object...)">MethodInvocationAdapter(Object, Method, Object...)</a></span> - Constructor for class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
-<dd>
-<div class="block">Constructor that accepts a method together with the holding <code>instance</code>
- and candidates for method arguments.</div>
-</dd>
-<dt><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils"><span class="typeNameLink">MethodInvocationAdapter.ParameterValue</span></a> - Class in <a href="com/github/actionfx/core/utils/package-summary.html">com.github.actionfx.core.utils</a></dt>
-<dd>
-<div class="block">A representation of a method parameter, together with a <code>ParameterHint</code></div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/annotation/AFXController.html#modal()">modal()</a></span> - Method in annotation type com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXController.html" title="annotation in com.github.actionfx.core.annotation">AFXController</a></dt>
 <dd>
 <div class="block">Specifies whether this view is a modal dialog or a regular window.</div>
@@ -1524,13 +1541,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/selection/ObservableListSelectionModel.html#%3Cinit%3E(javafx.collections.ObservableList,javafx.collections.ObservableList)">ObservableListSelectionModel(ObservableList&lt;T&gt;, ObservableList&lt;T&gt;)</a></span> - Constructor for class com.github.actionfx.core.selection.<a href="com/github/actionfx/core/selection/ObservableListSelectionModel.html" title="class in com.github.actionfx.core.selection">ObservableListSelectionModel</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html#observableLocale(javafx.beans.value.ObservableValue)">observableLocale(ObservableValue&lt;Locale&gt;)</a></span> - Method in class com.github.actionfx.core.<a href="com/github/actionfx/core/ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></dt>
+<dd>
+<div class="block">Configures an <code>ObservableValue</code> that holds a proper
+ <code>java.util.Locale</code> for internationalization.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#of(com.github.actionfx.core.annotation.ArgumentHint,java.lang.Object)">of(ArgumentHint, Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#of(com.github.actionfx.core.annotation.ArgumentHint,java.lang.Object)">of(ArgumentHint, Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#of(java.lang.Object)">of(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#of(java.lang.Object)">of(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/graph/NodeWrapper.html#of(java.lang.Object)">of(Object)</a></span> - Static method in class com.github.actionfx.core.view.graph.<a href="com/github/actionfx/core/view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></dt>
 <dd>
@@ -1550,11 +1568,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#ofNewValue(java.lang.Object)">ofNewValue(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#ofNewValue(java.lang.Object)">ofNewValue(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#ofOldValue(java.lang.Object)">ofOldValue(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#ofOldValue(java.lang.Object)">ofOldValue(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#ofRemovedValues(java.lang.Object)">ofRemovedValues(Object)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
@@ -1577,7 +1591,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  the annotated method, in case more than one method listens to changes of the
  same specific control.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html#%3Cinit%3E(java.lang.Class,java.util.function.Function,java.util.function.Function)">OrderBasedAnnotatedMethodComparator(Class&lt;A&gt;, Function&lt;A, String&gt;, Function&lt;A, Integer&gt;)</a></span> - Constructor for class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html#%3Cinit%3E(java.lang.Class,java.util.function.Function,java.util.function.Function)">OrderBasedAnnotatedMethodComparator(Class&lt;A&gt;, Function&lt;A, String&gt;, Function&lt;A, Integer&gt;)</a></span> - Constructor for class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a id="I:P">
@@ -1587,30 +1601,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dl>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html#parallelStream()">parallelStream()</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#PARAMETER_NAME_FRAGMENT_NEW">PARAMETER_NAME_FRAGMENT_NEW</a></span> - Static variable in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
-<dd>
-<div class="block">String fragment of a method argument that represents the "new" value.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html#PARAMETER_NAME_FRAGMENT_OLD">PARAMETER_NAME_FRAGMENT_OLD</a></span> - Static variable in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter</a></dt>
-<dd>
-<div class="block">String fragment of a method argument that represents the "old" value.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#%3Cinit%3E(com.github.actionfx.core.annotation.ArgumentHint,java.lang.Object)">ParameterValue(ArgumentHint, Object)</a></span> - Constructor for class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#%3Cinit%3E(com.github.actionfx.core.annotation.ArgumentHint,java.lang.Object)">ParameterValue(ArgumentHint, Object)</a></span> - Constructor for class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html#%3Cinit%3E(java.lang.Object)">ParameterValue(Object)</a></span> - Constructor for class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/ControllerMethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">ControllerMethodInvocationAdapter.ParameterValue</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html#%3Cinit%3E(java.lang.Object)">ParameterValue(Object)</a></span> - Constructor for class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/MethodInvocationAdapter.ParameterValue.html" title="class in com.github.actionfx.core.utils">MethodInvocationAdapter.ParameterValue</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#populateContainer(java.lang.String)">populateContainer(String)</a></span> - Method in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html#postProcess(java.lang.Object)">postProcess(Object)</a></span> - Method in class com.github.actionfx.core.container.instantiation.<a href="com/github/actionfx/core/container/instantiation/ControllerInstancePostProcessor.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor</a></dt>
 <dd>
-<div class="block">Populates the container with view components by scanning the given
- <code>rootPackage</code> and its subpackages for annotated classes relevant for
- ActionFX.</div>
+<div class="block">Performs a post-processing on the supplied <code>controller</code>, including
+ parsing of applied ActionFX annotations like <a href="com/github/actionfx/core/annotation/AFXNestedView.AFXNestedViews.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXNestedView.AFXNestedViews</code></a>,
+ <a href="com/github/actionfx/core/annotation/AFXLoadControlData.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXLoadControlData</code></a>, <a href="com/github/actionfx/core/annotation/AFXOnAction.html" title="annotation in com.github.actionfx.core.annotation"><code>AFXOnAction</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html#populateContainer(java.lang.String)">populateContainer(String)</a></span> - Method in class com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/AbstractView.html#posX">posX</a></span> - Variable in class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/annotation/AFXController.html#posX()">posX()</a></span> - Method in annotation type com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXController.html" title="annotation in com.github.actionfx.core.annotation">AFXController</a></dt>
@@ -1713,6 +1713,19 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Find the best fitting constructor for the supplied constructor arguments.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#resolveResourceBundle(java.lang.Class,java.util.Locale)">resolveResourceBundle(Class&lt;?&gt;, Locale)</a></span> - Method in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
+<dd>
+<div class="block">Retrieves the resource bundle holding internationalized texts for the given
+ <code>controllerClass</code> and supplied <code>Locale</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html#resolveResourceBundle(java.lang.Class,java.util.Locale)">resolveResourceBundle(Class&lt;?&gt;, Locale)</a></span> - Method in class com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/annotation/AFXController.html#resourcesBasename()">resourcesBasename()</a></span> - Method in annotation type com.github.actionfx.core.annotation.<a href="com/github/actionfx/core/annotation/AFXController.html" title="annotation in com.github.actionfx.core.annotation">AFXController</a></dt>
+<dd>
+<div class="block">Defines the location of <code>ResourceBundle</code> files in case the
+ loaded view for the annotated controller relies on the presence of the
+ resource bundles for internationalization.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html#retainAll(E...)">retainAll(E...)</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html#retainAll(java.util.Collection)">retainAll(Collection&lt;?&gt;)</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a></dt>
@@ -1720,6 +1733,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/BorderPanePosition.html#RIGHT">RIGHT</a></span> - com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/BorderPanePosition.html" title="enum in com.github.actionfx.core.view">BorderPanePosition</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/view/AbstractView.html#rootNode">rootNode</a></span> - Variable in class com.github.actionfx.core.view.<a href="com/github/actionfx/core/view/AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/BeanContainerFacade.html#runComponentScan(java.lang.String)">runComponentScan(String)</a></span> - Method in interface com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></dt>
+<dd>
+<div class="block">Populates the container with view components by scanning the given
+ <code>rootPackage</code> and its subpackages for annotated classes relevant for
+ ActionFX.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/container/DefaultBeanContainer.html#runComponentScan(java.lang.String)">runComponentScan(String)</a></span> - Method in class com.github.actionfx.core.container.<a href="com/github/actionfx/core/container/DefaultBeanContainer.html" title="class in com.github.actionfx.core.container">DefaultBeanContainer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/utils/AFXUtils.html#runInFxThread(java.lang.Runnable)">runInFxThread(Runnable)</a></span> - Static method in class com.github.actionfx.core.utils.<a href="com/github/actionfx/core/utils/AFXUtils.html" title="class in com.github.actionfx.core.utils">AFXUtils</a></dt>
 <dd>
@@ -1925,8 +1946,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </a>
 <h2 class="title">T</h2>
 <dl>
-<dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html#throwUnsupportedOperationException()">throwUnsupportedOperationException()</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/github/actionfx/core/listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener"><span class="typeNameLink">TimedChangeListener</span></a>&lt;<a href="com/github/actionfx/core/listener/TimedChangeListener.html" title="type parameter in TimedChangeListener">T</a>&gt; - Class in <a href="com/github/actionfx/core/listener/package-summary.html">com.github.actionfx.core.listener</a></dt>
 <dd>
 <div class="block">Implementation of the <code>ChangeListener</code> interface that schedules a
@@ -2027,6 +2046,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">ActionFX is not yet initialized.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html#unsupportedOperationException()">unsupportedOperationException()</a></span> - Method in class com.github.actionfx.core.collections.<a href="com/github/actionfx/core/collections/ValueChangeAwareObservableList.html" title="class in com.github.actionfx.core.collections">ValueChangeAwareObservableList</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/github/actionfx/core/selection/ObservableListSelectionModel.html#updateSelectedIndices()">updateSelectedIndices()</a></span> - Method in class com.github.actionfx.core.selection.<a href="com/github/actionfx/core/selection/ObservableListSelectionModel.html" title="class in com.github.actionfx.core.selection">ObservableListSelectionModel</a></dt>
 <dd>
 <div class="block">Updates the observable list of selected indices, after a change of the

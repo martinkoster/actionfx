@@ -144,7 +144,7 @@ public class AnnotationUtils {
 		final Method[] declaredMethods = clazz.getDeclaredMethods();
 		for (final Method method : declaredMethods) {
 			if (method.isAnnotationPresent(annotationClass)) {
-				ReflectionUtils.invokeMethod(method, instance, Void.class);
+				ReflectionUtils.invokeMethod(method, instance);
 			}
 		}
 		final Class<?> superclass = clazz.getSuperclass();

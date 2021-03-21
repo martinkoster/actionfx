@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import org.controlsfx.control.CheckListView?>
+
+
+<BorderPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <BorderPane>
+         <center>
+            <AnchorPane>
+               <children>
+                  <TableView fx:id="bookTableView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="titleColumn" editable="false" prefWidth="250.0" text="Title" />
+                      <TableColumn fx:id="categoryColumn" prefWidth="100.0" text="Category" />
+                        <TableColumn fx:id="priceColumn" prefWidth="50.0" text="Price" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+         </center>
+         <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                  <Label text="Filter: " />
+                  <TextField fx:id="filterTextField" />
+                  <Separator orientation="VERTICAL" />
+                <Button fx:id="addToShoppingCartButton" mnemonicParsing="false" text="Add to Shopping Cart" />
+              </items>
+            </ToolBar>
+         </top>
+      </BorderPane>
+   </center>
+   <left>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <TitledPane text="Book Categories" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <content>
+                  <AnchorPane>
+                     <children>
+                        <CheckListView fx:id="categoriesCheckListView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+         </children>
+      </AnchorPane>
+   </left>
+</BorderPane>

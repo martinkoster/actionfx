@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -88,8 +89,22 @@ public class AFXUtils {
 	 * @return the loaded {@code Node} instance
 	 */
 	public static final <T> T loadFxml(final String fxmlPath, final Object controller) {
+		return loadFxml(fxmlPath, controller, null);
+	}
+
+	/**
+	 * Loads an FXML file from the given {@code fxmlPath}, setting
+	 * {@code controller} as its backing controller.
+	 *
+	 * @param fxmlPath       the path to the FXML file
+	 * @param controller     the controller to set
+	 * @param resourceBundle the resource bundle that shall be used for localization
+	 * @return the loaded {@code Node} instance
+	 */
+	public static final <T> T loadFxml(final String fxmlPath, final Object controller,
+			final ResourceBundle resourceBundle) {
 		try {
-			final FXMLLoader loader = new FXMLLoader(AFXUtils.class.getResource(fxmlPath));
+			final FXMLLoader loader = new FXMLLoader(AFXUtils.class.getResource(fxmlPath), resourceBundle);
 			if (controller != null) {
 				loader.setController(controller);
 			}

@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * This annotation can be e.g. applied to a {@link TableView} field, so that the
  * user can select multiple entries in that table view.
  *
- * @author MartinKoster
+ * @author koster
  *
  */
 @Target({ ElementType.FIELD })

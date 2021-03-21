@@ -38,6 +38,7 @@ import java.util.List;
 import org.controlsfx.control.CheckTreeView;
 import org.controlsfx.control.PropertySheet.Item;
 import org.controlsfx.control.WorldMapView;
+import org.controlsfx.control.WorldMapView.Country;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -699,7 +700,6 @@ class ControlsFXControlWrapperTest {
 		assertUserValue(wrapper, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	void testWorldMapView() {
 		// GIVEN
@@ -712,10 +712,10 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertValues(wrapper, wmv.getSelectedCountries(), wmv.getSelectedLocations());
+		assertValues(wrapper, Country.DE);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Arrays.asList(wmv.getSelectedCountries(), wmv.getSelectedLocations()));
+		assertUserValue(wrapper, Arrays.asList(Country.DE));
 	}
 
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {

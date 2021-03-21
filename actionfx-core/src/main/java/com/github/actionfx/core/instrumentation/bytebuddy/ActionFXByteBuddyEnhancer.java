@@ -87,7 +87,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("ByteBuddy agent successfully installed.");
 		}
-		agentInstalled = true;
+		agentInstalled = true; // NOSONAR
 	}
 
 	@Override

@@ -24,6 +24,8 @@
 package com.github.actionfx.core;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 
@@ -42,6 +44,8 @@ import com.github.actionfx.core.view.View;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.application.Application;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.stage.Stage;
 
 /**
@@ -138,28 +142,15 @@ public class ActionFX {
 	// central exception handler
 	private UncaughtExceptionHandler uncaughtExceptionHandler;
 
+	// observable property for a locale for internationalization
+	private ObservableValue<Locale> observableLocale;
+
 	/**
 	 * Private constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
 	 */
 	private ActionFX() {
 		instance = this; // NOSONAR
-	}
-
-	/**
-	 * Post construct routine that is executed by the {@link ActionFXBuilder} after
-	 * the instance of {@link ActionFX} has been created.
-	 */
-	private void postConstruct() {
-		// if the agent shall be used and it is not yet installed then we install it
-		// here
-		if (!enhancer.agentInstalled() && enhancementStrategy == EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT) {
-			enhancer.installAgent();
-		}
-		// initialize exception handling
-		Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-		// after configuration and instance creation, the state transfers to CONFIGURED
-		actionFXState = ActionFXState.CONFIGURED;// NOSONAR
 	}
 
 	/**
@@ -224,20 +215,51 @@ public class ActionFX {
 	 * Internal component scanning routine.
 	 */
 	private void scanForActionFXComponentsInternal() {
+		// let's register some ActionFX-specific beans in the container before we do the
+		// component scan
+		addActionFXBeans();
+
 		// let's let the bean container implementation do the work
-		beanContainer.populateContainer(scanPackage);
+		beanContainer.runComponentScan(scanPackage);
 		actionFXState = ActionFXState.INITIALIZED;// NOSONAR
+	}
+
+	/**
+	 * Adds ActionFX beans that are available to the developer independent of the
+	 * used bean container.
+	 */
+	private void addActionFXBeans() {
+		// register the locale as "ObservableValue" (singleton and lazy-initialisation)
+		beanContainer.addBeanDefinition(BeanContainerFacade.LOCALE_PROPERTY_BEANNAME, observableLocale.getClass(), true,
+				true, () -> observableLocale);
+		// register the locale itself (non-singleton - request locale each time it is
+		// needed)
+		beanContainer.addBeanDefinition(BeanContainerFacade.LOCALE_BEANNAME, Locale.class, false, true,
+				() -> observableLocale.getValue());
+
+		// make ActionFX class itself available as bean
+		beanContainer.addBeanDefinition(BeanContainerFacade.ACTIONFX_BEANNAME, ActionFX.class, true, false, () -> this);
 	}
 
 	/**
 	 * Gets the view by the supplied {@code viewId}.
 	 *
 	 * @param viewId the view ID
-	 * @return the view instance. If the {@code viewId} does not exists,
-	 *         {@code null} is returned.
+	 * @return the view instance. If the {@code viewId} does not exists, an
+	 *         {@code IllegalArgumentException} is thrown.
 	 */
 	public View getView(final String viewId) {
-		return beanContainer.getBean(viewId);
+		final Object candidate = beanContainer.getBean(viewId);
+		if (candidate == null) {
+			throw new IllegalArgumentException("There is no view with ID='" + viewId
+					+ "' in the bean container of type '" + beanContainer.getClass().getCanonicalName() + "'!");
+		}
+		if (!View.class.isAssignableFrom(candidate.getClass())) {
+			throw new IllegalArgumentException(
+					"Bean with ID='" + viewId + "' is not of type '" + View.class.getCanonicalName()
+							+ "', but was of type '" + candidate.getClass().getCanonicalName() + "'!");
+		}
+		return (View) candidate;
 	}
 
 	/**
@@ -248,7 +270,7 @@ public class ActionFX {
 	 * @return the retrieved controller instance.If the {@code controllerClass} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public <T> T getController(final Class<T> controllerClass) {
+	public <T> T getBean(final Class<T> controllerClass) {
 		return beanContainer.getBean(controllerClass);
 	}
 
@@ -260,8 +282,42 @@ public class ActionFX {
 	 * @return the retrieved controller instance.If the {@code controllerId} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public <T> T getController(final String controllerId) {
+	public <T> T getBean(final String controllerId) {
 		return beanContainer.getBean(controllerId);
+	}
+
+	/**
+	 * Gets the {@link ResourceBundle} that is used internationalization of the view
+	 * associated with the controller identified by {@code controllerId}.
+	 * <p>
+	 * The locale is retrieved from the {@link #localeSupplier} that has been
+	 * configured with this instance of {@link ActionFX}.
+	 *
+	 * @param controllerId the ID of the controller
+	 * @return the resource bundle, or {@code null}, in case there is no resource
+	 *         bundle associated with the given controller
+	 */
+	public ResourceBundle getControllerResourceBundle(final String controllerId) {
+		final Object controller = getBean(controllerId);
+		if (controller == null) {
+			return null;
+		}
+		return getControllerResourceBundle(controller.getClass());
+	}
+
+	/**
+	 * Gets the {@link ResourceBundle} that is used internationalization of the view
+	 * associated with the given {@code controllerClass}.
+	 * <p>
+	 * The locale is retrieved from the {@link #localeSupplier} that has been
+	 * configured with this instance of {@link ActionFX}.
+	 *
+	 * @param controllerId the ID of the controller
+	 * @return the resource bundle, or {@code null}, in case there is no resource
+	 *         bundle associated with the given controller
+	 */
+	public ResourceBundle getControllerResourceBundle(final Class<?> controllerClass) {
+		return beanContainer.resolveResourceBundle(controllerClass, observableLocale.getValue());
 	}
 
 	/**
@@ -299,7 +355,7 @@ public class ActionFX {
 	 * components.
 	 *
 	 * @param scanPackage the package name that shall be scanned for ActionFX
-	 *                    componets
+	 *                    components
 	 * @return this builder
 	 */
 	public String getScanPackage() {
@@ -331,6 +387,26 @@ public class ActionFX {
 	 */
 	public ActionFXEnhancer getEnhancer() {
 		return enhancer;
+	}
+
+	/**
+	 * Gets the {@link UncaughtExceptionHandler}, if set.
+	 *
+	 * @return the {@link UncaughtExceptionHandler}.
+	 */
+	public UncaughtExceptionHandler getUncaughtExceptionHandler() {
+		return uncaughtExceptionHandler;
+	}
+
+	/**
+	 * Gets the locale as an {@link ObservableValue} If not set by
+	 * {@link ActionFXBuilder#observableLocale}, the default implementation will
+	 * return the {@link java.util.Locale#getDefault()} locale.
+	 *
+	 * @return the observable locale
+	 */
+	public ObservableValue<Locale> getObservableLocale() {
+		return observableLocale;
 	}
 
 	/**
@@ -394,6 +470,8 @@ public class ActionFX {
 
 		private UncaughtExceptionHandler uncaughtExceptionHandler;
 
+		private ObservableValue<Locale> observableLocale;
+
 		/**
 		 * Creates the instance of {@link ActionFX} ready to use.
 		 *
@@ -405,11 +483,13 @@ public class ActionFX {
 			actionFX.mainViewId = mainViewId;
 			actionFX.scanPackage = scanPackage;
 			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
-					: EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT;
+					: EnhancementStrategy.SUBCLASSING;
 			actionFX.enhancer = actionFXEnhancer != null ? actionFXEnhancer : new ActionFXByteBuddyEnhancer();
 			actionFX.uncaughtExceptionHandler = uncaughtExceptionHandler != null ? uncaughtExceptionHandler
 					: (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
-			actionFX.postConstruct();
+			actionFX.observableLocale = observableLocale != null ? observableLocale
+					: new SimpleObjectProperty<>(Locale.getDefault());
+			postConstruct(actionFX);
 			return actionFX;
 		}
 
@@ -514,6 +594,46 @@ public class ActionFX {
 			this.uncaughtExceptionHandler = uncaughtExceptionHandler;
 			return this;
 		}
+
+		/**
+		 * Configures an {@code ObservableValue} that holds a proper
+		 * {@code java.util.Locale} for internationalization.
+		 *
+		 * @param observableLocale the observable locale
+		 * @return this builder
+		 */
+		public ActionFXBuilder observableLocale(final ObservableValue<Locale> observableLocale) {
+			this.observableLocale = observableLocale;
+			return this;
+		}
+
+		/**
+		 * Configures an {@code Locale} for internationalization.
+		 *
+		 * @param locale the locale
+		 * @return this builder
+		 */
+		public ActionFXBuilder locale(final Locale locale) {
+			return observableLocale(new SimpleObjectProperty<>(locale));
+		}
+
+		/**
+		 * Post construct routine that is executed by the {@link ActionFXBuilder} after
+		 * the instance of {@link ActionFX} has been created.
+		 */
+		private void postConstruct(final ActionFX actionFX) {
+			// if the agent shall be used and it is not yet installed then we install it
+			// here
+			if (!actionFX.enhancer.agentInstalled()
+					&& actionFX.enhancementStrategy == EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT) {
+				actionFX.enhancer.installAgent();
+			}
+			// initialize exception handling
+			Thread.setDefaultUncaughtExceptionHandler(actionFX.uncaughtExceptionHandler);
+			// after configuration and instance creation, the state transfers to CONFIGURED
+			ActionFX.actionFXState = ActionFXState.CONFIGURED;// NOSONAR
+		}
+
 	}
 
 	/**
@@ -539,4 +659,5 @@ public class ActionFX {
 		 */
 		INITIALIZED
 	}
+
 }

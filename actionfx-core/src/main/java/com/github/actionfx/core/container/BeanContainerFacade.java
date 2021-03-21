@@ -23,7 +23,11 @@
  */
 package com.github.actionfx.core.container;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.function.Supplier;
+
+import javafx.beans.value.ObservableValue;
 
 /**
  * Facade for accessing a bean container holding necessary view and controller
@@ -35,13 +39,32 @@ import java.util.function.Supplier;
 public interface BeanContainerFacade {
 
 	/**
+	 * The bean name of an {@link ObservableValue} holding the application locale.
+	 */
+	public static String LOCALE_PROPERTY_BEANNAME = "localePropertyBean";
+
+	/**
+	 * The bean name of the application {@link java.util.Locale}. Preferably use
+	 * {@link #LOCALE_PROPERTY_BEANNAME} (which is an {@link ObservableValue}),
+	 * because classes using the {@link Locale} directly are not notified on
+	 * potential changes.
+	 */
+	public static String LOCALE_BEANNAME = "localeBean";
+
+	/**
+	 * The bean name of ActionFX itself. ActionFX can be injected via
+	 * {@code @Inject} into controller classes.
+	 */
+	public static String ACTIONFX_BEANNAME = "actionFX";
+
+	/**
 	 * Populates the container with view components by scanning the given
 	 * {@code rootPackage} and its subpackages for annotated classes relevant for
 	 * ActionFX.
 	 *
 	 * @param rootPackage the root package that acts as source for view components
 	 */
-	void populateContainer(String rootPackage);
+	void runComponentScan(String rootPackage);
 
 	/**
 	 * Adds a new bean definition to the bean container.
@@ -89,6 +112,17 @@ public interface BeanContainerFacade {
 	 * @return the bean instance
 	 */
 	<T> T getBean(Class<T> beanClass);
+
+	/**
+	 * Retrieves the resource bundle holding internationalized texts for the given
+	 * {@code controllerClass} and supplied {@link Locale}.
+	 *
+	 * @param controllerClass the controller class for that the resource bundle
+	 *                        shall be retrieved
+	 * @param locale          the locale
+	 * @return the resolved resource bundle
+	 */
+	ResourceBundle resolveResourceBundle(Class<?> controllerClass, Locale locale);
 
 	/**
 	 * Derives an ID from the given {@code controllerClass} under that the component
