@@ -16,7 +16,7 @@ For this simple application, we can use exactly the same application code. Howev
 
 As a further demo case, the sample application leverages ControlsFX' `org.controlsfx.control.CheckListView` for selecting book categories to display.
 
-!docs/images/bookstore.png!
+![Bookstore UI](docs/images/bookstore.png)
 
 ### Starting the application with ActionFX' default bean container
 
