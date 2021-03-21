@@ -51,7 +51,7 @@ public class ControllerOne {
 	/**
 	 * displays the view of ControllerTwo in a new stage
 	 */
-	@AFXShowView(showView = "nestedTabPaneView", showInNewWindow = true)
+	@AFXShowView(viewId = "nestedTabPaneView", showInNewWindow = true)
 	public void showViewTwoInNewStage() {
 
 	}
@@ -59,7 +59,7 @@ public class ControllerOne {
 	/**
 	 * displays the view of ControllerTwo in the current stage
 	 */
-	@AFXShowView(showView = "nestedTabPaneView", showInNewWindow = false)
+	@AFXShowView(viewId = "nestedTabPaneView", showInNewWindow = false)
 	public void showViewTwoInSameWindow() {
 
 	}

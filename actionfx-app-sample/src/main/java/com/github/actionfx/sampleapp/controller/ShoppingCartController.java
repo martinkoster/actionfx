@@ -72,7 +72,7 @@ public class ShoppingCartController {
 	}
 
 	@AFXOnAction(controlId = "checkoutButton")
-	@AFXShowView(showView = "checkoutView", showInNewWindow = true)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
 		// no to-do here as of the moment. Displaying of the view is achieved by
 		// annotation "AFXShowView"

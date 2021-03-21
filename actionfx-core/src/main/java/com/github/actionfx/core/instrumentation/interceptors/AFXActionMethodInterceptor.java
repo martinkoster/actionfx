@@ -55,7 +55,7 @@ public class AFXActionMethodInterceptor {
 	 */
 	private static void doOnSuccess(final AFXShowView afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
-		if (!"".equals(afxAction.showView())) {
+		if (!"".equals(afxAction.viewId())) {
 			showView(afxAction, instance, method, methodInvocationResult);
 		} else if (afxAction.showNestedViews().length > 0) {
 			showNestedViews(afxAction, instance, method, methodInvocationResult);
@@ -74,7 +74,7 @@ public class AFXActionMethodInterceptor {
 	 */
 	private static void showView(final AFXShowView afxAction, final Object instance, final Method method,
 			final Object methodInvocationResult) {
-		final String viewId = afxAction.showView();
+		final String viewId = afxAction.viewId();
 		final View view = getViewById(viewId);
 		if (afxAction.showInNewWindow()) {
 			// display in a new fresh stage

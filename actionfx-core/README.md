@@ -17,14 +17,15 @@ Module | Description | API Documentation | Gradle Dependency
   * [Implementing ActionFX controllers](#implementing-actionfx-controllers)
     + [Example of a Controller Definition with Nested Views](#example-of-a-controller-definition-with-nested-views)
     + [Annotations inside an ActionFX controller](#annotations-inside-an-actionfx-controller)
-      - [Annotation @AFXShowView (Method Annotation)](#annotation--afxshowview--method-annotation-)
-      - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction--method-annotation-)
-      - [Annotation @AFXLoadControlValue (Method Annotation)](#annotation--afxloadcontrolvalue--method-annotation-)
-      - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation--afxoncontrolvaluechange--method-annotation-)
-      - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation--afxarghint--method-argument-annotation-)
-      - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation--afxcontrolvalue--method-argument-annotation-)
-      - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation--afxnestedview--field-annotation-for-fields-annotated-with--fxml-)
-      - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation--afxenablemultiselection--field-annotation-for-fields-annotated-with--fxml-)
+      - [Annotation @AFXShowView (Method Annotation)](#annotation--afxshowview)
+      - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction)
+      - [Annotation @AFXLoadControlValue (Method Annotation)](#annotation--afxloadcontrolvalue)
+      - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation--afxoncontrolvaluechange)
+      - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation--afxarghint)
+      - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation--afxcontrolvalue)
+      - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation--afxnestedview)
+      - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation--afxenablemultiselection)
+      - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation--afxusefilteredlist)
     + [User Value of Controls](#user-value-of-controls)
 
 ## Overview
@@ -198,7 +199,7 @@ Please note in the example above, the additional attribute `attachToNodeWithId` 
 There are various annotations that you can apply to controller methods and fields that are reducing the amount of code that you need for wiring your controls and methods. In the following sections, an overview on the available annotations is provided.
 
 
-#### Annotation @AFXShowView (Method Annotation)
+#### Annotation @AFXShowView
 
 The [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) can be applied at method-level to navigate between different views from inside a controller class.
 
@@ -220,7 +221,7 @@ Please note that only *one* attribute must be used at the same time (they can no
 	}
 ```
 
-#### Annotation @AFXOnAction (Method Annotation)
+#### Annotation @AFXOnAction
 
 The [@AFXOnAction](src/main/java/com/github/actionfx/core/annotation/AFXOnAction.java) is wiring the annotated method to the "onAction" property of the specified control. This annotation can be e.g. used to execute the annotated method, when the user clicks on a button.
 
@@ -256,7 +257,7 @@ Attribute 					| Description
 	}
 ```
 
-#### Annotation @AFXLoadControlValue (Method Annotation)
+#### Annotation @AFXLoadControlValue
 
 The [@AFXLoadControlValue](src/main/java/com/github/actionfx/core/annotation/AFXLoadControlValue.java) annotation can  be applied to methods that return a value that is usable as value inside a referenced control (e.g. load all entities to be displayed inside a TableView or load a text to be displayed in a text area)
 
@@ -285,7 +286,7 @@ Attribute                           | Description
 	}
 ```
 
-#### Annotation @AFXOnControlValueChange (Method Annotation)
+#### Annotation @AFXOnControlValueChange
 
 The [@AFXOnControlValueChange](src/main/java/com/github/actionfx/core/annotation/AFXOnControlValueChange.java) annotation is applied to methods, which are then invoked, when the user changes a value in the referenced control identified by the attribute `controlId`.
 
@@ -331,7 +332,7 @@ For more details on how the attribute `timeoutMs` is realized, please refer to c
 	}
 ```
 
-#### Annotation @AFXArgHint (Method Argument Annotation)
+#### Annotation @AFXArgHint
 
 The [@AFXArgHint](src/main/java/com/github/actionfx/core/annotation/AFXArgHint.java) annotation helps other method-level annotations to recognize the "meaning" of a method argument. The value specified in this annotation is a "hint", which is required, when two method arguments have the same type. 
 
@@ -350,7 +351,7 @@ Attribute 					| Description
 	}
 ```
 
-#### Annotation @AFXControlValue (Method Argument Annotation)
+#### Annotation @AFXControlValue
 
 The [@AFXControlValue](src/main/java/com/github/actionfx/core/annotation/AFXControlValue.java) annotation is applied to method arguments to retrieve the user value from the specified control.
 
@@ -375,7 +376,7 @@ Attribute 					| Description
 	}
 ```
 
-#### Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML, Class Annotation for classes annotated with @AFXController)
+#### Annotation @AFXNestedView
 
 The [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation defines a nested view to be embedded into a scene graph. Nested views can be used to composite the overall scene graph view.
 
@@ -416,7 +417,7 @@ Attribute 							| Description
 ```
 
 
-#### Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)
+#### Annotation @AFXEnableMultiSelection
 
 The [@AFXEnableMultiSelection](src/main/java/com/github/actionfx/core/annotation/AFXEnableMultiSelection.java) annotation can be applied at field level on a `javafx.scene.control.Control`, in order to enable a multi-selection on that annotated control.
 
@@ -429,7 +430,7 @@ This annotation can be e.g. applied to a field of type `javafx.scene.control.Tab
 	private TableView<String> multiSelectionTable;
 ```
 
-#### Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)
+#### Annotation @AFXUseFilteredList
 
 The [@AFXUseFilteredList](src/main/java/com/github/actionfx/core/annotation/AFXUseFilteredList.java) annotation can be applied at field level on a `javafx.scene.control.Control`,so that ActionFX instructs the control to use a `javafx.collections.transformation.FilteredList` as items. Please note that the control must support multiple values in form of an `javafx.collections.transformation.ObservableList`.
 

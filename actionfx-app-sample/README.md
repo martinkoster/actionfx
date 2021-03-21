@@ -320,7 +320,7 @@ public class ShoppingCartController {
 	}
 
 	@AFXOnAction(controlId = "checkoutButton")
-	@AFXShowView(showView = "checkoutView", showInNewWindow = true)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
 		// no to-do here as of the moment. Displaying of the view is achieved by
 		// annotation "AFXShowView"
@@ -345,7 +345,7 @@ For the starting the check-out procedure, we display the check-out dialogue in a
 
 ```java
 	@AFXOnAction(controlId = "checkoutButton")
-	@AFXShowView(showView = "checkoutView", showInNewWindow = true)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
 		// no to-do here as of the moment. Displaying of the view is achieved by
 		// annotation "AFXShowView"
