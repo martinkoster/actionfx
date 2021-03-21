@@ -16,6 +16,8 @@ For this simple application, we can use exactly the same application code. Howev
 
 As a further demo case, the sample application leverages ControlsFX' `org.controlsfx.control.CheckListView` for selecting book categories to display.
 
+!docs/images/bookstore.png!
+
 ### Starting the application with ActionFX' default bean container
 
 For using ActionFX' default bean container, we derive your JavaFX class from [AbstractAFXApplication](../actionfx-core/src/main/java/com/github/actionfx/core/app/AbstractAFXApplication.java).
@@ -365,5 +367,5 @@ public class CheckoutController {
 }
 ```
 
-Source Code can be found here: [CheckoutController](src/main/java/com/github/actionfx/sampleapp/core/app/CheckoutController.java)
+Source Code can be found here: [CheckoutController](src/main/java/com/github/actionfx/sampleapp/controller/CheckoutController.java)
 
