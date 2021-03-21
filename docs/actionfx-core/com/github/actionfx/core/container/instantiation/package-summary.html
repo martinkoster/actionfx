@@ -120,16 +120,24 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="altColor">
-<th class="colFirst" scope="row"><a href="ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier</a>&lt;T&gt;</th>
+<th class="colFirst" scope="row"><a href="ControllerInstancePostProcessor.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor</a></th>
 <td class="colLast">
-<div class="block">Instantiation supplier for controller instances.</div>
+<div class="block">Post-processor for controller instances that is invoked after view creation
+ and dependency injection, but before potential
+ <code>@PostConstruct</code>-annotated methods.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<th class="colFirst" scope="row"><a href="ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier.OrderBasedAnnotatedMethodComparator</a>&lt;A extends java.lang.annotation.Annotation&gt;</th>
+<th class="colFirst" scope="row"><a href="ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstancePostProcessor.OrderBasedAnnotatedMethodComparator</a>&lt;A extends java.lang.annotation.Annotation&gt;</th>
 <td class="colLast">
 <div class="block">Comparator implementation that orders methods according to the "order"
  attribute among same controls.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="ControllerInstantiationSupplier.html" title="class in com.github.actionfx.core.container.instantiation">ControllerInstantiationSupplier</a>&lt;T&gt;</th>
+<td class="colLast">
+<div class="block">Instantiation supplier for controller instances.</div>
 </td>
 </tr>
 </tbody>

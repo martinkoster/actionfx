@@ -23,10 +23,14 @@ w * Copyright (c) 2020 Martin Koster
  */
 package com.github.actionfx.sampleapp.spring.app;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXApplication;
-import com.github.actionfx.core.app.AbstractAFXApplication;
 
 import javafx.application.Application;
+import javafx.stage.Stage;
 
 /**
  * Main entry point in the sample application.
@@ -34,15 +38,25 @@ import javafx.application.Application;
  * @author koster
  *
  */
-public class MainApp {
+@SpringBootApplication
+public class MainAppWithSpringBeanContainer {
 
 	public static void main(final String[] argv) {
+		ActionFX.builder().configurationClass(SampleActionFXApplication.class).build();
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.core.app")
-	public static class SampleActionFXApplication extends AbstractAFXApplication {
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.controller")
+	public static class SampleActionFXApplication extends Application {
 
+		@Override
+		public void init() throws Exception {
+			SpringApplication.run(MainAppWithSpringBeanContainer.class);
+		}
+
+		@Override
+		public void start(final Stage primaryStage) throws Exception {
+			ActionFX.getInstance().displayMainView(primaryStage);
+		}
 	}
-
 }

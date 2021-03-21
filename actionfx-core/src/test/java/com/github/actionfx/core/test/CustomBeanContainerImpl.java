@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.test;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 import com.github.actionfx.core.container.BeanContainerFacade;
@@ -47,7 +49,7 @@ public class CustomBeanContainerImpl implements BeanContainerFacade {
 	}
 
 	@Override
-	public void populateContainer(final String rootPackage) {
+	public void runComponentScan(final String rootPackage) {
 
 	}
 
@@ -55,5 +57,10 @@ public class CustomBeanContainerImpl implements BeanContainerFacade {
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
 			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
 
+	}
+
+	@Override
+	public ResourceBundle resolveResourceBundle(final Class<?> controllerClass, final Locale locale) {
+		return null;
 	}
 }

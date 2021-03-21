@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -90,7 +90,7 @@ loadScripts(document, 'script');</script>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -156,6 +156,23 @@ implements com.github.actionfx.core.container.BeanContainerFacade</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a id="fields.inherited.from.class.com.github.actionfx.core.container.BeanContainerFacade">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.github.actionfx.core.container.BeanContainerFacade</h3>
+<code>ACTIONFX_BEANNAME, LOCALE_BEANNAME, LOCALE_PROPERTY_BEANNAME</code></li>
+</ul>
+</li>
+</ul>
+</section>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <section role="region">
 <ul class="blockList">
@@ -216,17 +233,25 @@ implements com.github.actionfx.core.container.BeanContainerFacade</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#populateContainer(java.lang.String)">populateContainer</a></span>&#8203;(java.lang.String&nbsp;rootPackage)</code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registerBeanDefinition(java.lang.String,org.springframework.beans.factory.config.BeanDefinition)">registerBeanDefinition</a></span>&#8203;(java.lang.String&nbsp;beanName,
                       org.springframework.beans.factory.config.BeanDefinition&nbsp;definition)</code></th>
 <td class="colLast">
 <div class="block">Registers the <code>BeanDefinition</code> with the Spring context.</div>
 </td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>java.util.ResourceBundle</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resolveResourceBundle(java.lang.Class,java.util.Locale)">resolveResourceBundle</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;controllerClass,
+                     java.util.Locale&nbsp;locale)</code></th>
+<td class="colLast">
+<div class="block">Resolves to a <code>ResourceBundle</code> for the given <code>controllerClass</code>.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#runComponentScan(java.lang.String)">runComponentScan</a></span>&#8203;(java.lang.String&nbsp;rootPackage)</code></th>
+<td class="colLast">&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -287,16 +312,16 @@ implements com.github.actionfx.core.container.BeanContainerFacade</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="populateContainer(java.lang.String)">
+<a id="runComponentScan(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>populateContainer</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;populateContainer&#8203;(java.lang.String&nbsp;rootPackage)</pre>
+<h4>runComponentScan</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;runComponentScan&#8203;(java.lang.String&nbsp;rootPackage)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>populateContainer</code>&nbsp;in interface&nbsp;<code>com.github.actionfx.core.container.BeanContainerFacade</code></dd>
+<dd><code>runComponentScan</code>&nbsp;in interface&nbsp;<code>com.github.actionfx.core.container.BeanContainerFacade</code></dd>
 </dl>
 </li>
 </ul>
@@ -350,13 +375,38 @@ implements com.github.actionfx.core.container.BeanContainerFacade</pre>
 <a id="getBean(java.lang.Class)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getBean</h4>
 <pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;getBean&#8203;(java.lang.Class&lt;T&gt;&nbsp;beanClass)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>getBean</code>&nbsp;in interface&nbsp;<code>com.github.actionfx.core.container.BeanContainerFacade</code></dd>
+</dl>
+</li>
+</ul>
+<a id="resolveResourceBundle(java.lang.Class,java.util.Locale)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>resolveResourceBundle</h4>
+<pre class="methodSignature">public&nbsp;java.util.ResourceBundle&nbsp;resolveResourceBundle&#8203;(java.lang.Class&lt;?&gt;&nbsp;controllerClass,
+                                                      java.util.Locale&nbsp;locale)</pre>
+<div class="block">Resolves to a <code>ResourceBundle</code> for the given <code>controllerClass</code>.
+ <p>
+ The logic is as follows: In case the controller class does not hold a
+ resource base name under <code>AFXController.resourcesBasename()</code>, it is
+ expected that Spring's central <code>MessageSource</code> holds all
+ internationalized texts. In that case we wrap the <code>MessageSource</code> in a
+ <code>MessageSourceResourceBundle</code>, so that it can be accessed by JavaFX.
+ <p>
+ In case a base name is provided under
+ <code>AFXController.resourcesBasename()</code>, then the regular
+ <code>ResourceBundle</code> is returned as it would be in a non-Spring setup.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>resolveResourceBundle</code>&nbsp;in interface&nbsp;<code>com.github.actionfx.core.container.BeanContainerFacade</code></dd>
 </dl>
 </li>
 </ul>
@@ -413,7 +463,7 @@ implements com.github.actionfx.core.container.BeanContainerFacade</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

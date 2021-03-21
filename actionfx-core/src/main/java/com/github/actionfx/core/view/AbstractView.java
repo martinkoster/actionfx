@@ -108,7 +108,9 @@ public abstract class AbstractView implements View {
 	 */
 	@Override
 	public void show(final Stage stage) {
-		final Scene scene = new Scene(getRootNode());
+		final Parent parent = getRootNode();
+		// re-use a potentially existing scene
+		final Scene scene = parent.getScene() != null ? parent.getScene() : new Scene(getRootNode());
 		stage.setScene(scene);
 		initializeStage(stage);
 		if (!isHeadlessMode()) {

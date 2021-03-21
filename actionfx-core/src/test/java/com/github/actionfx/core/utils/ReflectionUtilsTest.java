@@ -322,6 +322,18 @@ class ReflectionUtilsTest {
 	}
 
 	@Test
+	void testSetFieldValueBySetter() throws NoSuchFieldException, SecurityException {
+		// GIVEN
+		final ClassWithField instance = new ClassWithField();
+
+		// WHEN
+		ReflectionUtils.setFieldValueBySetter(ClassWithField.class.getDeclaredField("field1"), instance, "Yahoo");
+
+		// THEN
+		assertThat(instance.getField1(), equalTo("Yahoo"));
+	}
+
+	@Test
 	void testFindAllDeclaredFields() {
 		// WHEN
 		final List<Field> fields = ReflectionUtils.findAllDeclaredFields(DerivedFromClassWithField.class);
@@ -356,7 +368,7 @@ class ReflectionUtilsTest {
 		final Method voidMethod = ClassWithMethods.class.getDeclaredMethod("voidMethod");
 
 		// WHEN
-		ReflectionUtils.invokeMethod(voidMethod, instance, Void.class);
+		ReflectionUtils.invokeMethod(voidMethod, instance);
 
 		// THEN
 		assertThat(instance.isVoidMethodExecuted(), equalTo(true));
@@ -369,8 +381,7 @@ class ReflectionUtilsTest {
 		final Method sayHelloMethod = ClassWithMethods.class.getDeclaredMethod("sayHello", String.class);
 
 		// WHEN and THEN
-		assertThat(ReflectionUtils.invokeMethod(sayHelloMethod, instance, String.class, "World"),
-				equalTo("Hello World"));
+		assertThat(ReflectionUtils.invokeMethod(sayHelloMethod, instance, "World"), equalTo("Hello World"));
 	}
 
 	@Test

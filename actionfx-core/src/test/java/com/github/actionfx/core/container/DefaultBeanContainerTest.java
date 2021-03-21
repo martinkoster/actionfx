@@ -31,11 +31,16 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.container.instantiation.MultilingualViewController;
+import com.github.actionfx.core.container.instantiation.SampleViewController;
 import com.github.actionfx.core.test.DerivedFromTestView;
 import com.github.actionfx.core.test.TestView;
 import com.github.actionfx.core.test.app.LazilyInitializedController;
@@ -174,12 +179,12 @@ class DefaultBeanContainerTest {
 	}
 
 	@Test
-	void testPopulateContainer() {
+	void testRunComponentScan() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
 
 		// WHEN
-		container.populateContainer(SampleApp.class.getPackageName());
+		container.runComponentScan(SampleApp.class.getPackageName());
 
 		// THEN
 		final View view = container.getBean("mainView");
@@ -205,7 +210,7 @@ class DefaultBeanContainerTest {
 	void testGetBean_withDependencyInjection() {
 		// GIVEN
 		final DefaultBeanContainer container = new DefaultBeanContainer();
-		container.populateContainer(SampleApp.class.getPackageName());
+		container.runComponentScan(SampleApp.class.getPackageName());
 
 		// WHEN
 		final MainController controller = container.getBean("mainController");
@@ -223,4 +228,42 @@ class DefaultBeanContainerTest {
 		assertThat(controller.getBaseModel(), sameInstance(model)); // type is still a singleton!
 
 	}
+
+	@Test
+	void testResolveResourceBundle() {
+		// GIVEN
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+
+		// WHEN
+		final ResourceBundle bundle = container.resolveResourceBundle(MultilingualViewController.class, Locale.GERMANY);
+
+		// THEN
+		assertThat(bundle, notNullValue());
+		assertThat(bundle.getString("label.text"), equalTo("Hallo Welt"));
+	}
+
+	@Test
+	void testResolveResourceBundle_noResourcesBasenameSpecified() {
+		// GIVEN
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+
+		// WHEN (controller does not specify a "resourcesBasename")
+		final ResourceBundle bundle = container.resolveResourceBundle(SampleViewController.class, Locale.GERMANY);
+
+		// THEN
+		assertThat(bundle, nullValue());
+	}
+
+	@Test
+	void testResolveResourceBundle_suppliedNoAnnotatedController() {
+		// GIVEN
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+
+		// WHEN (supplied class holds no @AFXController annotation)
+		final ResourceBundle bundle = container.resolveResourceBundle(String.class, Locale.GERMANY);
+
+		// THEN
+		assertThat(bundle, nullValue());
+	}
+
 }

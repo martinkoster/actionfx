@@ -27,7 +27,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
+import com.github.actionfx.core.container.instantiation.ControllerInstancePostProcessor;
 import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
@@ -68,6 +71,9 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	// strategies to resolve an ID or type to a bean
 	private final List<BeanResolutionFunction> beanResolverFunctions = new ArrayList<>();
 
+	// post-processor that wires JavaFX components to annotated methods
+	private final ControllerInstancePostProcessor controllerInstancePostProcessor = new ControllerInstancePostProcessor();
+
 	public DefaultBeanContainer() {
 		// bean resolution strategies
 		// the first strategy is to resolve by bean name / ID
@@ -89,14 +95,14 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	}
 
 	@Override
-	public void populateContainer(final String rootPackage) {
+	public void runComponentScan(final String rootPackage) {
 		final List<Class<?>> controllerClasses = ClassPathScanningUtils.findClassesWithAnnotation(rootPackage,
 				AFXController.class);
 		for (final Class<?> controllerClass : controllerClasses) {
 			final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 
 			final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
-					controllerClass);
+					controllerClass, resolveResourceBundle(controllerClass, getBean(Locale.class)));
 			final String controllerId = deriveControllerId(controllerClass);
 
 			// add a bean definition for the controller
@@ -109,7 +115,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 					() -> ControllerWrapper.getViewFrom(getBean(controllerId)));
 		}
 		// all non-lazy beans are instantiated now after reading all bean definitions
-		instatiateNonLazyBeans();
+		instantiateNonLazyBeans();
 	}
 
 	@Override
@@ -136,6 +142,19 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 			return null;
 		}
 		return getBeanByDefinition(beanDefinition);
+	}
+
+	@Override
+	public ResourceBundle resolveResourceBundle(final Class<?> controllerClass, final Locale locale) {
+		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
+		if (afxController == null) {
+			return null;
+		}
+		final String baseName = afxController.resourcesBasename();
+		if ("".equals(baseName)) {
+			return null;
+		}
+		return ResourceBundle.getBundle(baseName, locale);
 	}
 
 	/**
@@ -177,6 +196,11 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 		// inject potential dependencies
 		injectDependencies(instance);
+
+		// wire JavaFX components to annotated methods
+		if (AnnotationUtils.findAnnotation(instance.getClass(), AFXController.class) != null) {
+			controllerInstancePostProcessor.postProcess(instance);
+		}
 
 		// invoke methods annotated with @PostConstruct
 		AnnotationUtils.invokeMethodWithAnnotation(instance.getClass(), instance, PostConstruct.class);
@@ -257,7 +281,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	/**
 	 * Instantiate all non-lazy beans.
 	 */
-	protected void instatiateNonLazyBeans() {
+	protected void instantiateNonLazyBeans() {
 		beanDefinitionMap.values().stream().filter(beanDefinition -> !beanDefinition.isLazyInitialisation())
 				.forEach(this::getBeanByDefinition);
 	}

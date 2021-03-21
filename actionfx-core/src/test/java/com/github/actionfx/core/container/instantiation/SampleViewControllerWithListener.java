@@ -11,6 +11,7 @@ import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
+import com.github.actionfx.core.annotation.AFXUseFilteredList;
 import com.github.actionfx.core.annotation.ArgumentHint;
 
 import javafx.beans.property.BooleanProperty;
@@ -57,9 +58,11 @@ public class SampleViewControllerWithListener {
 	@FXML
 	protected ComboBox<String> comboBox;
 
+	@AFXUseFilteredList
 	@FXML
 	protected TableView<String> singleSelectionTable;
 
+	@AFXUseFilteredList(wrapInSortedList = true)
 	@AFXEnableMultiSelection
 	@FXML
 	protected TableView<String> multiSelectionTable;

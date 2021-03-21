@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,11 +74,12 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// THEN
-		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT));
+		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
 		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
 		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 
@@ -99,8 +101,8 @@ class ActionFXTest {
 
 		// WHEN
 		final ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
-				.mainViewId("mainView").actionFXEnhancer(enhancer).enhancementStrategy(EnhancementStrategy.SUBCLASSING)
-				.build();
+				.mainViewId("mainView").actionFXEnhancer(enhancer).locale(Locale.US)
+				.enhancementStrategy(EnhancementStrategy.SUBCLASSING).build();
 
 		// THEN
 		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
@@ -108,6 +110,7 @@ class ActionFXTest {
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
 		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 
@@ -147,21 +150,20 @@ class ActionFXTest {
 	@Test
 	void testScanComponents_usingDefaultBeanContainer() {
 		// GIVEN
-		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
 		// WHEN
 		actionFX.scanForActionFXComponents();
 
 		// THEN
 		final View view = actionFX.getView("mainView");
-		final MainController mainControllerById = actionFX.getController("mainController");
-		final MainController mainControllerByClassName = actionFX.getController(MainController.class);
+		final MainController mainControllerById = actionFX.getBean("mainController");
+		final MainController mainControllerByClassName = actionFX.getBean(MainController.class);
 
 		assertThat(view, notNullValue());
 		assertThat(mainControllerById, notNullValue());
 		assertThat(mainControllerByClassName, notNullValue());
 		assertThat(mainControllerById, sameInstance(mainControllerByClassName));
-
 	}
 
 	@Test
@@ -176,7 +178,7 @@ class ActionFXTest {
 
 		// THEN (custom container has be asked to populate container with the
 		// rootPackage of SampleApp)
-		verify(customBeanContainer).populateContainer(rootPackageCaptor.capture());
+		verify(customBeanContainer).runComponentScan(rootPackageCaptor.capture());
 		assertThat(rootPackageCaptor.getValue(), equalTo(SampleApp.class.getPackageName()));
 	}
 
@@ -190,6 +192,34 @@ class ActionFXTest {
 
 		// THEN (another call to scanComponents results in an exception)
 		assertThrows(IllegalStateException.class, () -> actionFX.scanForActionFXComponents());
+	}
+
+	@Test
+	void testScanComponents_getView_viewNotFound() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> actionFX.getView("fantasyView"));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("There is no view with ID='fantasyView'"));
+	}
+
+	@Test
+	void testScanComponents_getView_viewIsNotInstanceOfView() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> actionFX.getView("mainController"));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Bean with ID='mainController' is not of type"));
 	}
 
 	public static class AppClassWithoutAFXApplicationAnnotation {

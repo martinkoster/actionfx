@@ -74,7 +74,7 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 				applicationContext);
 
 		// WHEN
-		container.populateContainer(SampleApp.class.getPackageName());
+		ActionFX.getInstance().scanForActionFXComponents(container);
 
 		// THEN
 		final MainController controller = container.getBean("mainController");

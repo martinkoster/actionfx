@@ -138,21 +138,18 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addAll(final E... elements) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean setAll(final E... elements) { // NOSONAR
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public boolean setAll(final Collection<? extends E> col) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
@@ -170,13 +167,12 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean retainAll(final E... elements) { // NOSONAR
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public void remove(final int from, final int to) {
-		throwUnsupportedOperationException();
+		throw unsupportedOperationException();
 	}
 
 	@Override
@@ -226,14 +222,12 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 
 	@Override
 	public boolean add(final E e) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public boolean remove(final Object o) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
@@ -243,31 +237,27 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 
 	@Override
 	public boolean addAll(final Collection<? extends E> c) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public boolean addAll(final int index, final Collection<? extends E> c) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public boolean removeAll(final Collection<?> c) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public boolean retainAll(final Collection<?> c) { // NOSONAR
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public void replaceAll(final UnaryOperator<E> operator) {
-		throwUnsupportedOperationException();
+		throw unsupportedOperationException();
 	}
 
 	@Override
@@ -277,12 +267,12 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 
 	@Override
 	public void sort(final Comparator<? super E> c) {
-		throwUnsupportedOperationException();
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public void clear() {
-		throwUnsupportedOperationException();
+		throw unsupportedOperationException();
 	}
 
 	@Override
@@ -302,25 +292,22 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 
 	@Override
 	public E set(final int index, final E element) {
-		throwUnsupportedOperationException();
-		return null;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public void add(final int index, final E element) {
-		throwUnsupportedOperationException();
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public boolean removeIf(final Predicate<? super E> filter) {
-		throwUnsupportedOperationException();
-		return false;
+		throw unsupportedOperationException();
 	}
 
 	@Override
 	public E remove(final int index) {
-		throwUnsupportedOperationException();
-		return null;
+		throw unsupportedOperationException();
 	}
 
 	@Override
@@ -363,8 +350,8 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 		return delegateObservableList.parallelStream();
 	}
 
-	protected void throwUnsupportedOperationException() {
-		throw new UnsupportedOperationException("The list is immutable!");
+	protected UnsupportedOperationException unsupportedOperationException() {
+		return new UnsupportedOperationException("The list is immutable!");
 	}
 
 	/**

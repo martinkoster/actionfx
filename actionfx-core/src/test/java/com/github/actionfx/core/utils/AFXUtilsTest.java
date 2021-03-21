@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 Martin Koster
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,11 +19,12 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  */
 package com.github.actionfx.core.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
 import org.hamcrest.Matchers;
@@ -57,6 +60,7 @@ import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -82,6 +86,25 @@ class AFXUtilsTest {
 		final Node node = AFXUtils.loadFxml("/testfxml/SampleView.fxml", this);
 		assertNotNull(node);
 		assertTrue(node instanceof GridPane);
+	}
+
+	@Test
+	void testLoadFxml_internationalized() {
+		// GIVEN
+		final Locale locale = new Locale("en", "US");
+		final ResourceBundle bundle = ResourceBundle.getBundle("i18n.TestResources", locale);
+
+		// WHEN
+		final Node node = AFXUtils.loadFxml("/testfxml/MultilingualView.fxml", this, bundle);
+
+		// THEN
+		assertNotNull(node);
+		assertTrue(node instanceof VBox);
+		final VBox vbox = (VBox) node;
+		assertThat(vbox.getChildren(), hasSize(1));
+		assertThat(vbox.getChildren().get(0), instanceOf(Label.class));
+		final Label label = (Label) vbox.getChildren().get(0);
+		assertThat(label.getText(), equalTo("Hello World"));
 	}
 
 	@Test

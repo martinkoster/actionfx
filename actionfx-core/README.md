@@ -429,6 +429,23 @@ This annotation can be e.g. applied to a field of type `javafx.scene.control.Tab
 	private TableView<String> multiSelectionTable;
 ```
 
+#### Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)
+
+The [@AFXUseFilteredList](src/main/java/com/github/actionfx/core/annotation/AFXUseFilteredList.java) annotation can be applied at field level on a `javafx.scene.control.Control`,so that ActionFX instructs the control to use a `javafx.collections.transformation.FilteredList` as items. Please note that the control must support multiple values in form of an `javafx.collections.transformation.ObservableList`.
+
+This annotation can be e.g. applied to a field of type `javafx.scene.control.TableView`, so that table view items can be filtered. Additionally, the filtered list can be wrapped in a `javafx.collections.transformation.SortedList`, if desired.
+
+**Example:**
+```java
+	@AFXUseFilteredList
+	@FXML
+	private TableView<String> filteredTable;
+...
+	@AFXUseFilteredList(wrapInSortedList=true)
+	@FXML
+	private TableView<String> filteredAndSortedTable;
+```
+
 
 ### User Value of Controls
 

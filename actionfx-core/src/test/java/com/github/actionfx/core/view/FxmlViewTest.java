@@ -32,10 +32,14 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import com.github.actionfx.core.container.instantiation.MultilingualViewController;
 import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.testing.annotation.TestInFxThread;
@@ -60,6 +64,23 @@ class FxmlViewTest {
 		assertThat(view.getController(), instanceOf(TestController.class));
 		assertThat(view.getRootNode(), notNullValue());
 		assertThat(view.getRootNode(), instanceOf(GridPane.class));
+	}
+
+	@Test
+	void testFxmlView_internationalized() {
+		// GIVEN
+		final Locale locale = new Locale("de", "DE");
+		final ResourceBundle bundle = ResourceBundle.getBundle("i18n.TestResources", locale);
+
+		// WHEN
+		final FxmlView view = new FxmlView("multilingualView", "/testfxml/MultilingualView.fxml",
+				new MultilingualViewController(), bundle);
+
+		// THEN
+		assertThat(view.getId(), equalTo("multilingualView"));
+		assertThat(view.getController(), instanceOf(MultilingualViewController.class));
+		final MultilingualViewController controller = (MultilingualViewController) view.getController();
+		assertThat(controller.getLabel().getText(), equalTo("Hallo Welt"));
 	}
 
 	@Test

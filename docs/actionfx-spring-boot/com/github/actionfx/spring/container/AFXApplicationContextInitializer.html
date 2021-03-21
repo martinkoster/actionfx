@@ -142,7 +142,10 @@ implements org.springframework.context.ApplicationContextInitializer&lt;org.spri
 <div class="block">Implementation of <code>ApplicationContextInitializer</code> that delegates the
  bean initialization to <a href="SpringBeanContainer.html" title="class in com.github.actionfx.spring.container"><code>SpringBeanContainer</code></a>, which is in turn used
  again by ActionFX for retrieving the beans from Spring's
- <code>ApplicationContext</code>.</div>
+ <code>ApplicationContext</code>.
+ <p>
+ Please note that you need to build and setup the <code>ActionFX</code> instance
+ before firing up the Spring container.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>koster</dd>

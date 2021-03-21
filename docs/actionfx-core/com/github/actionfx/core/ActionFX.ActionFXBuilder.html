@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -216,13 +216,28 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#locale(java.util.Locale)">locale</a></span>&#8203;(java.util.Locale&nbsp;locale)</code></th>
+<td class="colLast">
+<div class="block">Configures an <code>Locale</code> for internationalization.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#mainViewId(java.lang.String)">mainViewId</a></span>&#8203;(java.lang.String&nbsp;mainViewId)</code></th>
 <td class="colLast">
 <div class="block">Sets the ID / name of the view that is used to be displayed in JavaFX's
  primary <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#observableLocale(javafx.beans.value.ObservableValue)">observableLocale</a></span>&#8203;(javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;observableLocale)</code></th>
+<td class="colLast">
+<div class="block">Configures an <code>ObservableValue</code> that holds a proper
+ <code>java.util.Locale</code> for internationalization.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#scanPackage(java.lang.String)">scanPackage</a></span>&#8203;(java.lang.String&nbsp;scanPackage)</code></th>
 <td class="colLast">
@@ -230,7 +245,7 @@ extends java.lang.Object</pre>
  components.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#uncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)">uncaughtExceptionHandler</a></span>&#8203;(java.lang.Thread.UncaughtExceptionHandler&nbsp;uncaughtExceptionHandler)</code></th>
 <td class="colLast">
@@ -405,7 +420,7 @@ extends java.lang.Object</pre>
 <a id="uncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>uncaughtExceptionHandler</h4>
 <pre class="methodSignature">public&nbsp;<a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a>&nbsp;uncaughtExceptionHandler&#8203;(java.lang.Thread.UncaughtExceptionHandler&nbsp;uncaughtExceptionHandler)</pre>
@@ -413,6 +428,39 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>uncaughtExceptionHandler</code> - the exception handler for uncaught exceptions</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>this builder</dd>
+</dl>
+</li>
+</ul>
+<a id="observableLocale(javafx.beans.value.ObservableValue)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>observableLocale</h4>
+<pre class="methodSignature">public&nbsp;<a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a>&nbsp;observableLocale&#8203;(javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;observableLocale)</pre>
+<div class="block">Configures an <code>ObservableValue</code> that holds a proper
+ <code>java.util.Locale</code> for internationalization.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>observableLocale</code> - the observable locale</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>this builder</dd>
+</dl>
+</li>
+</ul>
+<a id="locale(java.util.Locale)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>locale</h4>
+<pre class="methodSignature">public&nbsp;<a href="ActionFX.ActionFXBuilder.html" title="class in com.github.actionfx.core">ActionFX.ActionFXBuilder</a>&nbsp;locale&#8203;(java.util.Locale&nbsp;locale)</pre>
+<div class="block">Configures an <code>Locale</code> for internationalization.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>locale</code> - the locale</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>this builder</dd>
 </dl>

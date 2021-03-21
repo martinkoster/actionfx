@@ -6,6 +6,12 @@ description = "afx-spring-boot: This module contains integration classes for usi
 
 dependencies {
 	
+	    // JAVAFX DEPENDENCIES    
+        javafx {
+            version = "${javafxVersion}"
+            modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
+        }
+        
         api project(":actionfx-core")
 
 		// Spring Dependencies are not declared as "api" dependencies. We just want these dependencies at

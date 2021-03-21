@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
+var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":9,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -289,55 +289,71 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getBean(java.lang.Class)">getBean</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;controllerClass)</code></th>
+<td class="colLast">
+<div class="block">Gets the controller defined by the supplied <code>controllerClass</code>.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getBean(java.lang.String)">getBean</a></span>&#8203;(java.lang.String&nbsp;controllerId)</code></th>
+<td class="colLast">
+<div class="block">Gets the controller by the supplied <code>controllerId</code>.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected <a href="container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getBeanContainer()">getBeanContainer</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Grants access to the bean container.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getController(java.lang.Class)">getController</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;controllerClass)</code></th>
-<td class="colLast">
-<div class="block">Gets the controller defined by the supplied <code>controllerClass</code>.</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getController(java.lang.String)">getController</a></span>&#8203;(java.lang.String&nbsp;controllerId)</code></th>
-<td class="colLast">
-<div class="block">Gets the controller by the supplied <code>controllerId</code>.</div>
-</td>
-</tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.util.ResourceBundle</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getControllerResourceBundle(java.lang.Class)">getControllerResourceBundle</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;controllerClass)</code></th>
+<td class="colLast">
+<div class="block">Gets the <code>ResourceBundle</code> that is used internationalization of the view
+ associated with the given <code>controllerClass</code>.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.util.ResourceBundle</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getControllerResourceBundle(java.lang.String)">getControllerResourceBundle</a></span>&#8203;(java.lang.String&nbsp;controllerId)</code></th>
+<td class="colLast">
+<div class="block">Gets the <code>ResourceBundle</code> that is used internationalization of the view
+ associated with the controller identified by <code>controllerId</code>.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="instrumentation/ActionFXEnhancer.EnhancementStrategy.html" title="enum in com.github.actionfx.core.instrumentation">ActionFXEnhancer.EnhancementStrategy</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEnhancementStrategy()">getEnhancementStrategy</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The enhancement strategy to use within ActionFX.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="instrumentation/ActionFXEnhancer.html" title="interface in com.github.actionfx.core.instrumentation">ActionFXEnhancer</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEnhancer()">getEnhancer</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The enhancer to use within ActionFX.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>static <a href="ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInstance()">getInstance</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets an instance of <a href="ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a>.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="view/View.html" title="interface in com.github.actionfx.core.view">View</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMainView()">getMainView</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the main view of the application.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMainViewId()">getMainViewId</a></span>()</code></th>
 <td class="colLast">
@@ -345,14 +361,23 @@ extends java.lang.Object</pre>
  <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getObservableLocale()">getObservableLocale</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets the locale as an <code>ObservableValue</code> If not set by
+ <a href="ActionFX.ActionFXBuilder.html#observableLocale"><code>ActionFX.ActionFXBuilder.observableLocale</code></a>, the default implementation will
+ return the <code>Locale.getDefault()</code> locale.</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>javafx.stage.Stage</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPrimaryStage()">getPrimaryStage</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the primary stage, if it was set be the user.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getScanPackage()">getScanPackage</a></span>()</code></th>
 <td class="colLast">
@@ -360,21 +385,28 @@ extends java.lang.Object</pre>
  components.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>java.lang.Thread.UncaughtExceptionHandler</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUncaughtExceptionHandler()">getUncaughtExceptionHandler</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets the <code>Thread.UncaughtExceptionHandler</code>, if set.</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="view/View.html" title="interface in com.github.actionfx.core.view">View</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getView(java.lang.String)">getView</a></span>&#8203;(java.lang.String&nbsp;viewId)</code></th>
 <td class="colLast">
 <div class="block">Gets the view by the supplied <code>viewId</code>.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#reset()">reset</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Resets ActionFX to its initial state.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#scanForActionFXComponents()">scanForActionFXComponents</a></span>()</code></th>
 <td class="colLast">
@@ -382,7 +414,7 @@ extends java.lang.Object</pre>
  <a href="#scanPackage"><code>scanPackage</code></a>.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#scanForActionFXComponents(com.github.actionfx.core.container.BeanContainerFacade)">scanForActionFXComponents</a></span>&#8203;(<a href="container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a>&nbsp;beanContainer)</code></th>
 <td class="colLast">
@@ -390,7 +422,7 @@ extends java.lang.Object</pre>
  <a href="#scanPackage"><code>scanPackage</code></a>.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setPrimaryStage(javafx.stage.Stage)">setPrimaryStage</a></span>&#8203;(javafx.stage.Stage&nbsp;primaryStage)</code></th>
 <td class="colLast">
@@ -528,18 +560,18 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>viewId</code> - the view ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the view instance. If the <code>viewId</code> does not exists,
-         <code>null</code> is returned.</dd>
+<dd>the view instance. If the <code>viewId</code> does not exists, an
+         <code>IllegalArgumentException</code> is thrown.</dd>
 </dl>
 </li>
 </ul>
-<a id="getController(java.lang.Class)">
+<a id="getBean(java.lang.Class)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getController</h4>
-<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;getController&#8203;(java.lang.Class&lt;T&gt;&nbsp;controllerClass)</pre>
+<h4>getBean</h4>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;getBean&#8203;(java.lang.Class&lt;T&gt;&nbsp;controllerClass)</pre>
 <div class="block">Gets the controller defined by the supplied <code>controllerClass</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -551,13 +583,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="getController(java.lang.String)">
+<a id="getBean(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getController</h4>
-<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;getController&#8203;(java.lang.String&nbsp;controllerId)</pre>
+<h4>getBean</h4>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;getBean&#8203;(java.lang.String&nbsp;controllerId)</pre>
 <div class="block">Gets the controller by the supplied <code>controllerId</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -566,6 +598,48 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the retrieved controller instance.If the <code>controllerId</code> does
          not exists, <code>null</code> is returned.</dd>
+</dl>
+</li>
+</ul>
+<a id="getControllerResourceBundle(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getControllerResourceBundle</h4>
+<pre class="methodSignature">public&nbsp;java.util.ResourceBundle&nbsp;getControllerResourceBundle&#8203;(java.lang.String&nbsp;controllerId)</pre>
+<div class="block">Gets the <code>ResourceBundle</code> that is used internationalization of the view
+ associated with the controller identified by <code>controllerId</code>.
+ <p>
+ The locale is retrieved from the <code>#localeSupplier</code> that has been
+ configured with this instance of <a href="ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>controllerId</code> - the ID of the controller</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the resource bundle, or <code>null</code>, in case there is no resource
+         bundle associated with the given controller</dd>
+</dl>
+</li>
+</ul>
+<a id="getControllerResourceBundle(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getControllerResourceBundle</h4>
+<pre class="methodSignature">public&nbsp;java.util.ResourceBundle&nbsp;getControllerResourceBundle&#8203;(java.lang.Class&lt;?&gt;&nbsp;controllerClass)</pre>
+<div class="block">Gets the <code>ResourceBundle</code> that is used internationalization of the view
+ associated with the given <code>controllerClass</code>.
+ <p>
+ The locale is retrieved from the <code>#localeSupplier</code> that has been
+ configured with this instance of <a href="ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>controllerId</code> - the ID of the controller</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the resource bundle, or <code>null</code>, in case there is no resource
+         bundle associated with the given controller</dd>
 </dl>
 </li>
 </ul>
@@ -624,7 +698,7 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>scanPackage</code> - the package name that shall be scanned for ActionFX
-                    componets</dd>
+                    components</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>this builder</dd>
 </dl>
@@ -669,6 +743,36 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the enhancer</dd>
+</dl>
+</li>
+</ul>
+<a id="getUncaughtExceptionHandler()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUncaughtExceptionHandler</h4>
+<pre class="methodSignature">public&nbsp;java.lang.Thread.UncaughtExceptionHandler&nbsp;getUncaughtExceptionHandler()</pre>
+<div class="block">Gets the <code>Thread.UncaughtExceptionHandler</code>, if set.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <code>Thread.UncaughtExceptionHandler</code>.</dd>
+</dl>
+</li>
+</ul>
+<a id="getObservableLocale()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getObservableLocale</h4>
+<pre class="methodSignature">public&nbsp;javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;getObservableLocale()</pre>
+<div class="block">Gets the locale as an <code>ObservableValue</code> If not set by
+ <a href="ActionFX.ActionFXBuilder.html#observableLocale"><code>ActionFX.ActionFXBuilder.observableLocale</code></a>, the default implementation will
+ return the <code>Locale.getDefault()</code> locale.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the observable locale</dd>
 </dl>
 </li>
 </ul>

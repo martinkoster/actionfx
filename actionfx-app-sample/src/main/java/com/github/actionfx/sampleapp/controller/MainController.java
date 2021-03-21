@@ -21,34 +21,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
+package com.github.actionfx.sampleapp.controller;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXNestedView;
+import com.github.actionfx.core.view.BorderPanePosition;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 
 /**
- * Main application controller that is wiring up the master-, details- and
- * center view.
+ * Main application controller that integrates further views.
  *
  * @author koster
  *
  */
-@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true)
+@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true, icon = "/images/book.png", title = "The Book Store")
 public class MainController {
 
-	@AFXNestedView(refViewId = "productCatalogListView")
+	@AFXNestedView(refViewId = "bookCatalogueView", attachToBorderPanePosition = BorderPanePosition.CENTER)
+	@AFXNestedView(refViewId = "shoppingCartView", attachToBorderPanePosition = BorderPanePosition.RIGHT)
 	@FXML
-	private ScrollPane productListScrollPane;
+	private BorderPane contentPane;
 
-	@AFXNestedView(refViewId = "productDetailsView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
-	@FXML
-	private AnchorPane productDetailsAnchorPane;
-
-	@AFXNestedView(refViewId = "shoppingCartView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
-	@FXML
-	private AnchorPane shoppingCartAnchorPane;
 }

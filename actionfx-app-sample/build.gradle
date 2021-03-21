@@ -12,8 +12,11 @@ dependencies {
             modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
         }
 
+		implementation project(":actionfx-controlsfx")
         implementation project(":actionfx-core")
         implementation project(":actionfx-spring-boot")
+        
+  		implementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "${springBootVersion}"
         
         testImplementation project(":actionfx-testing")
 
@@ -68,4 +71,8 @@ modifyPom {
             }
         }
     }
+}
+
+sonarqube {
+    skipProject = true
 }

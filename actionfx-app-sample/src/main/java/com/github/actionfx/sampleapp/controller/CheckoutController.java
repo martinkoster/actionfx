@@ -21,20 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.sampleapp.core.app.controller;
+package com.github.actionfx.sampleapp.controller;
 
 import com.github.actionfx.core.annotation.AFXController;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
+/**
+ * The checkout view, displayed in its own stage in a modal fashion.
+ *
+ * @author koster
+ *
+ */
+@AFXController(viewId = "checkoutView", fxml = "/fxml/CheckoutView.fxml", icon = "/images/book.png", title = "Check Out", modal = true, width = 600, height = 500, posX = 600, posY = 300)
+public class CheckoutController {
 
-@AFXController(viewId = "shoppingCartView", fxml = "/fxml/ShoppingCartView.fxml")
-public class ShoppingCartController {
-
-	@FXML
-	private ListView<String> shoppingCartListView;
-
-	public void addToShoppingCart(final String product) {
-		shoppingCartListView.getItems().add(product);
-	}
 }

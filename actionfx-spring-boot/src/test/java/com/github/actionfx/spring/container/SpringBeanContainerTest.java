@@ -52,6 +52,7 @@ import com.github.actionfx.core.view.View;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
+import com.github.actionfx.spring.test.app.ViewWithButtonController;
 
 /**
  * JUnit test case for {@link SpringBeanContainer}.
@@ -92,19 +93,22 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
-	void testPopulateContainer() {
+	void testRunComponentScan() {
 		// WHEN
-		container.populateContainer(SampleApp.class.getPackageName());
+		container.runComponentScan(SampleApp.class.getPackageName());
 
-		// THEN (4 beans are registered (2 x controller, 2 x views)
-		verify(registry, times(4)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
+		// THEN (6 beans are registered (3 x controller, 3 x views)
+		verify(registry, times(6)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
 		final List<String> beanNames = beanNameCaptor.getAllValues();
 		final List<BeanDefinition> beanDefinitions = beanDefinitionCaptor.getAllValues();
-		assertThat(beanNames, contains("mainController", "mainView", "prototypeScopedController", "prototypeView"));
+		assertThat(beanNames, contains("mainController", "mainView", "prototypeScopedController", "prototypeView",
+				"viewWithButtonController", "viewWithButton"));
 		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true);
 		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true);
 		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false);
 		assertBeanDefinitionFor(beanDefinitions.get(3), View.class, false);
+		assertBeanDefinitionFor(beanDefinitions.get(4), ViewWithButtonController.class, true);
+		assertBeanDefinitionFor(beanDefinitions.get(5), View.class, true);
 	}
 
 	@Test

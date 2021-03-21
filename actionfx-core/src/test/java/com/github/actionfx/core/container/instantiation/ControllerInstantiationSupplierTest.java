@@ -27,29 +27,27 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
-import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 /**
  * JUnit test case for {@link FxmlViewInstantiationSupplier}
@@ -66,7 +64,6 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	@TestInFxThread
 	void testCreateInstance_viewCreationTest() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewController> supplier = new ControllerInstantiationSupplier<>(
@@ -96,254 +93,32 @@ class ControllerInstantiationSupplierTest {
 	}
 
 	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnUserInput_valueChangetextField_allListenersAreActive() {
+	void testCreateInstance_internationalizationTest() {
 		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
+		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
+		final ControllerInstantiationSupplier<MultilingualViewController> supplier = new ControllerInstantiationSupplier<>(
+				MultilingualViewController.class, resourceBundle);
 
 		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-		controller.textField.setText("Hello World"); // triggers listener
-
-		// THEN (all 3 annotated methods are invoked)
-		assertThat(controller.invocations,
-				contains("onTextFieldValueChange('Hello World')",
-						"onTextFieldValueChangeWithNewAndOldValue('Hello World', '', ObservableValue)",
-						"onTextFieldValueChangeWithAnnotatedArguments('', 'Hello World', ObservableValue)"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnUserInput_valueChangetextField_onlyOneListenerIsActive_usingListenerActiveBooleanPropertyInAnnotation() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-		// deactivate 2 out of 3 listeners (2 annotations use the
-		// "listenerActiveBooleanProperty"
-		controller.listenerEnabled.set(false);
-		controller.textField.setText("Hello World"); // triggers listener
-
-		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onTextFieldValueChange('Hello World')"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnUserInput_valueChangechoiceBox() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-		controller.choiceBox.setValue("Hello World"); // triggers listener
-
-		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onChoiceBoxValueChange('Hello World')"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnUserInput_valueChangecomboBox() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-		controller.comboBox.setValue("Hello World"); // triggers listener
-
-		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onComboBoxValueChange('Hello World')"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_enableMultiSelectionControls() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
+		final MultilingualViewController controller = supplier.get();
 
 		// THEN
-		assertThat(controller.singleSelectionTable.getSelectionModel().getSelectionMode(),
-				equalTo(SelectionMode.SINGLE));
-		assertThat(controller.multiSelectionTable.getSelectionModel().getSelectionMode(),
-				equalTo(SelectionMode.MULTIPLE));
+		assertThat(controller, notNullValue());
+		final View view = ControllerWrapper.getViewFrom(controller);
+		assertThat(view, notNullValue());
+		assertThat(view.getRootNode(), notNullValue());
+		assertThat(view.getId(), equalTo("multilingualView"));
+
+		assertThat(view, instanceOf(View.class));
+		final FxmlView fxmlView = (FxmlView) view;
+		final Node node = fxmlView.getRootNode();
+		assertNotNull(node);
+		assertTrue(node instanceof VBox);
+		final VBox vbox = (VBox) node;
+		assertThat(vbox.getChildren(), hasSize(1));
+		assertThat(vbox.getChildren().get(0), instanceOf(Label.class));
+		final Label label = (Label) vbox.getChildren().get(0);
+		assertThat(label.getText(), equalTo("Hello World"));
 	}
 
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnAction() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-
-		// THEN
-		assertThat(controller.actionButton.getOnAction(), notNullValue());
-
-		// and WHEN (fire action)
-		Event.fireEvent(controller.actionButton, new ActionEvent());
-
-		// and THEN (invocation was performed)
-		assertThat(controller.invocations, contains("onActionButtonClicked()"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnAction_referencedControlDoesNotHaveOnActionProperty() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithWrongAFXOnAction> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithWrongAFXOnAction.class);
-
-		// WHEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> supplier.get());
-
-		// THEN
-		assertThat(ex.getMessage(), equalTo(
-				"Control with id='singleSelectionTable' and type 'javafx.scene.control.TableView' does not support an 'onAction' property! Please verify your @AFXOnAction annotation in controller class 'com.github.actionfx.core.container.instantiation.SampleViewControllerWithWrongAFXOnAction', method 'willNeverBeCalledAsOnActionIsWrong'!"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnAction_togetherWith_wireOnControlUserValue() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-
-		// THEN
-		assertThat(controller.actionWithSubmissionButton.getOnAction(), notNullValue());
-
-		// and WHEN (fire action)
-		Event.fireEvent(controller.actionWithSubmissionButton, new ActionEvent());
-
-		// and THEN (invocation was performed, with control user value injected into
-		// method)
-		assertThat(controller.invocations, contains("onActionWithSubmissionButtonClicked(ActionEvent, 'Hello World')"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnUserInput_selection_singleValueChange_inTableView() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-		controller.singleSelectionTable.getItems().add("Item 1");
-		controller.singleSelectionTable.getItems().add("Item 2");
-		controller.singleSelectionTable.getItems().add("Item 3");
-		controller.singleSelectionTable.getSelectionModel().select("Item 2");
-
-		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onSelectValueInSingleSelectionTable('Item 2')",
-				"onSelectValueInSingleSelectionTableWithList([Item 2])"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireOnUserInput_selection_multiValueChange_inTableView() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-		controller.multiSelectionTable.getItems().add("Item 1");
-		controller.multiSelectionTable.getItems().add("Item 2");
-		controller.multiSelectionTable.getItems().add("Item 3");
-		controller.multiSelectionTable.getSelectionModel().selectAll();
-
-		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onSelectValueInMultiSelectionTable('Item 1','Item 2','Item 3')",
-				"onSelectValueInMultiSelectionTableWithFullArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)",
-				"onSelectValueInMultiSelectionTableWithAnnotatedArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireLoadControlData_valueIsObservableList() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-
-		// THEN (verify that dataLoadedSelectionTable has the items loaded from the
-		// method "loadData")
-		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
-	}
-
-	@Test
-	void testCreateInstance_wireLoadControlData_valueIsObservableList_dataIsLoadedAsynchronously() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-
-		// THEN (initially, data is empty, because the data loading flag is set to false
-		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedSelectionTable.getItems(), hasSize(0));
-
-		// and WHEN (we switch the loading flag to "true")
-		controller.loadDataForTableViewActivated.set(true);
-
-		// and THEN
-		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
-	}
-
-	@Test
-	@TestInFxThread
-	void testCreateInstance_wireLoadControlData_valueIsWritableValue() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-
-		// THEN
-		assertThat(controller.dataLoadedTreeView.getRoot(), notNullValue());
-		assertThat(controller.dataLoadedTreeView.getRoot().getValue(), equalTo("root"));
-	}
-
-	@Test
-	void testCreateInstance_wireLoadControlData_valueIsWritableValue_dataIsLoadedAsynchronously() {
-		// GIVEN
-		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
-				SampleViewControllerWithListener.class);
-
-		// WHEN
-		final SampleViewControllerWithListener controller = supplier.get();
-
-		// THEN (initially, root value is empty, because the data loading flag is set to
-		// false
-		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedTreeView.getRoot(), nullValue());
-
-		// and WHEN (we switch the loading flag to "true")
-		controller.loadDataForTreeViewActivated.set(true);
-
-		// and THEN
-		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedTreeView.getRoot(), notNullValue());
-		assertThat(controller.asyncDataLoadedTreeView.getRoot().getValue(), equalTo("root"));
-	}
 }
