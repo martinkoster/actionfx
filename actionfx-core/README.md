@@ -455,7 +455,7 @@ Attribute 							| Description
 ```
 
 
-### User Value of Controls
+## User Value of Controls
 
 In the previous sections, it was shown that user selected values can be injected into methods e.g. by using the `@AFXControlValue` annotation or that you can listen to changes of control values via the `@AFXOnControlValueChange` annotation.
 
@@ -526,7 +526,7 @@ javafx.scene.control.ToolBar				| itemsProperty()
 javafx.scene.control.TreeTableView			| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
 javafx.scene.control.TreeView				| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
 
-### Internationalization
+## Internationalization
 
 Internationalization works by specifying the locale while setting up the ActionFX instance and by providing the resource bundle name as part of the `@AFXController` annotation.
 
