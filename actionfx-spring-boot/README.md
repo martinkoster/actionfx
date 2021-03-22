@@ -16,37 +16,6 @@ Once your ActionFX controllers are managed by Spring, you can leverage all Sprin
 
 ### Use Spring's MessageSource for internationalization
 
-When using Spring, developers can use Spring's MessageSource for internatio
-
-#### Internationalization in Non-Spring Environment:
-
-Internationalization in Non-Spring environments works by specifying the locale while setting up the ActionFX instance and by providing the resource bundle name as part of the `@AFXController` annotation.
-
-Setting up ActionFX with a `java.util.Locale` set to `Locale.US`:
-
-```java
-ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
- 						.locale(Locale.US)
-						.build()
-```
-
-Controller definition with using a `java.util.ResourceBundle`:
-
-```java
-@AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml", resourcesBasename = "i18n.TextResources")
-public class MultilingualViewController {
-
-}
-```
-Using this configuration, it is expected that there are localized properties files in folder `i18n` with names:
-- TextResource_en_US.properties
-- TextResource_en.properties
-- TextResources.properties
-
-Please note that this internationalization mechanism will also work in a Spring environment. However, you can not make use of advanced features supplied by a Spring `MessageSource`.
-
-#### Internationalization in Spring Environments:
-
 For Spring environments, it is recommended to register the properties files as part of a central Spring-managed `MessageSource`:
 
 ```java
