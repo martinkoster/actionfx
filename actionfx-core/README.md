@@ -88,6 +88,8 @@ Builder Method | Description
 `enhancementStrategy(final EnhancementStrategy enhancementStrategy)` | The byte-code enhancement strategy to use within ActionFX. Currently the following enhancement strategies are available:1.) `EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT}`: A byte-code instrumentation agent is installed/attached at runtime. Methods of controllerclasses are directly enhanced via method interceptors. 2.) `EnhancementStrategy.SUBCLASSING`: Controller classes are sub-classed, while controller methods are overriden and method interceptors are attached.
 `actionFXEnhancer(final ActionFXEnhancer actionFXEnhancer)` | Sets the implementation of interface `ActionFXEnhancer` to use within ActionFX. In case there is no instance set, the default enhancer `ActionFXByteBuddyEnhancer` is used. Please note that implementations of interface `ActionFXEnhancer` must provide the possibility of both, byte code instrumentation via a runtime agent and byte code enhancement via sub-classing.
 `uncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler)` | Configures an exception handler for uncaught exceptions.
+`locale(final Locale locale)` | Configures an `java.util.Locale` for internationalization. The locale itself is wrapped into an `ObservableValue<Locale>`
+`observableLocale(final ObservableValue<Locale> observableLocale)` | Configures an `javafx.beans.value.ObservableValue` that holds a proper `java.util.Locale` for internationalization.
 
 Once the ActionFX instance is setup with all configuration parameters, it is required to scan for components / controllers with
 
@@ -557,6 +559,13 @@ ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
 @AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml", resourcesBasename = "i18n.TextResources")
 public class MultilingualViewController {
 
+	// The locale can be injected into the controller in the following forms, if desired and needed...
+
+	@Inject
+	private Locale locale:
+	
+	@Inject
+	private ObservableValue<Locale> observableLocale;
 }
 ```
 Using this configuration, it is expected that there are localized properties files in folder `i18n` with names:
