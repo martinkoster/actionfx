@@ -27,6 +27,7 @@ Module | Description | API Documentation | Gradle Dependency
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
     + [User Value of Controls](#user-value-of-controls)
+    + [Internationalization](#internationalization)
 
 ## Overview
 
@@ -207,11 +208,11 @@ The annotation provides different options how the new view shall be displayed. T
 
 Attribute 					| Description 
 --------------------------- | -------------------------------------------------
-`showView` 				|  The view to be displayed, when the method successfully terminates. This attribute competes with attribute `showNestedViews()`, while this attribute has higher precedence than `showNestedViews()` 
+`viewId`	 				|  The view to be displayed, when the method successfully terminates. This attribute competes with attribute `showNestedViews()`, while this attribute has higher precedence than `showNestedViews()` 
 `showInNewWindow` 		|  Determines whether the view defined in `showView()` shall be displayed in its own `Stage`. The specification of this attribute does not affect view transition in case the attribute `showNestedViews()` is given.
 `showNestedViews` 		| The nested views to be displayed, when the method successfully terminates. This attribute allows to embed view into the current scene graph and `Stage`. Please take note, that this attribute must not be used together with `showView()` and `showInNewWindow()`.
 
-Please note that only *one* attribute must be used at the same time (they can not be combined).
+Please note that only *one* attribute starting with `show*` must be used at the same time (they can not be combined).
 
 **Example:**
 ```java
@@ -436,6 +437,12 @@ The [@AFXUseFilteredList](src/main/java/com/github/actionfx/core/annotation/AFXU
 
 This annotation can be e.g. applied to a field of type `javafx.scene.control.TableView`, so that table view items can be filtered. Additionally, the filtered list can be wrapped in a `javafx.collections.transformation.SortedList`, if desired.
 
+The following attributes are available inside the annotation:
+
+Attribute 							| Description 
+----------------------------------- | -------------------------------------------------
+`wrapInSortedList` 				| Optionally the {@link FilteredList} can be additionally wrapped inside a `javafx.collections.transformation.SortedList`. Default is however `false`.
+
 **Example:**
 ```java
 	@AFXUseFilteredList
@@ -518,3 +525,43 @@ javafx.scene.control.ToggleButton			| selectedProperty()
 javafx.scene.control.ToolBar				| itemsProperty()
 javafx.scene.control.TreeTableView			| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
 javafx.scene.control.TreeView				| getSelectionModel().selectedItemProperty() (for single-selection), getSelectionModel().getSelectedItems() (for multi-selection)
+
+### Internationalization
+
+Internationalization works by specifying the locale while setting up the ActionFX instance and by providing the resource bundle name as part of the `@AFXController` annotation.
+
+In this case, FXML views can contain "%" prefixed placeholder that are replaced by values from internationalized properties files during view loading.
+
+**Example of an internationalized FXML:**
+
+```xml
+<BorderPane fx:controller="bundledemo.MyController" xmlns:fx="http://javafx.com/fxml">
+    <center>
+        <!-- This label's text will be taken from the bundle automatically -->
+        <Label text="%messageKey"/>
+    </center>
+</BorderPane>
+```
+
+**Setting up ActionFX with a `java.util.Locale` set to `Locale.US`:**
+
+```java
+ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+ 						.locale(Locale.US)
+						.build()
+```
+
+**Controller definition with using a `java.util.ResourceBundle`:**
+
+```java
+@AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml", resourcesBasename = "i18n.TextResources")
+public class MultilingualViewController {
+
+}
+```
+Using this configuration, it is expected that there are localized properties files in folder `i18n` with names:
+- TextResource_en_US.properties
+- TextResource_en.properties
+- TextResources.properties
+
+In case you are working in a Spring-managed environment, you might want to refer to ActionFX module' [actionfx-spring-boot/README.md](../actionfx-spring-boot/README.md).

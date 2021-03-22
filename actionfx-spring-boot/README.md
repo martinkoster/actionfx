@@ -6,6 +6,68 @@ Module | Description | API Documentation | Gradle Dependency
 ------ | ----------- | ----------------- | ----------
 [actionfx-spring-boot](README.md) | This module contains Spring factories to use a Spring Bean container together with ActionFX. Additional Spring Boot is supported with the ActionFX autoconfiguration class [AFXAutoconfiguration](actionfx-spring-boot/src/main/java/com/github/actionfx/spring/autoconfigure/AFXAutoconfiguration.java). When using this module, Spring @Autowired can be used instead of @Inject to autowire views and controllers (and even more services and components managed by the Spring bean container). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-spring-boot/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", version: "1.0.0"`
 
-### Wiring a SpringBeanContainer with an ApplicationContextInitializer
+### Hooking in Spring into ActionFX with an ApplicationContextInitializer
 
 When including this module on your application's classpath, class [AFXApplicationContextInitializer](src/main/java/com/github/actionfx/spring/container/AFXApplicationContextInitializer.java) is automatically added as a Spring `ApplicationContextInitializer` via [spring.factories](src/main/resources/META-INF/spring.factories), registering all ActionFX controllers as regular Spring beans. Additionally, an auto-configuration class is registered (see [AFXAutoconfiguration](src/main/java/com/github/actionfx/spring/autoconfigure/AFXAutoconfiguration.java)).
+
+### Using Spring Features in ActionFX controllers
+
+Once your ActionFX controllers are managed by Spring, you can leverage all Spring annotations on method- and field-level like `@Autowired` (instead of `@Inject`). Please note that you can **not** use class-level annotations like `@Component` or `@Controller`, because ActionFX requires more information that is only given by the `@AFXController` annotation. However, all classes annotated by `@AFXController` are registered as Spring-managed beans, either singleton- or prototype-scoped, depending on the attribute `@AFXController(..., singleton=true/false)`.
+
+### Use Spring's MessageSource for internationalization
+
+When using Spring, developers can use Spring's MessageSource for internatio
+
+#### Internationalization in Non-Spring Environment:
+
+Internationalization in Non-Spring environments works by specifying the locale while setting up the ActionFX instance and by providing the resource bundle name as part of the `@AFXController` annotation.
+
+Setting up ActionFX with a `java.util.Locale` set to `Locale.US`:
+
+```java
+ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+ 						.locale(Locale.US)
+						.build()
+```
+
+Controller definition with using a `java.util.ResourceBundle`:
+
+```java
+@AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml", resourcesBasename = "i18n.TextResources")
+public class MultilingualViewController {
+
+}
+```
+Using this configuration, it is expected that there are localized properties files in folder `i18n` with names:
+- TextResource_en_US.properties
+- TextResource_en.properties
+- TextResources.properties
+
+Please note that this internationalization mechanism will also work in a Spring environment. However, you can not make use of advanced features supplied by a Spring `MessageSource`.
+
+#### Internationalization in Spring Environments:
+
+For Spring environments, it is recommended to register the properties files as part of a central Spring-managed `MessageSource`:
+
+```java
+@Configuration
+public class SpringConfig {
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+
+        var source = new ResourceBundleMessageSource();
+        source.setBasenames("i18n/TextResources");
+        return source;
+    }
+}
+```
+
+If doing so, the controller configuration itself must omit the `resourceBasename` attribute in `@AFXController`:
+
+```java
+@AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml")
+public class MultilingualViewController {
+
+}
+```

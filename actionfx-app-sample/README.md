@@ -358,7 +358,7 @@ Source Code can be found here: [ShoppingCartController](src/main/java/com/github
 
 The check-out controller does not contain any logic anymore as it is the end of the demo application.
 
-However, the applied `@AFXController` application shows how to display the view as a modal dialog (`modal=true`) at a certain position and in a certain size:
+However, the applied `@AFXController` annotation shows how to display the view as a modal dialog (`modal=true`) at a certain position and in a certain size:
 
 ```java
 @AFXController(viewId = "checkoutView", fxml = "/fxml/CheckoutView.fxml", icon = "/images/book.png", title = "Check Out", modal = true, width = 600, height = 500, posX = 600, posY = 300)
