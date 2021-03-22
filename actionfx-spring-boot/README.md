@@ -37,6 +37,13 @@ If doing so, the controller configuration itself must omit the `resourceBasename
 ```java
 @AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml")
 public class MultilingualViewController {
+	
+	// The locale can be injected into the controller in the following forms, if desired and needed...
 
+	@Inject
+	private Locale locale:
+	
+	@Inject
+	private ObservableValue<Locale> observableLocale;
 }
 ```
