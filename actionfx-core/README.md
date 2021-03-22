@@ -26,8 +26,8 @@ Module | Description | API Documentation | Gradle Dependency
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
-    + [User Value of Controls](#user-value-of-controls)
-    + [Internationalization](#internationalization)
+  * [User Value of Controls](#user-value-of-controls)
+  * [Internationalization](#internationalization)
 
 ## Overview
 
