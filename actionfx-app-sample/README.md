@@ -112,25 +112,13 @@ public class BookCatalogueController {
 	@FXML
 	private CheckListView<String> categoriesCheckListView;
 
-	@FXML
-	private TextField filterTextField;
-
-	@FXML
-	private Button addToShoppingCartButton;
-
 	@AFXUseFilteredList
 	@AFXEnableMultiSelection
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
-
-	@FXML
-	private TableColumn<Book, String> titleColumn;
-
-	@FXML
-	private TableColumn<Book, String> categoryColumn;
-
-	@FXML
-	private TableColumn<Book, String> priceColumn;
 
 	// both, ActionFX' BeanContainer and Spring bean container know how to interpret
 	// this annotation
@@ -139,9 +127,6 @@ public class BookCatalogueController {
 
 	@PostConstruct
 	public void initialize() {
-		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-		priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 		categoriesCheckListView.getCheckModel().checkAll();
 	}
 
@@ -153,10 +138,10 @@ public class BookCatalogueController {
 	@AFXLoadControlData(controlId = "bookTableView", async = true)
 	public List<Book> loadBooks() {
 		final List<Book> books = new ArrayList<>();
-		books.add(new Book("Sci-Fi Stories 3", "Science Fiction", "8,99$"));
-		books.add(new Book("Thrilling 2", "Thriller", "9,99$"));
-		books.add(new Book("Fantastic World", "Fantasy", "7,99$"));
-		books.add(new Book("Drama Queen", "Drama", "2,99$"));
+		books.add(new Book("Sci-Fi Stories 3", "Science Fiction", 8.99));
+		books.add(new Book("Thrilling 2", "Thriller", 9.99));
+		books.add(new Book("Fantastic World", "Fantasy", 7.99));
+		books.add(new Book("Drama Queen", "Drama", 2.99));
 		return books;
 	}
 
@@ -222,14 +207,18 @@ The catalogue view holds a ControlsFX `CheckListView` which displays the categor
 	}
 ```
 
-The actual books are displayed in a `javafx.scene.layout.TableView` which is configured to support a multi-selection and a filtering:
+The actual books are displayed in a `javafx.scene.layout.TableView` which is configured to support a multi-selection and a filtering. Additionally, it is configured, which data is displayed in which column via the `AFXCellValueConfig` annotation:
 
 ```java
 	@AFXUseFilteredList
 	@AFXEnableMultiSelection
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
 ```
+In plain JavaFX, it would be required to inject the `TableColumn` instances via `@FXML`. In ActionFX, this is not required as the table column instances are looked up in the scene graph using the `colId` attribute in `@AFXCellValueConfig`.
 
 The table view itself is loaded in an asynchronous fashion via:
 

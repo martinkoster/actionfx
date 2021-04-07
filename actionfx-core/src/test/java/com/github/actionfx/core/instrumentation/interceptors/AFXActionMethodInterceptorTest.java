@@ -83,7 +83,7 @@ class AFXActionMethodInterceptorTest {
 		viewOfControllerOne.show(primaryStage);
 
 		// WHEN
-		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne, method);
+		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is part of new stage that is
 		// different from the primary stage)
@@ -107,7 +107,7 @@ class AFXActionMethodInterceptorTest {
 		viewOfControllerOne.show(primaryStage);
 
 		// WHEN
-		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne, method);
+		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is identical to the primary stage)
 		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
@@ -131,7 +131,7 @@ class AFXActionMethodInterceptorTest {
 		viewOfControllerOne.show(popup, primaryStage);
 
 		// WHEN
-		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne, method);
+		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is identical to the popup)
 		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
@@ -154,7 +154,7 @@ class AFXActionMethodInterceptorTest {
 		viewOfControllerOne.show(primaryStage);
 
 		// WHEN
-		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne, method);
+		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is identical to the primary stage)
 		assertThat(viewOfControllerTwo.getWindow(), notNullValue());

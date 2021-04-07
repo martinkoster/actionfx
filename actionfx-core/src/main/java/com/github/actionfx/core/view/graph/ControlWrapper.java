@@ -54,6 +54,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SelectionModel;
+import javafx.util.StringConverter;
 
 /**
  * Wrapper around a {@link Control} in order to have a unique access to its
@@ -114,6 +115,9 @@ public class ControlWrapper extends NodeWrapper {
 
 	// the field name of the "onAction" property inside controls that do support it
 	private static final String ON_ACTION_FIELD_NAME = "onAction";
+
+	// the field name of a converter property for controls that support it
+	private static final String CONVERTER_PROPERTY_NAME = "converter";
 
 	// property keys that are expected in a control-specific properties file
 	private static final String PROPERTY_KEY_VALUE_PROPERTY = "valueProperty";
@@ -628,6 +632,31 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
+	 * Returns the "converter" property of a control. In case this property is not
+	 * supported, {@code null} is returned.
+	 *
+	 * @return the "converter" property, or {@code null}, in case the property is
+	 *         not supported by the wrapped control
+	 */
+	@SuppressWarnings("unchecked")
+	public ObjectProperty<StringConverter<?>> getConverterProperty() {
+		final Field field = ReflectionUtils.findField(getWrappedType(), CONVERTER_PROPERTY_NAME);
+		if (field == null) {
+			return null;
+		}
+		final Object value = ReflectionUtils.getFieldValueByPropertyGetter(field, getWrapped());
+		if (value == null) {
+			return null;
+		}
+		if (!ObjectProperty.class.isAssignableFrom(value.getClass())) {
+			throw new IllegalStateException("Converter property in control of type '"
+					+ getWrappedType().getCanonicalName() + "' has type '" + value.getClass().getCanonicalName()
+					+ "', expected was type '" + ObjectProperty.class.getCanonicalName() + "'!");
+		}
+		return (ObjectProperty<StringConverter<?>>) value;
+	}
+
+	/**
 	 * Returns the "on action" property of a control. In case this property is not
 	 * supported, {@code null} is returned.
 	 *
@@ -668,7 +697,7 @@ public class ControlWrapper extends NodeWrapper {
 				final Properties controlConfigProperties = new Properties();
 				controlConfigProperties.load(inputStream);
 				return mapToControlConfig(controlConfigProperties);
-			} catch (final IOException e) {
+			} catch (final Exception e) {
 				LOG.warn("File '{}' does not exist or can not be read.", configPropertiesPath);
 			}
 			return null;

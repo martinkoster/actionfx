@@ -24,10 +24,17 @@
 package com.github.actionfx.spring.container;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,6 +48,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
@@ -65,9 +73,11 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 
 	private ApplicationContext applicationContext;
 
+	@SuppressWarnings("unchecked")
 	@BeforeAll
 	static void initializeActionFX() {
-		ActionFX.builder().scanPackage(SampleApp.class.getPackageName()).build();
+		ActionFX.builder().scanPackage(SampleApp.class.getPackageName())
+				.controllerExtension(CustomControllerExtension.class, AnotherCustomControllerExtension.class).build();
 	}
 
 	@AfterAll
@@ -88,8 +98,7 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		// THEN (make sure that also the applicationContextInitializer has been setup
 		// properly)
 		final MainController controller = actionFX.getBean("mainController");
-		final PrototypeScopedController prototypeScopedController = actionFX
-				.getBean(PrototypeScopedController.class);
+		final PrototypeScopedController prototypeScopedController = actionFX.getBean(PrototypeScopedController.class);
 
 		assertThat(controller, notNullValue());
 
@@ -115,9 +124,48 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		assertThat(controller.isActionFired(), equalTo(true));
 	}
 
+	@Test
+	void testControllerBeanPostProcessor_customControllerExtensions() {
+
+		// WHEN (controller is retrieved from Spring context)
+		applicationContext.getBean(ViewWithButtonController.class);
+
+		// THEN (custom controller extensions have been applied)
+		final ControllerExtensionBean ceb = applicationContext.getBean(ControllerExtensionBean.class);
+		assertThat(ceb, notNullValue());
+		assertThat(ceb.getCustomControllerExtensions(), hasSize(2));
+		final Consumer<Object> ext1 = ceb.getCustomControllerExtensions().get(0);
+		final Consumer<Object> ext2 = ceb.getCustomControllerExtensions().get(1);
+		assertThat(ext1, instanceOf(CustomControllerExtension.class));
+		assertThat(ext2, instanceOf(AnotherCustomControllerExtension.class));
+
+		assertThat(((CustomControllerExtension) ext1).getExtendedControllerList(),
+				hasItems(ViewWithButtonController.class));
+		assertThat(((AnotherCustomControllerExtension) ext2).getExtendedControllerList(),
+				hasItems(ViewWithButtonController.class));
+	}
+
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+	}
+
+	public static class CustomControllerExtension implements Consumer<Object> {
+
+		private final Set<Class<?>> extendedControllerList = new HashSet<>();
+
+		@Override
+		public void accept(final Object t) {
+			// take the super class, not the class that ByteBuddy has generated
+			extendedControllerList.add(t.getClass().getSuperclass());
+		}
+
+		public Set<Class<?>> getExtendedControllerList() {
+			return extendedControllerList;
+		}
+	}
+
+	public static class AnotherCustomControllerExtension extends CustomControllerExtension {
 	}
 
 }

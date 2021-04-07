@@ -35,9 +35,9 @@ public class Book {
 
 	private String category;
 
-	private String price;
+	private Double price;
 
-	public Book(final String title, final String category, final String price) {
+	public Book(final String title, final String category, final Double price) {
 		this.title = title;
 		this.category = category;
 		this.price = price;
@@ -59,11 +59,11 @@ public class Book {
 		this.category = category;
 	}
 
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(final String price) {
+	public void setPrice(final Double price) {
 		this.price = price;
 	}
 

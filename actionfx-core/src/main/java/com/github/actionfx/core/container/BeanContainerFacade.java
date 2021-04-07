@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+
 import javafx.beans.value.ObservableValue;
 
 /**
@@ -56,6 +58,12 @@ public interface BeanContainerFacade {
 	 * {@code @Inject} into controller classes.
 	 */
 	public static String ACTIONFX_BEANNAME = "actionFX";
+
+	/**
+	 * The bean name of an {@link ControllerExtensionBean} holding all user defined
+	 * controller extensions.
+	 */
+	public static String CONTROLLER_EXTENSION_BEANNAME = "controllerExtensionBean";
 
 	/**
 	 * Populates the container with view components by scanning the given

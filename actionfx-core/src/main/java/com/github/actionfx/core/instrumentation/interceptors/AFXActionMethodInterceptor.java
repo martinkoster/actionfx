@@ -1,12 +1,8 @@
 package com.github.actionfx.core.instrumentation.interceptors;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.Callable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXNestedView;
@@ -28,37 +24,28 @@ import javafx.stage.Window;
  */
 public class AFXActionMethodInterceptor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AFXActionMethodInterceptor.class);
-
 	private AFXActionMethodInterceptor() {
 		// class can not be instantiated
 	}
 
 	public static Object interceptAFXAction(final AFXShowView afxAction, final Callable<?> callable,
-			final Object instance, final Method method, final Object... args) throws Exception {
-		try {
-			final Object result = callable.call();
-			doOnSuccess(afxAction, instance, method, result);
-			return result;
-		} finally {
-
-		}
+			final Object instance) throws Exception {
+		final Object result = callable.call();
+		doOnSuccess(afxAction, instance);
+		return result;
 	}
 
 	/**
 	 * Executes the on-success action defined in {@link AFXShowView}.
 	 *
-	 * @param afxAction              the {@link AFXShowView} annotation
-	 * @param instance               the instance holding the intercepted method
-	 * @param method                 the intercepted method
-	 * @param methodInvocationResult the result of the intercepted method
+	 * @param afxAction the {@link AFXShowView} annotation
+	 * @param instance  the instance holding the intercepted method
 	 */
-	private static void doOnSuccess(final AFXShowView afxAction, final Object instance, final Method method,
-			final Object methodInvocationResult) {
+	private static void doOnSuccess(final AFXShowView afxAction, final Object instance) {
 		if (!"".equals(afxAction.viewId())) {
-			showView(afxAction, instance, method, methodInvocationResult);
+			showView(afxAction, instance);
 		} else if (afxAction.showNestedViews().length > 0) {
-			showNestedViews(afxAction, instance, method, methodInvocationResult);
+			showNestedViews(afxAction, instance);
 		}
 	}
 
@@ -66,14 +53,10 @@ public class AFXActionMethodInterceptor {
 	 * Shows the view inside a window, either freshly created or inside the
 	 * currently displayed one.
 	 *
-	 * @param afxAction              the {@link AFXShowView} annotation that is
-	 *                               intercepted
-	 * @param instance               the controller instance
-	 * @param method                 the intercepted method
-	 * @param methodInvocationResult the result of the intercepted method
+	 * @param afxAction the {@link AFXShowView} annotation that is intercepted
+	 * @param instance  the controller instance
 	 */
-	private static void showView(final AFXShowView afxAction, final Object instance, final Method method,
-			final Object methodInvocationResult) {
+	private static void showView(final AFXShowView afxAction, final Object instance) {
 		final String viewId = afxAction.viewId();
 		final View view = getViewById(viewId);
 		if (afxAction.showInNewWindow()) {
@@ -103,19 +86,14 @@ public class AFXActionMethodInterceptor {
 	 * Shows one or multiple nested views inside the currently displayed scene graph
 	 * by attaching the new views.
 	 *
-	 * @param afxAction              the {@link AFXShowView} annotation that is
-	 *                               intercepted
-	 * @param instance               the controller instance
-	 * @param method                 the intercepted method
-	 * @param methodInvocationResult the result of the intercepted method
+	 * @param afxAction the {@link AFXShowView} annotation that is intercepted
+	 * @param instance  the controller instance
 	 */
-	@SuppressWarnings("unchecked")
-	private static void showNestedViews(final AFXShowView afxAction, final Object instance, final Method method,
-			final Object methodInvocationResult) {
+	private static void showNestedViews(final AFXShowView afxAction, final Object instance) {
 		final View currentView = ControllerWrapper.getViewFrom(instance);
 		final AFXNestedView[] nestedViews = afxAction.showNestedViews();
 		ViewBuilder.embedNestedViews(currentView,
-				nestedViews != null ? Arrays.asList(nestedViews) : Collections.EMPTY_LIST);
+				nestedViews != null ? Arrays.asList(nestedViews) : Collections.emptyList());
 	}
 
 	/**

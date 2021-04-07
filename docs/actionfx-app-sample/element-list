@@ -1,4 +1,5 @@
+com.github.actionfx.sampleapp.controller
+com.github.actionfx.sampleapp.converter
 com.github.actionfx.sampleapp.core.app
-com.github.actionfx.sampleapp.core.app.controller
+com.github.actionfx.sampleapp.model
 com.github.actionfx.sampleapp.spring.app
-com.github.actionfx.sampleapp.spring.app.controller

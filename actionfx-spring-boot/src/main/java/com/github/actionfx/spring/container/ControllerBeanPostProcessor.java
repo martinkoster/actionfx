@@ -23,6 +23,9 @@
  */
 package com.github.actionfx.spring.container;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
@@ -43,7 +46,11 @@ import com.github.actionfx.core.utils.AnnotationUtils;
  */
 public class ControllerBeanPostProcessor implements BeanPostProcessor {
 
-	private final ControllerInstancePostProcessor controllerInstancePostProcessor = new ControllerInstancePostProcessor();
+	private final ControllerInstancePostProcessor controllerInstancePostProcessor;
+
+	public ControllerBeanPostProcessor(final List<Consumer<Object>> customControllerExtension) {
+		controllerInstancePostProcessor = new ControllerInstancePostProcessor(customControllerExtension);
+	}
 
 	@Override
 	public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {

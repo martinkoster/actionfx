@@ -33,6 +33,7 @@ import javax.inject.Inject;
 
 import org.controlsfx.control.CheckListView;
 
+import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
@@ -40,15 +41,12 @@ import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.annotation.AFXUseFilteredList;
+import com.github.actionfx.sampleapp.converter.DoubleCurrencyStringConverter;
 import com.github.actionfx.sampleapp.model.Book;
 
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 @AFXController(viewId = "bookCatalogueView", fxml = "/fxml/BookCatalogueView.fxml")
 public class BookCatalogueController {
@@ -56,25 +54,13 @@ public class BookCatalogueController {
 	@FXML
 	private CheckListView<String> categoriesCheckListView;
 
-	@FXML
-	private TextField filterTextField;
-
-	@FXML
-	private Button addToShoppingCartButton;
-
 	@AFXUseFilteredList
 	@AFXEnableMultiSelection
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
-
-	@FXML
-	private TableColumn<Book, String> titleColumn;
-
-	@FXML
-	private TableColumn<Book, String> categoryColumn;
-
-	@FXML
-	private TableColumn<Book, String> priceColumn;
 
 	// both, ActionFX' BeanContainer and Spring bean container know how to interpret
 	// this annotation
@@ -83,9 +69,6 @@ public class BookCatalogueController {
 
 	@PostConstruct
 	public void initialize() {
-		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-		priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 		categoriesCheckListView.getCheckModel().checkAll();
 	}
 
@@ -97,10 +80,10 @@ public class BookCatalogueController {
 	@AFXLoadControlData(controlId = "bookTableView", async = true)
 	public List<Book> loadBooks() {
 		final List<Book> books = new ArrayList<>();
-		books.add(new Book("Sci-Fi Stories 3", "Science Fiction", "8,99$"));
-		books.add(new Book("Thrilling 2", "Thriller", "9,99$"));
-		books.add(new Book("Fantastic World", "Fantasy", "7,99$"));
-		books.add(new Book("Drama Queen", "Drama", "2,99$"));
+		books.add(new Book("Sci-Fi Stories 3", "Science Fiction", 8.99));
+		books.add(new Book("Thrilling 2", "Thriller", 9.99));
+		books.add(new Book("Fantastic World", "Fantasy", 7.99));
+		books.add(new Book("Drama Queen", "Drama", 2.99));
 		return books;
 	}
 

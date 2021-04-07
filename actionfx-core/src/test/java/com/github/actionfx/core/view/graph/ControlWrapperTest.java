@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -49,6 +50,8 @@ import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -59,6 +62,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.SelectionModel;
@@ -1300,6 +1304,19 @@ class ControlWrapperTest {
 	}
 
 	@Test
+	void testGetOnActionProperty_propertyNotOfExpectedTypeObjectProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapper.of(new ControlWithNonObjectPropertyAction());
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getOnActionProperty());
+
+		// THEN
+		assertThat(ex.getMessage(), containsString(
+				"OnAction property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!"));
+	}
+
+	@Test
 	void testSetValues_useAFilteredList() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlWrapperProvider.tableView(false);
@@ -1324,6 +1341,39 @@ class ControlWrapperTest {
 
 		// THEN
 		assertThat(ex.getMessage(), containsString("has no 'values' property that can be set!"));
+	}
+
+	@Test
+	void testGetConverterProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.choiceBox(false);
+
+		// WHEN and THEN
+		assertThat(wrapper.getConverterProperty(), notNullValue());
+		assertThat(wrapper.getConverterProperty(), instanceOf(ObjectProperty.class));
+	}
+
+	@Test
+	void testGetConverterProperty_propertyNotOfExpectedTypeObjectProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapper.of(new ControlWithNonObjectPropertyConverter());
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> wrapper.getConverterProperty());
+
+		// THEN
+		assertThat(ex.getMessage(), containsString(
+				"Converter property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyConverter' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!"));
+	}
+
+	@Test
+	void testGetConverterProperty_controlDoesNotSupportConverter() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+
+		// WHEN and THEN
+		assertThat(wrapper.getConverterProperty(), nullValue());
 	}
 
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {
@@ -1394,5 +1444,54 @@ class ControlWrapperTest {
 	private static void assertUserValueIsNotSupported(final ControlWrapper wrapper) {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getUserValue());
 		assertThat(ex.getMessage(), containsString("does not support user value retrieval!"));
+	}
+
+	/**
+	 * Class having an "onAction" property, but it is not of expected type
+	 * "ObjectProperty".
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ControlWithNonObjectPropertyAction extends Control {
+
+		private final StringProperty onAction = new SimpleStringProperty();
+
+		public final StringProperty onActionProperty() {
+			return onAction;
+		}
+
+		public final String getOnAction() {
+			return onActionProperty().get();
+		}
+
+		public final void setOnAction(final String onAction) {
+			onActionProperty().set(onAction);
+		}
+	}
+
+	/**
+	 * Class having a "converter" property, but it is not of expected type
+	 * "ObjectProperty".
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ControlWithNonObjectPropertyConverter extends Control {
+
+		private final StringProperty converter = new SimpleStringProperty();
+
+		public final StringProperty converterProperty() {
+			return converter;
+		}
+
+		public final String getConverter() {
+			return converterProperty().get();
+		}
+
+		public final void setConverter(final String converter) {
+			converterProperty().set(converter);
+		}
+
 	}
 }

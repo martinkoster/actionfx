@@ -52,7 +52,9 @@ import javafx.event.Event;
 import javafx.scene.control.SelectionMode;
 
 /**
- * JUnit test case for {@link ControllerInstancePostProcessor.}
+ * JUnit integration test case for {@link ControllerInstancePostProcessor}. This
+ * is considered as integration test as it requires all controller extensions to
+ * be present.
  *
  * @author koster
  *

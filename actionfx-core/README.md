@@ -24,6 +24,8 @@ Module | Description | API Documentation | Gradle Dependency
       - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation-afxarghint)
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
+      - [Annotation @AFXConverter (Field Annotation)](#annotation-afxconverter)
+      - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
   * [User Value of Controls](#user-value-of-controls)
@@ -88,7 +90,7 @@ Builder Method | Description
 `enhancementStrategy(final EnhancementStrategy enhancementStrategy)` | The byte-code enhancement strategy to use within ActionFX. Currently the following enhancement strategies are available:1.) `EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT}`: A byte-code instrumentation agent is installed/attached at runtime. Methods of controllerclasses are directly enhanced via method interceptors. 2.) `EnhancementStrategy.SUBCLASSING`: Controller classes are sub-classed, while controller methods are overriden and method interceptors are attached.
 `actionFXEnhancer(final ActionFXEnhancer actionFXEnhancer)` | Sets the implementation of interface `ActionFXEnhancer` to use within ActionFX. In case there is no instance set, the default enhancer `ActionFXByteBuddyEnhancer` is used. Please note that implementations of interface `ActionFXEnhancer` must provide the possibility of both, byte code instrumentation via a runtime agent and byte code enhancement via sub-classing.
 `uncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler)` | Configures an exception handler for uncaught exceptions.
-`locale(final Locale locale)` | Configures an `java.util.Locale` for internationalization. The locale itself is wrapped into an `ObservableValue<Locale>`
+`locale(final Locale locale)` | Configures a `java.util.Locale` for internationalization. The locale itself is wrapped into an `ObservableValue<Locale>`
 `observableLocale(final ObservableValue<Locale> observableLocale)` | Configures an `javafx.beans.value.ObservableValue` that holds a proper `java.util.Locale` for internationalization.
 
 Once the ActionFX instance is setup with all configuration parameters, it is required to scan for components / controllers with
@@ -218,7 +220,7 @@ Please note that only *one* attribute starting with `show*` must be used at the 
 
 **Example:**
 ```java
-	@AFXShowView(showViewInNewWindow="detailsView")
+	@AFXShowView(viewId="detailsView")
 	public void actionMethod() {
 		// some further initialization goes here - or leave it just empty
 	}
@@ -401,6 +403,7 @@ Attribute 							| Description
 `attachToAnchorBottom`			| Optional anchor bottom in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorLeft`.
 
 **Example:**
+
 ```java
 	@AFXNestedView(refViewId = "productCatalogListView")
 	@FXML
@@ -418,6 +421,61 @@ Attribute 							| Description
 	@FXML
 	private GridPane productFeedbackGridPane;
 ```
+
+#### Annotation @AFXConverter
+
+The [@AFXConverter](src/main/java/com/github/actionfx/core/annotation/AFXConverter.java) annotation can be applied at field level to add a converter to a control.
+
+Supported are e.g. the following controls:
+- `javafx.scene.control.ChoiceBox`
+- `javafx.scene.control.ComboBox`
+
+The following attributes are available inside the annotation:
+
+Attribute 							| Description 
+----------------------------------- | -------------------------------------------------
+`value` 						    | The converter class that shall be injected into the annotated `javafx.scene.control.Control`. It is expected that the converter class has a default no-arg constructor and extends `javafx.util.StringConverter`.
+
+**Example:**
+
+```java
+		@AFXConverter(MovieStringConverter.class)
+		private final ComboBox<Movie> comboBox = new ComboBox<>();	
+```
+
+#### Annotation @AFXCellValueConfig
+
+The [@AFXCellValueConfig](src/main/java/com/github/actionfx/core/annotation/AFXCellValueConfig.java) annotation can be applied at field level to configure tables/table columns and what data shall be displayed there and how.
+
+The annotation can be applied on:
+- `javafx.scene.control.TableView` or `javafx.scene.control.TreeTableView` for configuring the contained columns without the need to have the columns itself injected via @FXML
+- `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` for configuring the annotated column directly
+- `javafx.scene.control.TreeView` 
+- `javafx.scene.control.ListView`
+
+The following attributes are available inside the annotation:
+
+Attribute                   | Description 
+--------------------------- | -------------------------------------------------
+`colId` 				    | The name of the column to configure. This field is mandatory, if applied on a `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` and no value in `colIdx()` is given. The field is meaningless, when the annotation is applied on `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` field directly.
+`colIdx` 				    | The index of the column to configure (0-based). This field is mandatory, if applied on a `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` and no value in`colId()` is given. The field is meaningless, when the annotation is applied on `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` field directly.
+`propertyValue` 		    | The property value that is used to configure a `javafx.scene.control.cell.PropertyValueFactory` or `javafx.scene.control.cell.TreeItemPropertyValueFactory` as a cell-value factory for the column to configure. This field is mandatory, when annotating fields of type `javafx.scene.control.TableView`, `javafx.scene.control.TableColumn`, `javafx.scene.control.TreeTableView` or `javafx.scene.control.TreeTableColumn`. For fields of type `javafx.scene.control.TreeView` and `javafx.scene.control.ListView` it must remain empty, because the components do not Java bean. For these components, using attribute `stringConverter()` makes sense.
+`stringConverter` 		| An optional string converter class that shall be used to convert the backed domain objects value under attribute `propertyValue` into a displayable string in the table column and convert it back from a string to the property's data type.
+`cellType` 				| An optional cell type to set for the given cell to configure. Can be used for custom cell types.
+`editable` 				| Flag that indicates whether the user shall be able to edit cell data in the table column directly or not. The default is `false` (no editing).
+
+
+**Example:**
+
+```java
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
+	@FXML
+	private TableView<Book> bookTableView;
+```
+
+In plain JavaFX, it would be required to inject the `TableColumn` instances via `@FXML`. In ActionFX, this is not required as the table column instances are looked up in the scene graph using the `colId` attribute in `@AFXCellValueConfig`.
 
 
 #### Annotation @AFXEnableMultiSelection
