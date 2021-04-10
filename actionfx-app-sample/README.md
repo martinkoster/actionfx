@@ -477,7 +477,7 @@ public class DatacontainerView extends HBox {
 }
 ```
 
-The view class itself needs to be derived from a node that extends from `javafx.scene.Parent`. As you can see, we give relevant nodes an ID, which is required to have them referenced via the `@FXML` annotation in controller shown in the next section.
+The view class itself needs to be derived from a node that extends from `javafx.scene.Parent`. As you can see, we give relevant nodes an ID, which is required to have them referenced via the `@FXML` annotation in the controller shown in the next section.
 
 Source Code can be found here: [DatacontainerView](src/main/java/com/github/actionfx/datacontainerapp/view/DatacontainerView.java)
 

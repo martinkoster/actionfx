@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.0.0 (10.04.2021)
+- ActionFX' feature-based annotations are implemented as "controller extensions"
+- Users can add controller extension when building the ActionFX instance at startup.
+- Statically coded, non-FXML views are now supported by controllers via the @AFXController.viewClass() attribute.
+- Added support for configuring cell value factories via annotation @AFXCellValueConfig.
+- Added support for adding converter to components via annotation @AFXConverter.
+- Upgraded dependecies:
+  * JavaFX to version 16 (minor versions starting from 11 are also possible)
+  * Classgraph to version 4.8.104
+  
+  
+  
 ## 0.1.0 (19.03.2021)
 - Added support for internationalization (resource bundles are used for actionfx-core and Spring's org.springframework.context.MessageSource can be used in Spring environments as alternative)#
 - Default byte-code enhancement strategy is SUBCLASSING
