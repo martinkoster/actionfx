@@ -11,6 +11,8 @@
 
 ActionFX aims at simplifying the development of JavaFX applications by reducing the amount of boilerplate code a developer has to provide. The focus in using "ActionFX" lies on providing the "action" and not coding of tedious wiring together of components, callbacks and change listener. The result is less and cleaner code, which is easier to read, maintain and especially test.
 
+For a quick introduction to ActionFX, you can refer to the [sample applications](actionfx-app-sample/README.md). For a more detailed overview on the features of ActionFX, please refer the [core documentation](actionfx-core/README.md).
+
 ## Design Philosophies
 - **Support and encourage the implementation of the MVC pattern**: Controllers are light-weight, loosely-coupled components that are not dependent on any framework base classes. Views on the other hand are preferably defined via FXML and other concerns like view behavior, main-window/popup-window considerations are configuration aspects defined via annotations (and not as tons of code).
 - **Lightweight and Less-intrusive**: ActionFX does not force you to build your classes on top of framework classes. At no point in time, you need to derive your classes from ActionFX classes. Classes supplied by the framework can be used e.g. to speed up the setup process, but this is not required. At all point in time, it is possible to make normal use of plain JavaFX development style.
