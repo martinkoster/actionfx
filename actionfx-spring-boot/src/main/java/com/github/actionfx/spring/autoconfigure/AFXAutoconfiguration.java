@@ -26,6 +26,7 @@ package com.github.actionfx.spring.autoconfigure;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
 
 /**
@@ -38,8 +39,8 @@ import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
 public class AFXAutoconfiguration {
 
 	@Bean
-	public ControllerBeanPostProcessor controllerBeanPostProcessor() {
-		return new ControllerBeanPostProcessor();
+	public ControllerBeanPostProcessor controllerBeanPostProcessor(final ControllerExtensionBean bean) {
+		return new ControllerBeanPostProcessor(bean.getCustomControllerExtensions());
 	}
 
 }

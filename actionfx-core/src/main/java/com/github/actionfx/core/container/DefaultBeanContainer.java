@@ -25,11 +25,13 @@ package com.github.actionfx.core.container;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -72,9 +74,27 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	private final List<BeanResolutionFunction> beanResolverFunctions = new ArrayList<>();
 
 	// post-processor that wires JavaFX components to annotated methods
-	private final ControllerInstancePostProcessor controllerInstancePostProcessor = new ControllerInstancePostProcessor();
+	private final ControllerInstancePostProcessor controllerInstancePostProcessor;
 
+	/**
+	 * The default constructor (without custom controller extensions).
+	 */
 	public DefaultBeanContainer() {
+		this(Collections.emptyList());
+	}
+
+	/**
+	 * Constructor that accepts custom controller extensions that are applied to a
+	 * newly created controller instance after dependency injection, but before
+	 * methods annotated with {@code @PostConstruct} are executed.
+	 *
+	 * @param customControllerExtensions a list of custom controller extensions
+	 *                                   implementing the {@link Consumer} interface
+	 */
+	public DefaultBeanContainer(final List<Consumer<Object>> customControllerExtensions) {
+
+		controllerInstancePostProcessor = new ControllerInstancePostProcessor(customControllerExtensions);
+
 		// bean resolution strategies
 		// the first strategy is to resolve by bean name / ID
 		beanResolverFunctions.add((id, type) -> getBean(id));
@@ -103,7 +123,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 			final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
 					controllerClass, resolveResourceBundle(controllerClass, getBean(Locale.class)));
-			final String controllerId = deriveControllerId(controllerClass);
+			final String controllerId = deriveBeanId(controllerClass);
 
 			// add a bean definition for the controller
 			addBeanDefinition(controllerId, controllerClass, afxController.singleton(), afxController.lazyInit(),

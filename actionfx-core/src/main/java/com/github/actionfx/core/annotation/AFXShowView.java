@@ -51,10 +51,10 @@ public @interface AFXShowView {
 	 *
 	 * @return the view ID for the success view
 	 */
-	public String showView() default "";
+	public String viewId() default "";
 
 	/**
-	 * Determines whether the view defined in {@link #showView()} shall be displayed
+	 * Determines whether the view defined in {@link #viewId()} shall be displayed
 	 * in its own {@link Stage}. The specification of this attribute does not affect
 	 * view transition in case the attribute {@link #showNestedViews()} is given.
 	 *
@@ -68,7 +68,7 @@ public @interface AFXShowView {
 	 * The nested views to be displayed, when the method successfully terminates.
 	 * This attribute allows to embed a view into the current scene graph and
 	 * {@link Stage}. Please take note, that this attribute must not be used
-	 * together with {@link #showView()} and {@link #showInNewWindow()}.
+	 * together with {@link #viewId()} and {@link #showInNewWindow()}.
 	 *
 	 * @return the nested views to be displayed
 	 */

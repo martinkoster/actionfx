@@ -24,8 +24,12 @@
 package com.github.actionfx.core;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -36,10 +40,12 @@ import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -145,6 +151,10 @@ public class ActionFX {
 	// observable property for a locale for internationalization
 	private ObservableValue<Locale> observableLocale;
 
+	// holds a list of custom controller extensions added by the user during
+	// ActionFX setup
+	private ControllerExtensionBean controllerExtensionBean;
+
 	/**
 	 * Private constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
@@ -239,6 +249,10 @@ public class ActionFX {
 
 		// make ActionFX class itself available as bean
 		beanContainer.addBeanDefinition(BeanContainerFacade.ACTIONFX_BEANNAME, ActionFX.class, true, false, () -> this);
+
+		// add controller extensions to the bean container
+		beanContainer.addBeanDefinition(BeanContainerFacade.CONTROLLER_EXTENSION_BEANNAME,
+				ControllerExtensionBean.class, true, false, () -> controllerExtensionBean);
 	}
 
 	/**
@@ -472,6 +486,8 @@ public class ActionFX {
 
 		private ObservableValue<Locale> observableLocale;
 
+		private final List<Consumer<Object>> controllerExtensions = new ArrayList<>();
+
 		/**
 		 * Creates the instance of {@link ActionFX} ready to use.
 		 *
@@ -479,7 +495,7 @@ public class ActionFX {
 		 */
 		public ActionFX build() {
 			final ActionFX actionFX = new ActionFX();
-			actionFX.beanContainer = new DefaultBeanContainer();
+			actionFX.beanContainer = new DefaultBeanContainer(controllerExtensions);
 			actionFX.mainViewId = mainViewId;
 			actionFX.scanPackage = scanPackage;
 			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
@@ -489,6 +505,7 @@ public class ActionFX {
 					: (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
 			actionFX.observableLocale = observableLocale != null ? observableLocale
 					: new SimpleObjectProperty<>(Locale.getDefault());
+			actionFX.controllerExtensionBean = new ControllerExtensionBean(controllerExtensions);
 			postConstruct(actionFX);
 			return actionFX;
 		}
@@ -615,6 +632,44 @@ public class ActionFX {
 		 */
 		public ActionFXBuilder locale(final Locale locale) {
 			return observableLocale(new SimpleObjectProperty<>(locale));
+		}
+
+		/**
+		 * Registers custom controller extensions instances implemented by the user.
+		 * Controller extensions are applied to the controller after instantiation,
+		 * after dependency injection, but before methods annotated with
+		 * {@code @PostConstruct} are invoked.
+		 *
+		 * @param controllerExtensions the controller extensions
+		 * @return this builder
+		 */
+		@SuppressWarnings("unchecked")
+		public ActionFXBuilder controllerExtension(final Consumer<Object>... extensions) {
+			if (extensions.length > 0) {
+				controllerExtensions.addAll(Arrays.asList(extensions));
+			}
+			return this;
+		}
+
+		/**
+		 * Registers custom controller extensions implemented by the user. It is
+		 * expected that supplied classes have a default, no-argument constructor.
+		 * Controller extensions are applied to the controller after instantiation,
+		 * after dependency injection, but before methods annotated with
+		 * {@code @PostConstruct} are invoked.
+		 *
+		 * @param controllerExtensions the controller extension classes
+		 * @return this builder
+		 */
+		@SuppressWarnings("unchecked")
+		public ActionFXBuilder controllerExtension(final Class<? extends Consumer<Object>>... extensionClasses) {
+			final Consumer<Object>[] extensions = new Consumer[extensionClasses.length];
+			if (extensionClasses.length > 0) {
+				for (int i = 0; i < extensionClasses.length; i++) {
+					extensions[i] = ReflectionUtils.instantiateClass(extensionClasses[i]);
+				}
+			}
+			return controllerExtension(extensions);
 		}
 
 		/**

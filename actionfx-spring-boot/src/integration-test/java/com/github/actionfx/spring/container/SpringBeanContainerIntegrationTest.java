@@ -28,6 +28,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,10 +38,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
@@ -52,7 +56,7 @@ import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
  *
  */
 @ExtendWith({ FxThreadForAllMonocleExtension.class, SpringExtension.class })
-@ContextConfiguration(classes = SampleApp.class)
+@ContextConfiguration(classes = { SampleApp.class, SpringBeanContainerIntegrationTest.class })
 class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 
 	private ApplicationContext applicationContext;
@@ -93,6 +97,11 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 		// check, that @Autowired-annotated field in abstract base class is resolved
 		assertThat(controller.getActionFX(), notNullValue());
 		assertThat(controller.getActionFX(), sameInstance(actionFX)); // type is still a singleton!
+	}
+
+	@Bean
+	public ControllerExtensionBean controllerExtensionBean() {
+		return new ControllerExtensionBean(Collections.emptyList());
 	}
 
 	@Override

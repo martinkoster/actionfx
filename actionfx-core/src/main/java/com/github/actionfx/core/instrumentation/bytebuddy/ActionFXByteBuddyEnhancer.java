@@ -155,7 +155,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 		public static Object intercept(@SuperCall final Callable<?> callable, @This final Object instance,
 				@Origin final Method method, @AllArguments final Object... args) throws Exception {
 			final AFXShowView afxAction = method.getAnnotation(AFXShowView.class);
-			return AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, instance, method, args);
+			return AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, instance);
 		}
 	}
 

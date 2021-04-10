@@ -24,6 +24,7 @@
 package com.github.actionfx.core;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -31,14 +32,19 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.test.nestedviewapp.ControllerWithNestedviewOnField;
+import com.github.actionfx.core.test.nestedviewapp.NestedTabPaneController;
 import com.github.actionfx.core.test.nestedviewapp.NestedViewApp;
 import com.github.actionfx.core.test.nestedviewapp.NestedViewController;
 import com.github.actionfx.core.view.View;
@@ -106,8 +112,7 @@ class ActionFXIntegrationTest {
 		actionFX.scanForActionFXComponents();
 
 		// WHEN
-		final ControllerWithNestedviewOnField controller = actionFX
-				.getBean(ControllerWithNestedviewOnField.class);
+		final ControllerWithNestedviewOnField controller = actionFX.getBean(ControllerWithNestedviewOnField.class);
 
 		// THEN (2 AFXNestedView annotations are evaluated)
 		assertThat(controller.mainBorderPane, notNullValue());
@@ -193,6 +198,52 @@ class ActionFXIntegrationTest {
 		assertThat(controller.getObservableLocale(), notNullValue());
 		assertThat(controller.getObservableLocale().getValue(), equalTo(Locale.US));
 		assertThat(controller.getActionFX(), sameInstance(ActionFX.getInstance()));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testCheckActionFXCustomControllerExtensions() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class)
+				.controllerExtension(CustomControllerExtension.class, AnotherCustomControllerExtension.class).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN (we need to request the controller beans for triggering the controller
+		// extensions)
+		ActionFX.getInstance().getBean(NestedViewController.class);
+		ActionFX.getInstance().getBean(NestedTabPaneController.class);
+
+		// THEN
+		final ControllerExtensionBean ceb = ActionFX.getInstance().getBean(ControllerExtensionBean.class);
+		assertThat(ceb, notNullValue());
+		assertThat(ceb.getCustomControllerExtensions(), hasSize(2));
+		final Consumer<Object> ext1 = ceb.getCustomControllerExtensions().get(0);
+		final Consumer<Object> ext2 = ceb.getCustomControllerExtensions().get(1);
+		assertThat(ext1, instanceOf(CustomControllerExtension.class));
+		assertThat(ext2, instanceOf(AnotherCustomControllerExtension.class));
+
+		assertThat(((CustomControllerExtension) ext1).getExtendedControllerList(),
+				hasItems(NestedViewController.class, NestedTabPaneController.class));
+		assertThat(((AnotherCustomControllerExtension) ext2).getExtendedControllerList(),
+				hasItems(NestedViewController.class, NestedTabPaneController.class));
+	}
+
+	public static class CustomControllerExtension implements Consumer<Object> {
+
+		private final Set<Class<?>> extendedControllerList = new HashSet<>();
+
+		@Override
+		public void accept(final Object t) {
+			// take the super class, not the class that ByteBuddy has generated
+			extendedControllerList.add(t.getClass().getSuperclass());
+		}
+
+		public Set<Class<?>> getExtendedControllerList() {
+			return extendedControllerList;
+		}
+	}
+
+	public static class AnotherCustomControllerExtension extends CustomControllerExtension {
 	}
 
 }

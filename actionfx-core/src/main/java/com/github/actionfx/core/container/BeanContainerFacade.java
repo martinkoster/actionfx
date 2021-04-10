@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
+import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+
 import javafx.beans.value.ObservableValue;
 
 /**
@@ -56,6 +58,12 @@ public interface BeanContainerFacade {
 	 * {@code @Inject} into controller classes.
 	 */
 	public static String ACTIONFX_BEANNAME = "actionFX";
+
+	/**
+	 * The bean name of an {@link ControllerExtensionBean} holding all user defined
+	 * controller extensions.
+	 */
+	public static String CONTROLLER_EXTENSION_BEANNAME = "controllerExtensionBean";
 
 	/**
 	 * Populates the container with view components by scanning the given
@@ -125,8 +133,8 @@ public interface BeanContainerFacade {
 	ResourceBundle resolveResourceBundle(Class<?> controllerClass, Locale locale);
 
 	/**
-	 * Derives an ID from the given {@code controllerClass} under that the component
-	 * shall be stored and retrieved at.
+	 * Derives an ID from the given {@code beanClazz} under that the component shall
+	 * be stored and retrieved at.
 	 * <p>
 	 * The default implementation takes the simple class name and decapitalizes the
 	 * first letter.
@@ -135,15 +143,15 @@ public interface BeanContainerFacade {
 	 * <b>Example:</b>
 	 *
 	 * <pre>
-	 * deriveControllerId(SomeController.class) = "someController"
+	 * deriveBeanId(SomeController.class) = "someController"
 	 *
 	 * <pre>
 	 *
-	 * @param controllerClass the controller class
+	 * @param beanClazz the controller class
 	 * @return the derived controller ID
 	 */
-	default String deriveControllerId(final Class<?> controllerClass) {
-		final String className = controllerClass.getSimpleName();
+	default String deriveBeanId(final Class<?> beanClazz) {
+		final String className = beanClazz.getSimpleName();
 		return className.length() > 1
 				? className.substring(0, 1).toLowerCase() + className.substring(1, className.length())
 				: className.substring(0, 1).toLowerCase();
