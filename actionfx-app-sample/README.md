@@ -8,7 +8,7 @@ Module | Description | API Documentation | Gradle Dependency
 
 This module contains the following demo applications:
 
-- [A Simple Book Store](#a-simple-book-store): An FXML-based demo showing most of the annotations available in ActionFX. The application has a main class for getting started via ActionFX's core bean container and a main class for getting starting with Spring Boot.
+- [A Simple Book Store](#a-simple-book-store): A FXML-based demo showing most of the annotations available in ActionFX. The application has a main class for getting started via ActionFX's core bean container and a main class for getting starting with Spring Boot.
 - [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
 
 ## A Simple Book Store
