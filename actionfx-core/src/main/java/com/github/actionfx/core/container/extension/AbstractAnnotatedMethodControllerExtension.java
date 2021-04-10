@@ -45,7 +45,7 @@ import com.github.actionfx.core.utils.ReflectionUtils;
 import javafx.beans.property.BooleanProperty;
 
 /**
- * Controller extension base class that extends annotated fields.
+ * Controller extension base class that extends annotated methods.
  *
  * @author koster
  *
