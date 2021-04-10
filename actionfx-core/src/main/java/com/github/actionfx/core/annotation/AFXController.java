@@ -29,6 +29,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javafx.scene.Parent;
+
 /**
  * Annotation for ActionFX controllers to associate and manage a view together
  * with it.
@@ -50,11 +52,22 @@ public @interface AFXController {
 
 	/**
 	 * Path to the FXML file to load for this view. Path is relative to the
-	 * application's classpath.
+	 * application's classpath. In case you have your view not in an FXML file, but
+	 * implemented in an individual class, please refer to attribute
+	 * {@link #viewClass()}.
 	 *
 	 * @return the path to the FXML file
 	 */
-	public String fxml();
+	public String fxml() default "";
+
+	/**
+	 * Alternatively to the {@link #fxml()} attribute for defining a view's scene
+	 * graph, it is also possible to load a view from a specified class. A view
+	 * class specified under this location must be derived from {@link Parent}.
+	 *
+	 * @return the class holding the view
+	 */
+	public Class<? extends Parent> viewClass() default Parent.class;
 
 	/**
 	 * Specifies whether this view is a modal dialog or a regular window. Default is

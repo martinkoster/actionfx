@@ -123,15 +123,6 @@ public @interface AFXCellValueConfig {
 	public Class<? extends IndexedCell> cellType() default IndexedCell.class;
 
 	/**
-	 * Flag that indicates whether the user shall be able to edit cell data in the
-	 * table column directly or not. The default is {@code false} (no editing).
-	 *
-	 * @return {@code true}, if the cell data can be edited by the user,
-	 *         {@code false}, if the data is not editable. Default is {@code false}.
-	 */
-	public boolean editable() default false;
-
-	/**
 	 * Annotation to make {@link AFXCellValueConfig} repeatable (e.g. on
 	 * {@link TableView} and {@link TreeTableView} directly). This annotation is not
 	 * intended for direct use in application code.

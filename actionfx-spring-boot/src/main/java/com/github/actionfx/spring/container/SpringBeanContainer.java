@@ -102,7 +102,7 @@ public class SpringBeanContainer implements BeanContainerFacade {
 					beanClass);
 
 			// add a bean definition for the controller
-			final String controllerBeanId = deriveControllerId(beanClass);
+			final String controllerBeanId = deriveBeanId(beanClass);
 			registerBeanDefinition(controllerBeanId,
 					createBeanDefinitionForController(beanDefinition, afxController, controllerSupplier));
 

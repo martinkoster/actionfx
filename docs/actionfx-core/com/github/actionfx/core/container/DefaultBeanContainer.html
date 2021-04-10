@@ -166,7 +166,7 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <!--   -->
 </a>
 <h3>Fields inherited from interface&nbsp;com.github.actionfx.core.container.<a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></h3>
-<code><a href="BeanContainerFacade.html#ACTIONFX_BEANNAME">ACTIONFX_BEANNAME</a>, <a href="BeanContainerFacade.html#LOCALE_BEANNAME">LOCALE_BEANNAME</a>, <a href="BeanContainerFacade.html#LOCALE_PROPERTY_BEANNAME">LOCALE_PROPERTY_BEANNAME</a></code></li>
+<code><a href="BeanContainerFacade.html#ACTIONFX_BEANNAME">ACTIONFX_BEANNAME</a>, <a href="BeanContainerFacade.html#CONTROLLER_EXTENSION_BEANNAME">CONTROLLER_EXTENSION_BEANNAME</a>, <a href="BeanContainerFacade.html#LOCALE_BEANNAME">LOCALE_BEANNAME</a>, <a href="BeanContainerFacade.html#LOCALE_PROPERTY_BEANNAME">LOCALE_PROPERTY_BEANNAME</a></code></li>
 </ul>
 </li>
 </ul>
@@ -186,7 +186,17 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 </tr>
 <tr class="altColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">DefaultBeanContainer</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">The default constructor (without custom controller extensions).</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.util.List)">DefaultBeanContainer</a></span>&#8203;(java.util.List&lt;java.util.function.Consumer&lt;java.lang.Object&gt;&gt;&nbsp;customControllerExtensions)</code></th>
+<td class="colLast">
+<div class="block">Constructor that accepts custom controller extensions that are applied to a
+ newly created controller instance after dependency injection, but before
+ methods annotated with <code>@PostConstruct</code> are executed.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -299,7 +309,7 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.github.actionfx.core.container.<a href="BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></h3>
-<code><a href="BeanContainerFacade.html#deriveControllerId(java.lang.Class)">deriveControllerId</a></code></li>
+<code><a href="BeanContainerFacade.html#deriveBeanId(java.lang.Class)">deriveBeanId</a></code></li>
 </ul>
 </li>
 </ul>
@@ -320,10 +330,28 @@ implements <a href="BeanContainerFacade.html" title="interface in com.github.act
 <a id="&lt;init&gt;()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>DefaultBeanContainer</h4>
 <pre>public&nbsp;DefaultBeanContainer()</pre>
+<div class="block">The default constructor (without custom controller extensions).</div>
+</li>
+</ul>
+<a id="&lt;init&gt;(java.util.List)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>DefaultBeanContainer</h4>
+<pre>public&nbsp;DefaultBeanContainer&#8203;(java.util.List&lt;java.util.function.Consumer&lt;java.lang.Object&gt;&gt;&nbsp;customControllerExtensions)</pre>
+<div class="block">Constructor that accepts custom controller extensions that are applied to a
+ newly created controller instance after dependency injection, but before
+ methods annotated with <code>@PostConstruct</code> are executed.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>customControllerExtensions</code> - a list of custom controller extensions
+                                   implementing the <code>Consumer</code> interface</dd>
+</dl>
 </li>
 </ul>
 </li>

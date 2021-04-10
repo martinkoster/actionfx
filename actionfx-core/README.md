@@ -92,6 +92,8 @@ Builder Method | Description
 `uncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler)` | Configures an exception handler for uncaught exceptions.
 `locale(final Locale locale)` | Configures a `java.util.Locale` for internationalization. The locale itself is wrapped into an `ObservableValue<Locale>`
 `observableLocale(final ObservableValue<Locale> observableLocale)` | Configures an `javafx.beans.value.ObservableValue` that holds a proper `java.util.Locale` for internationalization.
+`controllerExtension(final Consumer<Object>... extensions)`  | Registers custom controller extensions instances implemented by the user. Controller extensions are applied to the controller after instantiation, after dependency injection, but before methods annotated with `@PostConstruct` are invoked. As mandated by the design philosophy, this builder method accepts a generic `Consumer` instance, where it is up to the developer to decide what to do with the controller instance. In case you are interested in doing something with a field, you can derive your implementation from [AbstractAnnotatedFieldControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedFieldControllerExtension.java). For extending methods, you can derive your implementation from [AbstractAnnotatedMethodControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedMethodControllerExtension.java).
+`controllerExtension(final Class<? extends Consumer<Object>>... extensionClasses)` | Same as `controllerExtension(final Consumer<Object>... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.
 
 Once the ActionFX instance is setup with all configuration parameters, it is required to scan for components / controllers with
 
@@ -118,7 +120,8 @@ The following attributes are available as part of the [@AFXController](src/main/
 Attribute | Description | Default Value
 --------- | ----------- | -------------
 `viewId` | The ID of the view. Must be unique among all views of this application. | -
-`fxml` | Path to the FXML file to load for this view. Path is relative to the application's classpath. | -
+`fxml` | Path to the FXML file to load for this view. Path is relative to the application's classpath. In case you have your view not in an FXML file, but implemented in an individual class, please refer to attribute `viewClass()`. | `""`
+`viewClass` | Alternatively to the `fxml()` attribute for defining a view's scene graph, it is also possible to load a view from a specified class. A view class specified under this location must be derived from `javafx.scene.Parent`. | `javafx.scnene.Parent.class`
 `modal` | Specifies whether this view is a modal dialog or a regular window. | `false` 
 `maximized` | Specifies whether this view shall be displayed maxized or not. | `false`
 `width` | The width of the view (however `maximized` has a higher priority) | `200`

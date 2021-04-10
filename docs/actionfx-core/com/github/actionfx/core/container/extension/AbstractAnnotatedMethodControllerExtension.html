@@ -146,7 +146,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="OnActionMethodControllerExtension.html" title="class in com.github.actionfx.core.container.extension">OnActionMethodControllerExtension</a></code>, <code><a href="OnContolValueChangeMethodControllerExtension.html" title="class in com.github.actionfx.core.container.extension">OnContolValueChangeMethodControllerExtension</a></code>, <code><a href="OnLoadControlDataMethodControllerExtension.html" title="class in com.github.actionfx.core.container.extension">OnLoadControlDataMethodControllerExtension</a></code></dd>
+<dd><code><a href="OnActionMethodControllerExtension.html" title="class in com.github.actionfx.core.container.extension">OnActionMethodControllerExtension</a></code>, <code><a href="OnControlValueChangeMethodControllerExtension.html" title="class in com.github.actionfx.core.container.extension">OnControlValueChangeMethodControllerExtension</a></code>, <code><a href="OnLoadControlDataMethodControllerExtension.html" title="class in com.github.actionfx.core.container.extension">OnLoadControlDataMethodControllerExtension</a></code></dd>
 </dl>
 <hr>
 <pre>public abstract class <span class="typeNameLabel">AbstractAnnotatedMethodControllerExtension&lt;A extends java.lang.annotation.Annotation&gt;</span>
@@ -249,7 +249,7 @@ extends <a href="AbstractAnnotationBasedControllerExtension.html" title="class i
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>protected <a href="../../listener/TimedListChangeListener.html" title="class in com.github.actionfx.core.listener">TimedListChangeListener</a>&lt;?&gt;</code></td>
+<td class="colFirst"><code>protected <a href="../../listener/TimedListChangeListener.html" title="class in com.github.actionfx.core.listener">TimedListChangeListener</a>&lt;java.lang.Object&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createListChangeListener(java.lang.Object,java.lang.reflect.Method,long,javafx.beans.property.BooleanProperty,java.util.function.Supplier,java.util.function.Supplier)">createListChangeListener</a></span>&#8203;(java.lang.Object&nbsp;instance,
                         java.lang.reflect.Method&nbsp;method,
                         long&nbsp;timeoutMs,
@@ -272,7 +272,7 @@ extends <a href="AbstractAnnotationBasedControllerExtension.html" title="class i
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>protected <a href="../../listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener">TimedChangeListener</a>&lt;?&gt;</code></td>
+<td class="colFirst"><code>protected <a href="../../listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener">TimedChangeListener</a>&lt;java.lang.Object&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createValueChangeListener(java.lang.Object,java.lang.reflect.Method,long,javafx.beans.property.BooleanProperty)">createValueChangeListener</a></span>&#8203;(java.lang.Object&nbsp;instance,
                          java.lang.reflect.Method&nbsp;method,
                          long&nbsp;timeoutMs,
@@ -400,10 +400,10 @@ extends <a href="AbstractAnnotationBasedControllerExtension.html" title="class i
 <ul class="blockList">
 <li class="blockList">
 <h4>createValueChangeListener</h4>
-<pre class="methodSignature">protected&nbsp;<a href="../../listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener">TimedChangeListener</a>&lt;?&gt;&nbsp;createValueChangeListener&#8203;(java.lang.Object&nbsp;instance,
-                                                           java.lang.reflect.Method&nbsp;method,
-                                                           long&nbsp;timeoutMs,
-                                                           javafx.beans.property.BooleanProperty&nbsp;listenerActionBooleanProperty)</pre>
+<pre class="methodSignature">protected&nbsp;<a href="../../listener/TimedChangeListener.html" title="class in com.github.actionfx.core.listener">TimedChangeListener</a>&lt;java.lang.Object&gt;&nbsp;createValueChangeListener&#8203;(java.lang.Object&nbsp;instance,
+                                                                          java.lang.reflect.Method&nbsp;method,
+                                                                          long&nbsp;timeoutMs,
+                                                                          javafx.beans.property.BooleanProperty&nbsp;listenerActionBooleanProperty)</pre>
 <div class="block">Creates a value change listener that invokes the supplied <code>Method</code> on
  the given <code>instance</code>.</div>
 <dl>
@@ -425,12 +425,12 @@ extends <a href="AbstractAnnotationBasedControllerExtension.html" title="class i
 <ul class="blockListLast">
 <li class="blockList">
 <h4>createListChangeListener</h4>
-<pre class="methodSignature">protected&nbsp;<a href="../../listener/TimedListChangeListener.html" title="class in com.github.actionfx.core.listener">TimedListChangeListener</a>&lt;?&gt;&nbsp;createListChangeListener&#8203;(java.lang.Object&nbsp;instance,
-                                                              java.lang.reflect.Method&nbsp;method,
-                                                              long&nbsp;timeoutMs,
-                                                              javafx.beans.property.BooleanProperty&nbsp;listenerActionBooleanProperty,
-                                                              java.util.function.Supplier&lt;java.util.List&lt;java.lang.Object&gt;&gt;&nbsp;allValuesSupplier,
-                                                              java.util.function.Supplier&lt;java.lang.Object&gt;&nbsp;singleValueSupplier)</pre>
+<pre class="methodSignature">protected&nbsp;<a href="../../listener/TimedListChangeListener.html" title="class in com.github.actionfx.core.listener">TimedListChangeListener</a>&lt;java.lang.Object&gt;&nbsp;createListChangeListener&#8203;(java.lang.Object&nbsp;instance,
+                                                                             java.lang.reflect.Method&nbsp;method,
+                                                                             long&nbsp;timeoutMs,
+                                                                             javafx.beans.property.BooleanProperty&nbsp;listenerActionBooleanProperty,
+                                                                             java.util.function.Supplier&lt;java.util.List&lt;java.lang.Object&gt;&gt;&nbsp;allValuesSupplier,
+                                                                             java.util.function.Supplier&lt;java.lang.Object&gt;&nbsp;singleValueSupplier)</pre>
 <div class="block">Creates a list change listener that invokes the supplied <code>Method</code> on
  the given <code>instance</code>.</div>
 <dl>

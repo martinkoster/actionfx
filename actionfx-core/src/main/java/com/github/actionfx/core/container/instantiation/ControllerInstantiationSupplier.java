@@ -36,12 +36,15 @@ import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStra
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.view.AbstractView;
 import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.ViewBuilder;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.scene.Parent;
 
 /**
  * Instantiation supplier for controller instances. This class is responsible
@@ -127,8 +130,8 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	private T createControllerInstance() {
 		try {
 			final T controller = controllerClass.getDeclaredConstructor().newInstance();
-			final FxmlView fxmlView = createFxmlViewInstance(controller);
-			injectView(controller, fxmlView);
+			final View view = createViewInstance(controller);
+			injectView(controller, view);
 			return controller;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
@@ -138,16 +141,15 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	}
 
 	/**
-	 * Creates an {@link FxmlView} instance for the given {@code controller}.
+	 * Creates an {@link View} instance for the given {@code controller}.
 	 *
 	 * @param controller the controller for that the view shall be created
 	 * @return the created view
 	 */
-	private FxmlView createFxmlViewInstance(final Object controller) {
+	private View createViewInstance(final Object controller) {
 		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
-		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller,
-				resourceBundle);
-		final ViewBuilder<FxmlView> builder = new ViewBuilder<>(fxmlView);
+		final AbstractView view = instantiateView(controller, afxController);
+		final ViewBuilder<AbstractView> builder = new ViewBuilder<>(view);
 		final List<AFXNestedView> nestedViews = AnnotationUtils.findAllAnnotations(controllerClass,
 				AFXNestedView.class);
 		return builder.posX(afxController.posX()).posY(afxController.posY()).width(afxController.width())
@@ -155,6 +157,24 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 				.modalDialogue(afxController.modal()).icon(afxController.icon())
 				.stylesheets(afxController.stylesheets()).nestedViews(nestedViews).windowTitle(afxController.title())
 				.getView();
+	}
+
+	/**
+	 * Creates an {@link AbstractView} instance for the given {@code controller},
+	 * using the parameters in {@link AFXController}.
+	 *
+	 * @param controller the controller for that the view shall be created
+	 * @return the created view
+	 */
+	private AbstractView instantiateView(final Object controller, final AFXController afxController) {
+		if (!"".equals(afxController.fxml())) {
+			return new FxmlView(afxController.viewId(), afxController.fxml(), controller, resourceBundle);
+		}
+		if (!Parent.class.equals(afxController.viewClass())) {
+			return new ParentView(afxController.viewId(), afxController.viewClass(), controller, resourceBundle);
+		}
+		throw new IllegalStateException("Controller class '" + controller.getClass()
+				+ "' has @AFXController annotation, which does not specify 'fxml()' or 'viewClass()' attribute!");
 	}
 
 	/**

@@ -123,7 +123,7 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 
 			final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
 					controllerClass, resolveResourceBundle(controllerClass, getBean(Locale.class)));
-			final String controllerId = deriveControllerId(controllerClass);
+			final String controllerId = deriveBeanId(controllerClass);
 
 			// add a bean definition for the controller
 			addBeanDefinition(controllerId, controllerClass, afxController.singleton(), afxController.lazyInit(),

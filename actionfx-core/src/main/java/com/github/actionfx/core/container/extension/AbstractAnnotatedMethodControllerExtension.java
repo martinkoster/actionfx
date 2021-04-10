@@ -102,7 +102,7 @@ public abstract class AbstractAnnotatedMethodControllerExtension<A extends Annot
 	 *                                      change listener is executed
 	 * @return
 	 */
-	protected TimedChangeListener<?> createValueChangeListener(final Object instance, final Method method,
+	protected TimedChangeListener<Object> createValueChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty) {
 		return new TimedChangeListener<>((observable, oldValue, newValue) -> {
 			final ControllerMethodInvocationAdapter adapter = createMethodInvocationAdapter(instance, method,
@@ -132,7 +132,7 @@ public abstract class AbstractAnnotatedMethodControllerExtension<A extends Annot
 	 *                                      item)
 	 * @return
 	 */
-	protected TimedListChangeListener<?> createListChangeListener(final Object instance, final Method method,
+	protected TimedListChangeListener<Object> createListChangeListener(final Object instance, final Method method,
 			final long timeoutMs, final BooleanProperty listenerActionBooleanProperty,
 			final Supplier<List<Object>> allValuesSupplier, final Supplier<Object> singleValueSupplier) {
 		return new TimedListChangeListener<>(change -> {
