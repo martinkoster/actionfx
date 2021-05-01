@@ -25,23 +25,30 @@ package com.github.actionfx.core.container.extension;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.scene.control.IndexedCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.TreeView.EditEvent;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -173,6 +180,41 @@ class CellValueConfigControllerExtensionTest {
 				"Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but annotation does not define, which column shall be configured!"));
 	}
 
+	@Test
+	void testAccept_tableView_editableTableColumns() {
+		// GIVEN
+		final ControllerWithEditableTableColumns controller = new ControllerWithEditableTableColumns();
+		final CellValueConfigControllerExtension extension = new CellValueConfigControllerExtension();
+		extension.accept(controller);
+		fillTableView(controller.tableView);
+		final CellEditEvent<Person, String> nameEditEvent = createCellEditEvent(controller.tableView.getItems().get(0),
+				"Herman Doe");
+		final CellEditEvent<Person, Double> ageEditEvent = createCellEditEvent(controller.tableView.getItems().get(0),
+				Double.valueOf(99.0));
+
+		// WHEN
+		controller.nameColumn.getOnEditCommit().handle(nameEditEvent);
+		controller.ageColumn.getOnEditCommit().handle(ageEditEvent);
+
+		// THEN
+		assertCellContains(controller.tableView, 0, 0, "Herman Doe");
+		assertCellContains(controller.tableView, 0, 1, 99.0);
+	}
+
+	@Test
+	void testAccept_tableView_customCellType() {
+		// GIVEN
+		final ControllerWithCustomTableCell controller = new ControllerWithCustomTableCell();
+		final CellValueConfigControllerExtension extension = new CellValueConfigControllerExtension();
+
+		// WHEN
+		extension.accept(controller);
+
+		// THEN
+		assertCellType(controller.tableView, 0, CustomTableCell.class);
+		assertCellType(controller.tableView, 1, TextFieldTableCell.class);
+	}
+
 	void fillTableView(final TableView<Person> tableView) {
 		tableView.getItems().add(new Person("John Doe", 42.6));
 		tableView.getItems().add(new Person("Jane Doe", 37.1));
@@ -182,6 +224,12 @@ class CellValueConfigControllerExtensionTest {
 	void assertCellContains(final TableView tableView, final int row, final int col, final Object expectedValue) {
 		final TableColumn column = (TableColumn) tableView.getColumns().get(col);
 		assertThat(column.getCellData(row), equalTo(expectedValue));
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	void assertCellType(final TableView tableView, final int col, final Class<? extends IndexedCell> expectedCellType) {
+		final TableColumn column = (TableColumn) tableView.getColumns().get(col);
+		assertThat(column.getCellFactory().call(tableView), instanceOf(expectedCellType));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -303,6 +351,27 @@ class CellValueConfigControllerExtensionTest {
 				"Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but annotation does not define, which column shall be configured!"));
 	}
 
+	@Test
+	void testAccept_treeTableView_editableTableColumns() {
+		// GIVEN
+		final ControllerWithEditableTreeTableColumns controller = new ControllerWithEditableTreeTableColumns();
+		final CellValueConfigControllerExtension extension = new CellValueConfigControllerExtension();
+		extension.accept(controller);
+		fillTreeTableView(controller.tableView);
+		final javafx.scene.control.TreeTableColumn.CellEditEvent<Person, String> nameEditEvent = createTreeCellEditEvent(
+				controller.tableView.getRoot(), "Herman Doe");
+		final javafx.scene.control.TreeTableColumn.CellEditEvent<Person, Double> ageEditEvent = createTreeCellEditEvent(
+				controller.tableView.getRoot(), Double.valueOf(99.0));
+
+		// WHEN
+		controller.nameColumn.getOnEditCommit().handle(nameEditEvent);
+		controller.ageColumn.getOnEditCommit().handle(ageEditEvent);
+
+		// THEN
+		assertCellContains(controller.tableView, 0, 0, "Herman Doe");
+		assertCellContains(controller.tableView, 0, 1, 99.0);
+	}
+
 	void fillTreeTableView(final TreeTableView<Person> tableView) {
 		final TreeItem<Person> root = new TreeItem<>(new Person("John Doe", 42.6));
 		tableView.setRoot(root);
@@ -338,6 +407,22 @@ class CellValueConfigControllerExtensionTest {
 				"John Doe (age 42.6)");
 	}
 
+	@Test
+	void testAccept_editableTreeView() {
+		// GIVEN
+		final ControllerWithEditableTreeView controller = new ControllerWithEditableTreeView();
+		final CellValueConfigControllerExtension extension = new CellValueConfigControllerExtension();
+		extension.accept(controller);
+		fillTreeView(controller.treeView);
+		final EditEvent<Person> event = createTreeViewEditEvent(controller.treeView.getRoot(),
+				new Person("Herman Doe", Double.valueOf(99.0)));
+		// WHEN
+		controller.treeView.getOnEditCommit().handle(event);
+		// THEN
+		assertCellConvertsValueToString(controller.treeView, controller.treeView.getRoot().getValue(),
+				"Herman Doe (age 99.0)");
+	}
+
 	void fillTreeView(final TreeView<Person> treeView) {
 		final TreeItem<Person> root = new TreeItem<>(new Person("John Doe", 42.6));
 		treeView.setRoot(root);
@@ -360,13 +445,49 @@ class CellValueConfigControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		fillTreeView(controller.listView);
+		fillListView(controller.listView);
 		assertCellConvertsValueToString(controller.listView, controller.listView.getItems().get(0),
 				"John Doe (age 42.6)");
 	}
 
-	void fillTreeView(final ListView<Person> listView) {
+	@Test
+	void testAccept_editableListView() {
+		// GIVEN
+		final ControllerWithEditableListView controller = new ControllerWithEditableListView();
+		final CellValueConfigControllerExtension extension = new CellValueConfigControllerExtension();
+		extension.accept(controller);
+		fillListView(controller.listView);
+		final javafx.scene.control.ListView.EditEvent<Person> event = createListViewEditEvent(0,
+				new Person("Herman Doe", Double.valueOf(99.0)));
+
+		// WHEN
+		controller.listView.getOnEditCommit().handle(event);
+
+		// THEN
+		assertCellConvertsValueToString(controller.listView, controller.listView.getItems().get(0),
+				"Herman Doe (age 99.0)");
+	}
+
+	void fillListView(final ListView<Person> listView) {
 		listView.getItems().add(new Person("John Doe", 42.6));
+	}
+
+	@SuppressWarnings("unchecked")
+	private <S, T> CellEditEvent<S, T> createCellEditEvent(final S rowValue, final T newValue) {
+		final CellEditEvent<S, T> event = Mockito.mock(CellEditEvent.class);
+		when(event.getRowValue()).thenReturn(rowValue);
+		when(event.getNewValue()).thenReturn(newValue);
+		return event;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <S, T> javafx.scene.control.TreeTableColumn.CellEditEvent<S, T> createTreeCellEditEvent(
+			final TreeItem<S> rowValue, final T newValue) {
+		final javafx.scene.control.TreeTableColumn.CellEditEvent<S, T> event = Mockito
+				.mock(javafx.scene.control.TreeTableColumn.CellEditEvent.class);
+		when(event.getRowValue()).thenReturn(rowValue);
+		when(event.getNewValue()).thenReturn(newValue);
+		return event;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -377,7 +498,24 @@ class CellValueConfigControllerExtensionTest {
 		assertThat(cell.getText(), equalTo(expectedText));
 	}
 
-	public class ControllerWithTableViewConfiguredByIndex {
+	@SuppressWarnings("unchecked")
+	private <T> EditEvent<T> createTreeViewEditEvent(final TreeItem<T> rowValue, final T newValue) {
+		final EditEvent<T> event = Mockito.mock(EditEvent.class);
+		when(event.getTreeItem()).thenReturn(rowValue);
+		when(event.getNewValue()).thenReturn(newValue);
+		return event;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> javafx.scene.control.ListView.EditEvent<T> createListViewEditEvent(final int index, final T newValue) {
+		final javafx.scene.control.ListView.EditEvent<T> event = Mockito
+				.mock(javafx.scene.control.ListView.EditEvent.class);
+		when(event.getIndex()).thenReturn(index);
+		when(event.getNewValue()).thenReturn(newValue);
+		return event;
+	}
+
+	public static class ControllerWithTableViewConfiguredByIndex {
 
 		public View _view;
 
@@ -393,7 +531,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTableViewConfiguredByWrongIndex {
+	public static class ControllerWithTableViewConfiguredByWrongIndex {
 
 		public View _view;
 
@@ -409,7 +547,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTableViewConfiguredById {
+	public static class ControllerWithTableViewConfiguredById {
 
 		public View _view;
 
@@ -427,7 +565,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTableViewConfiguredByWrongId {
+	public static class ControllerWithTableViewConfiguredByWrongId {
 
 		public View _view;
 
@@ -445,7 +583,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTableColumns {
+	public static class ControllerWithTableColumns {
 
 		public View _view;
 
@@ -458,6 +596,42 @@ class CellValueConfigControllerExtensionTest {
 		protected TableColumn<Person, String> ageColumn = new TableColumn<>();
 
 		public ControllerWithTableColumns() {
+			tableView.getColumns().add(nameColumn);
+			tableView.getColumns().add(ageColumn);
+		}
+	}
+
+	public static class ControllerWithEditableTableColumns {
+
+		public View _view;
+
+		protected TableView<Person> tableView = new TableView<>();
+
+		@AFXCellValueConfig(propertyValue = "name", editable = true)
+		protected TableColumn<Person, String> nameColumn = new TableColumn<>();
+
+		@AFXCellValueConfig(propertyValue = "age", stringConverter = DoubleConverter.class, editable = true)
+		protected TableColumn<Person, Double> ageColumn = new TableColumn<>();
+
+		public ControllerWithEditableTableColumns() {
+			tableView.getColumns().add(nameColumn);
+			tableView.getColumns().add(ageColumn);
+		}
+	}
+
+	public static class ControllerWithCustomTableCell {
+
+		public View _view;
+
+		protected TableView<Person> tableView = new TableView<>();
+
+		@AFXCellValueConfig(propertyValue = "name", cellType = CustomTableCell.class)
+		protected TableColumn<Person, String> nameColumn = new TableColumn<>();
+
+		@AFXCellValueConfig(propertyValue = "age", stringConverter = DoubleConverter.class)
+		protected TableColumn<Person, String> ageColumn = new TableColumn<>();
+
+		public ControllerWithCustomTableCell() {
 			tableView.getColumns().add(nameColumn);
 			tableView.getColumns().add(ageColumn);
 		}
@@ -476,7 +650,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTreeTableViewConfiguredByIndex {
+	public static class ControllerWithTreeTableViewConfiguredByIndex {
 
 		public View _view;
 
@@ -492,7 +666,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTreeTableViewConfiguredByWrongIndex {
+	public static class ControllerWithTreeTableViewConfiguredByWrongIndex {
 
 		public View _view;
 
@@ -508,7 +682,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTreeTableViewConfiguredById {
+	public static class ControllerWithTreeTableViewConfiguredById {
 
 		public View _view;
 
@@ -526,7 +700,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTreeTableViewConfiguredByWrongId {
+	public static class ControllerWithTreeTableViewConfiguredByWrongId {
 
 		public View _view;
 
@@ -544,7 +718,7 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithTreeTableColumns {
+	public static class ControllerWithTreeTableColumns {
 
 		public View _view;
 
@@ -562,7 +736,25 @@ class CellValueConfigControllerExtensionTest {
 		}
 	}
 
-	public class ControllerWithNullField {
+	public static class ControllerWithEditableTreeTableColumns {
+
+		public View _view;
+
+		protected TreeTableView<Person> tableView = new TreeTableView<>();
+
+		@AFXCellValueConfig(propertyValue = "name", editable = true)
+		protected TreeTableColumn<Person, String> nameColumn = new TreeTableColumn<>();
+
+		@AFXCellValueConfig(propertyValue = "age", stringConverter = DoubleConverter.class, editable = true)
+		protected TreeTableColumn<Person, Double> ageColumn = new TreeTableColumn<>();
+
+		public ControllerWithEditableTreeTableColumns() {
+			tableView.getColumns().add(nameColumn);
+			tableView.getColumns().add(ageColumn);
+		}
+	}
+
+	public static class ControllerWithNullField {
 
 		public View _view;
 
@@ -571,7 +763,7 @@ class CellValueConfigControllerExtensionTest {
 
 	}
 
-	public class ControllerWithInvalidAnnotation {
+	public static class ControllerWithInvalidAnnotation {
 
 		public View _view;
 
@@ -580,7 +772,7 @@ class CellValueConfigControllerExtensionTest {
 
 	}
 
-	public class ControllerWithTreeTableNullField {
+	public static class ControllerWithTreeTableNullField {
 
 		public View _view;
 
@@ -589,7 +781,7 @@ class CellValueConfigControllerExtensionTest {
 
 	}
 
-	public class ControllerWithTreeTableInvalidAnnotation {
+	public static class ControllerWithTreeTableInvalidAnnotation {
 
 		public View _view;
 
@@ -598,7 +790,7 @@ class CellValueConfigControllerExtensionTest {
 
 	}
 
-	public class ControllerWithTreeView {
+	public static class ControllerWithTreeView {
 
 		public View _view;
 
@@ -607,12 +799,34 @@ class CellValueConfigControllerExtensionTest {
 
 	}
 
-	public class ControllerWithListView {
+	public static class ControllerWithEditableTreeView {
+
+		public View _view;
+
+		@AFXCellValueConfig(stringConverter = PersonStringConverter.class, editable = true)
+		protected TreeView<Person> treeView = new TreeView<>();
+
+	}
+
+	public static class ControllerWithListView {
 
 		public View _view;
 
 		@AFXCellValueConfig(stringConverter = PersonStringConverter.class)
 		protected ListView<Person> listView = new ListView<>();
+
+	}
+
+	public static class ControllerWithEditableListView {
+
+		public View _view;
+
+		@AFXCellValueConfig(stringConverter = PersonStringConverter.class, editable = true)
+		protected ListView<Person> listView = new ListView<>();
+
+	}
+
+	public static class CustomTableCell extends TableCell<Person, String> {
 
 	}
 
