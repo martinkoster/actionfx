@@ -482,11 +482,11 @@ In plain JavaFX, it would be required to inject the `TableColumn` instances via 
 However, you can also apply the `@AFXCellValueConfig` annotation on injected columns. For making the cells e.g. in a `javafx.scene.control.TreeTableView` editable, you can additionally use attribute `editable`:
 
 ```java
-		@AFXCellValueConfig(propertyValue = "name", editable = true)
-		private TreeTableColumn<Person, String> nameColumn = new TreeTableColumn<>();
+	@AFXCellValueConfig(propertyValue = "name", editable = true)
+	private TreeTableColumn<Person, String> nameColumn = new TreeTableColumn<>();
 
-		@AFXCellValueConfig(propertyValue = "age", stringConverter = DoubleConverter.class, editable = true)
-		private TreeTableColumn<Person, Double> ageColumn = new TreeTableColumn<>();
+	@AFXCellValueConfig(propertyValue = "age", stringConverter = DoubleConverter.class, editable = true)
+	private TreeTableColumn<Person, Double> ageColumn = new TreeTableColumn<>();
 ```
 
 
