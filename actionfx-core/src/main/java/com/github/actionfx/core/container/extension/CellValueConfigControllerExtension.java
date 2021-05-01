@@ -46,6 +46,7 @@ import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 
 /**
  * Extends controllers for functionality for {@link AFXCellValueConfig}
@@ -144,7 +145,8 @@ public class CellValueConfigControllerExtension extends AbstractAnnotatedFieldCo
 		@SuppressWarnings("rawtypes")
 		public default void configureCellFactory(final AFXCellValueConfig annotation, final Object columnInstance,
 				final ObjectProperty<Callback> cellFactoryProperty) {
-			if (annotation.cellType() != IndexedCell.class || annotation.stringConverter() != StringConverter.class) {
+			if (annotation.cellType() != IndexedCell.class || annotation.stringConverter() != StringConverter.class
+					|| annotation.editable()) {
 				final Class<? extends IndexedCell> cellType = determineCellType(annotation);
 				final Callback cellFactory = createCellFactory(cellType, annotation.stringConverter());
 				cellFactoryProperty.set(cellFactory);
@@ -164,15 +166,30 @@ public class CellValueConfigControllerExtension extends AbstractAnnotatedFieldCo
 				final Class<? extends StringConverter> stringConverterClass) {
 			return list -> {
 				final IndexedCell cell = ReflectionUtils.instantiateClass(cellType);
-				if (stringConverterClass != StringConverter.class) {
-					final Field converterField = ReflectionUtils.findField(cellType, "converter");
-					if (converterField != null) {
-						ReflectionUtils.setFieldValueBySetter(converterField, cell,
-								ReflectionUtils.instantiateClass(stringConverterClass));
-					}
+				final Field converterField = ReflectionUtils.findField(cellType, "converter");
+				if (converterField != null) {
+					ReflectionUtils.setFieldValueBySetter(converterField, cell,
+							createStringConverter(stringConverterClass));
 				}
 				return cell;
 			};
+		}
+
+		/**
+		 * Instantiates a string converter based on the supplied
+		 * {@code stringConverterClass}.
+		 *
+		 * @param stringConverterClass the string converter class to instantiate.
+		 * @return the instantiated string converter class. Uses
+		 *         {@link DefaultStringConverter}, if {@code stringConverterClass} is
+		 *         equal to {@code StringConverter}.
+		 */
+		@SuppressWarnings("rawtypes")
+		public default StringConverter createStringConverter(
+				final Class<? extends StringConverter> stringConverterClass) {
+			return stringConverterClass != StringConverter.class
+					? ReflectionUtils.instantiateClass(stringConverterClass)
+					: new DefaultStringConverter();
 		}
 
 		/**
@@ -215,6 +232,26 @@ public class CellValueConfigControllerExtension extends AbstractAnnotatedFieldCo
 					: (TableColumn) instance;
 			column.setCellValueFactory(new PropertyValueFactory(annotation.propertyValue()));
 			configureCellFactory(annotation, column, column.cellFactoryProperty());
+			if (annotation.editable()) {
+				enableEditing(column, annotation.propertyValue());
+			}
+		}
+
+		/**
+		 * Enables edit functionality for the given {@code column}.
+		 *
+		 * @param column       the column to enable editing for
+		 * @param propertyName the name of the property that receives the value
+		 */
+		private <S, T> void enableEditing(final TableColumn<S, T> column, final String propertyName) {
+			final TableView<S> tableView = column.getTableView();
+			tableView.setEditable(true);
+			column.setEditable(true);
+			column.setOnEditCommit(editEvent -> {
+				final S backingInstance = editEvent.getRowValue();
+				final Field field = ReflectionUtils.findField(backingInstance.getClass(), propertyName);
+				ReflectionUtils.setFieldValueBySetter(field, backingInstance, editEvent.getNewValue());
+			});
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -271,6 +308,26 @@ public class CellValueConfigControllerExtension extends AbstractAnnotatedFieldCo
 					: (TreeTableColumn) instance;
 			column.setCellValueFactory(new TreeItemPropertyValueFactory(annotation.propertyValue()));
 			configureCellFactory(annotation, column, column.cellFactoryProperty());
+			if (annotation.editable()) {
+				enableEditing(column, annotation.propertyValue());
+			}
+		}
+
+		/**
+		 * Enables edit functionality for the given {@code column}.
+		 *
+		 * @param column       the column to enable editing for
+		 * @param propertyName the name of the property that receives the value
+		 */
+		private <S, T> void enableEditing(final TreeTableColumn<S, T> column, final String propertyName) {
+			final TreeTableView<S> treeTableView = column.getTreeTableView();
+			treeTableView.setEditable(true);
+			column.setEditable(true);
+			column.setOnEditCommit(editEvent -> {
+				final S backingInstance = editEvent.getRowValue().getValue();
+				final Field field = ReflectionUtils.findField(backingInstance.getClass(), propertyName);
+				ReflectionUtils.setFieldValueBySetter(field, backingInstance, editEvent.getNewValue());
+			});
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -324,6 +381,19 @@ public class CellValueConfigControllerExtension extends AbstractAnnotatedFieldCo
 		public void configure(final Object instance, final AFXCellValueConfig annotation) {
 			final TreeView treeView = (TreeView) instance;
 			configureCellFactory(annotation, instance, treeView.cellFactoryProperty());
+			if (annotation.editable()) {
+				enableEditing(treeView);
+			}
+		}
+
+		/**
+		 * Enables edit functionality for the given {@code column}.
+		 *
+		 * @param treeView the tree view to enable editing for
+		 */
+		private <T> void enableEditing(final TreeView<T> treeView) {
+			treeView.setEditable(true);
+			treeView.setOnEditCommit(editEvent -> editEvent.getTreeItem().setValue(editEvent.getNewValue()));
 		}
 
 		@SuppressWarnings("rawtypes")
@@ -352,6 +422,20 @@ public class CellValueConfigControllerExtension extends AbstractAnnotatedFieldCo
 		public void configure(final Object instance, final AFXCellValueConfig annotation) {
 			final ListView listView = (ListView) instance;
 			configureCellFactory(annotation, instance, listView.cellFactoryProperty());
+			if (annotation.editable()) {
+				enableEditing(listView);
+			}
+		}
+
+		/**
+		 * Enables edit functionality for the given {@code column}.
+		 *
+		 * @param listView the list view to enable editing for
+		 */
+		private <T> void enableEditing(final ListView<T> listView) {
+			listView.setEditable(true);
+			listView.setOnEditCommit(
+					editEvent -> listView.getItems().set(editEvent.getIndex(), editEvent.getNewValue()));
 		}
 
 		@SuppressWarnings("rawtypes")

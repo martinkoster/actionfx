@@ -491,23 +491,23 @@ All relevant controls that are configured through ActionFX are injected via the 
 @AFXController(viewId = "datacontainerDemoView", viewClass = DatacontainerView.class, maximized = true)
 public class DatacontainerController {
 
-	@AFXCellValueConfig(colId = "firstNameColumn", propertyValue = "firstName")
-	@AFXCellValueConfig(colId = "lastNameColumn", propertyValue = "lastName")
-	@AFXCellValueConfig(colId = "salaryColumn", propertyValue = "salary", stringConverter = DoubleCurrencyStringConverter.class)
+	@AFXCellValueConfig(colId = "firstNameColumn", propertyValue = "firstName", editable = true)
+	@AFXCellValueConfig(colId = "lastNameColumn", propertyValue = "lastName", editable = true)
+	@AFXCellValueConfig(colId = "salaryColumn", propertyValue = "salary", stringConverter = DoubleCurrencyStringConverter.class, editable = true)
 	@FXML
 	private TableView<Employee> employeeTableView;
 
-	@AFXCellValueConfig(stringConverter = EmployeeStringConverter.class)
+	@AFXCellValueConfig(stringConverter = EmployeeStringConverter.class, editable = true)
 	@FXML
 	private ListView<Employee> employeeListView;
 
-	@AFXCellValueConfig(colId = "firstNameTreeColumn", propertyValue = "firstName")
-	@AFXCellValueConfig(colId = "lastNameTreeColumn", propertyValue = "lastName")
-	@AFXCellValueConfig(colId = "salaryTreeColumn", propertyValue = "salary", stringConverter = DoubleCurrencyStringConverter.class)
+	@AFXCellValueConfig(colId = "firstNameTreeColumn", propertyValue = "firstName", editable = true)
+	@AFXCellValueConfig(colId = "lastNameTreeColumn", propertyValue = "lastName", editable = true)
+	@AFXCellValueConfig(colId = "salaryTreeColumn", propertyValue = "salary", stringConverter = DoubleCurrencyStringConverter.class, editable = true)
 	@FXML
 	private TreeTableView<Employee> employeeTreeTableView;
 
-	@AFXCellValueConfig(stringConverter = EmployeeStringConverter.class)
+	@AFXCellValueConfig(stringConverter = EmployeeStringConverter.class, editable = true)
 	@FXML
 	private TreeView<Employee> employeeTreeView;
 
@@ -557,28 +557,33 @@ public class DatacontainerController {
 		return loadEmployeeTableData();
 	}
 
-	public static class EmployeeStringConverter extends StringConverter<Employee> {
-
-		@Override
-		public String toString(final Employee object) {
-			if (object == null) {
-				return "";
-			}
-			return String.format("%s %s %.2f $", object.getFirstName(), object.getLastName(), object.getSalary());
-		}
-
+		/**
+		 * This method is invoked when the cell content is edited.
+		 */
 		@Override
 		public Employee fromString(final String string) {
-			// not needed for the demo here
-			return null;
+			final String[] tokens = string.split(" ");
+			final String firstName = getToken(tokens, 0, "");
+			final String lastName = getToken(tokens, 1, "");
+			final NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+			Double salary = Double.valueOf(0.0);
+			try {
+				salary = format.parse(getToken(tokens, 2, "0.0")).doubleValue();
+			} catch (final ParseException e) {
+			}
+			return new Employee(firstName, lastName, salary);
 		}
 
-	}
+		private String getToken(final String[] tokens, final int token, final String defaultValue) {
+			return tokens.length > token ? tokens[token] : defaultValue;
+		}
 }
 ```
 
 The controller class above shows, how controls containing data can be configured through ActionFX. Controls like `TableView`, `TreeTableView`, `TreeView` and `ListView` have cell factories and cell value factories under the hood to display data. For these control types, annotation [@AFXCellValueConfig](../actionfx-core/src/main/java/com/github/actionfx/core/annotation/AFXCellValueConfig.java) is used. This annotation is capable of mapping a property value from an underlying domain class to e.g. a `TableColumn` via the attribute `colId()` and `propertyValue()`. 
 
+As further show case, the cells of controls of type `TableView`, `TreeTableView`, `TreeView` and `ListView` are editable and accept user input when clicking on the cells (`@AFXCellValueConfig(..., editable = true)`).
+
 For data container like `ComboBox` or `ChoiceBox`, the annotation [@AFXConverter](../actionfx-core/src/main/java/com/github/actionfx/core/annotation/AFXConverter.java) is used to convert a model instance to a displayable string inside these controls.
 
-Source Code can be found here: [DatacontainerView](src/main/java/com/github/actionfx/datacontainerapp/controller/DatacontainerController.java)
+Source Code can be found here: [DatacontainerController](src/main/java/com/github/actionfx/datacontainerapp/controller/DatacontainerController.java)

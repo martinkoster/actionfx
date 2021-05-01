@@ -4,7 +4,7 @@ The "actionfx-core" module consists of the core functionality of ActionFX.
 
 Module | Description | API Documentation | Gradle Dependency 
 ------ | ----------- | ----------------- | ----------
-[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.0.0"`
+[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.1.0"`
 
 ## Table of Contents
 
@@ -477,8 +477,17 @@ Attribute                   | Description
 	@FXML
 	private TableView<Book> bookTableView;
 ```
-
 In plain JavaFX, it would be required to inject the `TableColumn` instances via `@FXML`. In ActionFX, this is not required as the table column instances are looked up in the scene graph using the `colId` attribute in `@AFXCellValueConfig`.
+
+However, you can also apply the `@AFXCellValueConfig` annotation on injected columns. For making the cells e.g. in a `javafx.scene.control.TreeTableView` editable, you can additionally use attribute `editable`:
+
+```java
+		@AFXCellValueConfig(propertyValue = "name", editable = true)
+		private TreeTableColumn<Person, String> nameColumn = new TreeTableColumn<>();
+
+		@AFXCellValueConfig(propertyValue = "age", stringConverter = DoubleConverter.class, editable = true)
+		private TreeTableColumn<Person, Double> ageColumn = new TreeTableColumn<>();
+```
 
 
 #### Annotation @AFXEnableMultiSelection
