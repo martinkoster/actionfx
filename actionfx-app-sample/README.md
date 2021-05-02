@@ -289,24 +289,11 @@ public class ShoppingCartController {
 	@FXML
 	private Button checkoutButton;
 
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
-
-	@FXML
-	private TableColumn<Book, String> titleColumn;
-
-	@FXML
-	private TableColumn<Book, String> categoryColumn;
-
-	@FXML
-	private TableColumn<Book, String> priceColumn;
-
-	@PostConstruct
-	public void initialize() {
-		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-		priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-	}
 
 	@AFXOnAction(controlId = "emptyButton")
 	public void emptyShoppingCart() {
