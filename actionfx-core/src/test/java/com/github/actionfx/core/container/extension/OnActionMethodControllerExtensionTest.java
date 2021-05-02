@@ -24,15 +24,19 @@
 package com.github.actionfx.core.container.extension;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.test.ViewCreator;
@@ -40,6 +44,7 @@ import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.Button;
@@ -100,6 +105,31 @@ class OnActionMethodControllerExtensionTest {
 
 	@Test
 	@TestInFxThread
+	void testAccept_asyncAction() {
+		// GIVEN
+		final Button button = new Button();
+		final ControllerWithAFXOnActionAsync controller = Mockito
+				.spy(new ControllerWithAFXOnActionAsync(ViewCreator.create(button, "actionButton")));
+		final OnActionMethodControllerExtension extension = new OnActionMethodControllerExtension();
+
+		// WHEN
+		extension.accept(controller);
+
+		// THEN
+		assertThat(button.getOnAction(), notNullValue());
+
+		// and WHEN (fire action)
+		Event.fireEvent(button, new ActionEvent());
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+
+		// and THEN (invocation was performed)
+		verify(controller, times(1)).onActionButtonClicked();
+		// execution was not inside JavaFX thread
+		assertThat(controller.executedInJavaFxThread, equalTo(false));
+	}
+
+	@Test
+	@TestInFxThread
 	void testAccept_referencedControlDoesNotHaveOnActionProperty() {
 		// GIVEN (view with tableView - which does not have an "onAction" property)
 		final ControllerWithAFXOnAction controller = Mockito
@@ -124,6 +154,26 @@ class OnActionMethodControllerExtensionTest {
 
 		@AFXOnAction(controlId = "actionButton")
 		public void onActionButtonClicked() {
+		}
+	}
+
+	public class ControllerWithAFXOnActionAsync {
+
+		public View _view;
+
+		protected boolean executedInJavaFxThread = true;
+
+		public ControllerWithAFXOnActionAsync(final View view) {
+			_view = view;
+		}
+
+		@AFXOnAction(controlId = "actionButton", async = true)
+		public void onActionButtonClicked() {
+			if (!Platform.isFxApplicationThread()) {
+				// for testing...because "async=true" is set, this method is not executed in
+				// JavaFX thread
+				executedInJavaFxThread = false;
+			}
 		}
 	}
 

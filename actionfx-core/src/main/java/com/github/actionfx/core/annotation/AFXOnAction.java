@@ -63,4 +63,19 @@ public @interface AFXOnAction {
 	 *         annotated method.
 	 */
 	public String controlId();
+
+	/**
+	 * Optional flag that determines, whether the annotated method shall be executed
+	 * in an asynchronous fashion. When set to {@code true}, the annotated method is
+	 * not executed inside the JavaFX-thread, but in its own thread in order not to
+	 * block the JavaFX thread. In case that UI components need to be updated in the
+	 * method, the update itself needs to be run with
+	 * {@link javafx.application.Platform#runLater(Runnable)}.
+	 *
+	 * @return {@code true},if method execution shall be performed from a new
+	 *         thread, {@code false}, if the method shall be executed synchronously
+	 *         inside the JavaFX thread. Default is {@code false}.
+	 */
+	public boolean async() default false;
+
 }

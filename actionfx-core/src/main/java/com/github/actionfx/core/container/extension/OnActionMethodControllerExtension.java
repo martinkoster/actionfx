@@ -64,7 +64,12 @@ public class OnActionMethodControllerExtension extends AbstractAnnotatedMethodCo
 		onActionProperty.setValue(actionEvent -> {
 			final ControllerMethodInvocationAdapter adapter = new ControllerMethodInvocationAdapter(controller,
 					annotatedElement, ParameterValue.of(actionEvent));
-			adapter.invoke();
+			if (annotation.async()) {
+				adapter.invokeAsynchronously(value -> {
+				});
+			} else {
+				adapter.invoke();
+			}
 		});
 	}
 
