@@ -557,6 +557,16 @@ public class DatacontainerController {
 		return loadEmployeeTableData();
 	}
 
+	public static class EmployeeStringConverter extends StringConverter<Employee> {
+
+		@Override
+		public String toString(final Employee object) {
+			if (object == null) {
+				return "";
+			}
+			return String.format("%s %s %.2f $", object.getFirstName(), object.getLastName(), object.getSalary());
+		}
+
 		/**
 		 * This method is invoked when the cell content is edited.
 		 */
@@ -577,6 +587,7 @@ public class DatacontainerController {
 		private String getToken(final String[] tokens, final int token, final String defaultValue) {
 			return tokens.length > token ? tokens[token] : defaultValue;
 		}
+	}
 }
 ```
 
