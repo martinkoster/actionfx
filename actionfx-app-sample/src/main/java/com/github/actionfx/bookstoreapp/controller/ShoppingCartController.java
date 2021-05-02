@@ -25,18 +25,16 @@ package com.github.actionfx.bookstoreapp.controller;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import com.github.actionfx.bookstoreapp.model.Book;
+import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
+import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXShowView;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 @AFXController(viewId = "shoppingCartView", fxml = "/fxml/ShoppingCartView.fxml")
 public class ShoppingCartController {
@@ -47,24 +45,11 @@ public class ShoppingCartController {
 	@FXML
 	private Button checkoutButton;
 
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
-
-	@FXML
-	private TableColumn<Book, String> titleColumn;
-
-	@FXML
-	private TableColumn<Book, String> categoryColumn;
-
-	@FXML
-	private TableColumn<Book, String> priceColumn;
-
-	@PostConstruct
-	public void initialize() {
-		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-		priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-	}
 
 	@AFXOnAction(controlId = "emptyButton")
 	public void emptyShoppingCart() {
