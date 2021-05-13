@@ -5,6 +5,7 @@ com.github.actionfx.core.collections
 com.github.actionfx.core.container
 com.github.actionfx.core.container.extension
 com.github.actionfx.core.container.instantiation
+com.github.actionfx.core.dialogs
 com.github.actionfx.core.instrumentation
 com.github.actionfx.core.instrumentation.bytebuddy
 com.github.actionfx.core.instrumentation.interceptors

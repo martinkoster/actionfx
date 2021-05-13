@@ -31,6 +31,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,11 +43,18 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.testfx.util.WaitForAsyncUtils;
 
+import com.github.actionfx.core.ActionFXMock;
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.AFXControlValue;
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.ArgumentHint;
+import com.github.actionfx.core.container.BeanContainerFacade;
+import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
@@ -53,6 +63,8 @@ import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 
@@ -290,6 +302,138 @@ class ControllerMethodInvocationAdapterTest {
 				containsString(" is not compatible with the method argument of type 'java.util.List'!"));
 	}
 
+	@Test
+	void testInvoke_withUserConfirmation_userConfirms() {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
+				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+		assertThat(result, equalTo("Hello World"));
+	}
+
+	@Test
+	void testInvoke_withUserConfirmation_userCancels() {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.FALSE);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
+				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(false));
+		assertThat(result, nullValue());
+	}
+
+	@Test
+	void testInvoke_withUserConfirmation_dialogValuesAreTakenFromResourceBundle() {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter(
+				"requiresUserConfirmationWithResourceBundle");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
+				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+		assertThat(result, equalTo("Hello World"));
+	}
+
+	@Test
+	void testInvoke_withUserConfirmation_keysDoNotExist_defaultValuesAreTaken() {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter(
+				"requiresUserConfirmationWithResourceBundleButKeysDoNotExist");
+
+		// WHEN
+		final Object result = adapter.invoke();
+
+		// THEN
+		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
+				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+		assertThat(result, equalTo("Hello World"));
+	}
+
+	@Test
+	void testInvokeAsynchronously_withUserConfirmation_userConfirms() {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
+		final StringProperty result = new SimpleStringProperty(null);
+
+		// WHEN
+		adapter.invokeAsynchronously(value -> result.set((String) value));
+
+		// THEN
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
+				ArgumentMatchers.eq("Header"), ArgumentMatchers.eq("Content"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+		assertThat(result.get(), equalTo("Hello World"));
+	}
+
+	@Test
+	void testInvokeAsynchronously_withUserConfirmation_userCancels() {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.FALSE);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
+		final StringProperty result = new SimpleStringProperty(null);
+
+		// WHEN
+		adapter.invokeAsynchronously(value -> result.set((String) value));
+
+		// THEN
+		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
+				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(false));
+		assertThat(result.get(), nullValue());
+	}
+
 	private static ControllerMethodInvocationAdapter methodInvocationAdapter(final String methodName) {
 		final ClassWithPublicMethods instance = createEnhancedInstance(true);
 		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
@@ -346,6 +490,7 @@ class ControllerMethodInvocationAdapterTest {
 	 * @author koster
 	 *
 	 */
+	@AFXController(viewId = "viewId", resourcesBasename = "i18n.TestResources")
 	public static class ClassWithPublicMethods {
 
 		private final List<Object> invokedArguments = new ArrayList<>();
@@ -429,6 +574,24 @@ class ControllerMethodInvocationAdapterTest {
 		public void voidMethodWithInjectedControlArgumentsOfIncompatibleType(
 				@AFXControlValue("textField") final List<String> selectedEntries) {
 			setExecuted();
+		}
+
+		@AFXRequiresUserConfirmation(title = "Title", header = "Header", content = "Content")
+		public String requiresUserConfirmation() {
+			setExecuted();
+			return "Hello World";
+		}
+
+		@AFXRequiresUserConfirmation(titleKey = "title", headerKey = "header", contentKey = "content")
+		public String requiresUserConfirmationWithResourceBundle() {
+			setExecuted();
+			return "Hello World";
+		}
+
+		@AFXRequiresUserConfirmation(title = "Title", header = "Header", content = "Content", titleKey = "fantasyTitleKey", headerKey = "fantasyHeaderKey", contentKey = "fantasyContentKey")
+		public String requiresUserConfirmationWithResourceBundleButKeysDoNotExist() {
+			setExecuted();
+			return "Hello World";
 		}
 
 		private void setExecuted() {

@@ -30,10 +30,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.AFXControlValue;
+import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.View;
@@ -49,8 +52,8 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
  * further hints, which value to take for which method argument.
  * <p>
  * Additionally, method arguments are allowed to be annotated by
- * {@link AFXControlValue}. In this case, the user value is retrieved from
- * the referenced control and is used as method argument.
+ * {@link AFXControlValue}. In this case, the user value is retrieved from the
+ * referenced control and is used as method argument.
  *
  * @author koster
  *
@@ -101,13 +104,8 @@ public class ControllerMethodInvocationAdapter {
 	 * @param <T> the return type of the method
 	 * @return the return value of the method
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T invoke() {
-		try {
-			return (T) method.invoke(controller, methodArguments);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new IllegalStateException("Invocation of method '" + method.getName() + "' failed!", e);
-		}
+		return invocationAllowed() ? invokeInternal() : null;
 	}
 
 	/**
@@ -120,7 +118,64 @@ public class ControllerMethodInvocationAdapter {
 	 *                 method invocation
 	 */
 	public <T> void invokeAsynchronously(final Consumer<T> consumer) {
-		AsyncUtils.executeAsynchronously(this::invoke, consumer);
+		if (invocationAllowed()) {
+			AsyncUtils.executeAsynchronously(this::invokeInternal, consumer);
+		}
+	}
+
+	/**
+	 * Internal method invocation routine. Will not check for user confirmation.
+	 *
+	 * @param <T> the return type of the method
+	 * @return the return value of the method
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> T invokeInternal() {
+		try {
+			return (T) method.invoke(controller, methodArguments);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalStateException("Invocation of method '" + method.getName() + "' failed!", e);
+		}
+	}
+
+	/**
+	 * Checks, whether method invocation is allowed. Method invocation is allowed,
+	 * if there is no {@link AFXRequiresUserConfirmation} annotation on the method,
+	 * or the user confirms a confirmation dialog in case there is a
+	 * {@link AFXRequiresUserConfirmation} annotation.
+	 *
+	 * @return {@code true}, if invocation is allowed, {@code false} otherwise.
+	 */
+	protected boolean invocationAllowed() {
+		final AFXRequiresUserConfirmation userConfirmation = AnnotationUtils.findAnnotation(method,
+				AFXRequiresUserConfirmation.class);
+		if (userConfirmation == null) {
+			return true;
+		}
+		final ActionFX actionFX = ActionFX.getInstance();
+		final ResourceBundle resourceBundle = actionFX.getControllerResourceBundle(controller.getClass());
+		return actionFX.showConfirmationDialog(
+				getMessage(resourceBundle, userConfirmation.titleKey(), userConfirmation.title()),
+				getMessage(resourceBundle, userConfirmation.headerKey(), userConfirmation.header()),
+				getMessage(resourceBundle, userConfirmation.contentKey(), userConfirmation.content()));
+
+	}
+
+	/**
+	 * Retrieves the message for the given {@code key}. In case there is no key or
+	 * the key can not be resolved, the {@code defaultMessage} is returned.
+	 *
+	 * @param resourceBundle the resource bundle holding the message
+	 * @param key            the resource bundle property key
+	 * @param defaultMessage the default message
+	 * @return the resolved message, or {@code defaultMessage}, in case the
+	 *         {@code key} can not be resolved.
+	 */
+	protected String getMessage(final ResourceBundle resourceBundle, final String key, final String defaultMessage) {
+		if (resourceBundle == null || key == null || key.trim().equals("")) {
+			return defaultMessage;
+		}
+		return resourceBundle.containsKey(key) ? resourceBundle.getString(key) : defaultMessage;
 	}
 
 	public Object getInstance() {
@@ -204,8 +259,8 @@ public class ControllerMethodInvocationAdapter {
 	 * controller.
 	 *
 	 * @param parameter        the parameter to search a value for
-	 * @param controlUserValue the {@link AFXControlValue} annotation applied to
-	 *                         the method argument
+	 * @param controlUserValue the {@link AFXControlValue} annotation applied to the
+	 *                         method argument
 	 * @return the value retrieved from the control
 	 */
 	private Object determineInstanceFromControl(final Parameter parameter, final AFXControlValue controlUserValue) {

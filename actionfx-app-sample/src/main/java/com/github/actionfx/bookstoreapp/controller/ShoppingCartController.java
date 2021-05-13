@@ -30,6 +30,7 @@ import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXOnAction;
+import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.AFXShowView;
 
 import javafx.fxml.FXML;
@@ -52,6 +53,7 @@ public class ShoppingCartController {
 	private TableView<Book> bookTableView;
 
 	@AFXOnAction(controlId = "emptyButton")
+	@AFXRequiresUserConfirmation(title="Confirmation", header="Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();
 	}

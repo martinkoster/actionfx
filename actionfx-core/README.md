@@ -28,6 +28,7 @@ Module | Description | API Documentation | Gradle Dependency
       - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
+      - [Annotation @AFXRequiresUserConfirmation (Method Annotation)](#annotation-afxrequiresuserconfirmation)
   * [User Value of Controls](#user-value-of-controls)
   * [Internationalization](#internationalization)
 
@@ -529,6 +530,38 @@ Attribute 							| Description
 	private TableView<String> filteredAndSortedTable;
 ```
 
+#### Annotation @AFXRequiresUserConfirmation
+
+The [@AFXRequiresUserConfirmation](src/main/java/com/github/actionfx/core/annotation/AFXRequiresUserConfirmation.java) annotation is applied on methods that shall be only executed, when the user confirms the execution via a confirmation dialog.
+
+The layout of the confirmation dialog is as follows:
+![Confirmation Dialog](docs/images/confirmation-dialog.png)
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`title` 				| A title text to be displayed in the confirmation dialog. In case `titleKey()` is set, than this value as a lower priority.
+`header`               | A header text to be displayed in the confirmation dialog. In case `headerKey()` is set, than this value as a lower priority.
+`content`              | A content text to be displayed in the confirmation dialog. In case `contentKey()` is set, than this value as a lower priority.
+`titleKey`             | A resource bundle property key for the title text to be displayed in the confirmation dialog. A value in this attribute has a higher priority than the value specified in `title()`.
+`headerKey`            | A resource bundle property key for the header text to be displayed in the confirmation dialog. A value in this attribute has a higher priority than the value specified in `header()`.
+`contentKey`           | A resource bundle property key for the content text to be displayed in the confirmation dialog. A value in this attribute has a higher priority than the value specified in `content()`.
+
+**Example:**
+```java
+	@AFXRequiresUserConfirmation(title="Confirmation", header = "Action On User Name", content = "Are you sure?")		  
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
+		// do some action stuff
+	}
+...
+    @AFXRequiresUserConfirmation(title="Confirmation", header = "Action On User Name Change", content = "Are you sure to change the user name?")
+	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, timeoutMs = 300, listenerActiveBooleanProperty = "listenerEnabled")
+	public void onUsernameChange(final String newValue, final String oldValue, final ObservableValue<String> observable) {
+		// action on user name change goes here
+	}
+```
 
 ## User Value of Controls
 

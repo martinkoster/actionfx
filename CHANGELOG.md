@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## 1.2.0 (02.05.2021)
 - Annotation @AFXOnAction now supports asynchronous method invocation via attribute 'async'.
 - Support for working with simple dialogs like confirmation-, information-, warning-, error-, file handling- and text input dialogs.
+- Added annotation @AFXRequiresUserConfirmation: Methods are only executed after the user confirms via a confirmation dialog.
 
 ## 1.1.0 (01.05.2021)
 - Extended AFXCellValueConfig annotation by 'editable' attribute for making cells in TableView, TreeTableView, TreeView and ListView editable by the user

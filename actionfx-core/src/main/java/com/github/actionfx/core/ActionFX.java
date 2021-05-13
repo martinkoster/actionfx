@@ -131,39 +131,39 @@ public class ActionFX {
 	protected static ActionFXState actionFXState = ActionFXState.UNINITIALIZED;
 
 	// the internal bean container for managing ActionFX components
-	private BeanContainerFacade beanContainer;
+	protected BeanContainerFacade beanContainer;
 
 	// the ID of the mainView that is displayed in JavaFXs primary Stage
-	private String mainViewId;
+	protected String mainViewId;
 
 	// the package name to scan for ActionFX components
-	private String scanPackage;
+	protected String scanPackage;
 
 	// byte code enhancement strategy to use within ActionFX (runtime agent or
 	// sub-classing)
-	private EnhancementStrategy enhancementStrategy;
+	protected EnhancementStrategy enhancementStrategy;
 
 	// the byte-code enhancer to use
-	private ActionFXEnhancer enhancer;
+	protected ActionFXEnhancer enhancer;
 
 	// the primary stage of the JavaFX application
-	private Stage primaryStage;
+	protected Stage primaryStage;
 
 	// central exception handler
-	private UncaughtExceptionHandler uncaughtExceptionHandler;
+	protected UncaughtExceptionHandler uncaughtExceptionHandler;
 
 	// observable property for a locale for internationalization
-	private ObservableValue<Locale> observableLocale;
+	protected ObservableValue<Locale> observableLocale;
 
 	// holds a list of custom controller extensions added by the user during
 	// ActionFX setup
-	private ControllerExtensionBean controllerExtensionBean;
+	protected ControllerExtensionBean controllerExtensionBean;
 
 	/**
-	 * Private constructor. Use {@link #build()} method to create your
+	 * Internal constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
 	 */
-	private ActionFX() {
+	ActionFX() {
 		instance = this; // NOSONAR
 	}
 
@@ -597,7 +597,7 @@ public class ActionFX {
 	 *
 	 * @param expectedState the expected state to check.
 	 */
-	private static void checkActionFXState(final ActionFXState expectedState) {
+	static void checkActionFXState(final ActionFXState expectedState) {
 		if (actionFXState != expectedState) {
 			throw new IllegalStateException(
 					"ActionFX is in state '" + actionFXState + "', while expected state was '" + expectedState + "'!");
