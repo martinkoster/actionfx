@@ -542,9 +542,9 @@ The following attributes are available inside the annotation:
 
 Attribute 				| Description 
 ----------------------- | -------------------------------------------------
-`title` 				| A title text to be displayed in the confirmation dialog. In case `titleKey()` is set, than this value has a lower priority.
-`header`               | A header text to be displayed in the confirmation dialog. In case `headerKey()` is set, than this value has a lower priority.
-`content`              | A content text to be displayed in the confirmation dialog. In case `contentKey()` is set, than this value has a lower priority.
+`title` 				| A title text to be displayed in the confirmation dialog. In case `titleKey()` is set, than the value in `title` has a lower priority.
+`header`               | A header text to be displayed in the confirmation dialog. In case `headerKey()` is set, than the value in `header` has a lower priority.
+`content`              | A content text to be displayed in the confirmation dialog. In case `contentKey()` is set, than the value in `content` has a lower priority.
 `titleKey`             | A resource bundle property key for the title text to be displayed in the confirmation dialog. A value in this attribute has a higher priority than the value specified in `title()`.
 `headerKey`            | A resource bundle property key for the header text to be displayed in the confirmation dialog. A value in this attribute has a higher priority than the value specified in `header()`.
 `contentKey`           | A resource bundle property key for the content text to be displayed in the confirmation dialog. A value in this attribute has a higher priority than the value specified in `content()`.
