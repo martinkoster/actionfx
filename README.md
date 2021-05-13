@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Maven Central](https://img.shields.io/maven-central/v/com.github.martinkoster/actionfx-core)
 
-ActionFX aims at simplifying the development of JavaFX applications by reducing the amount of boilerplate code a developer has to provide. The focus in using "ActionFX" lies on providing the "action" and not coding of tedious wiring together of components, callbacks and change listener. The result is less and cleaner code, which is easier to read, maintain and especially test.
+ActionFX is a declarative, less-intrusive MVC framework based on annotations and dependency injection that aims at simplifying the development of JavaFX applications by reducing the amount of boilerplate code a developer has to provide. The focus in using "ActionFX" lies on providing the "action" and not on tedious coding of wiring together of components, callbacks and change listener. The result is less and cleaner code, which is easier to read, maintain and especially test.
 
 For a quick introduction to ActionFX, you can refer to the [sample applications](actionfx-app-sample/README.md). For a more detailed overview on the features of ActionFX, please refer the [core documentation](actionfx-core/README.md).
 

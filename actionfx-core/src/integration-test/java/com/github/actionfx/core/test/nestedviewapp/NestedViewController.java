@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXNestedView;
+import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.view.BorderPanePosition;
 
 import javafx.beans.value.ObservableValue;
@@ -24,6 +25,9 @@ public class NestedViewController {
 	@Inject
 	private ActionFX actionFX;
 
+	@Inject
+	private DialogController dialogController;
+
 	public Locale getLocale() {
 		return locale;
 	}
@@ -34,6 +38,10 @@ public class NestedViewController {
 
 	public ActionFX getActionFX() {
 		return actionFX;
+	}
+
+	public DialogController getDialogController() {
+		return dialogController;
 	}
 
 }

@@ -31,19 +31,25 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.github.actionfx.core.ActionFX.ActionFXBuilder;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
@@ -51,6 +57,9 @@ import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
 
 /**
  * JUnit test case for {@link ActionFX}.
@@ -220,6 +229,215 @@ class ActionFXTest {
 
 		// THEN
 		assertThat(ex.getMessage(), containsString("Bean with ID='mainController' is not of type"));
+	}
+
+	@Test
+	void testShowConfirmationDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(controller.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
+
+		// WHEN
+		assertThat(actionFX.showConfirmationDialog("Title", "HeaderText", "ContentText"), equalTo(Boolean.TRUE));
+
+		// THEN
+		verify(controller).showConfirmationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowWarningDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showWarningDialog("Title", "HeaderText", "ContentText");
+
+		// THEN
+		verify(controller).showWarningDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowInformationDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showInformationDialog("Title", "HeaderText", "ContentText");
+
+		// THEN
+		verify(controller).showInformationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowErrorDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showErrorDialog("Title", "HeaderText", "ContentText");
+
+		// THEN
+		verify(controller).showErrorDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowDirectoryChooser() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFolder = Files.createTempDirectory("junit").toFile();
+		final File initialFolder = Files.createTempDirectory("junit").toFile();
+
+		when(controller.showDirectoryChooser(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFolder);
+
+		// WHEN
+		assertThat(actionFX.showDirectoryChooser("Title", initialFolder, owner), equalTo(selectedFolder));
+
+		// THEN
+		verify(controller).showDirectoryChooser(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileOpenDialog_initialFileName_extensionFilter() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+		final ExtensionFilter filter = new ExtensionFilter("Text Files", "*.txt");
+
+		when(controller.showFileOpenDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.anyString(), ArgumentMatchers.any(ExtensionFilter.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, "initial.txt", filter, owner),
+				equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq("initial.txt"), ArgumentMatchers.eq(filter), ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileOpenDialog() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+
+		when(controller.showFileOpenDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, owner), equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileSaveDialog() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+
+		when(controller.showFileSaveDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, owner), equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileSaveDialog_initialFileName_extensionFilter() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+		final ExtensionFilter filter = new ExtensionFilter("Text Files", "*.txt");
+
+		when(controller.showFileSaveDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.anyString(), ArgumentMatchers.any(ExtensionFilter.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, "initial.txt", filter, owner),
+				equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq("initial.txt"), ArgumentMatchers.eq(filter), ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowTextInputDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+
+		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn("Text");
+
+		// WHEN
+		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText"), equalTo("Text"));
+
+		// THEN
+		verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowTextInputDialog_withDefaultText() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+
+		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn("Text");
+
+		// WHEN
+		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText", "DefaultText"), equalTo("Text"));
+
+		// THEN
+		verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"), ArgumentMatchers.eq("DefaultText"));
 	}
 
 	public static class AppClassWithoutAFXApplicationAnnotation {

@@ -79,6 +79,8 @@ class OnActionMethodControllerExtensionTest {
 
 		// and THEN (invocation was performed)
 		verify(controller, times(1)).onActionButtonClicked();
+		// execution was inside JavaFX thread
+		assertThat(controller.executedInJavaFxThread, equalTo(true));
 	}
 
 	@Test
@@ -120,7 +122,7 @@ class OnActionMethodControllerExtensionTest {
 
 		// and WHEN (fire action)
 		Event.fireEvent(button, new ActionEvent());
-		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+		WaitForAsyncUtils.sleep(100, TimeUnit.MILLISECONDS);
 
 		// and THEN (invocation was performed)
 		verify(controller, times(1)).onActionButtonClicked();
@@ -148,12 +150,17 @@ class OnActionMethodControllerExtensionTest {
 
 		public View _view;
 
+		protected boolean executedInJavaFxThread = false;
+
 		public ControllerWithAFXOnAction(final View view) {
 			_view = view;
 		}
 
 		@AFXOnAction(controlId = "actionButton")
 		public void onActionButtonClicked() {
+			if (Platform.isFxApplicationThread()) {
+				executedInJavaFxThread = true;
+			}
 		}
 	}
 

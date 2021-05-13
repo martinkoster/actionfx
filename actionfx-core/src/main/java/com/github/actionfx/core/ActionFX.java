@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core;
 
+import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
@@ -52,7 +54,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * Central handler for working with ActionFX. It provides routines to get views
@@ -253,6 +257,10 @@ public class ActionFX {
 		// add controller extensions to the bean container
 		beanContainer.addBeanDefinition(BeanContainerFacade.CONTROLLER_EXTENSION_BEANNAME,
 				ControllerExtensionBean.class, true, false, () -> controllerExtensionBean);
+
+		// add the dialog controller to the bean container
+		beanContainer.addBeanDefinition(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, DialogController.class, true, true,
+				DialogController::new);
 	}
 
 	/**
@@ -362,6 +370,165 @@ public class ActionFX {
 		setPrimaryStage(primaryStage);
 		final View view = getMainView();
 		view.show(primaryStage);
+	}
+
+	/**
+	 * Displays a modal confirmation dialogue with the specified {@code title} and
+	 * {@code message}.
+	 *
+	 * @param title       the title of the dialog
+	 * @param headerText  the header text to be displayed in the dialog
+	 * @param contentText the content text to be displayed in the dialog
+	 * @return {@code true}, when the OK button has been pressed, {@code false}
+	 *         otherwise.
+	 */
+	public boolean showConfirmationDialog(final String title, final String headerText, final String contentText) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showConfirmationDialog(title,
+				headerText, contentText);
+	}
+
+	/**
+	 * Displays a modal warning dialogue with the specified {@code title} and
+	 * {@code message}.
+	 *
+	 * @param title       the title of the dialog
+	 * @param headerText  the header text to be displayed in the dialog
+	 * @param contentText the content text to be displayed in the dialog
+	 */
+	public void showWarningDialog(final String title, final String headerText, final String contentText) {
+		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showWarningDialog(title, headerText,
+				contentText);
+	}
+
+	/**
+	 * Displays a modal information dialogue with the specified {@code title} and
+	 * {@code message}.
+	 *
+	 * @param title       the title of the dialog
+	 * @param headerText  the header text to be displayed in the dialog
+	 * @param contentText the content text to be displayed in the dialog
+	 */
+	public void showInformationDialog(final String title, final String headerText, final String contentText) {
+		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showInformationDialog(title,
+				headerText, contentText);
+	}
+
+	/**
+	 * Displays a modal error dialogue with the specified {@code title} and
+	 * {@code message}.
+	 *
+	 * @param title       the title of the dialog
+	 * @param headerText  the header text to be displayed in the dialog
+	 * @param contentText the content text to be displayed in the dialog
+	 */
+	public void showErrorDialog(final String title, final String headerText, final String contentText) {
+		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showErrorDialog(title, headerText,
+				contentText);
+	}
+
+	/**
+	 * Displays a directory chooser and returns the selected {@link File}
+	 * descriptor.
+	 *
+	 * @param title            the dialog title
+	 * @param defaultDirectory the directory to show, when the dialog is opened
+	 * @param owner            the window owner
+	 * @return the selected directory, or {@code null}, if no directory has been
+	 *         selected
+	 */
+	public File showDirectoryChooser(final String title, final File defaultDirectory, final Window owner) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showDirectoryChooser(title,
+				defaultDirectory, owner);
+	}
+
+	/**
+	 * Displays a file chooser and returns the selected <tt>File</tt> descriptor.
+	 *
+	 * @param title               the dialog title
+	 * @param defaultDirectory    the directory to show, when the dialog is opened
+	 * @param initialFileName     the initially suggested file name
+	 * @param fileExtensionFilter an optional file extension filter
+	 * @param owner               the window owner
+	 * @return the selected file, or {@code null} if no file has been selected
+	 */
+	public File showFileOpenDialog(final String title, final File defaultDirectory, final String initialFileName,
+			final ExtensionFilter fileExtensionFilter, final Window owner) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileOpenDialog(title,
+				defaultDirectory, initialFileName, fileExtensionFilter, owner);
+	}
+
+	/**
+	 * Displays a file chooser and returns the selected {@link File} descriptor.
+	 *
+	 * @param title            the dialog title
+	 * @param defaultDirectory the directory to show, when the dialog is opened
+	 * @param owner            the window owner
+	 * @return the selected file, or {@code null}, if no file has been selected
+	 */
+	public File showFileOpenDialog(final String title, final File defaultDirectory, final Window owner) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileOpenDialog(title,
+				defaultDirectory, owner);
+	}
+
+	/**
+	 * Displays a file chooser and returns the selected {@link File} descriptor.
+	 *
+	 * @param title            the dialog title
+	 * @param defaultDirectory the directory to show, when the dialog is opened
+	 * @param owner            the window owner
+	 * @return the selected file, or {@code null}, if no file has been selected
+	 */
+	public File showFileSaveDialog(final String title, final File defaultDirectory, final Window owner) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileSaveDialog(title,
+				defaultDirectory, owner);
+	}
+
+	/**
+	 * Displays a file chooser and returns the selected {@link File} descriptor.
+	 *
+	 * @param title               the dialog title
+	 * @param defaultDirectory    the directory to show, when the dialog is opened
+	 * @param initialFileName     the initially suggested file name
+	 * @param fileExtensionFilter an optional file extension filter
+	 * @param owner               the window owner
+	 * @return the selected file, or {@code null}, if no file has been selected
+	 */
+	public File showFileSaveDialog(final String title, final File defaultDirectory, final String initialFileName,
+			final ExtensionFilter fileExtensionFilter, final Window owner) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileSaveDialog(title,
+				defaultDirectory, initialFileName, fileExtensionFilter, owner);
+	}
+
+	/**
+	 * Displays a modal <tt>TextInputDialog</tt> that lets the user enter a single
+	 * string value.
+	 *
+	 * @param title       the title of the input dialog
+	 * @param headerText  a header text to be displayed inside the dialogue
+	 * @param contentText a content text displayed in front of the input text field
+	 * @return the entered string value, or <tt>null</tt>, if no value has been
+	 *         entered.
+	 */
+	public String showTextInputDialog(final String title, final String headerText, final String contentText) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showTextInputDialog(title,
+				headerText, contentText);
+	}
+
+	/**
+	 * Displays a modal <tt>TextInputDialog</tt> that lets the user enter a single
+	 * string value. A default text is already pre-set.
+	 *
+	 * @param title        the title of the input dialog
+	 * @param headerText   a header text to be displayed inside the dialogue
+	 * @param contentText  a content text displayed in front of the input text field
+	 * @param defaultValue the pre-set default text
+	 * @return the entered string value, or <tt>null</tt>, if no value has been
+	 *         entered.
+	 */
+	public String showTextInputDialog(final String title, final String headerText, final String contentText,
+			final String defaultValue) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showTextInputDialog(title,
+				headerText, contentText, defaultValue);
 	}
 
 	/**

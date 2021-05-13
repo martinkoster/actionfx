@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+import com.github.actionfx.core.dialogs.DialogController;
 
 import javafx.beans.value.ObservableValue;
 
@@ -64,6 +65,11 @@ public interface BeanContainerFacade {
 	 * controller extensions.
 	 */
 	public static String CONTROLLER_EXTENSION_BEANNAME = "controllerExtensionBean";
+
+	/**
+	 * The bean name of {@link DialogController} for dialog support.
+	 */
+	public static String DIALOG_CONTROLLER_BEAN = "dialogControllerBean";
 
 	/**
 	 * Populates the container with view components by scanning the given

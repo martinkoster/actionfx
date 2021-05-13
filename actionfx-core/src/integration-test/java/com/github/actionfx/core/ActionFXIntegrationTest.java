@@ -198,6 +198,7 @@ class ActionFXIntegrationTest {
 		assertThat(controller.getObservableLocale(), notNullValue());
 		assertThat(controller.getObservableLocale().getValue(), equalTo(Locale.US));
 		assertThat(controller.getActionFX(), sameInstance(ActionFX.getInstance()));
+		assertThat(controller.getDialogController(), notNullValue());
 	}
 
 	@SuppressWarnings("unchecked")

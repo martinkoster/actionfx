@@ -217,7 +217,7 @@ The annotation provides different options how the new view shall be displayed. T
 Attribute 					| Description 
 --------------------------- | -------------------------------------------------
 `viewId`	 				|  The view to be displayed, when the method successfully terminates. This attribute competes with attribute `showNestedViews()`, while this attribute has higher precedence than `showNestedViews()` 
-`showInNewWindow` 		|  Determines whether the view defined in `showView()` shall be displayed in its own `Stage`. The specification of this attribute does not affect view transition in case the attribute `showNestedViews()` is given.
+`showInNewWindow` 		|  Determines whether the view defined in `viewId()` shall be displayed in its own `Stage`. The specification of this attribute does not affect view transition in case the attribute `showNestedViews()` is given.
 `showNestedViews` 		| The nested views to be displayed, when the method successfully terminates. This attribute allows to embed view into the current scene graph and `Stage`. Please take note, that this attribute must not be used together with `showView()` and `showInNewWindow()`.
 
 Please note that only *one* attribute starting with `show*` must be used at the same time (they can not be combined).
@@ -242,7 +242,7 @@ You can also combine this annotation with annotation `@AFXControlValue`:
 
 `void methodName(@AFXControlValue("usernameTextField") String username)`
 
-In this case, the user value entered in text field with ID usernameTextField' will be injected as method argument.
+In this case, the user value entered in text field with ID `usernameTextField` will be injected as method argument.
 
 The following attributes are available inside the annotation:
 
@@ -465,7 +465,7 @@ Attribute                   | Description
 --------------------------- | -------------------------------------------------
 `colId` 				    | The name of the column to configure. This field is mandatory, if applied on a `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` and no value in `colIdx()` is given. The field is meaningless, when the annotation is applied on `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` field directly.
 `colIdx` 				    | The index of the column to configure (0-based). This field is mandatory, if applied on a `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` and no value in`colId()` is given. The field is meaningless, when the annotation is applied on `javafx.scene.control.TableColumn` or `javafx.scene.control.TreeTableColumn` field directly.
-`propertyValue` 		    | The property value that is used to configure a `javafx.scene.control.cell.PropertyValueFactory` or `javafx.scene.control.cell.TreeItemPropertyValueFactory` as a cell-value factory for the column to configure. This field is mandatory, when annotating fields of type `javafx.scene.control.TableView`, `javafx.scene.control.TableColumn`, `javafx.scene.control.TreeTableView` or `javafx.scene.control.TreeTableColumn`. For fields of type `javafx.scene.control.TreeView` and `javafx.scene.control.ListView` it must remain empty, because the components do not Java bean. For these components, using attribute `stringConverter()` makes sense.
+`propertyValue` 		    | The property value that is used to configure a `javafx.scene.control.cell.PropertyValueFactory` or `javafx.scene.control.cell.TreeItemPropertyValueFactory` as a cell-value factory for the column to configure. This field is mandatory, when annotating fields of type `javafx.scene.control.TableView`, `javafx.scene.control.TableColumn`, `javafx.scene.control.TreeTableView` or `javafx.scene.control.TreeTableColumn`. For fields of type `javafx.scene.control.TreeView` and `javafx.scene.control.ListView` it must remain empty, because the components do not allow accessing single Java bean properties for displaying. For these components, using attribute `stringConverter()` must be used.
 `stringConverter` 		| An optional string converter class that shall be used to convert the backed domain objects value under attribute `propertyValue` into a displayable string in the table column and convert it back from a string to the property's data type.
 `cellType` 				| An optional cell type to set for the given cell to configure. Can be used for custom cell types.
 `editable` 				| Flag that indicates whether the user shall be able to edit cell data in the table column directly or not. The default is `false` (no editing).

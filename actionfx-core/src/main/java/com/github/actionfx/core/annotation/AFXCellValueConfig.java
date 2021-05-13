@@ -94,9 +94,9 @@ public @interface AFXCellValueConfig {
 	 * {@link TreeTableColumn}.
 	 * <p>
 	 * For fields of type {@link TreeView} and {@link ListView} it must remain
-	 * empty, because the components do not allow setting a single property from a
-	 * Java bean. For these components, using a {@link #stringConverter()} makes
-	 * sense.
+	 * empty, because the components do not allow accessing single Java bean
+	 * properties for displaying. For these components, using a
+	 * {@link #stringConverter()} must be used.
 	 *
 	 * @return the name of the property to use for a {@link PropertyValueFactory}
 	 */
