@@ -535,6 +535,7 @@ Attribute 							| Description
 The [@AFXRequiresUserConfirmation](src/main/java/com/github/actionfx/core/annotation/AFXRequiresUserConfirmation.java) annotation is applied on methods that shall be only executed, when the user confirms the execution via a confirmation dialog.
 
 The layout of the confirmation dialog is as follows:
+
 ![Confirmation Dialog](docs/images/confirmation-dialog.png)
 
 The following attributes are available inside the annotation:
