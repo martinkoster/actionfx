@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,36 +21,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
+package com.github.actionfx.core.converter;
 
-import java.util.ResourceBundle;
-
-import com.github.actionfx.core.utils.AFXUtils;
+import java.io.File;
 
 /**
- * {@link View} implementation that uses FXML for describing the view.
+ * Converts a {@link String} to a {@link File}.
  *
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
-
-	private final Object controller;
-
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this(id, fxmlLocation, controller, null);
-	}
-
-	public FxmlView(final String id, final String fxmlLocation, final Object controller,
-			final ResourceBundle resourceBundle) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
-		this.controller = controller;
-		this.resourceBundle = resourceBundle;
-	}
+public class StringToFileConverter implements Converter<String, File> {
 
 	@Override
-	public Object getController() {
-		return controller;
+	public File convert(final String source) {
+		return new File(source);
 	}
+
 }

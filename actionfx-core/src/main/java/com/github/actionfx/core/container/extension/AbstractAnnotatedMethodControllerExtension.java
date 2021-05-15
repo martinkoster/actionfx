@@ -37,9 +37,9 @@ import java.util.function.Supplier;
 
 import com.github.actionfx.core.listener.TimedChangeListener;
 import com.github.actionfx.core.listener.TimedListChangeListener;
+import com.github.actionfx.core.method.ControllerMethodInvocationAdapter;
+import com.github.actionfx.core.method.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.utils.AnnotationUtils;
-import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter;
-import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.utils.ReflectionUtils;
 
 import javafx.beans.property.BooleanProperty;

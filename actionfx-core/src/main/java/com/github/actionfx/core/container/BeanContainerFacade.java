@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 
 import javafx.beans.value.ObservableValue;
@@ -70,6 +71,11 @@ public interface BeanContainerFacade {
 	 * The bean name of {@link DialogController} for dialog support.
 	 */
 	public static String DIALOG_CONTROLLER_BEAN = "dialogControllerBean";
+
+	/**
+	 * The bean name of {@link ConversionService} for converting data types.
+	 */
+	public static String CONVERSION_SERVICE_BEAN = "conversionServiceBean";
 
 	/**
 	 * Populates the container with view components by scanning the given

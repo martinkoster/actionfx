@@ -27,8 +27,8 @@ import java.lang.reflect.Method;
 
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter;
-import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.method.ControllerMethodInvocationAdapter;
+import com.github.actionfx.core.method.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 

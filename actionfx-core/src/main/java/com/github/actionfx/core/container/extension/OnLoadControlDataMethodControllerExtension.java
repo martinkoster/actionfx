@@ -30,7 +30,7 @@ import java.util.List;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.collections.ObservableListAdapter;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter;
+import com.github.actionfx.core.method.ControllerMethodInvocationAdapter;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 

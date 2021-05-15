@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,36 +21,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
-
-import java.util.ResourceBundle;
-
-import com.github.actionfx.core.utils.AFXUtils;
+package com.github.actionfx.core.converter;
 
 /**
- * {@link View} implementation that uses FXML for describing the view.
+ * A converter converts a source object of type {@code S} to a target of type
+ * {@code T}.
  *
  * @author koster
- *
  */
-public class FxmlView extends AbstractView {
+@FunctionalInterface
+public interface Converter<S, T> {
 
-	private final Object controller;
+	/**
+	 * Convert the source object of type {@code S} to target type {@code T}.
+	 *
+	 * @param source the source object to convert, which must be an instance of
+	 *               {@code S} (never {@code null})
+	 * @return the converted object, which must be an instance of {@code T}
+	 *         (potentially {@code null})
+	 * @throws IllegalArgumentException if the source cannot be converted to the
+	 *                                  desired target type
+	 */
+	T convert(S source);
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this(id, fxmlLocation, controller, null);
-	}
-
-	public FxmlView(final String id, final String fxmlLocation, final Object controller,
-			final ResourceBundle resourceBundle) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
-		this.controller = controller;
-		this.resourceBundle = resourceBundle;
-	}
-
-	@Override
-	public Object getController() {
-		return controller;
-	}
 }

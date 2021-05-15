@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,36 +21,40 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
+package com.github.actionfx.core.utils;
 
 import java.util.ResourceBundle;
 
-import com.github.actionfx.core.utils.AFXUtils;
-
 /**
- * {@link View} implementation that uses FXML for describing the view.
+ * Util class for handlung internationalized messages.
  *
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
+public class MessageUtils {
 
-	private final Object controller;
-
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this(id, fxmlLocation, controller, null);
+	/**
+	 * Class can not be instantiated.
+	 */
+	private MessageUtils() {
+		// can not be instantiated
 	}
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller,
-			final ResourceBundle resourceBundle) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
-		this.controller = controller;
-		this.resourceBundle = resourceBundle;
-	}
-
-	@Override
-	public Object getController() {
-		return controller;
+	/**
+	 * Retrieves the message for the given {@code key}. In case there is no key or
+	 * the key can not be resolved, the {@code defaultMessage} is returned.
+	 *
+	 * @param resourceBundle the resource bundle holding the message
+	 * @param key            the resource bundle property key
+	 * @param defaultMessage the default message
+	 * @return the resolved message, or {@code defaultMessage}, in case the
+	 *         {@code key} can not be resolved.
+	 */
+	public static String getMessage(final ResourceBundle resourceBundle, final String key,
+			final String defaultMessage) {
+		if (resourceBundle == null || key == null || key.trim().equals("")) {
+			return defaultMessage;
+		}
+		return resourceBundle.containsKey(key) ? resourceBundle.getString(key) : defaultMessage;
 	}
 }

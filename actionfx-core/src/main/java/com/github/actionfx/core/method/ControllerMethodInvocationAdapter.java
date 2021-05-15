@@ -21,27 +21,36 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.utils;
+package com.github.actionfx.core.method;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.AFXControlValue;
+import com.github.actionfx.core.annotation.AFXFromDirectoryChooserDialog;
+import com.github.actionfx.core.annotation.AFXFromFileOpenDialog;
+import com.github.actionfx.core.annotation.AFXFromFileSaveDialog;
+import com.github.actionfx.core.annotation.AFXFromTextInputDialog;
 import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.ArgumentHint;
-import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.view.View;
-import com.github.actionfx.core.view.graph.ControlWrapper;
-import com.github.actionfx.core.view.graph.NodeWrapper;
+import com.github.actionfx.core.utils.AnnotationUtils;
+import com.github.actionfx.core.utils.AsyncUtils;
+import com.github.actionfx.core.utils.MessageUtils;
+import com.github.actionfx.core.utils.ReflectionUtils;
+
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * Adapter for invoking controller methods with variable method arguments.
@@ -60,11 +69,32 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
  */
 public class ControllerMethodInvocationAdapter {
 
+	/**
+	 * State that describes whether the method is executed or not, or maybe whether
+	 * even the execution shall be cancelled.
+	 *
+	 * @author koster
+	 *
+	 */
+	public enum MethodExecutionState {
+		NOT_EXECUTED, EXECUTED, EXECUTION_CANCELLED
+	}
+
+	// map for registering parameter resolvers
+	private static final Map<Class<? extends Annotation>, Class<? extends AnnotatedParameterResolver<?>>> PARAMETER_RESOLVER_MAP = new HashMap<>();
+
+	static {
+		registerParameterResolver();
+	}
+
 	private final Object controller;
 
 	private final Method method;
 
 	private final Object[] methodArguments;
+
+	private final SimpleObjectProperty<MethodExecutionState> methodExecutionState = new SimpleObjectProperty<>(
+			MethodExecutionState.NOT_EXECUTED);
 
 	/**
 	 * Constructor that accepts a method together with the holding {@code instance}
@@ -77,6 +107,15 @@ public class ControllerMethodInvocationAdapter {
 	public ControllerMethodInvocationAdapter(final Object controller, final Method method,
 			final Object... availableParameterValues) {
 		this(controller, method, toParameterValues(availableParameterValues));
+	}
+
+	private static void registerParameterResolver() {
+		PARAMETER_RESOLVER_MAP.put(AFXControlValue.class, ControlValueAnnotatedParameterResolver.class);
+		PARAMETER_RESOLVER_MAP.put(AFXFromFileOpenDialog.class, FromFileOpenDialogParameterResolver.class);
+		PARAMETER_RESOLVER_MAP.put(AFXFromFileSaveDialog.class, FromFileSaveDialogParameterResolver.class);
+		PARAMETER_RESOLVER_MAP.put(AFXFromDirectoryChooserDialog.class,
+				FromDirectoryChooserDialogParameterResolver.class);
+		PARAMETER_RESOLVER_MAP.put(AFXFromTextInputDialog.class, FromTextInputDialogParameterResolver.class);
 	}
 
 	/**
@@ -132,7 +171,9 @@ public class ControllerMethodInvocationAdapter {
 	@SuppressWarnings("unchecked")
 	protected <T> T invokeInternal() {
 		try {
-			return (T) method.invoke(controller, methodArguments);
+			final T returnValue = (T) method.invoke(controller, methodArguments);
+			methodExecutionState.set(MethodExecutionState.EXECUTED);
+			return returnValue;
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new IllegalStateException("Invocation of method '" + method.getName() + "' failed!", e);
 		}
@@ -140,8 +181,9 @@ public class ControllerMethodInvocationAdapter {
 
 	/**
 	 * Checks, whether method invocation is allowed. Method invocation is allowed,
-	 * if there is no {@link AFXRequiresUserConfirmation} annotation on the method,
-	 * or the user confirms a confirmation dialog in case there is a
+	 * if the method execution is not cancelled, there is no
+	 * {@link AFXRequiresUserConfirmation} annotation on the method, or the user
+	 * confirms a confirmation dialog in case there is a
 	 * {@link AFXRequiresUserConfirmation} annotation.
 	 *
 	 * @return {@code true}, if invocation is allowed, {@code false} otherwise.
@@ -149,33 +191,18 @@ public class ControllerMethodInvocationAdapter {
 	protected boolean invocationAllowed() {
 		final AFXRequiresUserConfirmation userConfirmation = AnnotationUtils.findAnnotation(method,
 				AFXRequiresUserConfirmation.class);
+		if (methodExecutionState.get() == MethodExecutionState.EXECUTION_CANCELLED) {
+			return false;
+		}
 		if (userConfirmation == null) {
 			return true;
 		}
 		final ActionFX actionFX = ActionFX.getInstance();
 		final ResourceBundle resourceBundle = actionFX.getControllerResourceBundle(controller.getClass());
 		return actionFX.showConfirmationDialog(
-				getMessage(resourceBundle, userConfirmation.titleKey(), userConfirmation.title()),
-				getMessage(resourceBundle, userConfirmation.headerKey(), userConfirmation.header()),
-				getMessage(resourceBundle, userConfirmation.contentKey(), userConfirmation.content()));
-
-	}
-
-	/**
-	 * Retrieves the message for the given {@code key}. In case there is no key or
-	 * the key can not be resolved, the {@code defaultMessage} is returned.
-	 *
-	 * @param resourceBundle the resource bundle holding the message
-	 * @param key            the resource bundle property key
-	 * @param defaultMessage the default message
-	 * @return the resolved message, or {@code defaultMessage}, in case the
-	 *         {@code key} can not be resolved.
-	 */
-	protected String getMessage(final ResourceBundle resourceBundle, final String key, final String defaultMessage) {
-		if (resourceBundle == null || key == null || key.trim().equals("")) {
-			return defaultMessage;
-		}
-		return resourceBundle.containsKey(key) ? resourceBundle.getString(key) : defaultMessage;
+				MessageUtils.getMessage(resourceBundle, userConfirmation.titleKey(), userConfirmation.title()),
+				MessageUtils.getMessage(resourceBundle, userConfirmation.headerKey(), userConfirmation.header()),
+				MessageUtils.getMessage(resourceBundle, userConfirmation.contentKey(), userConfirmation.content()));
 	}
 
 	public Object getInstance() {
@@ -186,6 +213,10 @@ public class ControllerMethodInvocationAdapter {
 		return method;
 	}
 
+	public SimpleObjectProperty<MethodExecutionState> getMethodExecutionState() {
+		return methodExecutionState;
+	}
+
 	/**
 	 * Matches values from {@link #availableParameter} to the given
 	 * {@code parameters}.
@@ -194,16 +225,33 @@ public class ControllerMethodInvocationAdapter {
 	 * @param availableParameterValues all available parameter value candidates
 	 * @return the values that match the desired parameters
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Object[] matchValuesToParameters(final Parameter[] parameters,
 			final ParameterValue[] availableParameterValues) {
 		// create a new list with parameter values - the values will be "consumed"
 		final List<ParameterValue> parameterValues = new ArrayList<>(Arrays.asList(availableParameterValues));
 		final Object[] values = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
-			final AFXControlValue controlUserValue = parameters[i].getAnnotation(AFXControlValue.class);
-			if (controlUserValue != null) {
-				values[i] = determineInstanceFromControl(parameters[i], controlUserValue);
-			} else {
+			final Annotation[] annotations = parameters[i].getAnnotations();
+			boolean isResolved = false;
+			for (final Annotation annotation : annotations) {
+				final Class<? extends AnnotatedParameterResolver<?>> resolverClass = PARAMETER_RESOLVER_MAP
+						.get(annotation.annotationType());
+				if (resolverClass != null) {
+					final AnnotatedParameterResolver resolver = ReflectionUtils.instantiateClass(resolverClass);
+					values[i] = resolver.resolve(controller, method, parameters[i], annotation,
+							parameters[i].getType());
+					if (!resolver.continueMethodInvocation()) {
+						// resolver tells not to continue method invocation, so we set the internal
+						// state to "cancelled"
+						methodExecutionState.set(MethodExecutionState.EXECUTION_CANCELLED);
+					}
+					isResolved = true;
+					break;
+				}
+			}
+			// not yet resolved? then try to match the supplied parameters
+			if (!isResolved) {
 				values[i] = determineInstanceForParameter(parameters[i], parameterValues);
 			}
 		}
@@ -251,45 +299,6 @@ public class ControllerMethodInvocationAdapter {
 			candidates.remove(bestMatch);
 			return bestMatch.getValue();
 		}
-	}
-
-	/**
-	 * Determines an instance for the given {@code parameter} from a
-	 * {@link javafx.scene.control.Control} inside the view that is held be the
-	 * controller.
-	 *
-	 * @param parameter        the parameter to search a value for
-	 * @param controlUserValue the {@link AFXControlValue} annotation applied to the
-	 *                         method argument
-	 * @return the value retrieved from the control
-	 */
-	private Object determineInstanceFromControl(final Parameter parameter, final AFXControlValue controlUserValue) {
-		final View view = ControllerWrapper.getViewFrom(controller);
-		if (view == null) {
-			throw new IllegalStateException("There is no view associated with controller of type '"
-					+ controller.getClass().getCanonicalName() + "'!");
-		}
-		final NodeWrapper control = view.lookupNode(controlUserValue.value());
-		if (control == null) {
-			throw new IllegalStateException("There is no node with ID='" + controlUserValue.value()
-					+ "' inside the view associated with controller '" + controller.getClass().getCanonicalName()
-					+ "'!");
-		}
-		if (!javafx.scene.control.Control.class.isAssignableFrom(control.getWrappedType())) {
-			throw new IllegalStateException(
-					"Node with ID='" + controlUserValue.value() + "' inside the view hosted by controller '"
-							+ controller.getClass().getCanonicalName() + "' is not a javafx.scene.control.Control!");
-		}
-		final ControlWrapper controlWrapper = ControlWrapper.of(control.getWrapped());
-		final Object userValue = controlWrapper.getUserValue();
-		if (userValue != null && !parameter.getType().isAssignableFrom(userValue.getClass())) {
-			throw new IllegalStateException("User value retrieved for control with ID='" + controlUserValue.value()
-					+ "' inside the view hosted by controller '" + controller.getClass().getCanonicalName()
-					+ "' is not compatible with the method argument of type '" + parameter.getType().getCanonicalName()
-					+ "'! Control value is of type '" + userValue.getClass().getCanonicalName() + "'");
-
-		}
-		return userValue;
 	}
 
 	/**

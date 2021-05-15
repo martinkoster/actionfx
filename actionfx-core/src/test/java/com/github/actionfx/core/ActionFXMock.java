@@ -43,7 +43,7 @@ public class ActionFXMock extends ActionFX {
 	public ActionFXMock() {
 		instance = this;
 		beanContainer = new DefaultBeanContainer();
-		observableLocale = new SimpleObjectProperty<Locale>(Locale.US);
+		observableLocale = new SimpleObjectProperty<>(Locale.US);
 		setStateConfigured();
 	}
 
@@ -54,7 +54,7 @@ public class ActionFXMock extends ActionFX {
 	 * @param bean     the bean
 	 */
 	public void addBean(final String beanName, final Object bean) {
-		getBeanContainer().addBeanDefinition(beanName, getClass(), true, true, () -> bean);
+		getBeanContainer().addBeanDefinition(beanName, bean.getClass(), true, true, () -> bean);
 	}
 
 	/**

@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.utils;
+package com.github.actionfx.core.method;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,7 +35,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +55,10 @@ import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
-import com.github.actionfx.core.utils.ControllerMethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.method.ControllerMethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.IntegerProperty;
@@ -460,28 +460,21 @@ class ControllerMethodInvocationAdapterTest {
 	 * @return the instance of the enhanced class
 	 */
 	private static ClassWithPublicMethods createEnhancedInstance(final boolean createView) {
-		final ActionFXByteBuddyEnhancer enhancer = new ActionFXByteBuddyEnhancer();
-		try {
-			final ClassWithPublicMethods instance = (ClassWithPublicMethods) enhancer
-					.enhanceClass(ClassWithPublicMethods.class).getDeclaredConstructor().newInstance();
-			if (createView) {
-				final FxmlView view = new FxmlView("testId", "/testfxml/ControllerMethodInvocationAdapterTestView.fxml",
-						instance);
-				final ListView<String> listView = view.lookupNode("listView").getWrapped();
-				listView.getItems().add("List Item 1");
-				listView.getItems().add("List Item 2");
-				listView.getItems().add("List Item 3");
-				// select 2 and 3
-				listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-				listView.getSelectionModel().select("List Item 2");
-				listView.getSelectionModel().select("List Item 3");
-				ControllerWrapper.setViewOn(instance, view);
-			}
-			return instance;
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw new IllegalStateException("Can not enhance class 'ClassWithPublicMethods!", e);
+		final ClassWithPublicMethods instance = new ClassWithPublicMethods();
+		if (createView) {
+			final FxmlView view = new FxmlView("testId", "/testfxml/ControllerMethodInvocationAdapterTestView.fxml",
+					instance);
+			final ListView<String> listView = view.lookupNode("listView").getWrapped();
+			listView.getItems().add("List Item 1");
+			listView.getItems().add("List Item 2");
+			listView.getItems().add("List Item 3");
+			// select 2 and 3
+			listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			listView.getSelectionModel().select("List Item 2");
+			listView.getSelectionModel().select("List Item 3");
+			ControllerWrapper.setViewOn(instance, view);
 		}
+		return instance;
 	}
 
 	/**
@@ -492,6 +485,8 @@ class ControllerMethodInvocationAdapterTest {
 	 */
 	@AFXController(viewId = "viewId", resourcesBasename = "i18n.TestResources")
 	public static class ClassWithPublicMethods {
+
+		public View _view;
 
 		private final List<Object> invokedArguments = new ArrayList<>();
 

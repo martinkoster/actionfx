@@ -48,15 +48,25 @@ public class ParentView extends AbstractView {
 
 	private final Object controller;
 
+	public ParentView(final String id, final Parent parent, final Object controller) {
+		this(id, parent, controller, null);
+	}
+
 	public ParentView(final String id, final Class<? extends Parent> parentClass, final Object controller) {
 		this(id, parentClass, controller, null);
 	}
 
 	public ParentView(final String id, final Class<? extends Parent> parentClass, final Object controller,
 			final ResourceBundle resourceBundle) {
+		this(id, instantiateParentClass(parentClass, resourceBundle), controller, resourceBundle);
+	}
+
+	public ParentView(final String id, final Parent rootNode, final Object controller,
+			final ResourceBundle resourceBundle) {
 		this.id = id;
-		rootNode = instantiateParentClass(parentClass, resourceBundle);
+		this.rootNode = rootNode;
 		this.controller = controller;
+		this.resourceBundle = resourceBundle;
 		injectViewComponents(controller);
 	}
 
@@ -74,7 +84,7 @@ public class ParentView extends AbstractView {
 	 * @param resourceBundle the resource bundle to use as constructor argument
 	 * @return the instantiated class
 	 */
-	protected Parent instantiateParentClass(final Class<? extends Parent> parentClass,
+	static Parent instantiateParentClass(final Class<? extends Parent> parentClass,
 			final ResourceBundle resourceBundle) {
 		try {
 			final Constructor<? extends Parent> constructorWithResourceBundle = parentClass

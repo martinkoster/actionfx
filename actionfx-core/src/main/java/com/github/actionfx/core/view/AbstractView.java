@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.github.actionfx.core.utils.AFXUtils;
 import com.github.actionfx.core.view.graph.NodeWrapper;
@@ -69,6 +70,8 @@ public abstract class AbstractView implements View {
 	protected String icon;
 
 	protected final List<String> stylesheets = new ArrayList<>();
+
+	protected ResourceBundle resourceBundle;
 
 	// each view instance holds its lookup cache, so that consecutive lookups are
 	// not expensive (requires a tree traversal each time otherwise)
@@ -278,6 +281,10 @@ public abstract class AbstractView implements View {
 
 	public List<String> getStylesheets() {
 		return stylesheets;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
 	}
 
 }

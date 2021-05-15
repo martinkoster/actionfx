@@ -42,6 +42,7 @@ import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
@@ -261,6 +262,10 @@ public class ActionFX {
 		// add the dialog controller to the bean container
 		beanContainer.addBeanDefinition(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, DialogController.class, true, true,
 				DialogController::new);
+
+		// add the conversion service that is listening to the locale
+		beanContainer.addBeanDefinition(BeanContainerFacade.CONVERSION_SERVICE_BEAN, ConversionService.class, true,
+				true, () -> new ConversionService(observableLocale));
 	}
 
 	/**
@@ -370,6 +375,15 @@ public class ActionFX {
 		setPrimaryStage(primaryStage);
 		final View view = getMainView();
 		view.show(primaryStage);
+	}
+
+	/**
+	 * Retrieves ActionFX' conversion service.
+	 *
+	 * @return the conversion service
+	 */
+	public ConversionService getConversionService() {
+		return getBean(ConversionService.class);
 	}
 
 	/**

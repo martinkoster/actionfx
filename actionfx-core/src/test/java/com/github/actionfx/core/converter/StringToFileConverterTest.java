@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,36 +21,35 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.view;
+package com.github.actionfx.core.converter;
 
-import java.util.ResourceBundle;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.github.actionfx.core.utils.AFXUtils;
+import java.io.File;
+
+import org.assertj.core.util.Files;
+import org.junit.jupiter.api.Test;
 
 /**
- * {@link View} implementation that uses FXML for describing the view.
+ * JUnit test case for {@link StringToFileConverter}.
  *
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
+class StringToFileConverterTest {
 
-	private final Object controller;
+	@Test
+	void testConvert() {
+		// GIVEN
+		final StringToFileConverter converter = new StringToFileConverter();
+		final File file = Files.newTemporaryFile();
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this(id, fxmlLocation, controller, null);
+		// WHEN
+		final File result = converter.convert(file.getAbsolutePath());
+
+		// THEN
+		assertThat(result, equalTo(file));
 	}
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller,
-			final ResourceBundle resourceBundle) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
-		this.controller = controller;
-		this.resourceBundle = resourceBundle;
-	}
-
-	@Override
-	public Object getController() {
-		return controller;
-	}
 }

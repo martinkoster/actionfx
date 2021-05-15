@@ -49,6 +49,7 @@ import org.mockito.Mockito;
 import com.github.actionfx.core.ActionFX.ActionFXBuilder;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
@@ -229,6 +230,21 @@ class ActionFXTest {
 
 		// THEN
 		assertThat(ex.getMessage(), containsString("Bean with ID='mainController' is not of type"));
+	}
+
+	@Test
+	void testGetConversionService() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final ConversionService service = actionFX.getConversionService();
+
+		// THEN
+		assertThat(service, notNullValue());
+		assertThat(service.getObservableLocale(), notNullValue());
+		assertThat(service.getObservableLocale().getValue(), equalTo(Locale.US));
 	}
 
 	@Test

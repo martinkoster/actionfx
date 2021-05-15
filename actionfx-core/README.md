@@ -28,7 +28,12 @@ Module | Description | API Documentation | Gradle Dependency
       - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
+    + [Annotations triggering User Dialogs](#annotations-triggering-user-dialogs)
       - [Annotation @AFXRequiresUserConfirmation (Method Annotation)](#annotation-afxrequiresuserconfirmation)
+      - [Annotation @AFXFromFileSaveDialog (Method Argument Annotation)](#annotation-afxfromfilesavedialog)
+      - [Annotation @AFXFromFileOpenDialog (Method Argument Annotation)](#annotation-afxfromfileopendialog)
+      - [Annotation @AFXFromChooseDirectoryDialog (Method Argument Annotation)](#annotation-afxfromchoosedirectorydialog)
+      - [Annotation @AFXFromTextInputDialog (Method Argument Annotation)](#annotation-afxfromtextinputdialog)
   * [User Value of Controls](#user-value-of-controls)
   * [Internationalization](#internationalization)
 
@@ -530,6 +535,10 @@ Attribute 							| Description
 	private TableView<String> filteredAndSortedTable;
 ```
 
+## Annotations triggering User Dialogs
+
+This chapter contains the description of annotations that trigger user dialogs in order to request values from the user, like basic user confirmation or request a string value, values from a file open or file save dialog.
+
 #### Annotation @AFXRequiresUserConfirmation
 
 The [@AFXRequiresUserConfirmation](src/main/java/com/github/actionfx/core/annotation/AFXRequiresUserConfirmation.java) annotation is applied on methods that shall be only executed, when the user confirms the execution via a confirmation dialog.
@@ -561,6 +570,170 @@ Attribute 				| Description
 	@AFXOnControlValueChange(controlId = "usernameTextField", order = 20, timeoutMs = 300, listenerActiveBooleanProperty = "listenerEnabled")
 	public void onUsernameChange(final String newValue, final String oldValue, final ObservableValue<String> observable) {
 		// action on user name change goes here
+	}
+```
+
+#### Annotation @AFXFromFileSaveDialog
+
+The [@AFXFromFileSaveDialog](src/main/java/com/github/actionfx/core/annotation/AFXFromFileSaveDialog.java) annotation can be applied on method arguments for requesting the value of the annotated argument of type `java.io.File`, `java.lang.String`, `java.nio.file.Path` or `java.net.URI` from a "file save" dialog.
+
+In case the dialog is cancelled and no file is chosen, the method invocation is also cancelled, unless you set the attribute `continueOnCancel` to `true`. If this is the case, the method argument will be `null`.
+
+The layout of the "file save" dialog is as follows:
+
+![File Save Dialog](docs/images/filesave-dialog.png)
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`title` 				| A title text to be displayed in the "file save" dialog. In case `titleKey()` is set, than the value in `title` has a lower priority. The default value is "Save File".
+`titleKey`             | A resource bundle property key for the title text to be displayed in the "file save" dialog. A value in this attribute has a higher priority than the value specified in `title()`.
+`extensionFilter`     | An optional extension filter for setting in the "file save" dialog. It follows the same semantics than `javafx.stage.FileChooser.ExtensionFilter`, i.e. the first element in the array is a description like "Music Files" and all following array elements are the allowed file extensions like "*.mp3", "*.wav", "*.ogg", etc. Example:  `extensionFilter={"Music Files", "*.mp3", "*.wav", "*.ogg"}`. 
+`continueOnCancel`    | Flag that determines what shall happen, in case the user cancels the "file save" dialog. By default, the method invocation is also cancelled, when the "file save" dialog is cancelled. If this flag is set to `true`, the method is invoked even if the "file save" dialog is cancelled. In that case, the method argument will be `null`. The default is `false`, that means the method invocation is cancelled, when the "file save" dialog is cancelled.
+
+
+**Example:**
+
+```java
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileSaveDialog(title="Save File") final File file) {
+		// action for saving the file goes here 
+	}
+	
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileSaveDialog(title="Save File") final String file) {
+		// action for saving the file goes here 
+	}
+	
+		@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileSaveDialog(title="Save File") final Path file) {
+		// action for saving the file goes here 
+	}
+	
+		@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileSaveDialog(title="Save File") final URI file) {
+		// action for saving the file goes here 
+	}
+```
+
+#### Annotation @AFXFromFileOpenDialog
+
+The [@AFXFromFileOpenDialog](src/main/java/com/github/actionfx/core/annotation/AFXFromFileOpenDialog.java) annotation can be applied on method arguments for requesting the value of the annotated argument of type `java.io.File`, `java.lang.String`, `java.nio.file.Path` or `java.net.URI` from a "file open" dialog.
+
+In case the dialog is cancelled and no file is chosen, the method invocation is also cancelled, unless you set the attribute `continueOnCancel` to `true`. If this is the case, the method argument will be `null`.
+
+The layout of the "file open" dialog is as follows:
+
+![File Open Dialog](docs/images/fileopen-dialog.png)
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`title` 				| A title text to be displayed in the "file open" dialog. In case `titleKey()` is set, than the value in `title` has a lower priority. The default value is "Open File".
+`titleKey`             | A resource bundle property key for the title text to be displayed in the "file open" dialog. A value in this attribute has a higher priority than the value specified in `title()`.
+`extensionFilter`     | An optional extension filter for setting in the "file open" dialog. It follows the same semantics than `javafx.stage.FileChooser.ExtensionFilter`, i.e. the first element in the array is a description like "Music Files" and all following array elements are the allowed file extensions like "*.mp3", "*.wav", "*.ogg", etc. Example:  `extensionFilter={"Music Files", "*.mp3", "*.wav", "*.ogg"}`. 
+`continueOnCancel`    | Flag that determines what shall happen, in case the user cancels the "file open" dialog. By default, the method invocation is also cancelled, when the "file open" dialog is cancelled. If this flag is set to `true`, the method is invoked even if the "file open" dialog is cancelled. In that case, the method argument will be `null`. The default is `false`, that means the method invocation is cancelled, when the "file open" dialog is cancelled.
+
+
+**Example:**
+
+```java
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileOpenDialog(title="Save File") final File file) {
+		// action for opening the file goes here 
+	}
+
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileOpenDialog(title="Save File") final String file) {
+		// action for opening the file goes here 
+	}
+
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileOpenDialog(title="Save File") final Path file) {
+		// action for opening the file goes here 
+	}
+
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromFileOpenDialog(title="Save File") final URI file) {
+		// action for opening the file goes here 
+	}
+```
+
+#### Annotation @AFXFromChooseDirectoryDialog
+
+The [@AFXFromChooseDirectoryDialog](src/main/java/com/github/actionfx/core/annotation/AFXFromChooseDirectoryDialog.java) annotation can be applied on method arguments for requesting the value of the annotated argument of type `java.io.File`, `java.lang.String`, `java.nio.file.Path` or `java.net.URI` from a "directory chooser" dialog.
+
+In case the dialog is cancelled and no directory is chosen, the method invocation is also cancelled, unless you set the attribute `continueOnCancel` to `true`. If this is the case, the method argument will be `null`.
+
+The layout of the "directory chooser" dialog is as follows:
+
+![Directory Chooser Dialog](docs/images/directorychooser-dialog.png)
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`title` 				| A title text to be displayed in the "directory chooser" dialog. In case `titleKey()` is set, than the value in `title` has a lower priority. The default value is "Select Folder".
+`titleKey`             | A resource bundle property key for the title text to be displayed in the "directory chooser" dialog. A value in this attribute has a higher priority than the value specified in `title()`.
+`continueOnCancel`    | Flag that determines what shall happen, in case the user cancels the "directory chooser" dialog. By default, the method invocation is also cancelled, when the "directory chooser" dialog is cancelled. If this flag is set to `true`, the method is invoked even if the "directory chooser" dialog is cancelled. In that case, the method argument will be `null`. The default is `false`, that means the method invocation is cancelled, when the "directory chooser" dialog is cancelled.
+
+
+**Example:**
+
+```java
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromDirectoryChooserDialog(title="Select Folder") final File folder) {
+		// do something with the folder here 
+	}
+	
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromDirectoryChooserDialog(title="Select Folder") final String folder) {
+		// do something with the folder here 
+	}
+
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromDirectoryChooserDialog(title="Select Folder") final Path folder) {
+		// do something with the folder here 
+	}
+	
+		@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromDirectoryChooserDialog(title="Select Folder") final URI folder) {
+		// do something with the folder here 
+	}
+```
+
+#### Annotation @AFXFromTextInputDialog
+
+The [@AFXFromTextInputDialog](src/main/java/com/github/actionfx/core/annotation/AFXFromTextInputDialog.java) annotation can be applied on method arguments for requesting a text input of type `java.lang.String` from a "text input" dialog.
+
+In case the dialog is cancelled and no file is chosen, the method invocation is also cancelled, unless you set the attribute `continueOnCancel` to `true`. If this is the case, the method argument will be `null`.
+
+The layout of the "text input" dialog is as follows:
+
+![Text Input Dialog](docs/images/textinput-dialog.png)
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`title` 				| A title text to be displayed in the "text input" dialog. In case `titleKey()` is set, than the value in `title` has a lower priority. The default value is "Text Input".
+`titleKey`             | A resource bundle property key for the title text to be displayed in the "text input" dialog. A value in this attribute has a higher priority than the value specified in `title()`.
+`header` 				| A header text to be displayed in the "text input" dialog. In case `headerKey()` is set, than the value in `header` has a lower priority. 
+`headerKey`             | A resource bundle property key for the header text to be displayed in the "text input" dialog. A value in this attribute has a higher priority than the value specified in `header()`.
+`content` 				| A content text to be displayed in the "text input" dialog. In case `contentKey()` is set, than the value in `content` has a lower priority.
+`contentKey`             | A resource bundle property key for the content text to be displayed in the "text input" dialog. A value in this attribute has a higher priority than the value specified in `content()`.
+`defaultValue`         | A default value to be set into the text field of the "text input" dialog.
+`continueOnCancel`    | Flag that determines what shall happen, in case the user cancels the "text input" dialog. By default, the method invocation is also cancelled, when the "text input" dialog is cancelled. If this flag is set to `true`, the method is invoked even if the "text input" dialog is cancelled. In that case, the method argument will be `null`. The default is `false`, that means the method invocation is cancelled, when the "text input" dialog is cancelled.
+
+
+**Example:**
+
+```java
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXFromTextInputDialog(title="Enter User Name", header ="User Name for Bookstore", content = "Please enter a user name", defaultValue="someone@somewhere.com") final String username) {
+		// do something with the username here 
 	}
 ```
 
