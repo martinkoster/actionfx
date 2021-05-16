@@ -32,7 +32,7 @@ configure(allprojects) { project ->
 	    published
 	    all*.exclude module: "slf4j-log4j12"
 	    all*.exclude module: "jsr305"
-	    integrationTestCompile.extendsFrom testImplementation
+	    integrationTestImplementation.extendsFrom testImplementation
 	    integrationTestRuntime.extendsFrom testRuntime
     }
 
@@ -115,7 +115,7 @@ configure(allprojects) { project ->
 	///////////////////
     spotbugs {
         effort = "max"
-        reportLevel = "high"  // TODO: remove if spotbugs works better
+        reportLevel = "high"  
         reportsDir = file("$buildDir/reports/spotbugs")
     }
     
