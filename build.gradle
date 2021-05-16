@@ -33,7 +33,7 @@ configure(allprojects) { project ->
 	    all*.exclude module: "slf4j-log4j12"
 	    all*.exclude module: "jsr305"
 	    integrationTestCompile.extendsFrom testImplementation
-	    integrationTestCompile.extendsFrom testRuntime
+	    integrationTestRuntime.extendsFrom testRuntime
     }
 
       
