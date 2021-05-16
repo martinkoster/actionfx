@@ -52,7 +52,7 @@ import org.testfx.matcher.control.TextInputControlMatchers;
 
 import com.github.actionfx.core.dialogs.DialogController.DirectoryChooserWrapper;
 import com.github.actionfx.core.dialogs.DialogController.FileChooserWrapper;
-import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -73,7 +73,7 @@ import javafx.stage.Window;
  * @author koster
  *
  */
-@ExtendWith(FxThreadForAllMonocleExtension.class)
+@ExtendWith(FxThreadForEachMonocleExtension.class)
 class DialogControllerTest {
 
 	private final ObjectProperty<Object> returnValue = new SimpleObjectProperty<>();
