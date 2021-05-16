@@ -551,7 +551,7 @@ Attribute 							| Description
 	private TableView<String> filteredAndSortedTable;
 ```
 
-## Annotations triggering User Dialogs
+### Annotations triggering User Dialogs
 
 This chapter contains the description of annotations that trigger user dialogs in order to request values from the user, like basic user confirmation or request a string value, values from a file open or file save dialog.
 
@@ -622,12 +622,12 @@ Attribute 				| Description
 		// action for saving the file goes here 
 	}
 	
-		@AFXOnAction(controlId = "actionButton")
+	@AFXOnAction(controlId = "actionButton")
 	public void onButtonClicked(@AFXFromFileSaveDialog(title="Save File") final Path file) {
 		// action for saving the file goes here 
 	}
 	
-		@AFXOnAction(controlId = "actionButton")
+	@AFXOnAction(controlId = "actionButton")
 	public void onButtonClicked(@AFXFromFileSaveDialog(title="Save File") final URI file) {
 		// action for saving the file goes here 
 	}
