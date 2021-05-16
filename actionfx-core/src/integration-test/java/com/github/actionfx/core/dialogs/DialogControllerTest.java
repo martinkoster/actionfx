@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,7 +58,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -224,9 +225,9 @@ class DialogControllerTest {
 		controller.showDirectoryChooserDialog("Title", null, owner);
 
 		// THEN
-		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
+		verify(wrapper).setTitle(eq("Title"));
 		verify(wrapper, never()).setInitialDirectory(ArgumentMatchers.nullable(File.class));
-		verify(wrapper).showDialog(ArgumentMatchers.eq(owner));
+		verify(wrapper).showDialog(eq(owner));
 	}
 
 	@Test
@@ -240,9 +241,9 @@ class DialogControllerTest {
 		controller.showDirectoryChooserDialog("Title", folder, owner);
 
 		// THEN
-		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
-		verify(wrapper).setInitialDirectory(ArgumentMatchers.eq(folder));
-		verify(wrapper).showDialog(ArgumentMatchers.eq(owner));
+		verify(wrapper).setTitle(eq("Title"));
+		verify(wrapper).setInitialDirectory(eq(folder));
+		verify(wrapper).showDialog(eq(owner));
 	}
 
 	@Test
@@ -255,10 +256,10 @@ class DialogControllerTest {
 		controller.showFileOpenDialog("Title", null, owner);
 
 		// THEN
-		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
+		verify(wrapper).setTitle(eq("Title"));
 		verify(wrapper, never()).setInitialDirectory(ArgumentMatchers.any());
 		verify(wrapper, never()).setInitialFileName(ArgumentMatchers.nullable(String.class));
-		verify(wrapper).showOpenDialog(ArgumentMatchers.eq(owner));
+		verify(wrapper).showOpenDialog(eq(owner));
 	}
 
 	@Test
@@ -273,11 +274,11 @@ class DialogControllerTest {
 		controller.showFileOpenDialog("Title", folder, "initial.txt", filter, owner);
 
 		// THEN
-		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
-		verify(wrapper).setInitialDirectory(ArgumentMatchers.eq(folder));
-		verify(wrapper).setInitialFileName(ArgumentMatchers.eq("initial.txt"));
-		verify(wrapper).setSelectedExtensionFilter(ArgumentMatchers.eq(filter));
-		verify(wrapper).showOpenDialog(ArgumentMatchers.eq(owner));
+		verify(wrapper).setTitle(eq("Title"));
+		verify(wrapper).setInitialDirectory(eq(folder));
+		verify(wrapper).setInitialFileName(eq("initial.txt"));
+		verify(wrapper).setSelectedExtensionFilter(eq(filter));
+		verify(wrapper).showOpenDialog(eq(owner));
 	}
 
 	@Test
@@ -290,10 +291,10 @@ class DialogControllerTest {
 		controller.showFileSaveDialog("Title", null, owner);
 
 		// THEN
-		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
+		verify(wrapper).setTitle(eq("Title"));
 		verify(wrapper, never()).setInitialDirectory(ArgumentMatchers.any());
 		verify(wrapper, never()).setInitialFileName(ArgumentMatchers.nullable(String.class));
-		verify(wrapper).showSaveDialog(ArgumentMatchers.eq(owner));
+		verify(wrapper).showSaveDialog(eq(owner));
 	}
 
 	@Test
@@ -308,11 +309,11 @@ class DialogControllerTest {
 		controller.showFileSaveDialog("Title", folder, "initial.txt", filter, owner);
 
 		// THEN
-		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
-		verify(wrapper).setInitialDirectory(ArgumentMatchers.eq(folder));
-		verify(wrapper).setInitialFileName(ArgumentMatchers.eq("initial.txt"));
-		verify(wrapper).setSelectedExtensionFilter(ArgumentMatchers.eq(filter));
-		verify(wrapper).showSaveDialog(ArgumentMatchers.eq(owner));
+		verify(wrapper).setTitle(eq("Title"));
+		verify(wrapper).setInitialDirectory(eq(folder));
+		verify(wrapper).setInitialFileName(eq("initial.txt"));
+		verify(wrapper).setSelectedExtensionFilter(eq(filter));
+		verify(wrapper).showSaveDialog(eq(owner));
 	}
 
 	@Test
@@ -392,10 +393,9 @@ class DialogControllerTest {
 		openDialogButton.setOnAction(event -> {
 			returnValue.set(dialogCallback.get());
 		});
-		final StackPane root = new StackPane(openDialogButton);
+		final AnchorPane root = new AnchorPane(openDialogButton);
 		root.setPrefSize(500, 500);
-		final StackPane stackPane = new StackPane(root);
-		FxToolkit.setupSceneRoot(() -> stackPane);
+		FxToolkit.setupSceneRoot(() -> root);
 		FxToolkit.setupStage(Stage::show);
 	}
 
