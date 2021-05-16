@@ -180,10 +180,12 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
 
 	@Override
 	public void beforeAll(final ExtensionContext context) throws Exception {
+		System.setProperty("testfx.robot", "glass");
+		System.setProperty("testfx.headless", "true");
 		System.setProperty("glass.platform", "Monocle");
 		System.setProperty("monocle.platform", "Headless");
 		System.setProperty("prism.order", "sw");
-		// System.setProperty("prism.text", "t2k");
+		System.setProperty("prism.text", "t2k");
 		System.setProperty("headless.geometry", "1600x1200-32");
 	}
 
