@@ -2,9 +2,25 @@
 
 This module contains an integration of the [ControlsFX](https://github.com/controlsfx/controlsfx) framework into ActionFX. 
 
-Module | Description | API Documentation | Gradle Dependency 
------- | ----------- | ----------------- | ----------
-[actionfx-controlsfx](README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-controls/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.2.0"`
+Module | Description | API Documentation 
+------ | ----------- | ----------------- 
+[actionfx-controlsfx](README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-controls/index.html) 
+
+**Gradle Dependency**
+
+```
+implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.2.0"
+```
+
+**Maven Dependency**
+
+```xml
+<dependency>
+    <groupId>com.github.martinkoster</groupId>
+    <artifactId>actionfx-controlsfx</artifactId>
+    <version>1.2.0</version>
+</dependency>
+```
 
 ## Using ControlsFX in an ActionFX application
 

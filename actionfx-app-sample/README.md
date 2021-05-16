@@ -2,14 +2,15 @@
 
 This module contains application sample with and without Spring as bean container.
 
-Module | Description | API Documentation | Gradle Dependency 
------- | ----------- | ----------------- | ----------
-[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-app-sample/index.html) | -
+Module | Description | API Documentation  
+------ | ----------- | ----------------- 
+[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-app-sample/index.html) 
 
 This module contains the following demo applications:
 
 - [A Simple Book Store](#a-simple-book-store): A FXML-based demo showing most of the annotations available in ActionFX. The application has a main class for getting started via ActionFX's core bean container and a main class for getting starting with Spring Boot.
 - [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
+- [Texteditor Demo](#texteditor-demo): A simple text editor demonstrating how to use menus, open-, save- and other dialogs with ActionFX.
 
 ## A Simple Book Store
 
@@ -36,13 +37,13 @@ public class BookstoreAppWithDefaultBeanContainer {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstoreapp.controller")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}
 }
 ```
-Source Code can be found here: [BookstoreAppWithDefaultBeanContainer](src/main/java/com/github/actionfx/bookstoreapp/core/app/BookstoreAppWithDefaultBeanContainer.java)
+Source Code can be found here: [BookstoreAppWithDefaultBeanContainer](src/main/java/com/github/actionfx/bookstore/core/app/BookstoreAppWithDefaultBeanContainer.java)
 
 
 ### Starting the application with the Spring bean container
@@ -58,7 +59,7 @@ public class BookstoreAppWithSpringBeanContainer {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstoreapp.controller")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
 	public static class SampleActionFXApplication extends Application {
 
 		@Override
@@ -80,7 +81,7 @@ In the `init` method, we start the Spring container. Please remember that `init`
 
 In the `start` method, we use the supplied `primaryStage` to display the main view inside by calling `ActionFX.getInstance().displayMainView(primaryStage)`.
 
-Source Code can be found here: [BookstoreAppWithSpringBeanContainer](src/main/java/com/github/actionfx/bookstoreapp/spring/app/BookstoreAppWithSpringBeanContainer.java)
+Source Code can be found here: [BookstoreAppWithSpringBeanContainer](src/main/java/com/github/actionfx/bookstore/spring/app/BookstoreAppWithSpringBeanContainer.java)
 
 ### The Controller and Views
 
@@ -104,7 +105,7 @@ public class MainController {
 }
 ```
 
-Source Code can be found here: [MainController](src/main/java/com/github/actionfx/bookstoreapp/controller/MainController.java)
+Source Code can be found here: [MainController](src/main/java/com/github/actionfx/bookstore/controller/MainController.java)
 
 #### BookCatalogueController
 
@@ -183,7 +184,7 @@ public class BookCatalogueController {
 	 *
 	 * @param selectedBooks the selected books from control "bookTableView"
 	 */
-	@AFXOnAction(controlId = "addToShoppingCartButton")
+	@AFXOnAction(nodeId = "addToShoppingCartButton")
 	public void addToShoppingCart(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
 		shoppingCartController.addToShoppingCart(selectedBooks);
 	}
@@ -263,7 +264,7 @@ The `@AFXOnControlValueChange` uses attribute `timeoutMs = 400`. This means that
 Last but not least, we define an action method that is invoked when the user wants to add one or multiple books to the shopping cart:
 
 ```java
-	@AFXOnAction(controlId = "addToShoppingCartButton")
+	@AFXOnAction(nodeId = "addToShoppingCartButton")
 	public void addToShoppingCart(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
 		shoppingCartController.addToShoppingCart(selectedBooks);
 	}
@@ -273,7 +274,7 @@ In this action method, we inject the **currently selected** books from the table
 
 In this step, we simply hand-over all selected books to the shopping cart controller, described in the next section.
 
-Source Code can be found here: [BookCatalogueController](src/main/java/com/github/actionfx/bookstoreapp/controller/BookCatalogueController.java)
+Source Code can be found here: [BookCatalogueController](src/main/java/com/github/actionfx/bookstore/controller/BookCatalogueController.java)
 
 #### ShoppingCartController
 
@@ -295,13 +296,13 @@ public class ShoppingCartController {
 	@FXML
 	private TableView<Book> bookTableView;
 
-	@AFXOnAction(controlId = "emptyButton")
+	@AFXOnAction(nodeId = "emptyButton")
 	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();
 	}
 
-	@AFXOnAction(controlId = "checkoutButton")
+	@AFXOnAction(nodeId = "checkoutButton")
 	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
 		// no to-do here as of the moment. Displaying of the view is achieved by
@@ -317,7 +318,7 @@ public class ShoppingCartController {
 The action for emptying the shopping cart is quite simple and straight-forward by using the `@AFXOnAction` annotation:
 
 ```java
-	@AFXOnAction(controlId = "emptyButton")
+	@AFXOnAction(nodeId = "emptyButton")
 	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();
@@ -329,7 +330,7 @@ As you can see here, this method is also annotated with `@AFXRequiresUserConfirm
 For the starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we combine the `AFXOnAction` annotation with the `AFXShowView` annotation that opens the defined view with name `checkoutView` is a new window (`showInNewWindow=true`).
 
 ```java
-	@AFXOnAction(controlId = "checkoutButton")
+	@AFXOnAction(nodeId = "checkoutButton")
 	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
 		// no to-do here as of the moment. Displaying of the view is achieved by
@@ -337,7 +338,7 @@ For the starting the check-out procedure, we display the check-out dialogue in a
 	}
 ```
 
-Source Code can be found here: [ShoppingCartController](src/main/java/com/github/actionfx/bookstoreapp/controller/ShoppingCartController.java)
+Source Code can be found here: [ShoppingCartController](src/main/java/com/github/actionfx/bookstore/controller/ShoppingCartController.java)
 
 #### CheckoutController 
 
@@ -352,7 +353,7 @@ public class CheckoutController {
 }
 ```
 
-Source Code can be found here: [CheckoutController](src/main/java/com/github/actionfx/bookstoreapp/controller/CheckoutController.java)
+Source Code can be found here: [CheckoutController](src/main/java/com/github/actionfx/bookstore/controller/CheckoutController.java)
 
 ## Data Container Demo
 
@@ -371,7 +372,7 @@ public class DatacontainerApp {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "datacontainerDemoView", scanPackage = "com.github.actionfx.datacontainerapp.controller")
+	@AFXApplication(mainViewId = "datacontainerDemoView", scanPackage = "com.github.actionfx.datacontainer.controller")
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}
@@ -379,7 +380,7 @@ public class DatacontainerApp {
 }
 ```
 
-Source Code can be found here: [DatacontainerApp](src/main/java/com/github/actionfx/datacontainerapp/app/DatacontainerApp.java)
+Source Code can be found here: [DatacontainerApp](src/main/java/com/github/actionfx/datacontainer/app/DatacontainerApp.java)
 
 ### Coding the Static View 
 
@@ -470,7 +471,7 @@ public class DatacontainerView extends HBox {
 
 The view class itself needs to be derived from a node that extends from `javafx.scene.Parent`. As you can see, we give relevant nodes an ID, which is required to have them referenced via the `@FXML` annotation in the controller shown in the next section.
 
-Source Code can be found here: [DatacontainerView](src/main/java/com/github/actionfx/datacontainerapp/view/DatacontainerView.java)
+Source Code can be found here: [DatacontainerView](src/main/java/com/github/actionfx/datacontainer/view/DatacontainerView.java)
 
 ### Coding the Controller and Configuring the Data Controls
 
@@ -588,4 +589,163 @@ As further show case, the cells of controls of type `TableView`, `TreeTableView`
 
 For data container like `ComboBox` or `ChoiceBox`, the annotation [@AFXConverter](../actionfx-core/src/main/java/com/github/actionfx/core/annotation/AFXConverter.java) is used to convert a model instance to a displayable string inside these controls.
 
-Source Code can be found here: [DatacontainerController](src/main/java/com/github/actionfx/datacontainerapp/controller/DatacontainerController.java)
+Source Code can be found here: [DatacontainerController](src/main/java/com/github/actionfx/datacontainer/controller/DatacontainerController.java)
+
+## Texteditor Demo
+
+In this demo, we show how to use menus, open-, save- and other dialogs with ActionFX. For the view, we again use a simple FXML-based layout. 
+
+The application's main class can be found here: [TextEditorApp](src/main/java/com/github/actionfx/texteditor/app/TextEditorApp.java)
+
+The editor itself has a simple menu structure for opening text files, saving text files, closing the application, finding a text and opening a small "About" dialog. 
+
+![Text Editor UI](docs/images/texteditor.png)
+
+In the following, we focus on the only controller that we use for our simple text editor.
+
+```java
+@AFXController(viewId = "textEditorDemoView", fxml = "/fxml/TextEditor.fxml", maximized = true, title = "Text Editor")
+public class TextEditorController {
+
+	@FXML
+	private TextArea editorTextArea;
+
+	@Inject
+	private ActionFX actionFX;
+
+	@AFXOnAction(nodeId = "openFileMenuItem", async = true)
+	public void openFile(@AFXFromFileOpenDialog(title = "Open Text File", extensionFilter = { "Text Files",
+			"*.txt" }) final Path path) throws IOException {
+		editorTextArea.clear();
+		try (final Scanner scanner = new Scanner(path)) {
+			scanner.useDelimiter(System.lineSeparator());
+			while (scanner.hasNext()) {
+				// since we activated "async=true", we are not inside the JavaFX thread.
+				// So changing the state of UI components requires us using
+				// Platform.runLater(..)
+				final String line = scanner.next();
+				Platform.runLater(() -> editorTextArea.appendText(line + System.lineSeparator()));
+			}
+		}
+	}
+
+	@AFXOnAction(nodeId = "saveFileMenuItem", async = true)
+	public void saveFile(
+			@AFXFromFileSaveDialog(title = "Save Text File", extensionFilter = { "Text Files",
+					"*.txt" }) final File file,
+			@AFXControlValue("editorTextArea") final String text) throws IOException {
+		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+			writer.write(text);
+		}
+		// show an information dialog that saving was successful
+		Platform.runLater(() -> actionFX.showInformationDialog("Save successful",
+				"File '" + file.getAbsolutePath() + "' has been successfully saved.", null));
+	}
+
+	@AFXOnAction(nodeId = "closeMenuItem")
+	@AFXRequiresUserConfirmation(title = "Exit", header = "Exit Text Editor", content = "Are you sure you want to exit the Text Editor?")
+	public void close() {
+		Platform.exit();
+	}
+
+	@AFXOnAction(nodeId = "findMenuItem")
+	public void find(
+			@AFXFromTextInputDialog(title = "Find", header = "Search for text", content = "Please enter a text to search for") final String searchText,
+			@AFXControlValue("editorTextArea") final String text) {
+		final int beginIndex = text.indexOf(searchText);
+		if (beginIndex > -1) {
+			final int endIndex = beginIndex + searchText.length();
+			editorTextArea.selectRange(beginIndex, endIndex);
+		} else {
+			actionFX.showInformationDialog("Find", "Text '" + searchText + "' has not been found!", null);
+		}
+	}
+	
+	@AFXOnAction(nodeId = "aboutMenuItem")
+	public void about() {
+		actionFX.showInformationDialog("About", "About Text Editor",
+				"This is a simple Text Editor realized with ActionFX.");
+	}
+}
+```
+
+The FXML-based scenegraph has a couple of nodes with IDs. However, we only inject the `javafx.scene.control.TextArea` via `@FXML`, because that is the only control that we are directly interacting with for setting the text content to.
+
+Other nodes like the menu items are not injected, these are just referenced via e.g. `@AFXOnAction(nodeId = "openFileMenuItem" ...)`.
+
+Additionally we inject the `ActionFX` instance, because we want to display information dialogs that show the user that a file has been successfully saved or for the "About" dialog.
+
+The **"open file" action** is configured the following way:
+
+```java
+	@AFXOnAction(nodeId = "openFileMenuItem", async = true)
+	public void openFile(@AFXFromFileOpenDialog(title = "Open Text File", extensionFilter = { "Text Files",
+			"*.txt" }) final Path path) throws IOException {
+		...
+	}
+```
+
+The actual file loading is realized in an asynchronous fashion, so that the JavaFX thread is not blocked while loading the data (`@AFXOnAction( ... async = true)`). 
+
+When this action method is triggered, a "file open" dialog is displayed via the method argument annotation `@AFXFromFileOpenDialog`. In case the user cancels the file open dialog, then the method `openFile` will not be executed at all. This is the default behavior for the `@AFXFromFileOpenDialog` (and related annotations). In case the developer wants to have the method called even when the "file open" dialog is cancelled, then the attribute `@AFXFromFileOpenDialog( ... continueOnCancel=true)` has to be set. In this case however, the method argument would be `null` on canceling the "file open" dialog.
+
+In the method itself, each line of the file is read separately and is added to the text area one by one. Because we are running the method asynchronously outside of the JavaFX thread, we need to call `Platform.runLater( .. )` to interact with UI component:
+
+```java
+	// since we activated "async=true", we are not inside the JavaFX thread.
+	// So changing the state of UI components requires us using
+	// Platform.runLater(..)
+	final String line = scanner.next();
+	Platform.runLater(() -> editorTextArea.appendText(line + System.lineSeparator()));
+```
+
+The **"file save" action** is realized in a similar fashion, again realized with an asynchronous method invocation.
+
+```java
+	@AFXOnAction(nodeId = "saveFileMenuItem", async = true)
+	public void saveFile(
+			@AFXFromFileSaveDialog(title = "Save Text File", extensionFilter = { "Text Files",
+					"*.txt" }) final File file,
+			@AFXControlValue("editorTextArea") final String text) throws IOException {
+		...
+	}
+```
+
+Instead of a "file open" dialog, we display a "file save" dialog now via `@AFXFromFileSaveDialog`. Additionally, we inject the content of the text area via `@AFXControlValue("editorTextArea")` for saving inside the method.
+
+The **"close" action** is using a `@AFXRequiresUserConfirmation` annotation for displaying a confirmation dialog to the user, whether he really wants to shutdown the application. The actual implementation becomes then pretty trivial:
+
+```java
+	@AFXOnAction(nodeId = "closeMenuItem")
+	@AFXRequiresUserConfirmation(title = "Exit", header = "Exit Text Editor", content = "Are you sure you want to exit the Text Editor?")
+	public void close() {
+		Platform.exit();
+	}
+```
+
+The **"find" action** makes use of the `@AFXFromTextInputDialog` annotation to request a search text to be entered by the user. 
+
+![Text Editor Find](docs/images/texteditor-find.png)
+
+Again, this is a method argument annotation that can avoid the actual method to be executed, in case the user cancels the displayed "text input" dialog. 
+
+```java
+	@AFXOnAction(nodeId = "findMenuItem")
+	public void find(
+			@AFXFromTextInputDialog(title = "Find", header = "Search for text", content = "Please enter a text to search for") final String searchText,
+			@AFXControlValue("editorTextArea") final String text) {
+		...
+	}
+```
+
+Last but not least, we display a simple **"About" dialog** to the user via an "information" dialog:
+
+```java
+	@AFXOnAction(nodeId = "aboutMenuItem")
+	public void about() {
+		actionFX.showInformationDialog("About", "About Text Editor",
+				"This is a simple Text Editor realized with ActionFX.");
+	}
+```
+
+Source Code can be found here: [TextEditorController](src/main/java/com/github/actionfx/texteditor/controller/TextEditorController.java)

@@ -53,7 +53,7 @@ public class FromDirectoryChooserDialogParameterResolver
 		final ActionFX actionFX = ActionFX.getInstance();
 		final ResourceBundle resourceBundle = actionFX.getControllerResourceBundle(controller.getClass());
 		final View view = ControllerWrapper.of(controller).getView();
-		final File selectedFile = actionFX.showDirectoryChooser(
+		final File selectedFile = actionFX.showDirectoryChooserDialog(
 				MessageUtils.getMessage(resourceBundle, annotation.titleKey(), annotation.title()), null,
 				view.getWindow());
 		if (selectedFile == null && !annotation.continueOnCancel()) {

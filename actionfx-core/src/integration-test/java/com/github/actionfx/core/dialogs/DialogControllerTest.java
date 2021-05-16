@@ -221,7 +221,7 @@ class DialogControllerTest {
 		setupDirectoryChooser(controller, wrapper);
 
 		// WHEN
-		controller.showDirectoryChooser("Title", null, owner);
+		controller.showDirectoryChooserDialog("Title", null, owner);
 
 		// THEN
 		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));
@@ -237,7 +237,7 @@ class DialogControllerTest {
 		final File folder = Files.createTempDirectory("junit").toFile();
 
 		// WHEN
-		controller.showDirectoryChooser("Title", folder, owner);
+		controller.showDirectoryChooserDialog("Title", folder, owner);
 
 		// THEN
 		verify(wrapper).setTitle(ArgumentMatchers.eq("Title"));

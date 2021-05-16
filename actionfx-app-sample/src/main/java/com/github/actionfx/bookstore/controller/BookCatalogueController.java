@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.controller;
+package com.github.actionfx.bookstore.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import javax.inject.Inject;
 
 import org.controlsfx.control.CheckListView;
 
-import com.github.actionfx.bookstoreapp.model.Book;
+import com.github.actionfx.bookstore.model.Book;
 import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXControlValue;
@@ -120,7 +120,7 @@ public class BookCatalogueController {
 	 *
 	 * @param selectedBooks the selected books from control "bookTableView"
 	 */
-	@AFXOnAction(controlId = "addToShoppingCartButton")
+	@AFXOnAction(nodeId = "addToShoppingCartButton")
 	public void addToShoppingCart(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
 		shoppingCartController.addToShoppingCart(selectedBooks);
 	}

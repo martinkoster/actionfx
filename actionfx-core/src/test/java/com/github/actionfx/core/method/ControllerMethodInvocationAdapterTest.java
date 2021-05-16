@@ -31,11 +31,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +55,10 @@ import com.github.actionfx.core.ActionFXMock;
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXFromDirectoryChooserDialog;
+import com.github.actionfx.core.annotation.AFXFromFileOpenDialog;
+import com.github.actionfx.core.annotation.AFXFromFileSaveDialog;
+import com.github.actionfx.core.annotation.AFXFromTextInputDialog;
 import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.container.BeanContainerFacade;
@@ -434,6 +443,104 @@ class ControllerMethodInvocationAdapterTest {
 		assertThat(result.get(), nullValue());
 	}
 
+	@Test
+	void testInvoke_fromFileOpenDialog() throws IOException {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		final File file = Files.createTempFile("junit", "-tmp").toFile();
+		when(dialogController.showFileOpenDialog(ArgumentMatchers.anyString(), isNull(), isNull(), isNull(), isNull()))
+				.thenReturn(file);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("openFile");
+
+		// WHEN
+		final File result = adapter.invoke();
+
+		// THEN
+		assertThat(result, equalTo(file));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+	}
+
+	@Test
+	void testInvoke_fromFileOpenDialog_userCancels() throws IOException {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showFileOpenDialog(ArgumentMatchers.anyString(), isNull(), isNull(), isNull(), isNull()))
+				.thenReturn(null);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("openFile");
+
+		// WHEN
+		final File result = adapter.invoke();
+
+		// THEN
+		assertThat(result, nullValue());
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(false));
+	}
+
+	@Test
+	void testInvoke_fromFileSaveDialog() throws IOException {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		final File file = Files.createTempFile("junit", "-tmp").toFile();
+		when(dialogController.showFileSaveDialog(ArgumentMatchers.anyString(), isNull(), isNull(), isNull(), isNull()))
+				.thenReturn(file);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("saveFile");
+
+		// WHEN
+		final File result = adapter.invoke();
+
+		// THEN
+		assertThat(result, equalTo(file));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+	}
+
+	@Test
+	void testInvoke_fromDirectoryChooserDialog() throws IOException {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		final File file = Files.createTempFile("junit", "-tmp").toFile();
+		when(dialogController.showDirectoryChooserDialog(ArgumentMatchers.anyString(), isNull(), isNull()))
+				.thenReturn(file);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("openDirectory");
+
+		// WHEN
+		final File result = adapter.invoke();
+
+		// THEN
+		assertThat(result, equalTo(file));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+	}
+
+	@Test
+	void testInvoke_fromTextInputDialog() throws IOException {
+		// GIVEN
+		final ActionFXMock actionFX = new ActionFXMock();
+		final DialogController dialogController = Mockito.mock(DialogController.class);
+		when(dialogController.showTextInputDialog(anyString(), anyString(), anyString(), anyString()))
+				.thenReturn("Hello World");
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("textInput");
+
+		// WHEN
+		final String result = adapter.invoke();
+
+		// THEN
+		assertThat(result, equalTo("Hello World"));
+		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
+		assertThat(instance.executed, equalTo(true));
+	}
+
 	private static ControllerMethodInvocationAdapter methodInvocationAdapter(final String methodName) {
 		final ClassWithPublicMethods instance = createEnhancedInstance(true);
 		final Method method = ReflectionUtils.findMethod(ClassWithPublicMethods.class, methodName, (Class<?>[]) null);
@@ -587,6 +694,26 @@ class ControllerMethodInvocationAdapterTest {
 		public String requiresUserConfirmationWithResourceBundleButKeysDoNotExist() {
 			setExecuted();
 			return "Hello World";
+		}
+
+		public File saveFile(@AFXFromFileSaveDialog(continueOnCancel = false) final File file) {
+			setExecuted();
+			return file;
+		}
+
+		public File openFile(@AFXFromFileOpenDialog final File file) {
+			setExecuted();
+			return file;
+		}
+
+		public File openDirectory(@AFXFromDirectoryChooserDialog final File file) {
+			setExecuted();
+			return file;
+		}
+
+		public String textInput(@AFXFromTextInputDialog final String text) {
+			setExecuted();
+			return text;
 		}
 
 		private void setExecuted() {

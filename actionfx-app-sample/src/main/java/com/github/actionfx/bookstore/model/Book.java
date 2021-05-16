@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,27 +21,50 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.controller;
-
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.annotation.AFXNestedView;
-import com.github.actionfx.core.view.BorderPanePosition;
-
-import javafx.fxml.FXML;
-import javafx.scene.layout.BorderPane;
+package com.github.actionfx.bookstore.model;
 
 /**
- * Main application controller that integrates further views.
+ * Sample domain class.
  *
  * @author koster
  *
  */
-@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true, icon = "/images/book.png", title = "The Book Store")
-public class MainController {
+public class Book {
 
-	@AFXNestedView(refViewId = "bookCatalogueView", attachToBorderPanePosition = BorderPanePosition.CENTER)
-	@AFXNestedView(refViewId = "shoppingCartView", attachToBorderPanePosition = BorderPanePosition.RIGHT)
-	@FXML
-	private BorderPane contentPane;
+	private String title;
+
+	private String category;
+
+	private Double price;
+
+	public Book(final String title, final String category, final Double price) {
+		this.title = title;
+		this.category = category;
+		this.price = price;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(final String title) {
+		this.title = title;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(final String category) {
+		this.category = category;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(final Double price) {
+		this.price = price;
+	}
 
 }

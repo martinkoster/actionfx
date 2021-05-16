@@ -1,5 +1,5 @@
 /*
-w * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,42 +21,47 @@ w * Copyright (c) 2020 Martin Koster
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.spring.app;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.annotation.AFXApplication;
-
-import javafx.application.Application;
-import javafx.stage.Stage;
+package com.github.actionfx.datacontainer.model;
 
 /**
- * Main entry point in the sample application.
+ * Demo model class.
  *
  * @author koster
  *
  */
-@SpringBootApplication
-public class BookstoreAppWithSpringBeanContainer {
+public class Employee {
 
-	public static void main(final String[] argv) {
-		ActionFX.builder().configurationClass(SampleActionFXApplication.class).build();
-		Application.launch(SampleActionFXApplication.class);
+	private String firstName;
+	private String lastName;
+	private Double salary;
+
+	public Employee(final String firstName, final String lastName, final Double salary) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.salary = salary;
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstoreapp.controller")
-	public static class SampleActionFXApplication extends Application {
+	public String getFirstName() {
+		return firstName;
+	}
 
-		@Override
-		public void init() throws Exception {
-			SpringApplication.run(BookstoreAppWithSpringBeanContainer.class);
-		}
+	public void setFirstName(final String firstName) {
+		this.firstName = firstName;
+	}
 
-		@Override
-		public void start(final Stage primaryStage) throws Exception {
-			ActionFX.getInstance().displayMainView(primaryStage);
-		}
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(final String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Double getSalary() {
+		return salary;
+	}
+
+	public void setSalary(final Double salary) {
+		this.salary = salary;
 	}
 }

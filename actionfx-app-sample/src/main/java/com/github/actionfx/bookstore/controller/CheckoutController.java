@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Martin Koster
+ * Copyright (c) 2020 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,47 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.datacontainerapp.model;
+package com.github.actionfx.bookstore.controller;
+
+import com.github.actionfx.core.annotation.AFXController;
 
 /**
- * Demo model class.
+ * The checkout view, displayed in its own stage in a modal fashion.
  *
  * @author koster
  *
  */
-public class Employee {
+@AFXController(viewId = "checkoutView", fxml = "/fxml/CheckoutView.fxml", icon = "/images/book.png", title = "Check Out", modal = true, width = 600, height = 500, posX = 600, posY = 300)
+public class CheckoutController {
 
-	private String firstName;
-	private String lastName;
-	private Double salary;
-
-	public Employee(final String firstName, final String lastName, final Double salary) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.salary = salary;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(final String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(final String lastName) {
-		this.lastName = lastName;
-	}
-
-	public Double getSalary() {
-		return salary;
-	}
-
-	public void setSalary(final Double salary) {
-		this.salary = salary;
-	}
 }

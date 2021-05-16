@@ -319,14 +319,14 @@ class ActionFXTest {
 		final File selectedFolder = Files.createTempDirectory("junit").toFile();
 		final File initialFolder = Files.createTempDirectory("junit").toFile();
 
-		when(controller.showDirectoryChooser(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+		when(controller.showDirectoryChooserDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
 				ArgumentMatchers.any(Window.class))).thenReturn(selectedFolder);
 
 		// WHEN
-		assertThat(actionFX.showDirectoryChooser("Title", initialFolder, owner), equalTo(selectedFolder));
+		assertThat(actionFX.showDirectoryChooserDialog("Title", initialFolder, owner), equalTo(selectedFolder));
 
 		// THEN
-		verify(controller).showDirectoryChooser(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+		verify(controller).showDirectoryChooserDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
 				ArgumentMatchers.eq(owner));
 	}
 

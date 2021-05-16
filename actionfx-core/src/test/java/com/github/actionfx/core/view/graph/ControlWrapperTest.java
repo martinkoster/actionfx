@@ -56,8 +56,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -1289,31 +1287,6 @@ class ControlWrapperTest {
 
 		// and THEN ( the listener is not fired, because it is removed already)
 		assertThat(changeListenerFired.get(), equalTo(false));
-	}
-
-	@Test
-	void testGetOnActionProperty() {
-		// GIVEN
-		final ControlWrapper wrapper = ControlWrapperProvider.button();
-
-		// WHEN
-		final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = wrapper.getOnActionProperty();
-
-		// THEN
-		assertThat(onActionProperty, notNullValue());
-	}
-
-	@Test
-	void testGetOnActionProperty_propertyNotOfExpectedTypeObjectProperty() {
-		// GIVEN
-		final ControlWrapper wrapper = ControlWrapper.of(new ControlWithNonObjectPropertyAction());
-
-		// WHEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getOnActionProperty());
-
-		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"OnAction property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!"));
 	}
 
 	@Test

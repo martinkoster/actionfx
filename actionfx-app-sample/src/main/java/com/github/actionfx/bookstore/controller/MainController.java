@@ -1,5 +1,5 @@
 /*
-w * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2020 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,28 +21,27 @@ w * Copyright (c) 2020 Martin Koster
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.core.app;
+package com.github.actionfx.bookstore.controller;
 
-import com.github.actionfx.core.annotation.AFXApplication;
-import com.github.actionfx.core.app.AbstractAFXApplication;
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXNestedView;
+import com.github.actionfx.core.view.BorderPanePosition;
 
-import javafx.application.Application;
+import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 
 /**
- * Main entry point in the sample application.
+ * Main application controller that integrates further views.
  *
  * @author koster
  *
  */
-public class BookstoreAppWithDefaultBeanContainer {
+@AFXController(viewId = "mainView", fxml = "/fxml/MainView.fxml", maximized = true, icon = "/images/book.png", title = "The Book Store")
+public class MainController {
 
-	public static void main(final String[] argv) {
-		Application.launch(SampleActionFXApplication.class);
-	}
-
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstoreapp.controller")
-	public static class SampleActionFXApplication extends AbstractAFXApplication {
-
-	}
+	@AFXNestedView(refViewId = "bookCatalogueView", attachToBorderPanePosition = BorderPanePosition.CENTER)
+	@AFXNestedView(refViewId = "shoppingCartView", attachToBorderPanePosition = BorderPanePosition.RIGHT)
+	@FXML
+	private BorderPane contentPane;
 
 }

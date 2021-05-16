@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+w * Copyright (c) 2020 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,17 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.controller;
+package com.github.actionfx.bookstore.core.app;
 
-import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.app.AbstractAFXApplication;
+
+import javafx.application.Application;
 
 /**
- * The checkout view, displayed in its own stage in a modal fashion.
+ * Main entry point in the sample application.
  *
  * @author koster
  *
  */
-@AFXController(viewId = "checkoutView", fxml = "/fxml/CheckoutView.fxml", icon = "/images/book.png", title = "Check Out", modal = true, width = 600, height = 500, posX = 600, posY = 300)
-public class CheckoutController {
+public class BookstoreAppWithDefaultBeanContainer {
+
+	public static void main(final String[] argv) {
+		Application.launch(SampleActionFXApplication.class);
+	}
+
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
+	public static class SampleActionFXApplication extends AbstractAFXApplication {
+
+	}
 
 }

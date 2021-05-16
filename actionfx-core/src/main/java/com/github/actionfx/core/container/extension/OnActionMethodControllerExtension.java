@@ -30,7 +30,7 @@ import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.method.ControllerMethodInvocationAdapter;
 import com.github.actionfx.core.method.ControllerMethodInvocationAdapter.ParameterValue;
 import com.github.actionfx.core.view.View;
-import com.github.actionfx.core.view.graph.ControlWrapper;
+import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.event.ActionEvent;
@@ -53,11 +53,11 @@ public class OnActionMethodControllerExtension extends AbstractAnnotatedMethodCo
 	@Override
 	protected void extend(final Object controller, final Method annotatedElement, final AFXOnAction annotation) {
 		final View view = ControllerWrapper.getViewFrom(controller);
-		final ControlWrapper controlWrapper = createControlWrapper(annotation.controlId(), view);
-		final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = controlWrapper.getOnActionProperty();
+		final NodeWrapper nodeWrapper = createNodeWrapper(annotation.nodeId(), view);
+		final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = nodeWrapper.getOnActionProperty();
 		if (onActionProperty == null) {
-			throw new IllegalStateException("Control with id='" + annotation.controlId() + "' and type '"
-					+ controlWrapper.getWrappedType().getCanonicalName()
+			throw new IllegalStateException("Control with id='" + annotation.nodeId() + "' and type '"
+					+ nodeWrapper.getWrappedType().getCanonicalName()
 					+ "' does not support an 'onAction' property! Please verify your @AFXOnAction annotation in controller class '"
 					+ controller.getClass().getCanonicalName() + "', method '" + annotatedElement.getName() + "'!");
 		}

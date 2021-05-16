@@ -15,7 +15,7 @@ public class ControllerWithWrongAFXOnAction {
 	/**
 	 * Control "singleSelectionTable" does not have an "onAction" property
 	 */
-	@AFXOnAction(controlId = "singleSelectionTable")
+	@AFXOnAction(nodeId = "singleSelectionTable")
 	public void willNeverBeCalledAsOnActionIsWrong() {
 
 	}

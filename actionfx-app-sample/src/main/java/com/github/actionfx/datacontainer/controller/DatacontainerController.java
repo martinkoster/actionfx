@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.datacontainerapp.controller;
+package com.github.actionfx.datacontainer.controller;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -34,8 +34,8 @@ import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXConverter;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
-import com.github.actionfx.datacontainerapp.model.Employee;
-import com.github.actionfx.datacontainerapp.view.DatacontainerView;
+import com.github.actionfx.datacontainer.model.Employee;
+import com.github.actionfx.datacontainer.view.DatacontainerView;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;

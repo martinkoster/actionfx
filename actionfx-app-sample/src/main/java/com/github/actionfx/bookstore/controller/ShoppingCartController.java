@@ -21,11 +21,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.controller;
+package com.github.actionfx.bookstore.controller;
 
 import java.util.List;
 
-import com.github.actionfx.bookstoreapp.model.Book;
+import com.github.actionfx.bookstore.model.Book;
 import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXController;
@@ -52,13 +52,13 @@ public class ShoppingCartController {
 	@FXML
 	private TableView<Book> bookTableView;
 
-	@AFXOnAction(controlId = "emptyButton")
+	@AFXOnAction(nodeId = "emptyButton")
 	@AFXRequiresUserConfirmation(title="Confirmation", header="Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();
 	}
 
-	@AFXOnAction(controlId = "checkoutButton")
+	@AFXOnAction(nodeId = "checkoutButton")
 	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
 		// no to-do here as of the moment. Displaying of the view is achieved by

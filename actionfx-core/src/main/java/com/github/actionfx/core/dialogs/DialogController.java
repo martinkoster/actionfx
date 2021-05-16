@@ -126,7 +126,7 @@ public class DialogController {
 	 * @return the selected directory, or {@code null}, if no directory has been
 	 *         selected
 	 */
-	public File showDirectoryChooser(final String title, final File defaultDirectory, final Window owner) {
+	public File showDirectoryChooserDialog(final String title, final File defaultDirectory, final Window owner) {
 		final DirectoryChooserWrapper chooser = createDirectoryChooserWrapper();
 		chooser.setTitle(title);
 		if (defaultDirectory != null) {

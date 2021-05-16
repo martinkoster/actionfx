@@ -21,9 +21,9 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.datacontainerapp.view;
+package com.github.actionfx.datacontainer.view;
 
-import com.github.actionfx.datacontainerapp.model.Employee;
+import com.github.actionfx.datacontainer.model.Employee;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;

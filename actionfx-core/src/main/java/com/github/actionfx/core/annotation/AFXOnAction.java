@@ -31,7 +31,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Annotated methods are invoked when the control specified with fires
+ * Annotated methods are invoked when the node or control specified with fires
  * {@link ActionEvent}. This is e.g. when the user clicks on
  * {@link javafx.scene.control.Button}.
  * <p>
@@ -56,13 +56,12 @@ import java.lang.annotation.Target;
 public @interface AFXOnAction {
 
 	/**
-	 * ID of the control whose action property shall be set to execute the annotated
+	 * ID of the node whose action property shall be set to execute the annotated
 	 * method.
 	 *
-	 * @return the node ID of a control, whose action property will invoke the
-	 *         annotated method.
+	 * @return the node ID, whose action property will invoke the annotated method.
 	 */
-	public String controlId();
+	public String nodeId();
 
 	/**
 	 * Optional flag that determines, whether the annotated method shall be executed

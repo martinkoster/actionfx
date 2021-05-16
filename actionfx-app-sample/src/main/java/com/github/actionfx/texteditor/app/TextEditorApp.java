@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+w * Copyright (c) 2020 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,39 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.test.app;
+package com.github.actionfx.texteditor.app;
 
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.annotation.AFXOnAction;
+import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.app.AbstractAFXApplication;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.application.Application;
 
 /**
- * Test controller.
+ * Main entry point in the sample application.
  *
  * @author koster
  *
  */
-@AFXController(fxml = "/testfxml/ViewWithButton.fxml", viewId = "viewWithButton")
-public class ViewWithButtonController extends AbstractController {
+public class TextEditorApp {
 
-	private boolean actionFired = false;
-
-	@FXML
-	private Button actionFXButton;
-
-	@AFXOnAction(nodeId = "actionFXButton")
-	public void actionMethod() {
-		actionFired = true;
+	public static void main(final String[] argv) {
+		Application.launch(SampleActionFXApplication.class);
 	}
 
-	public boolean isActionFired() {
-		return actionFired;
-	}
+	@AFXApplication(mainViewId = "textEditorDemoView", scanPackage = "com.github.actionfx.texteditor.controller")
+	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
-	public Button getActionFXButton() {
-		return actionFXButton;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Martin Koster
+w * Copyright (c) 2020 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,50 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.bookstoreapp.model;
+package com.github.actionfx.datacontainer.app;
+
+import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.app.AbstractAFXApplication;
+
+import javafx.application.Application;
 
 /**
- * Sample domain class.
+ * Main entry point in the sample application.
  *
  * @author koster
  *
  */
-public class Book {
+public class DatacontainerApp {
 
-	private String title;
-
-	private String category;
-
-	private Double price;
-
-	public Book(final String title, final String category, final Double price) {
-		this.title = title;
-		this.category = category;
-		this.price = price;
+	public static void main(final String[] argv) {
+		Application.launch(SampleActionFXApplication.class);
 	}
 
-	public String getTitle() {
-		return title;
-	}
+	@AFXApplication(mainViewId = "datacontainerDemoView", scanPackage = "com.github.actionfx.datacontainer.controller")
+	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
-	public void setTitle(final String title) {
-		this.title = title;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(final String category) {
-		this.category = category;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(final Double price) {
-		this.price = price;
 	}
 
 }

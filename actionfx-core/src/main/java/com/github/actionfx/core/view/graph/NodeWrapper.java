@@ -43,6 +43,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -72,6 +74,9 @@ public class NodeWrapper {
 			.synchronizedMap(new HashMap<>());
 
 	private static final Map<Class<?>, Boolean> SUPPORTS_SINGLE_CHILD = Collections.synchronizedMap(new HashMap<>());
+
+	// the field name of the "onAction" property inside controls that do support it
+	private static final String ON_ACTION_FIELD_NAME = "onAction";
 
 	private final Object wrapped;
 
@@ -337,6 +342,31 @@ public class NodeWrapper {
 	public boolean isLeafNode() {
 		return !Parent.class.isAssignableFrom(getWrappedType())
 				&& AnnotationUtils.findAnnotation(getWrappedType(), DefaultProperty.class) == null;
+	}
+
+	/**
+	 * Returns the "on action" property of a control. In case this property is not
+	 * supported, {@code null} is returned.
+	 *
+	 * @return the "on action" property, or {@code null}, in case the property is
+	 *         not supported by the wrapped control
+	 */
+	@SuppressWarnings("unchecked")
+	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {
+		final Field field = ReflectionUtils.findField(getWrappedType(), ON_ACTION_FIELD_NAME);
+		if (field == null) {
+			return null;
+		}
+		final Object value = ReflectionUtils.getFieldValueByPropertyGetter(field, getWrapped());
+		if (value == null) {
+			return null;
+		}
+		if (!ObjectProperty.class.isAssignableFrom(value.getClass())) {
+			throw new IllegalStateException("OnAction property in control of type '"
+					+ getWrappedType().getCanonicalName() + "' has type '" + value.getClass().getCanonicalName()
+					+ "', expected was type '" + ObjectProperty.class.getCanonicalName() + "'!");
+		}
+		return (ObjectProperty<EventHandler<ActionEvent>>) value;
 	}
 
 	/**
@@ -645,7 +675,7 @@ public class NodeWrapper {
 
 	/**
 	 * Looks up the ID field of the given node class.
-	 * 
+	 *
 	 * @param nodeClass the node class to check for the ID field
 	 * @return the field containing the node's ID
 	 * @throws IllegalStateException in case {@code nodeClass} has no ID property

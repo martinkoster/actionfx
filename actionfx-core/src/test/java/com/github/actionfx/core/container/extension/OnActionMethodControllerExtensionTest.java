@@ -156,7 +156,7 @@ class OnActionMethodControllerExtensionTest {
 			_view = view;
 		}
 
-		@AFXOnAction(controlId = "actionButton")
+		@AFXOnAction(nodeId = "actionButton")
 		public void onActionButtonClicked() {
 			if (Platform.isFxApplicationThread()) {
 				executedInJavaFxThread = true;
@@ -174,7 +174,7 @@ class OnActionMethodControllerExtensionTest {
 			_view = view;
 		}
 
-		@AFXOnAction(controlId = "actionButton", async = true)
+		@AFXOnAction(nodeId = "actionButton", async = true)
 		public void onActionButtonClicked() {
 			if (!Platform.isFxApplicationThread()) {
 				// for testing...because "async=true" is set, this method is not executed in
@@ -192,7 +192,7 @@ class OnActionMethodControllerExtensionTest {
 			_view = view;
 		}
 
-		@AFXOnAction(controlId = "actionButton")
+		@AFXOnAction(nodeId = "actionButton")
 		public void onActionButtonClicked(final ActionEvent e) {
 		}
 	}

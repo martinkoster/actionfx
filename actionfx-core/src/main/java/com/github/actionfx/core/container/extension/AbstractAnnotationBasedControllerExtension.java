@@ -103,15 +103,29 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
 	 * @return the control wrapper instance
 	 */
 	protected ControlWrapper createControlWrapper(final String controlId, final View view) {
-		final NodeWrapper wrappedTargetNode = view.lookupNode(controlId);
-		if (wrappedTargetNode == null) {
-			throw new IllegalStateException("Node with id='" + controlId + "' does not exist!");
-		}
+		final NodeWrapper wrappedTargetNode = createNodeWrapper(controlId, view);
 		if (!Control.class.isAssignableFrom(wrappedTargetNode.getWrappedType())) {
 			throw new IllegalStateException(
 					"Node with id='" + controlId + "' is not an instance of javafx.scene.control.Control!");
 		}
 		return ControlWrapper.of(wrappedTargetNode.getWrapped());
+	}
+
+	/**
+	 * Creates a {@link NodeWrapper} for a node identified by {@code nodeId}. The
+	 * node with the given ID is supposed to by inside the given {@code view}.
+	 *
+	 * @param nodeId the node ID for that the wrapper shall be created
+	 * @param view   the view containing the node with id {@code nodeId}
+	 * @return the control wrapper instance
+	 */
+	protected NodeWrapper createNodeWrapper(final String nodeId, final View view) {
+		final NodeWrapper wrappedTargetNode = view.lookupNode(nodeId);
+		if (wrappedTargetNode == null) {
+			throw new IllegalStateException(
+					"Node with id='" + nodeId + "' does not exist in view with ID='" + view.getId() + "'!");
+		}
+		return wrappedTargetNode;
 	}
 
 	/**

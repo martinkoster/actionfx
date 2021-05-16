@@ -85,12 +85,12 @@ public class SampleViewControllerWithListener {
 	// data loading initially deactivated
 	protected BooleanProperty loadDataForTreeViewActivated = new SimpleBooleanProperty(false);
 
-	@AFXOnAction(controlId = "actionButton")
+	@AFXOnAction(nodeId = "actionButton")
 	public void onActionButtonClicked() {
 		invocations.add("onActionButtonClicked()");
 	}
 
-	@AFXOnAction(controlId = "actionWithSubmissionButton")
+	@AFXOnAction(nodeId = "actionWithSubmissionButton")
 	public void onActionWithSubmissionButtonClicked(final ActionEvent actionEvent,
 			@AFXControlValue("actionButtonTextField") final String text) {
 		invocations.add("onActionWithSubmissionButtonClicked(" + (actionEvent != null ? "ActionEvent" : "null") + ", '"

@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.view.graph;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -40,12 +41,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.view.BorderPanePosition;
+import com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.DefaultProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -495,6 +500,31 @@ class NodeWrapperTest {
 	@Test
 	void testLookup_nodeDoesNotExist() {
 		assertThat(wrapperWithHierarchy().lookup("fantasyNode"), nullValue());
+	}
+
+	@Test
+	void testGetOnActionProperty() {
+		// GIVEN
+		final NodeWrapper wrapper = ControlWrapperProvider.button();
+
+		// WHEN
+		final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = wrapper.getOnActionProperty();
+
+		// THEN
+		assertThat(onActionProperty, notNullValue());
+	}
+
+	@Test
+	void testGetOnActionProperty_propertyNotOfExpectedTypeObjectProperty() {
+		// GIVEN
+		final NodeWrapper wrapper = ControlWrapper.of(new ControlWithNonObjectPropertyAction());
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getOnActionProperty());
+
+		// THEN
+		assertThat(ex.getMessage(), containsString(
+				"OnAction property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!"));
 	}
 
 	private static NodeWrapper wrapperWithAnchorPane(final Node... children) {

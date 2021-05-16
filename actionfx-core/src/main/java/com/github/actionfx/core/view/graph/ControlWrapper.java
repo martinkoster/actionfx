@@ -47,8 +47,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.MultipleSelectionModel;
@@ -112,9 +110,6 @@ public class ControlWrapper extends NodeWrapper {
 	// libraries like ControlsFX (CheckModel is wrapped)
 	private static final Map<Class<?>, Class<? extends SelectionModel<?>>> SELECTION_MODEL_WRAPPER = Collections
 			.synchronizedMap(new HashMap<>());
-
-	// the field name of the "onAction" property inside controls that do support it
-	private static final String ON_ACTION_FIELD_NAME = "onAction";
 
 	// the field name of a converter property for controls that support it
 	private static final String CONVERTER_PROPERTY_NAME = "converter";
@@ -654,31 +649,6 @@ public class ControlWrapper extends NodeWrapper {
 					+ "', expected was type '" + ObjectProperty.class.getCanonicalName() + "'!");
 		}
 		return (ObjectProperty<StringConverter<?>>) value;
-	}
-
-	/**
-	 * Returns the "on action" property of a control. In case this property is not
-	 * supported, {@code null} is returned.
-	 *
-	 * @return the "on action" property, or {@code null}, in case the property is
-	 *         not supported by the wrapped control
-	 */
-	@SuppressWarnings("unchecked")
-	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {
-		final Field field = ReflectionUtils.findField(getWrappedType(), ON_ACTION_FIELD_NAME);
-		if (field == null) {
-			return null;
-		}
-		final Object value = ReflectionUtils.getFieldValueByPropertyGetter(field, getWrapped());
-		if (value == null) {
-			return null;
-		}
-		if (!ObjectProperty.class.isAssignableFrom(value.getClass())) {
-			throw new IllegalStateException("OnAction property in control of type '"
-					+ getWrappedType().getCanonicalName() + "' has type '" + value.getClass().getCanonicalName()
-					+ "', expected was type '" + ObjectProperty.class.getCanonicalName() + "'!");
-		}
-		return (ObjectProperty<EventHandler<ActionEvent>>) value;
 	}
 
 	/**

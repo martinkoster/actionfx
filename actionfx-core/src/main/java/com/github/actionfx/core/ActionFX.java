@@ -450,8 +450,8 @@ public class ActionFX {
 	 * @return the selected directory, or {@code null}, if no directory has been
 	 *         selected
 	 */
-	public File showDirectoryChooser(final String title, final File defaultDirectory, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showDirectoryChooser(title,
+	public File showDirectoryChooserDialog(final String title, final File defaultDirectory, final Window owner) {
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showDirectoryChooserDialog(title,
 				defaultDirectory, owner);
 	}
 
