@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 - Annotation @AFXOnAction now supports asynchronous method invocation via attribute 'async'.
 - Support for working with simple dialogs like confirmation-, information-, warning-, error-, file handling- and text input dialogs.
 - Added annotation @AFXRequiresUserConfirmation: Methods are only executed after the user confirms via a confirmation dialog.
+- Added method argument annotations @AFXFromFileOpenDialog, @AFXFromFileSaveDialog, @AFXFromFileChooserDialog and @AFXFromTextInputDialog to request values from the user via dialogs.
+- Changed @AFXOnAction#controlId attribute to @AFXOnAction#nodeId as also regular nodes (not controls) can have an "onAction" property (e.g. "MenuItem").
+- Added new sample application "TextEditor"
 
 ## 1.1.0 (01.05.2021)
 - Extended AFXCellValueConfig annotation by 'editable' attribute for making cells in TableView, TreeTableView, TreeView and ListView editable by the user

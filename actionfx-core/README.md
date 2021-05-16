@@ -48,7 +48,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXRequiresUserConfirmation (Method Annotation)](#annotation-afxrequiresuserconfirmation)
       - [Annotation @AFXFromFileSaveDialog (Method Argument Annotation)](#annotation-afxfromfilesavedialog)
       - [Annotation @AFXFromFileOpenDialog (Method Argument Annotation)](#annotation-afxfromfileopendialog)
-      - [Annotation @AFXFromChooseDirectoryDialog (Method Argument Annotation)](#annotation-afxfromchoosedirectorydialog)
+      - [Annotation @AFXFromDirectoryChooserDialog (Method Argument Annotation)](#annotation-afxfromdirectorychooserdialog)
       - [Annotation @AFXFromTextInputDialog (Method Argument Annotation)](#annotation-afxfromtextinputdialog)
   * [User Value of Controls](#user-value-of-controls)
   * [Internationalization](#internationalization)
@@ -677,9 +677,9 @@ Attribute 				| Description
 	}
 ```
 
-#### Annotation @AFXFromChooseDirectoryDialog
+#### Annotation @AFXFromDirectoryChooserDialog
 
-The [@AFXFromChooseDirectoryDialog](src/main/java/com/github/actionfx/core/annotation/AFXFromChooseDirectoryDialog.java) annotation can be applied on method arguments for requesting the value of the annotated argument of type `java.io.File`, `java.lang.String`, `java.nio.file.Path` or `java.net.URI` from a "directory chooser" dialog.
+The [@AFXFromDirectoryChooserDialog](src/main/java/com/github/actionfx/core/annotation/AFXFromDirectoryChooserDialog.java) annotation can be applied on method arguments for requesting the value of the annotated argument of type `java.io.File`, `java.lang.String`, `java.nio.file.Path` or `java.net.URI` from a "directory chooser" dialog.
 
 In case the dialog is cancelled and no directory is chosen, the method invocation is also cancelled, unless you set the attribute `continueOnCancel` to `true`. If this is the case, the method argument will be `null`.
 

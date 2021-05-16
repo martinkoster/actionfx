@@ -164,6 +164,7 @@ public class ActionFX {
 	 * Internal constructor. Use {@link #build()} method to create your
 	 * application-specific instance of {@link ActionFX}.
 	 */
+	@SuppressFBWarnings(justification = "Design Decision")
 	ActionFX() {
 		instance = this; // NOSONAR
 	}
@@ -451,8 +452,8 @@ public class ActionFX {
 	 *         selected
 	 */
 	public File showDirectoryChooserDialog(final String title, final File defaultDirectory, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showDirectoryChooserDialog(title,
-				defaultDirectory, owner);
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))
+				.showDirectoryChooserDialog(title, defaultDirectory, owner);
 	}
 
 	/**

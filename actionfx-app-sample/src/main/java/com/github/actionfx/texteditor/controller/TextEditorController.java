@@ -27,6 +27,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Scanner;
 
@@ -87,7 +88,7 @@ public class TextEditorController {
 			@AFXFromFileSaveDialog(title = "Save Text File", extensionFilter = { "Text Files",
 					"*.txt" }) final File file,
 			@AFXControlValue("editorTextArea") final String text) throws IOException {
-		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
 			writer.write(text);
 		}
 		// show an information dialog that saving was successful
