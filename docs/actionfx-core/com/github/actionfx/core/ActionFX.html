@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":9,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10};
+var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -251,8 +251,53 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#beanContainer">beanContainer</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="container/extension/ControllerExtensionBean.html" title="class in com.github.actionfx.core.container.extension">ControllerExtensionBean</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#controllerExtensionBean">controllerExtensionBean</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="instrumentation/ActionFXEnhancer.EnhancementStrategy.html" title="enum in com.github.actionfx.core.instrumentation">ActionFXEnhancer.EnhancementStrategy</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#enhancementStrategy">enhancementStrategy</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="instrumentation/ActionFXEnhancer.html" title="interface in com.github.actionfx.core.instrumentation">ActionFXEnhancer</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#enhancer">enhancer</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected static <a href="ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#instance">instance</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#mainViewId">mainViewId</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#observableLocale">observableLocale</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected javafx.stage.Stage</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#primaryStage">primaryStage</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#scanPackage">scanPackage</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.Thread.UncaughtExceptionHandler</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#uncaughtExceptionHandler">uncaughtExceptionHandler</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -326,34 +371,41 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="converter/ConversionService.html" title="class in com.github.actionfx.core.converter">ConversionService</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConversionService()">getConversionService</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Retrieves ActionFX' conversion service.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="instrumentation/ActionFXEnhancer.EnhancementStrategy.html" title="enum in com.github.actionfx.core.instrumentation">ActionFXEnhancer.EnhancementStrategy</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEnhancementStrategy()">getEnhancementStrategy</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The enhancement strategy to use within ActionFX.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="instrumentation/ActionFXEnhancer.html" title="interface in com.github.actionfx.core.instrumentation">ActionFXEnhancer</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEnhancer()">getEnhancer</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The enhancer to use within ActionFX.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static <a href="ActionFX.html" title="class in com.github.actionfx.core">ActionFX</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getInstance()">getInstance</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets an instance of <a href="ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="view/View.html" title="interface in com.github.actionfx.core.view">View</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMainView()">getMainView</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the main view of the application.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMainViewId()">getMainViewId</a></span>()</code></th>
 <td class="colLast">
@@ -361,7 +413,7 @@ extends java.lang.Object</pre>
  <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getObservableLocale()">getObservableLocale</a></span>()</code></th>
 <td class="colLast">
@@ -370,14 +422,14 @@ extends java.lang.Object</pre>
  return the <code>Locale.getDefault()</code> locale.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>javafx.stage.Stage</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPrimaryStage()">getPrimaryStage</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the primary stage, if it was set be the user.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getScanPackage()">getScanPackage</a></span>()</code></th>
 <td class="colLast">
@@ -385,28 +437,28 @@ extends java.lang.Object</pre>
  components.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.lang.Thread.UncaughtExceptionHandler</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUncaughtExceptionHandler()">getUncaughtExceptionHandler</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the <code>Thread.UncaughtExceptionHandler</code>, if set.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="view/View.html" title="interface in com.github.actionfx.core.view">View</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getView(java.lang.String)">getView</a></span>&#8203;(java.lang.String&nbsp;viewId)</code></th>
 <td class="colLast">
 <div class="block">Gets the view by the supplied <code>viewId</code>.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#reset()">reset</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Resets ActionFX to its initial state.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#scanForActionFXComponents()">scanForActionFXComponents</a></span>()</code></th>
 <td class="colLast">
@@ -414,7 +466,7 @@ extends java.lang.Object</pre>
  <a href="#scanPackage"><code>scanPackage</code></a>.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#scanForActionFXComponents(com.github.actionfx.core.container.BeanContainerFacade)">scanForActionFXComponents</a></span>&#8203;(<a href="container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a>&nbsp;beanContainer)</code></th>
 <td class="colLast">
@@ -422,7 +474,7 @@ extends java.lang.Object</pre>
  <a href="#scanPackage"><code>scanPackage</code></a>.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setPrimaryStage(javafx.stage.Stage)">setPrimaryStage</a></span>&#8203;(javafx.stage.Stage&nbsp;primaryStage)</code></th>
 <td class="colLast">
@@ -430,7 +482,7 @@ extends java.lang.Object</pre>
  application.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showConfirmationDialog(java.lang.String,java.lang.String,java.lang.String)">showConfirmationDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                       java.lang.String&nbsp;headerText,
@@ -440,17 +492,17 @@ extends java.lang.Object</pre>
  <code>message</code>.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showDirectoryChooser(java.lang.String,java.io.File,javafx.stage.Window)">showDirectoryChooser</a></span>&#8203;(java.lang.String&nbsp;title,
-                    java.io.File&nbsp;defaultDirectory,
-                    javafx.stage.Window&nbsp;owner)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showDirectoryChooserDialog(java.lang.String,java.io.File,javafx.stage.Window)">showDirectoryChooserDialog</a></span>&#8203;(java.lang.String&nbsp;title,
+                          java.io.File&nbsp;defaultDirectory,
+                          javafx.stage.Window&nbsp;owner)</code></th>
 <td class="colLast">
 <div class="block">Displays a directory chooser and returns the selected <code>File</code>
  descriptor.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showErrorDialog(java.lang.String,java.lang.String,java.lang.String)">showErrorDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                java.lang.String&nbsp;headerText,
@@ -460,7 +512,7 @@ extends java.lang.Object</pre>
  <code>message</code>.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showFileOpenDialog(java.lang.String,java.io.File,java.lang.String,javafx.stage.FileChooser.ExtensionFilter,javafx.stage.Window)">showFileOpenDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                   java.io.File&nbsp;defaultDirectory,
@@ -471,7 +523,7 @@ extends java.lang.Object</pre>
 <div class="block">Displays a file chooser and returns the selected <tt>File</tt> descriptor.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showFileOpenDialog(java.lang.String,java.io.File,javafx.stage.Window)">showFileOpenDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                   java.io.File&nbsp;defaultDirectory,
@@ -480,7 +532,7 @@ extends java.lang.Object</pre>
 <div class="block">Displays a file chooser and returns the selected <code>File</code> descriptor.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showFileSaveDialog(java.lang.String,java.io.File,java.lang.String,javafx.stage.FileChooser.ExtensionFilter,javafx.stage.Window)">showFileSaveDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                   java.io.File&nbsp;defaultDirectory,
@@ -491,7 +543,7 @@ extends java.lang.Object</pre>
 <div class="block">Displays a file chooser and returns the selected <code>File</code> descriptor.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showFileSaveDialog(java.lang.String,java.io.File,javafx.stage.Window)">showFileSaveDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                   java.io.File&nbsp;defaultDirectory,
@@ -500,7 +552,7 @@ extends java.lang.Object</pre>
 <div class="block">Displays a file chooser and returns the selected <code>File</code> descriptor.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showInformationDialog(java.lang.String,java.lang.String,java.lang.String)">showInformationDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                      java.lang.String&nbsp;headerText,
@@ -510,7 +562,7 @@ extends java.lang.Object</pre>
  <code>message</code>.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showTextInputDialog(java.lang.String,java.lang.String,java.lang.String)">showTextInputDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                    java.lang.String&nbsp;headerText,
@@ -520,7 +572,7 @@ extends java.lang.Object</pre>
  string value.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showTextInputDialog(java.lang.String,java.lang.String,java.lang.String,java.lang.String)">showTextInputDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                    java.lang.String&nbsp;headerText,
@@ -531,7 +583,7 @@ extends java.lang.Object</pre>
  string value.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showWarningDialog(java.lang.String,java.lang.String,java.lang.String)">showWarningDialog</a></span>&#8203;(java.lang.String&nbsp;title,
                  java.lang.String&nbsp;headerText,
@@ -577,10 +629,91 @@ extends java.lang.Object</pre>
 <a id="actionFXState">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>actionFXState</h4>
 <pre>protected static&nbsp;<a href="ActionFX.ActionFXState.html" title="enum in com.github.actionfx.core">ActionFX.ActionFXState</a> actionFXState</pre>
+</li>
+</ul>
+<a id="beanContainer">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>beanContainer</h4>
+<pre>protected&nbsp;<a href="container/BeanContainerFacade.html" title="interface in com.github.actionfx.core.container">BeanContainerFacade</a> beanContainer</pre>
+</li>
+</ul>
+<a id="mainViewId">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mainViewId</h4>
+<pre>protected&nbsp;java.lang.String mainViewId</pre>
+</li>
+</ul>
+<a id="scanPackage">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>scanPackage</h4>
+<pre>protected&nbsp;java.lang.String scanPackage</pre>
+</li>
+</ul>
+<a id="enhancementStrategy">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>enhancementStrategy</h4>
+<pre>protected&nbsp;<a href="instrumentation/ActionFXEnhancer.EnhancementStrategy.html" title="enum in com.github.actionfx.core.instrumentation">ActionFXEnhancer.EnhancementStrategy</a> enhancementStrategy</pre>
+</li>
+</ul>
+<a id="enhancer">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>enhancer</h4>
+<pre>protected&nbsp;<a href="instrumentation/ActionFXEnhancer.html" title="interface in com.github.actionfx.core.instrumentation">ActionFXEnhancer</a> enhancer</pre>
+</li>
+</ul>
+<a id="primaryStage">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>primaryStage</h4>
+<pre>protected&nbsp;javafx.stage.Stage primaryStage</pre>
+</li>
+</ul>
+<a id="uncaughtExceptionHandler">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>uncaughtExceptionHandler</h4>
+<pre>protected&nbsp;java.lang.Thread.UncaughtExceptionHandler uncaughtExceptionHandler</pre>
+</li>
+</ul>
+<a id="observableLocale">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>observableLocale</h4>
+<pre>protected&nbsp;javafx.beans.value.ObservableValue&lt;java.util.Locale&gt; observableLocale</pre>
+</li>
+</ul>
+<a id="controllerExtensionBean">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>controllerExtensionBean</h4>
+<pre>protected&nbsp;<a href="container/extension/ControllerExtensionBean.html" title="class in com.github.actionfx.core.container.extension">ControllerExtensionBean</a> controllerExtensionBean</pre>
 </li>
 </ul>
 </li>
@@ -797,6 +930,20 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a id="getConversionService()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConversionService</h4>
+<pre class="methodSignature">public&nbsp;<a href="converter/ConversionService.html" title="class in com.github.actionfx.core.converter">ConversionService</a>&nbsp;getConversionService()</pre>
+<div class="block">Retrieves ActionFX' conversion service.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the conversion service</dd>
+</dl>
+</li>
+</ul>
 <a id="showConfirmationDialog(java.lang.String,java.lang.String,java.lang.String)">
 <!--   -->
 </a>
@@ -876,15 +1023,15 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="showDirectoryChooser(java.lang.String,java.io.File,javafx.stage.Window)">
+<a id="showDirectoryChooserDialog(java.lang.String,java.io.File,javafx.stage.Window)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>showDirectoryChooser</h4>
-<pre class="methodSignature">public&nbsp;java.io.File&nbsp;showDirectoryChooser&#8203;(java.lang.String&nbsp;title,
-                                         java.io.File&nbsp;defaultDirectory,
-                                         javafx.stage.Window&nbsp;owner)</pre>
+<h4>showDirectoryChooserDialog</h4>
+<pre class="methodSignature">public&nbsp;java.io.File&nbsp;showDirectoryChooserDialog&#8203;(java.lang.String&nbsp;title,
+                                               java.io.File&nbsp;defaultDirectory,
+                                               javafx.stage.Window&nbsp;owner)</pre>
 <div class="block">Displays a directory chooser and returns the selected <code>File</code>
  descriptor.</div>
 <dl>

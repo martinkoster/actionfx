@@ -120,7 +120,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 @Documented
 @Target(METHOD)
 public @interface <span class="memberNameLabel">AFXOnAction</span></pre>
-<div class="block">Annotated methods are invoked when the control specified with fires
+<div class="block">Annotated methods are invoked when the node or control specified with fires
  <code>ActionEvent</code>. This is e.g. when the user clicks on
  <code>Button</code>.
  <p>
@@ -161,9 +161,9 @@ public @interface <span class="memberNameLabel">AFXOnAction</span></pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#controlId()">controlId</a></span></code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#nodeId()">nodeId</a></span></code></th>
 <td class="colLast">
-<div class="block">ID of the control whose action property shall be set to execute the annotated
+<div class="block">ID of the node whose action property shall be set to execute the annotated
  method.</div>
 </td>
 </tr>
@@ -210,19 +210,18 @@ public @interface <span class="memberNameLabel">AFXOnAction</span></pre>
 <!--   -->
 </a>
 <h3>Element Detail</h3>
-<a id="controlId()">
+<a id="nodeId()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>controlId</h4>
-<pre>java.lang.String&nbsp;controlId</pre>
-<div class="block">ID of the control whose action property shall be set to execute the annotated
+<h4>nodeId</h4>
+<pre>java.lang.String&nbsp;nodeId</pre>
+<div class="block">ID of the node whose action property shall be set to execute the annotated
  method.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the node ID of a control, whose action property will invoke the
-         annotated method.</dd>
+<dd>the node ID, whose action property will invoke the annotated method.</dd>
 </dl>
 </li>
 </ul>

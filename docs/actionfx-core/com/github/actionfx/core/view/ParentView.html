@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10};
+var data = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -168,7 +168,7 @@ extends <a href="AbstractView.html" title="class in com.github.actionfx.core.vie
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.github.actionfx.core.view.<a href="AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></h3>
-<code><a href="AbstractView.html#height">height</a>, <a href="AbstractView.html#icon">icon</a>, <a href="AbstractView.html#id">id</a>, <a href="AbstractView.html#lookupCache">lookupCache</a>, <a href="AbstractView.html#maximized">maximized</a>, <a href="AbstractView.html#modalDialogue">modalDialogue</a>, <a href="AbstractView.html#posX">posX</a>, <a href="AbstractView.html#posY">posY</a>, <a href="AbstractView.html#rootNode">rootNode</a>, <a href="AbstractView.html#stylesheets">stylesheets</a>, <a href="AbstractView.html#width">width</a>, <a href="AbstractView.html#windowTitle">windowTitle</a></code></li>
+<code><a href="AbstractView.html#height">height</a>, <a href="AbstractView.html#icon">icon</a>, <a href="AbstractView.html#id">id</a>, <a href="AbstractView.html#lookupCache">lookupCache</a>, <a href="AbstractView.html#maximized">maximized</a>, <a href="AbstractView.html#modalDialogue">modalDialogue</a>, <a href="AbstractView.html#posX">posX</a>, <a href="AbstractView.html#posY">posY</a>, <a href="AbstractView.html#resourceBundle">resourceBundle</a>, <a href="AbstractView.html#rootNode">rootNode</a>, <a href="AbstractView.html#stylesheets">stylesheets</a>, <a href="AbstractView.html#width">width</a>, <a href="AbstractView.html#windowTitle">windowTitle</a></code></li>
 </ul>
 </li>
 </ul>
@@ -195,6 +195,19 @@ extends <a href="AbstractView.html" title="class in com.github.actionfx.core.vie
 <tr class="rowColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.String,java.lang.Class,java.lang.Object,java.util.ResourceBundle)">ParentView</a></span>&#8203;(java.lang.String&nbsp;id,
           java.lang.Class&lt;? extends javafx.scene.Parent&gt;&nbsp;parentClass,
+          java.lang.Object&nbsp;controller,
+          java.util.ResourceBundle&nbsp;resourceBundle)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.String,javafx.scene.Parent,java.lang.Object)">ParentView</a></span>&#8203;(java.lang.String&nbsp;id,
+          javafx.scene.Parent&nbsp;parent,
+          java.lang.Object&nbsp;controller)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.String,javafx.scene.Parent,java.lang.Object,java.util.ResourceBundle)">ParentView</a></span>&#8203;(java.lang.String&nbsp;id,
+          javafx.scene.Parent&nbsp;rootNode,
           java.lang.Object&nbsp;controller,
           java.util.ResourceBundle&nbsp;resourceBundle)</code></th>
 <td class="colLast">&nbsp;</td>
@@ -232,22 +245,13 @@ extends <a href="AbstractView.html" title="class in com.github.actionfx.core.vie
  view components into the given controller.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>protected javafx.scene.Parent</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#instantiateParentClass(java.lang.Class,java.util.ResourceBundle)">instantiateParentClass</a></span>&#8203;(java.lang.Class&lt;? extends javafx.scene.Parent&gt;&nbsp;parentClass,
-                      java.util.ResourceBundle&nbsp;resourceBundle)</code></th>
-<td class="colLast">
-<div class="block">Instantiates the given <code>parentClass</code> by looking up a constructor
- accepting a <code>ResourceBundle</code> argument.</div>
-</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.com.github.actionfx.core.view.AbstractView">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.github.actionfx.core.view.<a href="AbstractView.html" title="class in com.github.actionfx.core.view">AbstractView</a></h3>
-<code><a href="AbstractView.html#applyStylesheets()">applyStylesheets</a>, <a href="AbstractView.html#attachViewToParent(javafx.scene.Parent,com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher)">attachViewToParent</a>, <a href="AbstractView.html#detachView()">detachView</a>, <a href="AbstractView.html#getHeight()">getHeight</a>, <a href="AbstractView.html#getIcon()">getIcon</a>, <a href="AbstractView.html#getId()">getId</a>, <a href="AbstractView.html#getPosX()">getPosX</a>, <a href="AbstractView.html#getPosY()">getPosY</a>, <a href="AbstractView.html#getRootNode()">getRootNode</a>, <a href="AbstractView.html#getScene()">getScene</a>, <a href="AbstractView.html#getStylesheets()">getStylesheets</a>, <a href="AbstractView.html#getWidth()">getWidth</a>, <a href="AbstractView.html#getWindow()">getWindow</a>, <a href="AbstractView.html#getWindowTitle()">getWindowTitle</a>, <a href="AbstractView.html#hide()">hide</a>, <a href="AbstractView.html#initializeStage(javafx.stage.Stage)">initializeStage</a>, <a href="AbstractView.html#isMaximized()">isMaximized</a>, <a href="AbstractView.html#isModalDialogue()">isModalDialogue</a>, <a href="AbstractView.html#lookupNode(java.lang.String)">lookupNode</a>, <a href="AbstractView.html#show()">show</a>, <a href="AbstractView.html#show(javafx.stage.Popup,javafx.stage.Window)">show</a>, <a href="AbstractView.html#show(javafx.stage.Stage)">show</a>, <a href="AbstractView.html#showAndWait()">showAndWait</a></code></li>
+<code><a href="AbstractView.html#applyStylesheets()">applyStylesheets</a>, <a href="AbstractView.html#attachViewToParent(javafx.scene.Parent,com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher)">attachViewToParent</a>, <a href="AbstractView.html#detachView()">detachView</a>, <a href="AbstractView.html#getHeight()">getHeight</a>, <a href="AbstractView.html#getIcon()">getIcon</a>, <a href="AbstractView.html#getId()">getId</a>, <a href="AbstractView.html#getPosX()">getPosX</a>, <a href="AbstractView.html#getPosY()">getPosY</a>, <a href="AbstractView.html#getResourceBundle()">getResourceBundle</a>, <a href="AbstractView.html#getRootNode()">getRootNode</a>, <a href="AbstractView.html#getScene()">getScene</a>, <a href="AbstractView.html#getStylesheets()">getStylesheets</a>, <a href="AbstractView.html#getWidth()">getWidth</a>, <a href="AbstractView.html#getWindow()">getWindow</a>, <a href="AbstractView.html#getWindowTitle()">getWindowTitle</a>, <a href="AbstractView.html#hide()">hide</a>, <a href="AbstractView.html#initializeStage(javafx.stage.Stage)">initializeStage</a>, <a href="AbstractView.html#isMaximized()">isMaximized</a>, <a href="AbstractView.html#isModalDialogue()">isModalDialogue</a>, <a href="AbstractView.html#lookupNode(java.lang.String)">lookupNode</a>, <a href="AbstractView.html#show()">show</a>, <a href="AbstractView.html#show(javafx.stage.Popup,javafx.stage.Window)">show</a>, <a href="AbstractView.html#show(javafx.stage.Stage)">show</a>, <a href="AbstractView.html#showAndWait()">showAndWait</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
@@ -272,6 +276,17 @@ extends <a href="AbstractView.html" title="class in com.github.actionfx.core.vie
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a id="&lt;init&gt;(java.lang.String,javafx.scene.Parent,java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ParentView</h4>
+<pre>public&nbsp;ParentView&#8203;(java.lang.String&nbsp;id,
+                  javafx.scene.Parent&nbsp;parent,
+                  java.lang.Object&nbsp;controller)</pre>
+</li>
+</ul>
 <a id="&lt;init&gt;(java.lang.String,java.lang.Class,java.lang.Object)">
 <!--   -->
 </a>
@@ -286,11 +301,23 @@ extends <a href="AbstractView.html" title="class in com.github.actionfx.core.vie
 <a id="&lt;init&gt;(java.lang.String,java.lang.Class,java.lang.Object,java.util.ResourceBundle)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>ParentView</h4>
 <pre>public&nbsp;ParentView&#8203;(java.lang.String&nbsp;id,
                   java.lang.Class&lt;? extends javafx.scene.Parent&gt;&nbsp;parentClass,
+                  java.lang.Object&nbsp;controller,
+                  java.util.ResourceBundle&nbsp;resourceBundle)</pre>
+</li>
+</ul>
+<a id="&lt;init&gt;(java.lang.String,javafx.scene.Parent,java.lang.Object,java.util.ResourceBundle)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ParentView</h4>
+<pre>public&nbsp;ParentView&#8203;(java.lang.String&nbsp;id,
+                  javafx.scene.Parent&nbsp;rootNode,
                   java.lang.Object&nbsp;controller,
                   java.util.ResourceBundle&nbsp;resourceBundle)</pre>
 </li>
@@ -317,26 +344,6 @@ extends <a href="AbstractView.html" title="class in com.github.actionfx.core.vie
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the controller instance</dd>
-</dl>
-</li>
-</ul>
-<a id="instantiateParentClass(java.lang.Class,java.util.ResourceBundle)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>instantiateParentClass</h4>
-<pre class="methodSignature">protected&nbsp;javafx.scene.Parent&nbsp;instantiateParentClass&#8203;(java.lang.Class&lt;? extends javafx.scene.Parent&gt;&nbsp;parentClass,
-                                                     java.util.ResourceBundle&nbsp;resourceBundle)</pre>
-<div class="block">Instantiates the given <code>parentClass</code> by looking up a constructor
- accepting a <code>ResourceBundle</code> argument. If no such constructor is
- provided, the default no-argument constructor is invoked.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>parentClass</code> - the parent class to instantiate</dd>
-<dd><code>resourceBundle</code> - the resource bundle to use as constructor argument</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the instantiated class</dd>
 </dl>
 </li>
 </ul>

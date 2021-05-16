@@ -387,16 +387,15 @@ class DialogControllerTest {
 	 * Defines an expected behaviour for a dialog.
 	 */
 	private <T> void setupDialog(final Supplier<T> dialogCallback) throws Exception {
-		FxToolkit.setupSceneRoot(() -> {
-			final Button openDialogButton = new Button("Open Dialog");
-			openDialogButton.setId("openDialog");
-			openDialogButton.setOnAction(event -> {
-				returnValue.set(dialogCallback.get());
-			});
-			final StackPane root = new StackPane(openDialogButton);
-			root.setPrefSize(500, 500);
-			return new StackPane(root);
+		final Button openDialogButton = new Button("Open Dialog");
+		openDialogButton.setId("openDialog");
+		openDialogButton.setOnAction(event -> {
+			returnValue.set(dialogCallback.get());
 		});
+		final StackPane root = new StackPane(openDialogButton);
+		root.setPrefSize(500, 500);
+		final StackPane stackPane = new StackPane(root);
+		FxToolkit.setupSceneRoot(() -> stackPane);
 		FxToolkit.setupStage(Stage::show);
 	}
 
