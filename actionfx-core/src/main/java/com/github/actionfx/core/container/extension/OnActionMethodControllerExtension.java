@@ -27,8 +27,7 @@ import java.lang.reflect.Method;
 
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.method.ControllerMethodInvocationAdapter;
-import com.github.actionfx.core.method.ControllerMethodInvocationAdapter.ParameterValue;
+import com.github.actionfx.core.method.ActionFXMethodInvocation;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 
@@ -61,16 +60,13 @@ public class OnActionMethodControllerExtension extends AbstractAnnotatedMethodCo
 					+ "' does not support an 'onAction' property! Please verify your @AFXOnAction annotation in controller class '"
 					+ controller.getClass().getCanonicalName() + "', method '" + annotatedElement.getName() + "'!");
 		}
-		onActionProperty.setValue(actionEvent -> {
-			final ControllerMethodInvocationAdapter adapter = new ControllerMethodInvocationAdapter(controller,
-					annotatedElement, ParameterValue.of(actionEvent));
-			if (annotation.async()) {
-				adapter.invokeAsynchronously(value -> {
-				});
-			} else {
-				adapter.invoke();
-			}
-		});
+		if (annotation.async()) {
+			onActionProperty.setValue(ActionFXMethodInvocation.forOnActionPropertyWithAsyncCall(returnValue -> {
+			}, controller, annotatedElement));
+		} else {
+			onActionProperty.setValue(ActionFXMethodInvocation.forOnActionProperty(controller, annotatedElement));
+
+		}
 	}
 
 }

@@ -290,10 +290,14 @@ public class ControlWrapperProvider {
 		return new ControlWrapper(c);
 	}
 
-	public static ControlWrapper textArea() {
+	public static ControlWrapper textArea(final String text) {
 		final TextArea c = new TextArea();
-		c.setText("Hello World");
+		c.setText(text);
 		return new ControlWrapper(c);
+	}
+
+	public static ControlWrapper textArea() {
+		return textArea("Hello World");
 	}
 
 	public static ControlWrapper textField() {

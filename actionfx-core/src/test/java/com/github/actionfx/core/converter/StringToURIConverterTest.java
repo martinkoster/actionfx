@@ -32,6 +32,8 @@ import java.net.URI;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 
+import com.github.actionfx.core.converter.StringToURIConverter;
+
 /**
  * JUnit test case for {@link StringToURIConverter}.
  *

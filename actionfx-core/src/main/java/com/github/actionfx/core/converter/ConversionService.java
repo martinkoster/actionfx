@@ -24,15 +24,21 @@
 package com.github.actionfx.core.converter;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Set;
+
+import com.github.actionfx.core.utils.ReflectionUtils;
 
 import javafx.beans.value.ObservableValue;
+import javafx.util.StringConverter;
 
 /**
  * Service offering conversion routines.
@@ -42,7 +48,15 @@ import javafx.beans.value.ObservableValue;
  */
 public class ConversionService {
 
-	private static final Map<ConvertiblePair, Converter<?, ?>> CONVERTER_REGISTRY = new HashMap<>();
+	// contains all registered converter factories
+	@SuppressWarnings("rawtypes")
+	private static final Map<ConvertiblePair, ConverterFactory> CONVERTER_FACTORIES = new HashMap<>();
+
+	// the converter cache provides fast access for converter factories. It also
+	// holds entries for each class of a class hierarchy, so that when accessing not
+	// the entire class hierarchy needs to be traversed again and again
+	@SuppressWarnings("rawtypes")
+	private static final Map<ConvertiblePair, ConverterFactory> CONVERTER_FACTORY_ACCESS_CACHE = new HashMap<>();
 
 	static {
 		registerConverter();
@@ -73,12 +87,25 @@ public class ConversionService {
 		if (targetType.isAssignableFrom(source.getClass())) {
 			return (T) source;
 		}
-		final Converter<Object, T> converter = lookupConverter(source.getClass(), targetType);
+		final Converter<Object, T> converter = (Converter<Object, T>) createConverter(source.getClass(), targetType);
 		if (converter != null) {
 			return converter.convert(source);
 		}
 		throw new IllegalArgumentException("Unable to convert type '" + source.getClass().getCanonicalName()
 				+ "' to type '" + targetType.getCanonicalName() + "'!");
+	}
+
+	/**
+	 * Creates a JavaFX string converter for the specified
+	 *
+	 * @param <T>
+	 * @param targetType
+	 * @return
+	 */
+	public <T> StringConverter<T> createStringConverter(final Class<T> targetType) {
+		final Converter<T, String> toStringConverter = createConverter(targetType, String.class);
+		final Converter<String, T> fromStringConverter = createConverter(String.class, targetType);
+		return new GenericStringConverter<>(toStringConverter, fromStringConverter);
 	}
 
 	/**
@@ -91,56 +118,160 @@ public class ConversionService {
 	 *         type to the specified target type
 	 */
 	public boolean canConvert(final Class<?> sourceType, final Class<?> targetType) {
-		return targetType.isAssignableFrom(sourceType) || lookupConverter(sourceType, targetType) != null;
+		return targetType.isAssignableFrom(sourceType) || lookupConverterFactory(sourceType, targetType) != null;
 	}
 
 	/**
-	 * Looks up the best fit converter that is registered in this conversion
-	 * service. Considers the type hierarchy of {@code sourceType}.
+	 * Creates a {@link Converter} for converting the given {@code sourceType} to
+	 * {@code targetType}. In case there is no converter for handling these source
+	 * and target types, {@code null} will be returned.
 	 *
+	 * @param <S>        the source type parameter
 	 * @param <T>        the target type parameter
 	 * @param sourceType the source type
 	 * @param targetType the target type
-	 * @return the looked up converter, or {@code null}, if no converter could be
-	 *         found
+	 * @return the created converter, or {@link null}, in case there is no converter
+	 *         available for the specified types
 	 */
-	@SuppressWarnings("unchecked")
-	protected <T> Converter<Object, T> lookupConverter(final Class<?> sourceType, final Class<T> targetType) {
-		final Stream<Class<?>> stream = generateStream(sourceType);
-		return (Converter<Object, T>) stream.distinct()
-				.filter(clazz -> CONVERTER_REGISTRY.containsKey(ConvertiblePair.of(clazz, targetType)))
-				.map(clazz -> CONVERTER_REGISTRY.get(ConvertiblePair.of(clazz, targetType))).findFirst()
-				.orElseGet(() -> null);
-	}
-
-	private static void registerConverter() {
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(File.class, Path.class), new FileToPathConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(File.class, String.class), new FileToStringConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(File.class, URI.class), new FileToURIConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(String.class, Path.class), new StringToPathConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(String.class, File.class), new StringToFileConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(String.class, URI.class), new StringToURIConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(URI.class, Path.class), new URIToPathConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(URI.class, File.class), new URIToFileConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(URI.class, String.class), new URIToStringConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(Path.class, File.class), new PathToFileConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(Path.class, URI.class), new PathToURIConverter());
-		CONVERTER_REGISTRY.put(ConvertiblePair.of(Path.class, String.class), new PathToStringConverter());
+	private <S, T> Converter<S, T> createConverter(final Class<S> sourceType, final Class<T> targetType) {
+		final ConverterFactory<S, T> converterFactory = lookupConverterFactory(sourceType, targetType);
+		if (converterFactory == null) {
+			return null;
+		}
+		return converterFactory.create(sourceType, targetType);
 	}
 
 	/**
-	 * Creates a stream on the class hierarchy of {@code clazz}, including all
-	 * implemented interfaces.
+	 * Looks up the best fit converter factory that is registered in this conversion
+	 * service. Considers the type hierarchy of {@code sourceType}.
+	 * <p>
+	 * This method first tries to lookup the converter factory in cache via a fast
+	 * lookup. In case the converter factory is not yet cached, the entire class
+	 * hierarchies of the {@code sourceType} and {@code targetType} are checked.
 	 *
-	 * @param clazz the class to create a hierarchy stream for
-	 * @return the created stream
+	 * @param sourceType the source type
+	 * @param targetType the target type
+	 * @return the looked up converter factory, or {@code null}, if no converter
+	 *         factory could be found
 	 */
-	private Stream<Class<?>> generateStream(final Class<?> clazz) {
-		if (clazz == null) {
-			return Stream.empty();
+	@SuppressWarnings("unchecked")
+	protected <S, T> ConverterFactory<S, T> lookupConverterFactory(final Class<S> sourceType,
+			final Class<T> targetType) {
+		return CONVERTER_FACTORY_ACCESS_CACHE.computeIfAbsent(ConvertiblePair.of(sourceType, targetType),
+				this::findConverterFactory);
+	}
+
+	/**
+	 * Finds a suiting converter factory by iterating over the entire class
+	 * hierarchies of the source and target types of the {@link ConvertiblePair}.
+	 *
+	 * @param <S>             the source type
+	 * @param <T>             the target type
+	 * @param convertiblePair the convertible pair
+	 * @return the found converter factory, or {@code null}, if no converter factory
+	 *         could be found.
+	 */
+	@SuppressWarnings("unchecked")
+	protected <S, T> ConverterFactory<S, T> findConverterFactory(final ConvertiblePair convertiblePair) {
+		final List<Class<?>> sourceCandidates = getClassHierarchy(convertiblePair.getSource());
+		final List<Class<?>> targetCandidates = getClassHierarchy(convertiblePair.getTarget());
+		for (final Class<?> sourceCandidate : sourceCandidates) {
+			for (final Class<?> targetCandidate : targetCandidates) {
+				final ConvertiblePair pairToCheck = new ConvertiblePair(sourceCandidate, targetCandidate);
+				final ConverterFactory<S, T> converterFactory = CONVERTER_FACTORIES.get(pairToCheck);
+				if (converterFactory != null) {
+					return converterFactory;
+				}
+			}
 		}
-		return Stream.concat(Stream.concat(Stream.of(clazz), generateStream(clazz.getSuperclass())),
-				Arrays.stream(clazz.getInterfaces()).flatMap(this::generateStream));
+		return null;
+	}
+
+	/**
+	 * Returns an ordered class hierarchy for the given type.
+	 *
+	 * @param type the type
+	 * @return an ordered list of all classes that the given type extends or
+	 *         implements
+	 */
+	private List<Class<?>> getClassHierarchy(final Class<?> type) {
+		final List<Class<?>> hierarchy = new ArrayList<>(20);
+		final Set<Class<?>> visited = new HashSet<>(20);
+		addToClassHierarchy(0, ReflectionUtils.resolvePrimitiveIfNecessary(type), false, hierarchy, visited);
+		final boolean array = type.isArray();
+
+		int i = 0;
+		while (i < hierarchy.size()) {
+			Class<?> candidate = hierarchy.get(i);
+			candidate = array ? candidate.getComponentType() : ReflectionUtils.resolvePrimitiveIfNecessary(candidate);
+			final Class<?> superclass = candidate.getSuperclass();
+			if (superclass != null && superclass != Object.class && superclass != Enum.class) {
+				addToClassHierarchy(i + 1, candidate.getSuperclass(), array, hierarchy, visited);
+			}
+			addInterfacesToClassHierarchy(candidate, array, hierarchy, visited);
+			i++;
+		}
+
+		if (Enum.class.isAssignableFrom(type)) {
+			addToClassHierarchy(hierarchy.size(), Enum.class, array, hierarchy, visited);
+			addToClassHierarchy(hierarchy.size(), Enum.class, false, hierarchy, visited);
+			addInterfacesToClassHierarchy(Enum.class, array, hierarchy, visited);
+		}
+
+		addToClassHierarchy(hierarchy.size(), Object.class, array, hierarchy, visited);
+		addToClassHierarchy(hierarchy.size(), Object.class, false, hierarchy, visited);
+		return hierarchy;
+	}
+
+	private void addInterfacesToClassHierarchy(final Class<?> type, final boolean asArray,
+			final List<Class<?>> hierarchy, final Set<Class<?>> visited) {
+
+		for (final Class<?> implementedInterface : type.getInterfaces()) {
+			addToClassHierarchy(hierarchy.size(), implementedInterface, asArray, hierarchy, visited);
+		}
+	}
+
+	private void addToClassHierarchy(final int index, Class<?> type, final boolean asArray,
+			final List<Class<?>> hierarchy, final Set<Class<?>> visited) {
+
+		if (asArray) {
+			type = Array.newInstance(type, 0).getClass();
+		}
+		if (visited.add(type)) {
+			hierarchy.add(index, type);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void registerConverter() {
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(File.class, Path.class),
+				(sourceClass, targetClass) -> new FileToPathConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(File.class, String.class),
+				(sourceClass, targetClass) -> new FileToStringConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(File.class, URI.class),
+				(sourceClass, targetClass) -> new FileToURIConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Path.class),
+				(sourceClass, targetClass) -> new StringToPathConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, File.class),
+				(sourceClass, targetClass) -> new StringToFileConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, URI.class),
+				(sourceClass, targetClass) -> new StringToURIConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(URI.class, Path.class),
+				(sourceClass, targetClass) -> new URIToPathConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(URI.class, File.class),
+				(sourceClass, targetClass) -> new URIToFileConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(URI.class, String.class),
+				(sourceClass, targetClass) -> new URIToStringConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Path.class, File.class),
+				(sourceClass, targetClass) -> new PathToFileConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Path.class, URI.class),
+				(sourceClass, targetClass) -> new PathToURIConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Path.class, String.class),
+				(sourceClass, targetClass) -> new PathToStringConverter());
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Number.class, Number.class),
+				(sourceClass, targetClass) -> new NumberToNumberConverter<>(targetClass));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Number.class),
+				(sourceClass, targetClass) -> new StringToNumberConverter<>(targetClass));
 	}
 
 	/**
@@ -215,6 +346,38 @@ public class ConversionService {
 			}
 			return true;
 		}
+
+		public Class<?> getSource() {
+			return source;
+		}
+
+		public Class<?> getTarget() {
+			return target;
+		}
+	}
+
+	/**
+	 * Factory interface for creating instances of converter.
+	 *
+	 * @param <S> the source type
+	 * @param <T> the target type
+	 *
+	 * @author koster
+	 *
+	 */
+	@FunctionalInterface
+	public interface ConverterFactory<S, T> {
+
+		/**
+		 * Creates a new instance of a {@link Converter}
+		 *
+		 * @param <S>         the source type
+		 * @param <T>         the target type
+		 * @param sourceClass the source class
+		 * @param targetClass the target class
+		 * @return the created converter instance
+		 */
+		public Converter<S, T> create(Class<S> sourceClass, Class<T> targetClass);
 	}
 
 }

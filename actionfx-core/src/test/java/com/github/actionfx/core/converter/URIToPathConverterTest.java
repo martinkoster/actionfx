@@ -32,6 +32,8 @@ import java.nio.file.Path;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 
+import com.github.actionfx.core.converter.URIToPathConverter;
+
 /**
  * JUnit test case for {@link URIToPathConverter}.
  *

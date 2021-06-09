@@ -199,13 +199,13 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenListHasElements() {
+	void testEnableNodeWhenListHasElements() {
 		final ObservableList<String> list = FXCollections.observableArrayList();
 		final Button button = new Button();
 		button.setDisable(true);
 
 		// create a binding between button's disable state and the list
-		AFXUtils.enableButtonWhenListHasElements(button, list);
+		AFXUtils.enableNodeWhenListHasElements(button, list);
 
 		assertThat(button.isDisabled(), equalTo(true));
 
@@ -223,7 +223,7 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenListHasElements_listProperty() {
+	void testEnableNodeWhenListHasElements_listProperty() {
 		// GIVEN
 		final ObjectProperty<ObservableList<String>> listProperty = new SimpleObjectProperty<>();
 		final ObservableList<String> list = FXCollections.observableArrayList();
@@ -232,7 +232,7 @@ class AFXUtilsTest {
 
 		// WHEN
 		// create a binding between button's disable state and the list
-		AFXUtils.enableButtonWhenListHasElements(button, listProperty);
+		AFXUtils.enableNodeWhenListHasElements(button, listProperty);
 
 		// THEN (list property not yet set, so button is disabled)
 		assertThat(button.isDisabled(), equalTo(true));
@@ -261,13 +261,13 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void enableButtonWhenListHasNoElements() {
+	void testEnableNodeWhenListHasNoElements() {
 		final ObservableList<String> list = FXCollections.observableArrayList();
 		final Button button = new Button();
 		button.setDisable(true);
 
 		// create a binding between button's disable state and the list
-		AFXUtils.enableButtonWhenListHasNoElements(button, list);
+		AFXUtils.enableNodeWhenListHasNoElements(button, list);
 
 		// button is not disabled, because list has no elements
 		assertThat(button.isDisabled(), equalTo(false));
@@ -286,7 +286,7 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void enableButtonWhenListHasNoElements_listProperty() {
+	void testEnableNodeWhenListHasNoElements_listProperty() {
 		// GIVEN
 		final ObjectProperty<ObservableList<String>> listProperty = new SimpleObjectProperty<>();
 		final ObservableList<String> list = FXCollections.observableArrayList();
@@ -295,7 +295,7 @@ class AFXUtilsTest {
 
 		// WHEN
 		// create a binding between button's disable state and the list
-		AFXUtils.enableButtonWhenListHasNoElements(button, listProperty);
+		AFXUtils.enableNodeWhenListHasNoElements(button, listProperty);
 
 		// THEN
 		// button is not disabled, because list has no elements
@@ -320,14 +320,14 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenStringPropertyHasText() {
+	void testEnableNodeWhenStringPropertyHasText() {
 		final TextField textField = new TextField();
 
 		final Button button = new Button();
 		button.setDisable(true);
 
 		// create a binding between button's disable state and the list
-		AFXUtils.enableButtonWhenStringPropertyHasText(button, textField.textProperty());
+		AFXUtils.enableNodeWhenStringPropertyHasText(button, textField.textProperty());
 
 		assertThat(button.isDisabled(), equalTo(true));
 
@@ -346,13 +346,13 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenControlsHaveValues_singleControl() {
+	void testEnableNodeWhenControlsHaveValues_singleControl() {
 		final TextField tf = new TextField();
 
 		final Button button = new Button();
 
 		// create a binding between button and control
-		AFXUtils.enableButtonWhenAllControlsHaveValues(button, tf);
+		AFXUtils.enableNodeWhenAllControlsHaveUserValues(button, tf);
 
 		// field is empty, button is expected to be empty
 		assertThat(button.isDisabled(), equalTo(true));
@@ -371,14 +371,14 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenControlsHaveValues_multipleControls() {
+	void testEnableNodeWhenControlsHaveValues_multipleControls() {
 		final TextField tf = new TextField();
 		final TextArea ta = new TextArea();
 
 		final Button button = new Button();
 
 		// create a binding between button and control
-		AFXUtils.enableButtonWhenAllControlsHaveValues(button, tf, ta);
+		AFXUtils.enableNodeWhenAllControlsHaveUserValues(button, tf, ta);
 
 		// field is empty, button is expected to be empty
 		assertThat(button.isDisabled(), equalTo(true));
@@ -403,13 +403,13 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenConditionIsMet() {
+	void testEnableNodeWhenConditionIsMet() {
 		// GIVEN
 		final BooleanProperty condition = new SimpleBooleanProperty(false);
 		final Button button = new Button();
 
 		// WHEN
-		AFXUtils.enableButtonWhenConditionIsMet(button, condition);
+		AFXUtils.enableNodeWhenConditionIsMet(button, condition);
 
 		// THEN
 		// initial state was "false", so button is expected to be disabled
@@ -423,13 +423,13 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenPropertyHasExpectValue() {
+	void testEnableNodeWhenPropertyHasExpectedValue() {
 		// GIVEN
 		final IntegerProperty property = new SimpleIntegerProperty(10);
 		final Button button = new Button();
 
 		// WHEN
-		AFXUtils.enableButtonWhenPropertyHasExpectValue(button, property, 0);
+		AFXUtils.enableNodeWhenPropertyHasExpectValue(button, property, 0);
 
 		// THEN
 		// disabled, value is 10, expected is 0
@@ -444,13 +444,34 @@ class AFXUtilsTest {
 	}
 
 	@Test
-	void testEnableButtonWhenPropertyHasNotExpectValue() {
+	void testEnableNodeWhenPropertyHasExpectedValue_expectedValueIsNull() {
+		// GIVEN
+		final ObjectProperty<String> property = new SimpleObjectProperty<>("hello");
+		final Button button = new Button();
+
+		// WHEN
+		AFXUtils.enableNodeWhenPropertyHasExpectValue(button, property, null);
+
+		// THEN
+		// disabled, value is "hello", expected is null
+		assertThat(button.isDisabled(), equalTo(true));
+
+		// AND WHEN
+		property.set(null);
+
+		// AND THEN
+		// enabled, value is null, expected is null
+		assertThat(button.isDisabled(), equalTo(false));
+	}
+
+	@Test
+	void testEnableNodeWhenPropertyHasNotExpectValue() {
 		// GIVEN
 		final IntegerProperty property = new SimpleIntegerProperty(10);
 		final Button button = new Button();
 
 		// WHEN
-		AFXUtils.enableButtonWhenPropertyHasNotExpectedValue(button, property, 0);
+		AFXUtils.enableNodeWhenPropertyHasNotExpectedValue(button, property, 0);
 
 		// THEN
 		// enabled, value is 10, expected is 0
@@ -461,6 +482,27 @@ class AFXUtilsTest {
 
 		// AND THEN
 		// disabled, value is 0 expected is 0
+		assertThat(button.isDisabled(), equalTo(true));
+	}
+
+	@Test
+	void testEnableNodeWhenPropertyHasNotExpectValue_expectedValueIsNull() {
+		// GIVEN
+		final ObjectProperty<String> property = new SimpleObjectProperty<>("hello");
+		final Button button = new Button();
+
+		// WHEN
+		AFXUtils.enableNodeWhenPropertyHasNotExpectedValue(button, property, null);
+
+		// THEN
+		// enabled, value is "hello", expected is null
+		assertThat(button.isDisabled(), equalTo(false));
+
+		// AND WHEN
+		property.set(null);
+
+		// AND THEN
+		// disabled, value is null expected is null
 		assertThat(button.isDisabled(), equalTo(true));
 	}
 

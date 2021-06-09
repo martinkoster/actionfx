@@ -24,7 +24,6 @@
 package com.github.actionfx.core.method;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -35,6 +34,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+
+import org.apache.commons.lang3.ClassUtils;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXArgHint;
@@ -168,15 +169,10 @@ public class ControllerMethodInvocationAdapter {
 	 * @param <T> the return type of the method
 	 * @return the return value of the method
 	 */
-	@SuppressWarnings("unchecked")
 	protected <T> T invokeInternal() {
-		try {
-			final T returnValue = (T) method.invoke(controller, methodArguments);
-			methodExecutionState.set(MethodExecutionState.EXECUTED);
-			return returnValue;
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new IllegalStateException("Invocation of method '" + method.getName() + "' failed!", e);
-		}
+		final T returnValue = ReflectionUtils.invokeMethod(method, controller, methodArguments);
+		methodExecutionState.set(MethodExecutionState.EXECUTED);
+		return returnValue;
 	}
 
 	/**
@@ -357,7 +353,7 @@ public class ControllerMethodInvocationAdapter {
 	 */
 	private static boolean candidateMatchesTypeParameter(final Parameter parameter, final ParameterValue candidate) {
 		return candidate.getType() == null && !parameter.getType().isPrimitive()
-				|| parameter.getType().isAssignableFrom(candidate.getType());
+				|| ClassUtils.isAssignable(parameter.getType(), candidate.getType(), true);
 	}
 
 	/**

@@ -32,6 +32,8 @@ import java.net.URI;
 import org.assertj.core.util.Files;
 import org.junit.jupiter.api.Test;
 
+import com.github.actionfx.core.converter.FileToURIConverter;
+
 /**
  * JUnit test case for {@link FileToURIConverter}.
  *

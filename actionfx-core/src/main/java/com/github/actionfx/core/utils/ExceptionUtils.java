@@ -36,6 +36,13 @@ public class ExceptionUtils {
 	public static final String NULL_VALUE_STRING = "null";
 
 	/**
+	 * Class cannot be instantiated.
+	 */
+	private ExceptionUtils() {
+		// class can not be instantiated.
+	}
+
+	/**
 	 * Converts the {@code values} to a printable string e.g. as part of an
 	 * exception.
 	 *

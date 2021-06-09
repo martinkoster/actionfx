@@ -714,7 +714,7 @@ Attribute 				| Description
 		// do something with the folder here 
 	}
 	
-		@AFXOnAction(controlId = "actionButton")
+	@AFXOnAction(controlId = "actionButton")
 	public void onButtonClicked(@AFXFromDirectoryChooserDialog(title="Select Folder") final URI folder) {
 		// do something with the folder here 
 	}

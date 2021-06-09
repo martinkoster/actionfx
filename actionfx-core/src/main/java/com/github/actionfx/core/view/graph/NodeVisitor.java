@@ -30,6 +30,10 @@ import javafx.scene.control.Tab;
  * interface uses {@link NodeWrapper} for describing elements in the scene graph
  * and not directly {@link Node}s, because not all elements in the JavaFX scene
  * graph do inherit from {@link Node} (e.g. {@link Tab}s).
+ * <p>
+ * Implementations of {@link NodeVisitor} can be applied to the scene graph via
+ * {@link NodeWrapper#applyNodeVisitorByBFS(NodeVisitor)} or
+ * {@link NodeWrapper#applyNodeVisitorByDFS(NodeVisitor)}.
  *
  * @author koster
  *

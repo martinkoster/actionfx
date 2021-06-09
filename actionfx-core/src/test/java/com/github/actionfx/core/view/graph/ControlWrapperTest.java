@@ -115,6 +115,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -133,6 +135,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, accordion.getPanes().get(0));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -150,6 +154,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Hello World");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -167,6 +173,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValueIsNotSupported(wrapper);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -184,6 +192,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, false);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -201,6 +211,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, true);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -218,6 +230,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -235,6 +249,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Choice 2");
 		assertSelectedValues(wrapper, "Choice 2");
 		assertUserValue(wrapper, "Choice 2");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -252,6 +268,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, Color.AZURE);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -269,6 +287,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -286,6 +306,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Choice 2");
 		assertSelectedValues(wrapper, "Choice 2");
 		assertUserValue(wrapper, "Choice 2");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -305,6 +327,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Manually entered");
 		assertSelectedValues(wrapper, "Manually entered");
 		assertUserValue(wrapper, "Manually entered");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -322,6 +346,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, LocalDate.of(2020, 12, 31));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -339,6 +365,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "https://www.google.com");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -356,7 +384,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Hello World");
-
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -374,6 +403,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -391,6 +422,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Choice 2");
 		assertSelectedValues(wrapper, "Choice 2");
 		assertUserValue(wrapper, "Choice 2");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -408,6 +441,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, Collections.EMPTY_LIST);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -425,6 +460,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Choice 3");
 		assertSelectedValues(wrapper, "Choice 2", "Choice 3");
 		assertUserValue(wrapper, Arrays.asList("Choice 2", "Choice 3"));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -442,6 +479,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValueIsNotSupported(wrapper);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -460,6 +499,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Menu 2");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -477,6 +518,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValueIsNotSupported(wrapper);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -494,6 +537,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Password");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -511,6 +556,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, 0.75);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -528,6 +575,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, 0.75);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -545,6 +594,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, false);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -562,6 +613,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, true);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -579,6 +632,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, 0.75);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -596,6 +651,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValueIsNotSupported(wrapper);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -613,6 +670,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValueIsNotSupported(wrapper);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesNotSet(wrapper);
 	}
 
 	@Test
@@ -630,6 +689,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, 0.75);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -647,6 +708,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, 0.75);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -665,6 +728,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Menu 2");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -682,6 +747,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, pane.getItems());
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -699,6 +766,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -716,6 +785,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Item 2");
 		assertSelectedValues(wrapper, "Item 2");
 		assertUserValue(wrapper, "Item 2");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -733,6 +804,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, Collections.EMPTY_LIST);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -750,6 +823,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Item 3");
 		assertSelectedValues(wrapper, "Item 2", "Item 3");
 		assertUserValue(wrapper, Arrays.asList("Item 2", "Item 3"));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -768,6 +843,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, pane.getTabs().get(0));
 		assertSelectedValues(wrapper, pane.getTabs().get(0));
 		assertUserValue(wrapper, pane.getTabs().get(0));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -786,6 +863,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, pane.getTabs().get(1));
 		assertSelectedValues(wrapper, pane.getTabs().get(1));
 		assertUserValue(wrapper, pane.getTabs().get(1));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -803,6 +882,20 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Hello World");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
+	}
+
+	@Test
+	void testTextArea_justContainsBlanks() {
+		// GIVEN
+		final String content = "            		";
+		final ControlWrapper wrapper = ControlWrapperProvider.textArea(content);
+
+		// WHEN and THEN
+		assertUserValue(wrapper, content);
+		assertUserValueNotSet(wrapper); // blanks are not considered as "value"
+		assertValueOrValuesNotSet(wrapper); // blanks are not considered as "value"
 	}
 
 	@Test
@@ -820,6 +913,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Hello World");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -837,6 +932,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Title 1");
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -854,6 +951,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, false);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -871,6 +970,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, true);
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -889,6 +990,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, c.getItems());
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -907,6 +1010,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -928,6 +1033,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, root.getChildren().get(0));
 		assertSelectedValues(wrapper, root.getChildren().get(0));
 		assertUserValue(wrapper, root.getChildren().get(0));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -946,6 +1053,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, Collections.EMPTY_LIST);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -967,6 +1076,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, root);
 		assertSelectedValues(wrapper, root.getChildren().get(0), root.getChildren().get(1));
 		assertUserValue(wrapper, Arrays.asList(root.getChildren().get(0), root.getChildren().get(1)));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -985,6 +1096,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, null);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1005,6 +1118,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, root.getChildren().get(0));
 		assertSelectedValues(wrapper, root.getChildren().get(0));
 		assertUserValue(wrapper, root.getChildren().get(0));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -1023,6 +1138,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, Collections.EMPTY_LIST);
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1043,6 +1160,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, root.getChildren().get(1));
 		assertSelectedValues(wrapper, root.getChildren().get(0), root.getChildren().get(1));
 		assertUserValue(wrapper, Arrays.asList(root.getChildren().get(0), root.getChildren().get(1)));
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -1060,6 +1179,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValues(wrapper, "Selected Value");// comes from CustomSelectionModelWrapper
 		assertUserValue(wrapper, Arrays.asList("Selected Value")); // comes from CustomSelectionModelWrapper
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -1094,6 +1215,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);// comes from ObservableListSelectionModel
 		assertUserValue(wrapper, Collections.emptyList()); // comes from ObservableListSelectionModel
+		assertUserValueNotSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -1114,6 +1237,8 @@ class ControlWrapperTest {
 		assertSelectedValue(wrapper, "Item 3");
 		assertSelectedValues(wrapper, "Item 2", "Item 3"); // comes from ObservableListSelectionModel
 		assertUserValue(wrapper, Arrays.asList("Item 2", "Item 3")); // comes from ObservableListSelectionModel
+		assertUserValueSet(wrapper);
+		assertValueOrValuesSet(wrapper);
 	}
 
 	@Test
@@ -1415,8 +1540,23 @@ class ControlWrapperTest {
 	}
 
 	private static void assertUserValueIsNotSupported(final ControlWrapper wrapper) {
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getUserValue());
-		assertThat(ex.getMessage(), containsString("does not support user value retrieval!"));
+		assertThat(wrapper.getUserValue(), nullValue());
+	}
+
+	private static void assertUserValueSet(final ControlWrapper wrapper) {
+		assertThat(wrapper.hasUserValueSet(), equalTo(true));
+	}
+
+	private static void assertUserValueNotSet(final ControlWrapper wrapper) {
+		assertThat(wrapper.hasUserValueSet(), equalTo(false));
+	}
+
+	private static void assertValueOrValuesSet(final ControlWrapper wrapper) {
+		assertThat(wrapper.hasValueOrValuesSet(), equalTo(true));
+	}
+
+	private static void assertValueOrValuesNotSet(final ControlWrapper wrapper) {
+		assertThat(wrapper.hasValueOrValuesSet(), equalTo(false));
 	}
 
 	/**

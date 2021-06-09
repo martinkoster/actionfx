@@ -435,6 +435,90 @@ class ReflectionUtilsTest {
 
 	}
 
+	@Test
+	void testFindMethodByFilter() throws NoSuchMethodException, SecurityException {
+		// WHEN
+		final List<Method> methods = ReflectionUtils.findMethods(DerivedClassOverridingMethod.class,
+				method -> method.getName().equals("method"));
+
+		// THEN (overridden method in base class is not part of the result list)
+		assertThat(methods, hasSize(2));
+		assertThat(methods,
+				containsInAnyOrder(DerivedClassOverridingMethod.class.getMethod("method", String.class, Integer.class),
+						BaseClass.class.getMethod("method", Integer.class)));
+	}
+
+	@Test
+	void testIsPrimitiveWrapper() {
+		// WHEN and THEN
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Boolean.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Byte.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Character.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Double.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Float.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Integer.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Long.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Short.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Void.class), equalTo(true));
+
+		assertThat(ReflectionUtils.isPrimitiveWrapper(boolean.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(byte.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(char.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(double.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(float.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(int.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(long.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(short.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(void.class), equalTo(false));
+	}
+
+	@Test
+	void testIsPrimitiveOrWrapperWrapper() {
+		// WHEN and THEN
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Boolean.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Byte.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Character.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Double.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Float.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Integer.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Long.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Short.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Void.class), equalTo(true));
+
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(boolean.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(byte.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(char.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(double.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(float.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(int.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(long.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(short.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(void.class), equalTo(true));
+
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(String.class), equalTo(false));
+	}
+
+	@Test
+	void testResolvePrimitiveIfNecessary() {
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(boolean.class), equalTo(Boolean.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(byte.class), equalTo(Byte.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(char.class), equalTo(Character.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(double.class), equalTo(Double.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(float.class), equalTo(Float.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(int.class), equalTo(Integer.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(long.class), equalTo(Long.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(short.class), equalTo(Short.class));
+
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Boolean.class), equalTo(Boolean.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Byte.class), equalTo(Byte.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Character.class), equalTo(Character.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Double.class), equalTo(Double.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Float.class), equalTo(Float.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Integer.class), equalTo(Integer.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Long.class), equalTo(Long.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Short.class), equalTo(Short.class));
+	}
+
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {
 		assertThat(methods, notNullValue());
 		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList()), hasItems(exptectedFieldNames)); // hasItems
@@ -713,6 +797,26 @@ class ReflectionUtilsTest {
 	 *
 	 */
 	public static class SuperClassWithInterface implements Interface2 {
+
+	}
+
+	public static class BaseClass {
+
+		public void method(final String string, final Integer integer) {
+
+		}
+
+		public void method(final Integer integer) {
+
+		}
+	}
+
+	public static class DerivedClassOverridingMethod extends BaseClass {
+
+		@Override
+		public void method(final String string, final Integer integer) {
+
+		}
 
 	}
 

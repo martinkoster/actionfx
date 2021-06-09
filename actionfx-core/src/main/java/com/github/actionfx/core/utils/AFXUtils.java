@@ -33,6 +33,8 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.github.actionfx.core.view.graph.ControlWrapper;
+
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -40,7 +42,6 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -52,7 +53,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollBar;
@@ -233,33 +233,33 @@ public class AFXUtils {
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the
-	 * {@code list} contains elements.
+	 * Creates a binding which enables the given {@code node}, when the {@code list}
+	 * contains elements.
 	 *
-	 * @param button the button to enable
-	 * @param list   the list that shall be checked for elements
+	 * @param node the node to enable
+	 * @param list the list that shall be checked for elements
 	 */
-	public static void enableButtonWhenListHasElements(final Button button, final ObservableList<?> list) {
+	public static void enableNodeWhenListHasElements(final Node node, final ObservableList<?> list) {
 		final BooleanBinding hasNoElementsProperty = Bindings.createBooleanBinding(list::isEmpty, list);
-		button.disableProperty().bind(hasNoElementsProperty);
+		node.disableProperty().bind(hasNoElementsProperty);
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the
-	 * {@code list} inside the {@code listProperty}contains elements.
+	 * Creates a binding which enables the given {@code node}, when the {@code list}
+	 * inside the {@code listProperty}contains elements.
 	 *
-	 * @param button       the button to enable
+	 * @param node         the node to enable
 	 * @param listProperty the list property that shall be checked for elements
 	 */
-	public static <T> void enableButtonWhenListHasElements(final Button button,
+	public static <T> void enableNodeWhenListHasElements(final Node node,
 			final ObjectProperty<ObservableList<T>> listProperty) {
 		if (listProperty.get() == null || listProperty.get().isEmpty()) {
-			button.setDisable(true);
+			node.setDisable(true);
 		}
 		listProperty.addListener((observable, oldValue, newValue) -> {
-			button.disableProperty().unbind();
+			node.disableProperty().unbind();
 			if (newValue != null) {
-				enableButtonWhenListHasElements(button, newValue);
+				enableNodeWhenListHasElements(node, newValue);
 			}
 		});
 	}
@@ -279,50 +279,50 @@ public class AFXUtils {
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the
-	 * {@code list} contains NO elements.
+	 * Creates a binding which enables the given {@code node}, when the {@code list}
+	 * contains NO elements.
 	 *
-	 * @param button the button to enable
-	 * @param list   the list that shall be checked for elements
+	 * @param node the node to enable
+	 * @param list the list that shall be checked for elements
 	 */
-	public static void enableButtonWhenListHasNoElements(final Button button, final ObservableList<?> list) {
+	public static void enableNodeWhenListHasNoElements(final Node node, final ObservableList<?> list) {
 		final BooleanBinding hasElementsProperty = Bindings.createBooleanBinding(() -> !list.isEmpty(), list);
-		button.disableProperty().bind(hasElementsProperty);
+		node.disableProperty().bind(hasElementsProperty);
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the
-	 * {@code list} inside the {@code listProperty}contains NO elements.
+	 * Creates a binding which enables the given {@code node}, when the {@code list}
+	 * inside the {@code listProperty}contains NO elements.
 	 *
-	 * @param button       the button to enable
+	 * @param node         the button to enable
 	 * @param listProperty the list property that shall be checked for elements
 	 */
-	public static <T> void enableButtonWhenListHasNoElements(final Button button,
+	public static <T> void enableNodeWhenListHasNoElements(final Node node,
 			final ObjectProperty<ObservableList<T>> listProperty) {
 		if (listProperty.get() == null || listProperty.get().isEmpty()) {
-			button.setDisable(false);
+			node.setDisable(false);
 		}
 		listProperty.addListener((observable, oldValue, newValue) -> {
-			button.disableProperty().unbind();
+			node.disableProperty().unbind();
 			if (newValue != null) {
-				enableButtonWhenListHasNoElements(button, newValue);
+				enableNodeWhenListHasNoElements(node, newValue);
 			}
 		});
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the
-	 * {@code list} contains elements.
+	 * Creates a binding which enables the given {@code node}, when the {@code list}
+	 * contains elements.
 	 *
-	 * @param button         the button to enable
+	 * @param node           the node to enable
 	 * @param stringProperty the string property that shall be checked for presence
 	 *                       of text
 	 */
-	public static void enableButtonWhenStringPropertyHasText(final Button button, final StringProperty stringProperty) {
+	public static void enableNodeWhenStringPropertyHasText(final Node node, final StringProperty stringProperty) {
 		final BooleanBinding hasNoTextProperty = Bindings
 				.createBooleanBinding(() -> StringUtils.isBlank(stringProperty.get()), stringProperty);
-		button.disableProperty().unbind();
-		button.disableProperty().bind(hasNoTextProperty);
+		node.disableProperty().unbind();
+		node.disableProperty().bind(hasNoTextProperty);
 	}
 
 	/**
@@ -331,75 +331,74 @@ public class AFXUtils {
 	 * Supported controls are: {@link TextInputControl} (e.g. {@link TextField} and
 	 * {@link TextArea}).
 	 *
-	 * @param button   the button to enable
+	 * @param Node     the node to enable
 	 * @param controls the controls to check
 	 */
-	public static void enableButtonWhenAllControlsHaveValues(final Button button, final Control... controls) {
+	public static void enableNodeWhenAllControlsHaveUserValues(final Node node, final Control... controls) {
 		final List<Observable> observables = new ArrayList<>();
 		// collect the observables so that the binding can react on changes
 		for (final Control control : controls) {
-			if (TextInputControl.class.isAssignableFrom(control.getClass())) {
-				observables.add(((TextInputControl) control).textProperty());
-			}
+			final ControlWrapper wrapper = ControlWrapper.of(control);
+			observables.add(wrapper.getUserValueAsObservable());
 		}
 		// create the binding which calculates the disabled status for the button
 		final BooleanBinding notAllValuesProvided = Bindings.createBooleanBinding(() -> {
 			boolean disabled = false;
 			for (final Control control : controls) {
-				if (TextInputControl.class.isAssignableFrom(control.getClass())) {
-					final TextInputControl textControl = (TextInputControl) control;
-					disabled |= StringUtils.isBlank(textControl.getText());
-				}
+				final ControlWrapper wrapper = ControlWrapper.of(control);
+				disabled |= !wrapper.hasUserValueSet();
 			}
 			return disabled;
 		}, observables.toArray(new Observable[observables.size()]));
-		button.disableProperty().unbind();
-		button.disableProperty().bind(notAllValuesProvided);
+		node.disableProperty().unbind();
+		node.disableProperty().bind(notAllValuesProvided);
 	}
 
 	/**
-	 * Enables the given {@code button}, when the supplied {@code condition}
-	 * property changes to {@code true}.
+	 * Enables the given {@code node}, when the supplied {@code condition} property
+	 * changes to {@code true}.
 	 *
 	 * @param button    the button to enable
 	 * @param condition the condition to observe
 	 */
-	public static void enableButtonWhenConditionIsMet(final Button button, final BooleanProperty condition) {
+	public static void enableNodeWhenConditionIsMet(final Node node, final BooleanProperty condition) {
 		final BooleanBinding conditionIsNotMet = Bindings.createBooleanBinding(() -> !condition.get(), condition);
-		button.disableProperty().unbind();
-		button.disableProperty().bind(conditionIsNotMet);
+		node.disableProperty().unbind();
+		node.disableProperty().bind(conditionIsNotMet);
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the supplied
-	 * integer value is equal to an expected value.
+	 * Creates a binding which enables the given {@code node}, when the supplied
+	 * property is equal to an expected value.
 	 *
-	 * @param button          the button to enable
-	 * @param integerProperty the integer property to observe
-	 * @param expectedValue   the expected value, when the button shall be enabled
+	 * @param node          the node to enable
+	 * @param property      the property to observe
+	 * @param expectedValue the expected value, when the button shall be enabled
 	 */
-	public static void enableButtonWhenPropertyHasExpectValue(final Button button,
-			final IntegerProperty integerProperty, final int expectedValue) {
+	public static <T> void enableNodeWhenPropertyHasExpectValue(final Node node, final ObservableValue<T> property,
+			final T expectedValue) {
 		final BooleanBinding expectedValueIsNotMet = Bindings
-				.createBooleanBinding(() -> integerProperty.get() != expectedValue, integerProperty);
-		button.disableProperty().unbind();
-		button.disableProperty().bind(expectedValueIsNotMet);
+				.createBooleanBinding(() -> expectedValue == null && property.getValue() != null
+						|| property.getValue() != null && !property.getValue().equals(expectedValue), property);
+		node.disableProperty().unbind();
+		node.disableProperty().bind(expectedValueIsNotMet);
 	}
 
 	/**
-	 * Creates a binding which enables the given {@code button}, when the supplied
-	 * integer value is NOT equal to an expected value.
+	 * Creates a binding which enables the given {@code node}, when the supplied
+	 * property is NOT equal to an expected value.
 	 *
-	 * @param button          the button to enable
-	 * @param integerProperty the integer property to observe
-	 * @param expectedValue   the expected value, when the button shall be enabled
+	 * @param node          the node to enable
+	 * @param property      the property to observe
+	 * @param expectedValue the expected value, when the button shall be enabled
 	 */
-	public static void enableButtonWhenPropertyHasNotExpectedValue(final Button button,
-			final IntegerProperty integerProperty, final int expectedValue) {
-		final BooleanBinding expectedValueIsMet = Bindings
-				.createBooleanBinding(() -> integerProperty.get() == expectedValue, integerProperty);
-		button.disableProperty().unbind();
-		button.disableProperty().bind(expectedValueIsMet);
+	public static <T> void enableNodeWhenPropertyHasNotExpectedValue(final Node node, final ObservableValue<T> property,
+			final T expectedValue) {
+		final BooleanBinding expectedValueIsNotMet = Bindings.createBooleanBinding(
+				() -> expectedValue == null && property.getValue() == null || property.getValue().equals(expectedValue),
+				property);
+		node.disableProperty().unbind();
+		node.disableProperty().bind(expectedValueIsNotMet);
 	}
 
 	/**

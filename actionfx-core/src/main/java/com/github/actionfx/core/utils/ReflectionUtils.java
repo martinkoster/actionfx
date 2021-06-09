@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -35,9 +36,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
@@ -58,8 +62,38 @@ public class ReflectionUtils {
 	 */
 	private static final Map<Class<?>, Field[]> DECLARED_FIELD_CACHE = Collections.synchronizedMap(new HashMap<>());
 
+	/**
+	 * Map with primitive type to its wrapper type, e.g. int.class -> Integer.class.
+	 */
+	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(8);
+
+	/**
+	 * Map with primitive wrapper to its type, e.g. Integer.class -> int.class.
+	 */
+	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(8);
+
+	static {
+		initializeTypes();
+	}
+
 	private ReflectionUtils() {
 		// class can not be instantiated
+	}
+
+	private static void initializeTypes() {
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Float.class, float.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
+		PRIMITIVE_WRAPPER_TYPE_MAP.put(Void.class, void.class);
+
+		for (final Map.Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPER_TYPE_MAP.entrySet()) {
+			PRIMITIVE_TYPE_TO_WRAPPER_MAP.put(entry.getValue(), entry.getKey());
+		}
 	}
 
 	/**
@@ -474,14 +508,14 @@ public class ReflectionUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T invokeMethod(final Method method, final Object instance, final Object... arguments) {
-		return (T) AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+		return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
 			final boolean wasAccessible = method.canAccess(instance);
 			try {
 				method.setAccessible(true); // NOSONAR
 				if (arguments.length == 0) {
-					return method.invoke(instance);
+					return (T) method.invoke(instance);
 				} else {
-					return method.invoke(instance, arguments);
+					return (T) method.invoke(instance, arguments);
 				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				throw new IllegalStateException("Problem invoking method '" + method.getName() + "'!", ex);
@@ -572,11 +606,53 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * Finds all public methods with a return type in a given <tt>clazz</tt>.
+	 * Check if the given class represents a primitive wrapper, i.e. Boolean, Byte,
+	 * Character, Short, Integer, Long, Float, Double, or Void.
 	 *
-	 * @param clazz        the class to be checked for public methods
-	 * @param methodFilter the predicate acting as a public method filter. needs to
-	 *                     evaluate to <tt>true</tt>.
+	 * @param clazz the class to check
+	 * @return whether the given class is a primitive wrapper class
+	 */
+	public static boolean isPrimitiveWrapper(final Class<?> clazz) {
+		return PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz);
+	}
+
+	/**
+	 * Resolve the given class, if it is a primitive class, returning the
+	 * corresponding primitive wrapper type instead.
+	 *
+	 * @param clazz the class to check
+	 * @return the original class, or a primitive wrapper for the original primitive
+	 *         type
+	 */
+	public static Class<?> resolvePrimitiveIfNecessary(final Class<?> clazz) {
+		return clazz.isPrimitive() && clazz != void.class ? PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(clazz) : clazz;
+	}
+
+	/**
+	 * Check if the given class represents a primitive (i.e. boolean, byte, char,
+	 * short, int, long, float, or double), {@code void}, or a wrapper for those
+	 * types (i.e. Boolean, Byte, Character, Short, Integer, Long, Float, Double, or
+	 * Void).
+	 *
+	 * @param clazz the class to check
+	 * @return {@code true} if the given class represents a primitive, void, or a
+	 *         wrapper class
+	 */
+	public static boolean isPrimitiveOrWrapper(final Class<?> clazz) {
+		return clazz.isPrimitive() || isPrimitiveWrapper(clazz);
+	}
+
+	/**
+	 * Finds all public/private/protected/package protected methods with a return
+	 * type in a given {@code clazz}.
+	 * <p>
+	 * Please note that overridden methods are only once in the result list, namely
+	 * for the top-most class.
+	 *
+	 * @param clazz        the class to be checked for
+	 *                     public/private/protected/package protected methods
+	 * @param methodFilter the predicate acting as a method filter. needs to
+	 *                     evaluate to {@code true}
 	 * @param visited      a set of classes already visited (in order to avoid
 	 *                     cycles)
 	 * @return a {@link java.util.List} of methods
@@ -597,9 +673,51 @@ public class ReflectionUtils {
 			}
 		}
 		if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class) {
-			methodList.addAll(findMethodsByFilter(clazz.getSuperclass(), methodFilter, visited));
+			// only add methods from super classes, if these are not contained in method
+			// list yet (overriden methods are filtered out)
+			methodList.addAll(findMethodsByFilter(clazz.getSuperclass(), methodFilter, visited).stream()
+					.filter(m -> !containsMethodWithSameNameAndSignature(methodList, m)).collect(Collectors.toList()));
 		}
 		return methodList;
+	}
+
+	/**
+	 * Checks, if the supplied list of {@code methods} already contains a method
+	 * that has the same name and signature than the specified {@code method}. The
+	 * owning class however can be different (overridden methods e.g. have a same
+	 * name and same arguments, but a different owning class).
+	 *
+	 * @param methods the list of methods to check
+	 * @param method  the method
+	 * @return {@code true} if the specified list already has a method with same
+	 *         name and arguments (but different owning class), {@code false}
+	 *         otherwise.
+	 */
+	private static boolean containsMethodWithSameNameAndSignature(final List<Method> methods, final Method method) {
+		final Optional<Method> duplicate = methods.stream().filter(
+				m -> m.getName().equals(method.getName()) && sameParameter(m.getParameters(), method.getParameters()))
+				.findFirst();
+		return !duplicate.isEmpty();
+	}
+
+	/**
+	 * Checks, if the supplied {@link Parameter} in {@code params1} {@code params2}
+	 * are identical.
+	 *
+	 * @param params1 the first parameter array
+	 * @param params2 the second parameter array
+	 * @return
+	 */
+	private static boolean sameParameter(final Parameter[] params1, final Parameter[] params2) {
+		if (params1.length != params2.length) {
+			return false;
+		}
+		for (int i = 0; i < params1.length; i++) {
+			if (params1[i].getType() != params2[i].getType()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ import com.github.actionfx.core.collections.ValueChangeAwareObservableList;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.utils.ReflectionUtils;
 
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -429,9 +431,43 @@ public class ControlWrapper extends NodeWrapper {
 	 * of values</li>
 	 * </ul>
 	 * The first matching rule wins for the extraction of the user value.
+	 * <p>
+	 * This method considers values selected via a {@link SelectionModel}.
 	 */
 	public Object getUserValue() {
-		final Object observable = getUserValueAsObservable();
+		final Observable observable = getUserValueAsObservable();
+		return getValueFromObservable(observable);
+	}
+
+	/**
+	 * Gets values or the value from the wrapped {@link Control}.
+	 * <p>
+	 * The value is assumed to be one of the following (entries with higher order
+	 * are of higher priority):
+	 * <ul>
+	 * <li>in case the control supports a single-value, the user value is the single
+	 * value (e.g. the "text" inside a {@link javafx.scene.control.TextField}
+	 * control)</li>
+	 * <li>in case the control supports a multi-values, the user value is the list
+	 * of values</li>
+	 * </ul>
+	 * The first matching rule wins for the extraction of the value.
+	 * <p>
+	 * Unlike method {@link #getUserValue()}, this method does not consider selected
+	 * values through a {@link SelectionModel}.
+	 */
+	public Object getValuesOrValue() {
+		final Observable observable = getValueOrValuesAsObservable();
+		return getValueFromObservable(observable);
+	}
+
+	/**
+	 * Extracts the actual value from the supplied {@link Observable}.
+	 *
+	 * @param observable the observable to extract the value from
+	 * @return the extracted value
+	 */
+	protected Object getValueFromObservable(final Observable observable) {
 		if (observable == null) {
 			return null;
 		}
@@ -450,32 +486,51 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Gets the user value as an observable, which is usually either an instance of
-	 * {@link ObservableValue} or of {@link ObservableList}. However, it is up to
-	 * the caller to do type checks on the return value.
+	 * Gets the user value as an {@link Observable} which is usually either an
+	 * instance of {@link ObservableValue} or of {@link ObservableList}. However, it
+	 * is up to the caller to do type checks on the return value.
+	 * <p>
+	 * A "user value" is a specifically value set by the user, e.g. by entering text
+	 * in a text field or by selecting entries in a table view.
 	 *
 	 * @return the value as an observable
 	 */
-	public Object getUserValueAsObservable() {
+	public Observable getUserValueAsObservable() {
 		if (supportsMultiSelection()) {
 			return getSelectedValues();
 		} else if (supportsSelection()) {
-			return getSelectedValue();
-		} else if (supportsValue()) {
+			return getSelectedValueProperty();
+		} else {
+			return getValueOrValuesAsObservable();
+		}
+	}
+
+	/**
+	 * Gets the value as an {@link Observable} which is usually either an instance
+	 * of {@link ObservableValue} or of {@link ObservableList}. However, it is up to
+	 * the caller to do type checks on the return value.
+	 * <p>
+	 * A "value" is either a value set by a user (e.g. text in a text field) or the
+	 * "items" behind e.g. a list/table view or elements inside a choice/combo box.
+	 *
+	 * @return the value as an observable
+	 */
+	protected Observable getValueOrValuesAsObservable() {
+		if (supportsValue()) {
 			return getValueProperty();
 		} else if (supportsValues()) {
 			return getValues();
 		} else {
-			throw new IllegalStateException(
-					"Control with ID='" + getId() + "' does not support user value retrieval! ");
+			// no user value supported, we simply return null here
+			return null;
 		}
 	}
 
-	private boolean isObservableList(final Object observable) {
+	private static boolean isObservableList(final Object observable) {
 		return ObservableList.class.isAssignableFrom(observable.getClass());
 	}
 
-	private boolean isObservableValue(final Object observable) {
+	private static boolean isObservableValue(final Object observable) {
 		return ObservableValue.class.isAssignableFrom(observable.getClass());
 	}
 
@@ -649,6 +704,72 @@ public class ControlWrapper extends NodeWrapper {
 					+ "', expected was type '" + ObjectProperty.class.getCanonicalName() + "'!");
 		}
 		return (ObjectProperty<StringConverter<?>>) value;
+	}
+
+	/**
+	 * Checks, whether the wrapped control has either values or a value set. Values
+	 * are e.g. text in a {@link TextField} or values in a {@link TableView} (even
+	 * when not selected).
+	 *
+	 * @return {@code true}, if the wrapped control has values set, {@code false}
+	 *         otherwise.
+	 */
+	public boolean hasValueOrValuesSet() {
+		final Observable observable = getValueOrValuesAsObservable();
+		if (observable == null) {
+			return false;
+		}
+		if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
+			final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
+			return observableValueHoldsValue(observableValue);
+		} else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
+			final ObservableList<?> observableList = (ObservableList<?>) observable;
+			return !observableList.isEmpty();
+		}
+		throw new IllegalStateException("Value property in control '" + getWrappedType().getCanonicalName()
+				+ "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+	}
+
+	/**
+	 * Checks, whether the wrapped control has a value set by the user. User values
+	 * are e.g. text in a {@link TextField} or selected values in a
+	 * {@link TableView}.
+	 *
+	 * @return {@code true}, if the wrapped control has value set by the user,
+	 *         {@code false} otherwise.
+	 */
+	public boolean hasUserValueSet() {
+		final Observable observable = getUserValueAsObservable();
+		if (observable == null) {
+			return false;
+		}
+		if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
+			final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
+			return observableValueHoldsValue(observableValue);
+		} else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
+			final ObservableList<?> observableList = (ObservableList<?>) observable;
+			return !observableList.isEmpty();
+		}
+		throw new IllegalStateException("User value property in control '" + getWrappedType().getCanonicalName()
+				+ "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+	}
+
+	/**
+	 * Checks, whether the given {@link ObservableValue} has a value set.
+	 *
+	 * @param observableValue the observable value
+	 * @return {@code true}, if and only if the observable value holds a value
+	 */
+	private boolean observableValueHoldsValue(final ObservableValue<?> observableValue) {
+		final Object value = observableValue.getValue();
+		if (value == null) {
+			return false;
+		}
+		if (value.getClass() == String.class) {
+			return !StringUtils.isBlank((String) value);
+		}
+		return true;
+
 	}
 
 	/**

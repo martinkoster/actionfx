@@ -102,7 +102,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Parameter parameter = method.getParameters()[0];
 		final AFXFromDirectoryChooserDialog annotation = parameter.getAnnotation(AFXFromDirectoryChooserDialog.class);
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
-		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner))).thenReturn(file);
+		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner)))
+				.thenReturn(file);
 
 		// WHEN
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
@@ -122,7 +123,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Parameter parameter = method.getParameters()[0];
 		final AFXFromDirectoryChooserDialog annotation = parameter.getAnnotation(AFXFromDirectoryChooserDialog.class);
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
-		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner))).thenReturn(file);
+		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner)))
+				.thenReturn(file);
 
 		// WHEN
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
@@ -142,7 +144,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Parameter parameter = method.getParameters()[0];
 		final AFXFromDirectoryChooserDialog annotation = parameter.getAnnotation(AFXFromDirectoryChooserDialog.class);
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
-		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner))).thenReturn(file);
+		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner)))
+				.thenReturn(file);
 
 		// WHEN
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
@@ -162,7 +165,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Parameter parameter = method.getParameters()[0];
 		final AFXFromDirectoryChooserDialog annotation = parameter.getAnnotation(AFXFromDirectoryChooserDialog.class);
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
-		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner))).thenReturn(file);
+		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner)))
+				.thenReturn(file);
 
 		// WHEN
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
@@ -182,7 +186,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 				"methodWithFileAndNotContinueOnCancel");
 		final Parameter parameter = method.getParameters()[0];
 		final AFXFromDirectoryChooserDialog annotation = parameter.getAnnotation(AFXFromDirectoryChooserDialog.class);
-		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner))).thenReturn(null);
+		when(dialogController.showDirectoryChooserDialog(eq("Open Music Folder"), isNull(), eq(owner)))
+				.thenReturn(null);
 
 		// WHEN
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
@@ -220,7 +225,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 	}
 
 	/**
-	 * A static view class with some elements having an ID.
+	 * A static view class.
 	 *
 	 * @author koster
 	 *

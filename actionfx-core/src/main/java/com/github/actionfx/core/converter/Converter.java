@@ -27,6 +27,8 @@ package com.github.actionfx.core.converter;
  * A converter converts a source object of type {@code S} to a target of type
  * {@code T}.
  *
+ * @param <S> the source type
+ * @param <T> the target type
  * @author koster
  */
 @FunctionalInterface

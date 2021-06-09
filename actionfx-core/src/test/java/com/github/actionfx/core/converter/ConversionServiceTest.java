@@ -38,6 +38,7 @@ import java.util.Locale;
 import org.junit.jupiter.api.Test;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.util.StringConverter;
 
 /**
  * JUnit test case for {@link ConversionService}.
@@ -93,6 +94,29 @@ class ConversionServiceTest {
 		assertThat(service.convert(file.toURI().toString(), URI.class), equalTo(file.toURI()));
 		assertThat(service.convert(file.getAbsolutePath(), Path.class), equalTo(file.toPath()));
 		assertThat(service.convert(file.getAbsolutePath(), File.class), equalTo(file));
+	}
+
+	@Test
+	void testConvert_fromStringToNumber() {
+		// GIVEN
+		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final String number = "124.5";
+
+		// WHEN and THEN
+		assertThat(service.convert(number, Integer.class), equalTo(Integer.valueOf(number)));
+		assertThat(service.convert(number, Float.class), equalTo(Float.valueOf(number)));
+		assertThat(service.convert(number, Double.class), equalTo(Double.valueOf(number)));
+		assertThat(service.convert(number, Short.class), equalTo(Short.valueOf(number)));
+		assertThat(service.convert(number, Byte.class), equalTo(Byte.valueOf(number)));
+	}
+
+	@Test
+	void testConvert_fromNumberToNumber() {
+		// GIVEN
+		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+
+		// WHEN and THEN
+
 	}
 
 	@Test
@@ -175,5 +199,19 @@ class ConversionServiceTest {
 		// WHEN and THEN
 		assertThat(service.canConvert(File.class, Integer.class), equalTo(false));
 		assertThat(service.canConvert(Double.class, Path.class), equalTo(false));
+	}
+
+	@Test
+	void testCreateStringConverter() throws IOException {
+		// GIVEN
+		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final File file = Files.createTempFile("junit", "-tmp").toFile();
+
+		// WHEN
+		final StringConverter<File> converter = service.createStringConverter(File.class);
+
+		// THEN
+		assertThat(converter.fromString(file.getAbsolutePath()), equalTo(file));
+		assertThat(converter.toString(file), equalTo(file.getAbsolutePath()));
 	}
 }
