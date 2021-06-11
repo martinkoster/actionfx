@@ -352,12 +352,15 @@ The "Remove Selected" button on the other hand shall be only active, when the us
 To illustrate the behavior of the buttons that we have configured with `@AFXEnableNode`, we have a look at the following three states of our shopping cart:
 
 **State 1:** The shopping cart is initially empty. Offering options to remove items from it or perform a check-out do not make sense, so these buttons are disabled.
+
 ![Empty Shopping Cart](docs/images/shopping-cart-empty.png)
 
 **State 2:** After we added one book to our shopping cart, we offer the user the actions for removing all books from the shopping cart and for performing the check-out. Removing selected books from the shopping cart however still does not make sense as long there is no user selection in our shopping cart.
+
 ![One Book In Shopping Cart](docs/images/shopping-cart-one-element.png)
 
 **State 3:** After we selected one book in our shopping cart, we can also activate the button for removing selected books from our shopping cart.
+
 ![selected Book In Shopping Cart](docs/images/shopping-cart-one-element-selected.png)
 
 The action for emptying the shopping cart is quite simple and straight-forward by using the `@AFXOnAction` annotation:
