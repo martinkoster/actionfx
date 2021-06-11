@@ -106,6 +106,27 @@ class ControllerInstancePostProcessorTest {
 
 	@Test
 	@TestInFxThread
+	void testPostProcess_wireEnableNode() {
+		// GIVEN
+		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(
+				SampleViewControllerWithListener.class);
+		// WHEN
+		final SampleViewControllerWithListener controller = supplier.get();
+		postProcessor.postProcess(controller);
+
+		// THEN (text field is empty, so action button is inactive
+		assertThat(controller.actionButtonTextField.isDisabled(), equalTo(true));
+
+		// and WHEN
+		controller.textField.setText("Hello World");
+
+		// and THEN (button is activated, because text field now holds a non-empty user
+		// value)
+		assertThat(controller.actionButtonTextField.isDisabled(), equalTo(false));
+	}
+
+	@Test
+	@TestInFxThread
 	void testPostProcess_wireOnUserInput_valueChangetextField_onlyOneListenerIsActive_usingListenerActiveBooleanPropertyInAnnotation() {
 		// GIVEN
 		final ControllerInstantiationSupplier<SampleViewControllerWithListener> supplier = new ControllerInstantiationSupplier<>(

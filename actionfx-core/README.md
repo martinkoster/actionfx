@@ -41,6 +41,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXConverter (Field Annotation)](#annotation-afxconverter)
+    + [Annotations for configuring Tables](#annotations-for-configuring-tables)      
       - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
@@ -470,6 +471,11 @@ Attribute 							| Description
 		@AFXConverter(MovieStringConverter.class)
 		private final ComboBox<Movie> comboBox = new ComboBox<>();	
 ```
+
+
+### Annotations for configuring Tables
+
+This chapter contains annotations for configuring and handling of tables like `javafx.scene.control.TableView`, `javafx.scene.control.TreeTableView`, `javafx.scene.control.TreeView` and `javafx.scene.control.ListView`. 
 
 #### Annotation @AFXCellValueConfig
 

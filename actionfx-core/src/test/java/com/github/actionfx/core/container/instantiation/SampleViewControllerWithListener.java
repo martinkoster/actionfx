@@ -8,6 +8,7 @@ import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
@@ -43,6 +44,7 @@ public class SampleViewControllerWithListener {
 	@FXML
 	protected Button actionButton;
 
+	@AFXEnableNode(whenAllContolsHaveUserValues = "textField")
 	@FXML
 	protected TextField actionButtonTextField;
 
