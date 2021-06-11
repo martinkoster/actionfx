@@ -25,6 +25,7 @@ package com.github.actionfx.core.container.extension;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -98,17 +99,31 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
 	 * {@code controlId}. The control with the given ID is supposed to by inside the
 	 * given {@code view}.
 	 *
-	 * @param controlId the control ID for that the wrapper shall be created
 	 * @param view      the view containing the control with id {@code controlId}
+	 * @param controlId the control ID for that the wrapper shall be created
 	 * @return the control wrapper instance
 	 */
-	protected ControlWrapper createControlWrapper(final String controlId, final View view) {
+	protected ControlWrapper createControlWrapper(final View view, final String controlId) {
 		final NodeWrapper wrappedTargetNode = createNodeWrapper(controlId, view);
 		if (!Control.class.isAssignableFrom(wrappedTargetNode.getWrappedType())) {
 			throw new IllegalStateException(
 					"Node with id='" + controlId + "' is not an instance of javafx.scene.control.Control!");
 		}
 		return ControlWrapper.of(wrappedTargetNode.getWrapped());
+	}
+
+	/**
+	 * Creates an array of {@link ControlWrapper} for controls identified by
+	 * {@code controlIds}. The controls with the given ID are supposed to by inside
+	 * the given {@code view}.
+	 *
+	 * @param view       the view containing the control with id {@code controlId}
+	 * @param controlIds the control IDs for that the wrapper shall be created
+	 * @return the control wrapper instance
+	 */
+	protected ControlWrapper[] createControlWrapper(final View view, final String... controlIds) {
+		return Arrays.stream(controlIds).map(controlId -> createControlWrapper(view, controlId))
+				.toArray(size -> new ControlWrapper[size]);
 	}
 
 	/**
@@ -144,4 +159,5 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
 		}
 		return booleanProperty;
 	}
+
 }

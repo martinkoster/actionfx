@@ -75,7 +75,6 @@ public abstract class AbstractAnnotatedFieldControllerExtension<A extends Annota
 
 		}
 		return (T) fieldValue;
-
 	}
 
 }

@@ -63,7 +63,7 @@ public class OnLoadControlDataMethodControllerExtension
 		final View view = ControllerWrapper.getViewFrom(controller);
 		final BooleanProperty loadingActiveBooleanProperty = lookupBooleanProperty(controller,
 				annotation.loadingActiveBooleanProperty());
-		final ControlWrapper controlWrapper = createControlWrapper(annotation.controlId(), view);
+		final ControlWrapper controlWrapper = createControlWrapper(view, annotation.controlId());
 		// check, whether the wrapped control supports multi-selection or only single
 		// selection
 		if (controlWrapper.supportsValues()) {

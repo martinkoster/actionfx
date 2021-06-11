@@ -9,8 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<TitledPane text="Shopping Cart" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<TitledPane minWidth="500.0" text="Shopping Cart" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <AnchorPane>
          <children>
@@ -31,7 +30,8 @@
                <top>
                   <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button fx:id="emptyButton" mnemonicParsing="false" text="Empty" />
+                        <Button fx:id="removeAllButton" mnemonicParsing="false" text="Remove All" />
+                        <Button fx:id="removeSelectedButton" mnemonicParsing="false" text="Remove Selected" />
                         <Separator orientation="VERTICAL" />
                       <Button fx:id="checkoutButton" mnemonicParsing="false" text="Checkout" />
                     </items>

@@ -59,7 +59,7 @@ public class OnControlValueChangeMethodControllerExtension
 		final View view = ControllerWrapper.getViewFrom(controller);
 		final BooleanProperty listenerActionBooleanProperty = lookupBooleanProperty(controller,
 				annotation.listenerActiveBooleanProperty());
-		final ControlWrapper controlWrapper = createControlWrapper(annotation.controlId(), view);
+		final ControlWrapper controlWrapper = createControlWrapper(view, annotation.controlId());
 		// check, whether the wrapped control supports multi-selection or only single
 		// selection
 		if (controlWrapper.supportsMultiSelection()) {

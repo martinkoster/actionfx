@@ -284,22 +284,37 @@ The shopping cart controller holds functionality for emptying the shopping cart 
 @AFXController(viewId = "shoppingCartView", fxml = "/fxml/ShoppingCartView.fxml")
 public class ShoppingCartController {
 
+	// activate button, when the table has items
+	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
 	@FXML
-	private Button emptyButton;
+	private Button removeAllButton;
 
+	// activate button, when user selected values
+	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+	@FXML
+	private Button removeSelectedButton;
+
+	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
 	@FXML
 	private Button checkoutButton;
 
+	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
 	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
 
-	@AFXOnAction(nodeId = "emptyButton")
+	@AFXOnAction(nodeId = "removeAllButton")
 	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();
+	}
+
+	@AFXOnAction(nodeId = "removeSelectedButton")
+	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Remove selected books", content = "Are you sure to remove the selected books from the shopping cart?")
+	public void removeSelectedBooks(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
+		bookTableView.getItems().removeAll(selectedBooks);
 	}
 
 	@AFXOnAction(nodeId = "checkoutButton")
@@ -313,12 +328,42 @@ public class ShoppingCartController {
 		bookTableView.getItems().addAll(books);
 	}
 }
+
 ```
+
+The buttons used in our shopping card are using the `@AFXEnableNode` annotation, so that the buttons are only active, when the respective operation shall be made available to the user.
+
+```java
+	// activate button, when the table has items
+	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
+	@FXML
+	private Button removeAllButton;
+```
+The "Remove All" button is only activate, if our shopping cards holds any item (no matter, whether these are selected or not. In that case, we must specify the `bookTableView` control as part of attribute `whenAllControlsHaveValues`.
+
+```java
+	// activate button, when user selected values
+	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+	@FXML
+	private Button removeSelectedButton;
+```
+The "Remove Selected" button on the other hand shall be only active, when the user selected one or multiple books in our shopping card. For that, the `bookTableView` control is specified in attribute `whenAllContolsHaveUserValues`.
+
+To illustrate the behavior of the buttons that we have configured with `@AFXEnableNode`, we have a look at the following three states of our shopping cart:
+
+**State 1:** The shopping cart is initially empty. Offering options to remove items from it or perform a check-out do not make sense, so these buttons are disabled.
+![Empty Shopping Cart](docs/images/shopping-cart-empty.png)
+
+**State 2:** After we added one book to our shopping cart, we offer the user the actions for removing all books from the shopping cart and for performing the check-out. Removing selected books from the shopping cart however still does not make sense as long there is no user selection in our shopping cart.
+![One Book In Shopping Cart](docs/images/shopping-cart-one-element.png)
+
+**State 3:** After we selected one book in our shopping cart, we can also activate the button for removing selected books from our shopping cart.
+![selected Book In Shopping Cart](docs/images/shopping-cart-one-element-selected.png)
 
 The action for emptying the shopping cart is quite simple and straight-forward by using the `@AFXOnAction` annotation:
 
 ```java
-	@AFXOnAction(nodeId = "emptyButton")
+	@AFXOnAction(nodeId = "removeAllButton")
 	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();

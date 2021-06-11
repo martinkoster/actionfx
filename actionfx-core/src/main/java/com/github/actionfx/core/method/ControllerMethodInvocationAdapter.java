@@ -352,8 +352,8 @@ public class ControllerMethodInvocationAdapter {
 	 *         the method parameter
 	 */
 	private static boolean candidateMatchesTypeParameter(final Parameter parameter, final ParameterValue candidate) {
-		return candidate.getType() == null && !parameter.getType().isPrimitive()
-				|| ClassUtils.isAssignable(parameter.getType(), candidate.getType(), true);
+		return candidate.getValue() == null && !parameter.getType().isPrimitive()
+				|| ClassUtils.isAssignable(candidate.getType(), parameter.getType(), true);
 	}
 
 	/**

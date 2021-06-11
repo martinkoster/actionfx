@@ -515,7 +515,7 @@ public class ControlWrapper extends NodeWrapper {
 	 *
 	 * @return the value as an observable
 	 */
-	protected Observable getValueOrValuesAsObservable() {
+	public Observable getValueOrValuesAsObservable() {
 		if (supportsValue()) {
 			return getValueProperty();
 		} else if (supportsValues()) {

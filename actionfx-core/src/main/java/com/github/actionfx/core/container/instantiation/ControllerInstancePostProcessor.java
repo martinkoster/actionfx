@@ -34,7 +34,9 @@ import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.container.extension.CellValueConfigControllerExtension;
 import com.github.actionfx.core.container.extension.ConverterControllerExtension;
+import com.github.actionfx.core.container.extension.DisableNodeControllerExtension;
 import com.github.actionfx.core.container.extension.EnableMultiSelectionControllerExtension;
+import com.github.actionfx.core.container.extension.EnableNodeControllerExtension;
 import com.github.actionfx.core.container.extension.NestedViewControllerExtension;
 import com.github.actionfx.core.container.extension.OnActionMethodControllerExtension;
 import com.github.actionfx.core.container.extension.OnControlValueChangeMethodControllerExtension;
@@ -66,6 +68,8 @@ public class ControllerInstancePostProcessor {
 		controllerExtensions.add(new OnActionMethodControllerExtension());
 		controllerExtensions.add(new ConverterControllerExtension());
 		controllerExtensions.add(new CellValueConfigControllerExtension());
+		controllerExtensions.add(new EnableNodeControllerExtension());
+		controllerExtensions.add(new DisableNodeControllerExtension());
 		controllerExtensions.add(new OnLoadControlDataMethodControllerExtension());
 		controllerExtensions.add(new OnControlValueChangeMethodControllerExtension());
 

@@ -41,6 +41,19 @@ import javafx.scene.control.Control;
 /**
  * Builder class for creating a {@link BooleanBinding} for one or many
  * {@link Control}s.
+ * <p>
+ * This builder allows to create boolean bindings based on chained predicates of
+ * form:
+ *
+ * <pre>
+ * boolean_value = NOT? (NOT? predicate1 [AND|OR] NOT? predicate2 [AND|OR] predicate3 ....)
+ * </pre>
+ *
+ * The predicates themselves again are evaluated against a list of controls,
+ * where you can chose, whether the predicate needs to be {@code true} for all
+ * controls or only for at least one control. (see
+ * {@link #allFulfilledFunction(Predicate)} and
+ * {@link #atLeastOneFulfilledFunction(Predicate)}).
  *
  * @author koster
  *
@@ -56,9 +69,20 @@ public class ControlBasedBooleanBindingBuilder {
 	// be negated or not
 	private boolean negateChainResult = false;
 
-	protected ControlBasedBooleanBindingBuilder() {
+	/**
+	 * Internal constructor. Use {@link #create()} for constructing an instance.
+	 *
+	 * @param createPredicate flag that determines, whether a first predicate for
+	 *                        building shall be added. If that flag is set to
+	 *                        {@code false}, a call to
+	 *                        {@link #addNewPredicate(BooleanOp)} has to be
+	 *                        performed before other builder methods are used.
+	 */
+	protected ControlBasedBooleanBindingBuilder(final boolean createPredicate) {
 		predicateChain = new ArrayList<>();
-		stackPredicateElement(BooleanOp.AND);
+		if (createPredicate) {
+			stackPredicateElement(BooleanOp.AND);
+		}
 	}
 
 	/**
@@ -67,7 +91,21 @@ public class ControlBasedBooleanBindingBuilder {
 	 * @return the create instance
 	 */
 	public static ControlBasedBooleanBindingBuilder create() {
-		return new ControlBasedBooleanBindingBuilder();
+		return create(true);
+	}
+
+	/**
+	 * Creates a new {@link ControlBasedBooleanBindingBuilder}.
+	 *
+	 * @param createPredicate flag that determines, whether a first predicate for
+	 *                        building shall be added. If that flag is set to
+	 *                        {@code false}, a call to
+	 *                        {@link #addNewPredicate(BooleanOp)} has to be
+	 *                        performed before other builder methods are used.
+	 * @return the create instance
+	 */
+	public static ControlBasedBooleanBindingBuilder create(final boolean createPredicate) {
+		return new ControlBasedBooleanBindingBuilder(createPredicate);
 	}
 
 	/**
@@ -193,9 +231,7 @@ public class ControlBasedBooleanBindingBuilder {
 	 * @return this builder instance
 	 */
 	public ControlBasedBooleanBindingBuilder and() {
-		predicateElementUnderConstruction.verifyPredicateElementIsComplete();
-		stackPredicateElement(BooleanOp.AND);
-		return this;
+		return addNewPredicate(BooleanOp.AND);
 	}
 
 	/**
@@ -206,13 +242,28 @@ public class ControlBasedBooleanBindingBuilder {
 	 * @return this builder instance
 	 */
 	public ControlBasedBooleanBindingBuilder or() {
-		predicateElementUnderConstruction.verifyPredicateElementIsComplete();
-		stackPredicateElement(BooleanOp.OR);
+		return addNewPredicate(BooleanOp.OR);
+	}
+
+	/**
+	 * Adds a new predicate to the predicate chain by linking it logically with the
+	 * supplied {@code booleanOp} with the previous predicate in the chain.
+	 *
+	 * @param booleanOp the boolean operator to use for linking the new predicate in
+	 *                  the chain
+	 * @return this builder instance
+	 */
+	public ControlBasedBooleanBindingBuilder addNewPredicate(final BooleanOp booleanOp) {
+		if (predicateElementUnderConstruction != null) {
+			predicateElementUnderConstruction.verifyPredicateElementIsComplete();
+		}
+		stackPredicateElement(booleanOp);
 		return this;
 	}
 
 	/**
-	 * Negates the current predicate under construction.
+	 * Negates the current predicate under construction.This function is toggling
+	 * negations, i.e. if you negate two times, the result is not negated anymore.
 	 *
 	 * @return this builder instance
 	 */
@@ -222,7 +273,9 @@ public class ControlBasedBooleanBindingBuilder {
 	}
 
 	/**
-	 * Negates the complete chain of predicates in this boolean binding builder.
+	 * Negates the complete chain of predicates in this boolean binding builder.This
+	 * function is toggling negations, i.e. if you negate two times, the result is
+	 * not negated anymore.
 	 * <p>
 	 * The method behaves like:
 	 *
@@ -238,8 +291,8 @@ public class ControlBasedBooleanBindingBuilder {
 	}
 
 	/**
-	 * Enum describes whether a predicate must match all controls or at least on
-	 * controls.
+	 * Enum describes whether a predicate must match all controls or at least one
+	 * control.
 	 *
 	 * @author koster
 	 *
@@ -331,7 +384,7 @@ public class ControlBasedBooleanBindingBuilder {
 
 		/**
 		 * Negates the result yielded with {@link #allFulfilledFunction} and
-		 * {@link #atLeastOneFulfilledFunction}. This function is toggeling negations,
+		 * {@link #atLeastOneFulfilledFunction}. This function is toggling negations,
 		 * i.e. if you negate two times, the result is not negated anymore.
 		 *
 		 * @return this builder instance

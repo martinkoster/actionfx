@@ -25,7 +25,7 @@ package com.github.actionfx.core.container.extension;
 
 import java.lang.reflect.Field;
 
-import com.github.actionfx.core.annotation.AFXEnableNode;
+import com.github.actionfx.core.annotation.AFXDisableNode;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.ControlBasedBooleanBindingBuilder;
 import com.github.actionfx.core.utils.ReflectionUtils;
@@ -34,20 +34,20 @@ import com.github.actionfx.core.view.View;
 import javafx.scene.Node;
 
 /**
- * Controller field extension that enables nodes of the JavaFX scene graph
+ * Controller field extension that disables nodes of the JavaFX scene graph
  * depending on control values.
  *
  * @author koster
  *
  */
-public class EnableNodeControllerExtension extends AbstractNodeActivationControllerExtension<AFXEnableNode> {
+public class DisableNodeControllerExtension extends AbstractNodeActivationControllerExtension<AFXDisableNode> {
 
-	public EnableNodeControllerExtension() {
-		super(AFXEnableNode.class);
+	public DisableNodeControllerExtension() {
+		super(AFXDisableNode.class);
 	}
 
 	@Override
-	protected void extend(final Object controller, final Field annotatedElement, final AFXEnableNode annotation) {
+	protected void extend(final Object controller, final Field annotatedElement, final AFXDisableNode annotation) {
 		final Object annotatedNode = ReflectionUtils.getFieldValue(annotatedElement, controller);
 		if (annotatedNode == null) {
 			throw new IllegalStateException("Field value of field '" + annotatedElement.getName() + "' is null!");
@@ -62,9 +62,6 @@ public class EnableNodeControllerExtension extends AbstractNodeActivationControl
 				annotation.whenAllContolsHaveUserValues(), annotation.whenAllControlsHaveValues(),
 				annotation.whenAtLeastOneContolHasUserValue(), annotation.whenAtLeastOneControlHasValues(),
 				annotation.logicalOp());
-		// we have to negate the outcome of the boolean binding as the property is named
-		// "disabled" (and not "enabled")
-		builder.negateAll();
 		node.disableProperty().unbind();
 		node.disableProperty().bind(builder.build());
 	}

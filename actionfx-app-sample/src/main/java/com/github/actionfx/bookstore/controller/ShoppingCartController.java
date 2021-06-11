@@ -28,7 +28,10 @@ import java.util.List;
 import com.github.actionfx.bookstore.model.Book;
 import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
+import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.AFXShowView;
@@ -40,22 +43,37 @@ import javafx.scene.control.TableView;
 @AFXController(viewId = "shoppingCartView", fxml = "/fxml/ShoppingCartView.fxml")
 public class ShoppingCartController {
 
+	// activate button, when the table has items
+	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
 	@FXML
-	private Button emptyButton;
+	private Button removeAllButton;
 
+	// activate button, when user selected values
+	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+	@FXML
+	private Button removeSelectedButton;
+
+	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
 	@FXML
 	private Button checkoutButton;
 
+	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
 	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
 
-	@AFXOnAction(nodeId = "emptyButton")
-	@AFXRequiresUserConfirmation(title="Confirmation", header="Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
+	@AFXOnAction(nodeId = "removeAllButton")
+	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
 		bookTableView.getItems().clear();
+	}
+
+	@AFXOnAction(nodeId = "removeSelectedButton")
+	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Remove selected books", content = "Are you sure to remove the selected books from the shopping cart?")
+	public void removeSelectedBooks(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
+		bookTableView.getItems().removeAll(selectedBooks);
 	}
 
 	@AFXOnAction(nodeId = "checkoutButton")
