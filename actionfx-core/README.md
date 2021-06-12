@@ -24,7 +24,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
 
 ## Table of Contents
 
-- [Module "actionfx-core"](#module--actionfx-core-)
+- [Module "actionfx-core"](#module-actionfx-core)
   * [Table of Contents](#table-of-contents)
   * [Overview](#overview)
   * [Setting up ActionFX](#setting-up-actionfx)
@@ -32,19 +32,23 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
     + [Build your own instance of ActionFX during application startup](#build-your-own-instance-of-actionfx-during-application-startup)
   * [Implementing ActionFX controllers](#implementing-actionfx-controllers)
     + [Example of a Controller Definition with Nested Views](#example-of-a-controller-definition-with-nested-views)
-    + [Annotations inside an ActionFX controller](#annotations-inside-an-actionfx-controller)
+    + [Annotations for handling Views](#annotations-for-handling-views)
+      - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXShowView (Method Annotation)](#annotation-afxshowview)
-      - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction)
+    + [Annotations for working with JavaFX controls and their values](#annotations-for-working-with-javafx-controls-and-their-values)      
       - [Annotation @AFXLoadControlValue (Method Annotation)](#annotation-afxloadcontrolvalue)
       - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation-afxoncontrolvaluechange)
       - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation-afxarghint)
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)
-      - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXConverter (Field Annotation)](#annotation-afxconverter)
+      - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction)
     + [Annotations for configuring Tables](#annotations-for-configuring-tables)      
       - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
+    + [Annotations for controlling the disabled state of a Node](#annotations-for-controlling-the-disabled-state-of-a-node)      
+      - [Annotation @AFXEnableNode (Field Annotation)](#annotation-afxenablenode)
+      - [Annotation @AFXDisableNode (Field Annotation)](#annotation-afxdisablenode)
     + [Annotations triggering User Dialogs](#annotations-triggering-user-dialogs)
       - [Annotation @AFXRequiresUserConfirmation (Method Annotation)](#annotation-afxrequiresuserconfirmation)
       - [Annotation @AFXFromFileSaveDialog (Method Argument Annotation)](#annotation-afxfromfilesavedialog)
@@ -225,11 +229,52 @@ public class MainController {
 
 Please note in the example above, the additional attribute `attachToNodeWithId` needs to be provided, so that ActionFX knows to which node the nested view needs to be attached to.
 
-
-### Annotations inside an ActionFX controller
-
 There are various annotations that you can apply to controller methods and fields that are reducing the amount of code that you need for wiring your controls and methods. In the following sections, an overview on the available annotations is provided.
 
+### Annotations for handling Views
+
+The following annotations are provided by ActionFX to work with views.
+
+#### Annotation @AFXNestedView
+
+The [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation defines a nested view to be embedded into a scene graph. Nested views can be used to composite the overall scene graph view.
+
+You can either use this annotation as part of an `AFXController` annotation, or you can apply it to a field that is also annotated by `@FXML`.
+
+The following attributes are available inside the annotation:
+
+Attribute 							| Description 
+----------------------------------- | -------------------------------------------------
+`refViewId` 						| The referenced view ID that shall nested in the view.
+`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used inside a `@AFXController` annotation. If used on a field annotated by `@FXML`, this value is irrelevant.
+`attachToIndex`					| Optional index referring to the target node's children list, where the view shall be attached to.
+`attachToColumn`					| Optional column index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInRow`.
+`attachToRow`						| Optional row index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInColum`.
+`attachToBorderPanePosition`		| Optional border pane position in case the target node is a `javafx.scene.layout.BorderPane`.
+`attachToAnchorLeft`				| Optional anchor left in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorBottom`.
+`attachToAnchorTop`				| Optional anchor top in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorLeft`, `attachToAnchorRight` and `attachToAnchorBottom`.
+`attachToAnchorRight`				|  Optional anchor right in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorLeft` and `attachToAnchorBottom`.
+`attachToAnchorBottom`			| Optional anchor bottom in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorLeft`.
+
+**Example:**
+
+```java
+	@AFXNestedView(refViewId = "productCatalogListView")
+	@FXML
+	private ScrollPane productListScrollPane;
+	...
+	@AFXNestedView(refViewId = "productDetailsView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
+	@FXML
+	private AnchorPane productDetailsAnchorPane;
+	...
+	@AFXNestedView(refViewId = "productDetailsView", attachToBorderPanePosition = BorderPanePosition.CENTER)
+	@FXML
+	private BorderPane shopingCartAnchorPane;
+	...
+	@AFXNestedView(refViewId = "productFeedbackView", attachToColumn = 3, attachInRow = 2)
+	@FXML
+	private GridPane productFeedbackGridPane;
+```
 
 #### Annotation @AFXShowView
 
@@ -253,43 +298,11 @@ Please note that only *one* attribute starting with `show*` must be used at the 
 	}
 ```
 
-#### Annotation @AFXOnAction
-
-The [@AFXOnAction](src/main/java/com/github/actionfx/core/annotation/AFXOnAction.java) is wiring the annotated method to the "onAction" property of the specified node or control. This annotation can be e.g. used to execute the annotated method, when the user clicks on a button.
-
-Annotated methods can be of the following signature:
-- `void methodName()`
-- `void methodName(javafx.event.ActionEvent event)`
-
-You can also combine this annotation with annotation `@AFXControlValue`:
-
-`void methodName(@AFXControlValue("usernameTextField") String username)`
-
-In this case, the user value entered in text field with ID `usernameTextField` will be injected as method argument.
-
-The following attributes are available inside the annotation:
-
-Attribute 					| Description 
---------------------------- | -------------------------------------------------
-`nodeId`				    | ID of the node or control whose action property shall be set to execute the annotated method.
-`async`                    | Optional flag that determines, whether the annotated method shall be executed in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. In case that UI components need to be updated in the method, the update itself needs to be run with `javafx.application.Platform#runLater(Runnable)`. Default is `false` (i.e. the method is run synchronously inside the JavaFX thread).
 
 
-**Example:**
-```java
-	// for the @AFXOnAction annotation to work, it is not required that the button is injected via @FXML
-	@FXML
-	private Button actionButton;
-	...
-	// for the @AFXControlValue annotation to work, it is not required that the text field is injected via @FXML
-	@FXML
- 	private TextField usernameTextField;
- 	...
-	@AFXOnAction(nodeId = "actionButton")
-	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
-		// do some action stuff
-	}
-```
+### Annotations for working with JavaFX controls and their values
+
+Working with controls that receive user values is a central part of JavaFX and, of course, of ActionFX. Setting and accessing these values is a central part of ActionFX. The following annotations are provided by ActionFX.
 
 #### Annotation @AFXLoadControlValue
 
@@ -410,46 +423,7 @@ Attribute 					| Description
 	}
 ```
 
-#### Annotation @AFXNestedView
 
-The [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation defines a nested view to be embedded into a scene graph. Nested views can be used to composite the overall scene graph view.
-
-You can either use this annotation as part of an `AFXController` annotation, or you can apply it to a field that is also annotated by `@FXML`.
-
-The following attributes are available inside the annotation:
-
-Attribute 							| Description 
------------------------------------ | -------------------------------------------------
-`refViewId` 						| The referenced view ID that shall nested in the view.
-`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used inside a `@AFXController` annotation. If used on a field annotated by `@FXML`, this value is irrelevant.
-`attachToIndex`					| Optional index referring to the target node's children list, where the view shall be attached to.
-`attachToColumn`					| Optional column index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInRow`.
-`attachToRow`						| Optional row index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInColum`.
-`attachToBorderPanePosition`		| Optional border pane position in case the target node is a `javafx.scene.layout.BorderPane`.
-`attachToAnchorLeft`				| Optional anchor left in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorBottom`.
-`attachToAnchorTop`				| Optional anchor top in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorLeft`, `attachToAnchorRight` and `attachToAnchorBottom`.
-`attachToAnchorRight`				|  Optional anchor right in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorLeft` and `attachToAnchorBottom`.
-`attachToAnchorBottom`			| Optional anchor bottom in case the target node is an `javafx.scene.layout.AnchorPane`. Must be used together with `attachToAnchorTop`, `attachToAnchorRight` and `attachToAnchorLeft`.
-
-**Example:**
-
-```java
-	@AFXNestedView(refViewId = "productCatalogListView")
-	@FXML
-	private ScrollPane productListScrollPane;
-	...
-	@AFXNestedView(refViewId = "productDetailsView", attachToAnchorBottom = 0.0, attachToAnchorLeft = 0.0, attachToAnchorRight = 0.0, attachToAnchorTop = 0.0)
-	@FXML
-	private AnchorPane productDetailsAnchorPane;
-	...
-	@AFXNestedView(refViewId = "productDetailsView", attachToBorderPanePosition = BorderPanePosition.CENTER)
-	@FXML
-	private BorderPane shopingCartAnchorPane;
-	...
-	@AFXNestedView(refViewId = "productFeedbackView", attachToColumn = 3, attachInRow = 2)
-	@FXML
-	private GridPane productFeedbackGridPane;
-```
 
 #### Annotation @AFXConverter
 
@@ -472,6 +446,43 @@ Attribute 							| Description
 		private final ComboBox<Movie> comboBox = new ComboBox<>();	
 ```
 
+#### Annotation @AFXOnAction
+
+The [@AFXOnAction](src/main/java/com/github/actionfx/core/annotation/AFXOnAction.java) is wiring the annotated method to the "onAction" property of the specified node or control. This annotation can be e.g. used to execute the annotated method, when the user clicks on a button.
+
+Annotated methods can be of the following signature:
+- `void methodName()`
+- `void methodName(javafx.event.ActionEvent event)`
+
+You can also combine this annotation with annotation `@AFXControlValue`:
+
+`void methodName(@AFXControlValue("usernameTextField") String username)`
+
+In this case, the user value entered in text field with ID `usernameTextField` will be injected as method argument.
+
+The following attributes are available inside the annotation:
+
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`nodeId`				    | ID of the node or control whose action property shall be set to execute the annotated method.
+`async`                    | Optional flag that determines, whether the annotated method shall be executed in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. In case that UI components need to be updated in the method, the update itself needs to be run with `javafx.application.Platform#runLater(Runnable)`. Default is `false` (i.e. the method is run synchronously inside the JavaFX thread).
+
+
+**Example:**
+```java
+	// for the @AFXOnAction annotation to work, it is not required that the button is injected via @FXML
+	@FXML
+	private Button actionButton;
+	...
+	// for the @AFXControlValue annotation to work, it is not required that the text field is injected via @FXML
+	@FXML
+ 	private TextField usernameTextField;
+ 	...
+	@AFXOnAction(nodeId = "actionButton")
+	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
+		// do some action stuff
+	}
+```
 
 ### Annotations for configuring Tables
 
@@ -555,6 +566,66 @@ Attribute 							| Description
 	@AFXUseFilteredList(wrapInSortedList=true)
 	@FXML
 	private TableView<String> filteredAndSortedTable;
+```
+
+### Annotations for controlling the disabled state of a Node
+
+Handling the disabled-state of a node in the scene graph depending on the state of other controls and/or user input can be a tedious task. Usually, you will find yourself creating boolean bindings. While it is not difficult to implement that approach for a single control, it can be a cumbersome task for wiring together multiple controls in a single boolean binding for activating or deactivating a node e.g. like a `javafx.scene.control.Button`. The following annotations are offered by ActionFX to simplify that task. 
+
+#### Annotation @AFXEnableNode
+
+The [@AFXEnableNode](src/main/java/com/github/actionfx/core/annotation/AFXEnableNode.java) annotation can be applied at field level on fields of type `javafx.scene.Node` to control its `disabledProperty()` and when a node shall be enabled. This annotation can be useful e.g. when you want to activate a control like a `javafx.scene.control.Button` only, when the user has specified a value in another control e.g. like in a `javafx.scene.control.TextField`.
+
+The following attributes are available inside the annotation:
+
+Attribute                                       | Description 
+----------------------------------------------- | -------------------------------------------------
+`whenAllContolsHaveUserValues`              | Annotated node is enabled, if all controls specified in this attribute have a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).  
+`whenAtLeastOneContolHasUserValue`          | Annotated node is enabled, if at least one of the controls specified in this attribute has a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).
+`whenAllControlsHaveValues`                  | Annotated node is enabled, if all controls specified in this attribute have a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
+`whenAtLeastOneControlHasValues`            | Annotated node is enabled, if at least one control specified in this attribute has a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
+`logicalOp`                                    | In case more than one attribute is specified as part of this annotation, this boolean operation describes how the different attributes shall be logically linked with each other. Possible values are `BooleanOp.AND` and `BooleanOp.OR`. Default is `BooleanOp.AND`.
+
+**Example:**
+
+```java
+	// activate button, when the table view has items
+	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
+	@FXML
+	private Button removeAllButton;
+
+	// activate button, when user selected values in table view
+	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+	@FXML
+	private Button removeSelectedButton;
+
+	// activate button, when all controls of the form have values
+	@AFXEnableNode(whenAllControlsHaveValues = {"usernameTextField" , "passwordTextField")
+	@FXML
+	private Button submitButton;
+```
+
+#### Annotation @AFXDisableNode
+
+The [@AFXDisableNode](src/main/java/com/github/actionfx/core/annotation/AFXDisableNode.java) has the same purpose than the [@AFXEnableNode](src/main/java/com/github/actionfx/core/annotation/AFXEnableNode.java), but it is defining rules, when a node shall be disabled. Logically, this annotation is the "negated" `@AFXEnableNode` functionality.
+
+The following attributes are available inside the annotation:
+
+Attribute                                       | Description 
+----------------------------------------------- | -------------------------------------------------
+`whenAllContolsHaveUserValues`              | Annotated node is disabled, if all controls specified in this attribute have a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).  
+`whenAtLeastOneContolHasUserValue`          | Annotated node is disabled, if at least one of the controls specified in this attribute has a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).
+`whenAllControlsHaveValues`                  | Annotated node is disabled, if all controls specified in this attribute have a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
+`whenAtLeastOneControlHasValues`            | Annotated node is disabled, if at least one control specified in this attribute has a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
+`logicalOp`                                    | In case more than one attribute is specified as part of this annotation, this boolean operation describes how the different attributes shall be logically linked with each other. Possible values are `BooleanOp.AND` and `BooleanOp.OR`. Default is `BooleanOp.AND`.
+
+**Example:**
+
+```java
+	// deactivate button, when the table view has items
+	@AFXDisableNode(whenAllControlsHaveValues = "bookTableView")
+	@FXML
+	private Button addItemsButton;
 ```
 
 ### Annotations triggering User Dialogs
