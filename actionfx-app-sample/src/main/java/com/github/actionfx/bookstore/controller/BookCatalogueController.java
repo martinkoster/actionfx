@@ -72,12 +72,12 @@ public class BookCatalogueController {
 		categoriesCheckListView.getCheckModel().checkAll();
 	}
 
-	@AFXLoadControlData(controlId = "categoriesCheckListView", order = 1)
+	@AFXLoadControlData(controlId = "categoriesCheckListView")
 	public List<String> loadCategories() {
 		return Arrays.asList("Thriller", "Science Fiction", "Fantasy", "Drama");
 	}
 
-	@AFXLoadControlData(controlId = "bookTableView", async = true, order = 2)
+	@AFXLoadControlData(controlId = "bookTableView", async = true)
 	public List<Book> loadBooks() {
 		final List<Book> books = new ArrayList<>();
 		books.add(new Book("Sci-Fi Stories 3", "Science Fiction", 8.99));

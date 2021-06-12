@@ -34,9 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.github.actionfx.core.converter.Converter;
-import com.github.actionfx.core.converter.GenericStringConverter;
-
 /**
  * JUnit test case for {@link GenericStringConverter}.
  *

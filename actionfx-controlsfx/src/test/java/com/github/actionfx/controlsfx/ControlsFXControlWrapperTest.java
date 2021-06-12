@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.controlsfx.control.CheckTreeView;
 import org.controlsfx.control.PropertySheet.Item;
-import org.controlsfx.control.WorldMapView;
 import org.controlsfx.control.WorldMapView.Country;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -680,7 +679,6 @@ class ControlsFXControlWrapperTest {
 	void testWorldMapView() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlsFXControlProvider.worldMapView();
-		final WorldMapView wmv = wrapper.getWrapped();
 
 		// WHEN and THEN
 		assertSupportsValue(wrapper, false);

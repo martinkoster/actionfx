@@ -121,8 +121,10 @@ public class ControlBasedBooleanBindingBuilder {
 
 		return Bindings.createBooleanBinding(() -> {
 			boolean result = true;
+			boolean firstLoopRun = true;
 			for (final PredicateElement element : predicateChain) {
-				result = combinedPredicateResults(result, element);
+				result = firstLoopRun ? element.evaluatePredicate() : combinedPredicateResults(result, element);
+				firstLoopRun = false;
 			}
 			return negateChainResult ? !result : result;
 		}, observables);
@@ -157,7 +159,8 @@ public class ControlBasedBooleanBindingBuilder {
 	 * @return this builder instance
 	 */
 	public ControlBasedBooleanBindingBuilder forControl(final Control... controls) {
-		return forControl(Arrays.stream(controls).map(ControlWrapper::of).toArray(size -> new ControlWrapper[size]));
+		return forControlWrapper(
+				Arrays.stream(controls).map(ControlWrapper::of).toArray(size -> new ControlWrapper[size]));
 	}
 
 	/**
@@ -166,7 +169,7 @@ public class ControlBasedBooleanBindingBuilder {
 	 * @param wrappers the control wrappers to add
 	 * @return this builder instance
 	 */
-	public ControlBasedBooleanBindingBuilder forControl(final ControlWrapper... wrappers) {
+	public ControlBasedBooleanBindingBuilder forControlWrapper(final ControlWrapper... wrappers) {
 		predicateElementUnderConstruction.forControl(wrappers);
 		return this;
 	}

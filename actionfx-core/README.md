@@ -555,7 +555,7 @@ The following attributes are available inside the annotation:
 
 Attribute 							| Description 
 ----------------------------------- | -------------------------------------------------
-`wrapInSortedList` 				| Optionally the {@link FilteredList} can be additionally wrapped inside a `javafx.collections.transformation.SortedList`. Default is however `false`.
+`wrapInSortedList` 				| Optionally the `FilteredList` can be additionally wrapped inside a `javafx.collections.transformation.SortedList`. Default is however `false`.
 
 **Example:**
 ```java

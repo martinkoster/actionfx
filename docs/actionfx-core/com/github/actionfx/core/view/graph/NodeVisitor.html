@@ -133,7 +133,11 @@ public interface <span class="typeNameLabel">NodeVisitor</span></pre>
 <div class="block">Functional handler for applying some logic during scene graph traversal. This
  interface uses <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>NodeWrapper</code></a> for describing elements in the scene graph
  and not directly <code>Node</code>s, because not all elements in the JavaFX scene
- graph do inherit from <code>Node</code> (e.g. <code>Tab</code>s).</div>
+ graph do inherit from <code>Node</code> (e.g. <code>Tab</code>s).
+ <p>
+ Implementations of <a href="NodeVisitor.html" title="interface in com.github.actionfx.core.view.graph"><code>NodeVisitor</code></a> can be applied to the scene graph via
+ <a href="NodeWrapper.html#applyNodeVisitorByBFS(com.github.actionfx.core.view.graph.NodeVisitor)"><code>NodeWrapper.applyNodeVisitorByBFS(NodeVisitor)</code></a> or
+ <a href="NodeWrapper.html#applyNodeVisitorByDFS(com.github.actionfx.core.view.graph.NodeVisitor)"><code>NodeWrapper.applyNodeVisitorByDFS(NodeVisitor)</code></a>.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>koster</dd>

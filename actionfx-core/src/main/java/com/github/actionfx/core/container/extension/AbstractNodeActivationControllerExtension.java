@@ -109,22 +109,22 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 			final ControlWrapper[] whenAtLeastOneControlHasValues, final BooleanOp booleanOp) {
 		final ControlBasedBooleanBindingBuilder builder = ControlBasedBooleanBindingBuilder.create(false);
 		if (whenAllContolsHaveUserValues.length > 0) {
-			builder.addNewPredicate(booleanOp).forControl(whenAllContolsHaveUserValues)
+			builder.addNewPredicate(booleanOp).forControlWrapper(whenAllContolsHaveUserValues)
 					.observableExtractorFunction(ControlWrapper::getUserValueAsObservable)
 					.allFulfilledFunction(ControlWrapper::hasUserValueSet);
 		}
 		if (whenAllControlsHaveValues.length > 0) {
-			builder.addNewPredicate(booleanOp).forControl(whenAllControlsHaveValues)
+			builder.addNewPredicate(booleanOp).forControlWrapper(whenAllControlsHaveValues)
 					.observableExtractorFunction(ControlWrapper::getValueOrValuesAsObservable)
 					.allFulfilledFunction(ControlWrapper::hasValueOrValuesSet);
 		}
 		if (whenAtLeastOneContolHasUserValue.length > 0) {
-			builder.addNewPredicate(booleanOp).forControl(whenAtLeastOneContolHasUserValue)
+			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneContolHasUserValue)
 					.observableExtractorFunction(ControlWrapper::getUserValueAsObservable)
 					.atLeastOneFulfilledFunction(ControlWrapper::hasUserValueSet);
 		}
 		if (whenAtLeastOneControlHasValues.length > 0) {
-			builder.addNewPredicate(booleanOp).forControl(whenAtLeastOneControlHasValues)
+			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneControlHasValues)
 					.observableExtractorFunction(ControlWrapper::getValueOrValuesAsObservable)
 					.atLeastOneFulfilledFunction(ControlWrapper::hasValueOrValuesSet);
 		}

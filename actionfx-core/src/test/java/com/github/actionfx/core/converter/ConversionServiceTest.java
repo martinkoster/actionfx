@@ -100,7 +100,7 @@ class ConversionServiceTest {
 	void testConvert_fromStringToNumber() {
 		// GIVEN
 		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
-		final String number = "124.5";
+		final String number = "124";
 
 		// WHEN and THEN
 		assertThat(service.convert(number, Integer.class), equalTo(Integer.valueOf(number)));
@@ -108,15 +108,6 @@ class ConversionServiceTest {
 		assertThat(service.convert(number, Double.class), equalTo(Double.valueOf(number)));
 		assertThat(service.convert(number, Short.class), equalTo(Short.valueOf(number)));
 		assertThat(service.convert(number, Byte.class), equalTo(Byte.valueOf(number)));
-	}
-
-	@Test
-	void testConvert_fromNumberToNumber() {
-		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
-
-		// WHEN and THEN
-
 	}
 
 	@Test

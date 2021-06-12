@@ -13,6 +13,12 @@ ActionFX is a declarative, less-intrusive MVC framework based on annotations and
 
 For a quick introduction to ActionFX, you can refer to the [sample applications](actionfx-app-sample/README.md). For a more detailed overview on the features of ActionFX, please refer the [core documentation](actionfx-core/README.md).
 
+This document contains the following chapters:
+
+- [Design Philosophies](#design-philosophies)
+- [Feature Overview](#feature-overview)
+- [Module Overview](#module-overview)
+
 ## Design Philosophies
 - **Support and encourage the implementation of the MVC pattern**: Controllers are light-weight, loosely-coupled components that are not dependent on any framework base classes. Views on the other hand are preferably defined via FXML and other concerns like view behavior, main-window/popup-window considerations are configuration aspects defined via annotations (and not as tons of code).
 - **Lightweight and Less-intrusive**: ActionFX does not force you to build your classes on top of framework classes. At no point in time, you need to derive your classes from ActionFX classes. Classes supplied by the framework can be used e.g. to speed up the setup process, but this is not required. At all point in time, it is possible to make normal use of plain JavaFX development style.
@@ -26,12 +32,12 @@ ActionFX provides the following features in a declarative fashion without requir
 - Use Dependency Injection with ActionFX directly or with a Spring container
 - Define controllers using FXML or statically implemented views
 - View handling through annotations e.g. injecting nested views into a scene graph or navigate to a certain view
-- Inject control values e.g. from a `javafx.scene.control.TextField` into methods by annotating method arguments
-- Wiring the `onActionProperty` of scene graph nodes to methods by using annotations
+- Inject control values e.g. selected items from a `javafx.scene.control.TableView` into methods by using annotations on method arguments
+- Wire the `onActionProperty` of scene graph nodes to methods by using annotations
 - Configure complex table views or even tree table views by just using annotations, which avoids a lot of code lines compared to pure JavaFX
 - Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the user supplied input in other controls like text fields or table views
 - Integrate user confirmation dialogues or simple text input dialogs in a declarative fashion also via annotations
-- Out-of-the-box internationalization support through resource bundle integration (for Spring a `org.springframework.context.MessageSource` can be leverage)
+- Out-of-the-box internationalization support through resource bundle integration (for Spring a `org.springframework.context.MessageSource` can be leveraged)
 
 ## Module Overview
 

@@ -39,20 +39,21 @@ public class ViewCreator {
 	private ViewCreator() {
 	}
 
-	public static StaticView create(final Node node, final String id) {
-		node.setId(id);
+	public static StaticView create(final Node node, final String nodeId) {
+		node.setId(nodeId);
 		return new StaticView("staticView", node);
+	}
+
+	public static StaticView create() {
+		return new StaticView("staticView");
 	}
 
 	public static class StaticView extends AbstractView {
 
-		private final Node node;
-
-		public StaticView(final String viewId, final Node node) {
+		public StaticView(final String viewId, final Node... node) {
 			id = viewId;
-			this.node = node;
 			final AnchorPane pane = new AnchorPane();
-			pane.getChildren().add(node);
+			pane.getChildren().addAll(node);
 			rootNode = pane;
 		}
 
@@ -61,8 +62,10 @@ public class ViewCreator {
 			return null;
 		}
 
-		public Node getNode() {
-			return node;
+		public StaticView appendNode(final Node node, final String nodeId) {
+			node.setId(nodeId);
+			((AnchorPane) getRootNode()).getChildren().add(node);
+			return this;
 		}
 	}
 }

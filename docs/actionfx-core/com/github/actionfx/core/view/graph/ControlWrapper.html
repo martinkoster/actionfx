@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":9,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -342,11 +342,11 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>java.lang.Object</code></td>
+<td class="colFirst"><code>javafx.beans.Observable</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUserValueAsObservable()">getUserValueAsObservable</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Gets the user value as an observable, which is usually either an instance of
- <code>ObservableValue</code> or of <code>ObservableList</code>.</div>
+<div class="block">Gets the user value as an <code>Observable</code> which is usually either an
+ instance of <code>ObservableValue</code> or of <code>ObservableList</code>.</div>
 </td>
 </tr>
 <tr id="i12" class="altColor">
@@ -357,69 +357,105 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </td>
 </tr>
 <tr id="i13" class="rowColor">
+<td class="colFirst"><code>protected java.lang.Object</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueFromObservable(javafx.beans.Observable)">getValueFromObservable</a></span>&#8203;(javafx.beans.Observable&nbsp;observable)</code></th>
+<td class="colLast">
+<div class="block">Extracts the actual value from the supplied <code>Observable</code>.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>javafx.beans.Observable</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueOrValuesAsObservable()">getValueOrValuesAsObservable</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets the value as an <code>Observable</code> which is usually either an instance
+ of <code>ObservableValue</code> or of <code>ObservableList</code>.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.beans.value.ObservableValue&lt;V&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueProperty()">getValueProperty</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the value property.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.collections.ObservableList&lt;V&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValues()">getValues</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Get all values from the underlying wrapped <code>Control</code>.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>java.lang.Object</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValuesOrValue()">getValuesOrValue</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets values or the value from the wrapped <code>Control</code>.</div>
+</td>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hasUserValueSet()">hasUserValueSet</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Checks, whether the wrapped control has a value set by the user.</div>
+</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hasValueOrValuesSet()">hasValueOrValuesSet</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Checks, whether the wrapped control has either values or a value set.</div>
+</td>
+</tr>
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>static <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#of(javafx.scene.control.Control)">of</a></span>&#8203;(javafx.scene.control.Control&nbsp;control)</code></th>
 <td class="colLast">
 <div class="block">Convenient factory method for creating a <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> instance.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllSelectedValueChangeListener()">removeAllSelectedValueChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached selected value change listener.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllSelectedValuesChangeListener()">removeAllSelectedValuesChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached selected values change listener.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllValueChangeListener()">removeAllValueChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached value change listener.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllValuesChangeListener()">removeAllValuesChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached values change listener.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setValues(javafx.collections.ObservableList)">setValues</a></span>&#8203;(javafx.collections.ObservableList&lt;V&gt;&nbsp;valueList)</code></th>
 <td class="colLast">
 <div class="block">Sets the given <code>valueList</code> as "values" to the underlying control.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsMultipleValues()">supportsMultipleValues</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the wrapped <code>Control</code> supports multiple values or not.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsMultiSelection()">supportsMultiSelection</a></span>()</code></th>
 <td class="colLast">
@@ -427,28 +463,28 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  or not.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsSelection()">supportsSelection</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the control supports a selection of values.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsSelectionModelProperty()">supportsSelectionModelProperty</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the control supports a <code>SelectionModel</code> property.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsValue()">supportsValue</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the wrapped <code>Control</code> supports a "value" property (e.g.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsValues()">supportsValues</a></span>()</code></th>
 <td class="colLast">
@@ -811,7 +847,49 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  <li>in case the control supports a multi-values, the user value is the list
  of values</li>
  </ul>
- The first matching rule wins for the extraction of the user value.</div>
+ The first matching rule wins for the extraction of the user value.
+ <p>
+ This method considers values selected via a <code>SelectionModel</code>.</div>
+</li>
+</ul>
+<a id="getValuesOrValue()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValuesOrValue</h4>
+<pre class="methodSignature">public&nbsp;java.lang.Object&nbsp;getValuesOrValue()</pre>
+<div class="block">Gets values or the value from the wrapped <code>Control</code>.
+ <p>
+ The value is assumed to be one of the following (entries with higher order
+ are of higher priority):
+ <ul>
+ <li>in case the control supports a single-value, the user value is the single
+ value (e.g. the "text" inside a <code>TextField</code>
+ control)</li>
+ <li>in case the control supports a multi-values, the user value is the list
+ of values</li>
+ </ul>
+ The first matching rule wins for the extraction of the value.
+ <p>
+ Unlike method <a href="#getUserValue()"><code>getUserValue()</code></a>, this method does not consider selected
+ values through a <code>SelectionModel</code>.</div>
+</li>
+</ul>
+<a id="getValueFromObservable(javafx.beans.Observable)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValueFromObservable</h4>
+<pre class="methodSignature">protected&nbsp;java.lang.Object&nbsp;getValueFromObservable&#8203;(javafx.beans.Observable&nbsp;observable)</pre>
+<div class="block">Extracts the actual value from the supplied <code>Observable</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>observable</code> - the observable to extract the value from</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the extracted value</dd>
+</dl>
 </li>
 </ul>
 <a id="getUserValueAsObservable()">
@@ -820,10 +898,32 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <ul class="blockList">
 <li class="blockList">
 <h4>getUserValueAsObservable</h4>
-<pre class="methodSignature">public&nbsp;java.lang.Object&nbsp;getUserValueAsObservable()</pre>
-<div class="block">Gets the user value as an observable, which is usually either an instance of
- <code>ObservableValue</code> or of <code>ObservableList</code>. However, it is up to
- the caller to do type checks on the return value.</div>
+<pre class="methodSignature">public&nbsp;javafx.beans.Observable&nbsp;getUserValueAsObservable()</pre>
+<div class="block">Gets the user value as an <code>Observable</code> which is usually either an
+ instance of <code>ObservableValue</code> or of <code>ObservableList</code>. However, it
+ is up to the caller to do type checks on the return value.
+ <p>
+ A "user value" is a specifically value set by the user, e.g. by entering text
+ in a text field or by selecting entries in a table view.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the value as an observable</dd>
+</dl>
+</li>
+</ul>
+<a id="getValueOrValuesAsObservable()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValueOrValuesAsObservable</h4>
+<pre class="methodSignature">public&nbsp;javafx.beans.Observable&nbsp;getValueOrValuesAsObservable()</pre>
+<div class="block">Gets the value as an <code>Observable</code> which is usually either an instance
+ of <code>ObservableValue</code> or of <code>ObservableList</code>. However, it is up to
+ the caller to do type checks on the return value.
+ <p>
+ A "value" is either a value set by a user (e.g. text in a text field) or the
+ "items" behind e.g. a list/table view or elements inside a choice/combo box.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the value as an observable</dd>
@@ -970,7 +1070,7 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <a id="getConverterProperty()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getConverterProperty</h4>
 <pre class="methodSignature">public&nbsp;javafx.beans.property.ObjectProperty&lt;javafx.util.StringConverter&lt;?&gt;&gt;&nbsp;getConverterProperty()</pre>
@@ -980,6 +1080,40 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the "converter" property, or <code>null</code>, in case the property is
          not supported by the wrapped control</dd>
+</dl>
+</li>
+</ul>
+<a id="hasValueOrValuesSet()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hasValueOrValuesSet</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;hasValueOrValuesSet()</pre>
+<div class="block">Checks, whether the wrapped control has either values or a value set. Values
+ are e.g. text in a <code>TextField</code> or values in a <code>TableView</code> (even
+ when not selected).</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>true</code>, if the wrapped control has values set, <code>false</code>
+         otherwise.</dd>
+</dl>
+</li>
+</ul>
+<a id="hasUserValueSet()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>hasUserValueSet</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;hasUserValueSet()</pre>
+<div class="block">Checks, whether the wrapped control has a value set by the user. User values
+ are e.g. text in a <code>TextField</code> or selected values in a
+ <code>TableView</code>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>true</code>, if the wrapped control has value set by the user,
+         <code>false</code> otherwise.</dd>
 </dl>
 </li>
 </ul>

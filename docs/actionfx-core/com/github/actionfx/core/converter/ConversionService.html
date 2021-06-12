@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -160,6 +160,13 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>,&#8203;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;</span></code></th>
+<td class="colLast">
+<div class="block">Factory interface for creating instances of converter.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter">ConversionService.ConvertiblePair</a></span></code></th>
 <td class="colLast">
@@ -226,16 +233,31 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;javafx.util.StringConverter&lt;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createStringConverter(java.lang.Class)">createStringConverter</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
+<td class="colLast">
+<div class="block">Creates a JavaFX string converter for the specified</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected &lt;S,&#8203;T&gt;<br><a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findConverterFactory(com.github.actionfx.core.converter.ConversionService.ConvertiblePair)">findConverterFactory</a></span>&#8203;(<a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter">ConversionService.ConvertiblePair</a>&nbsp;convertiblePair)</code></th>
+<td class="colLast">
+<div class="block">Finds a suiting converter factory by iterating over the entire class
+ hierarchies of the source and target types of the <a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter"><code>ConversionService.ConvertiblePair</code></a>.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getObservableLocale()">getObservableLocale</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>protected &lt;T&gt;&nbsp;<a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;java.lang.Object,&#8203;T&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupConverter(java.lang.Class,java.lang.Class)">lookupConverter</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;sourceType,
-               java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected &lt;S,&#8203;T&gt;<br><a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupConverterFactory(java.lang.Class,java.lang.Class)">lookupConverterFactory</a></span>&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                      java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
 <td class="colLast">
-<div class="block">Looks up the best fit converter that is registered in this conversion
+<div class="block">Looks up the best fit converter factory that is registered in this conversion
  service.</div>
 </td>
 </tr>
@@ -311,6 +333,23 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a id="createStringConverter(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createStringConverter</h4>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;javafx.util.StringConverter&lt;T&gt;&nbsp;createStringConverter&#8203;(java.lang.Class&lt;T&gt;&nbsp;targetType)</pre>
+<div class="block">Creates a JavaFX string converter for the specified</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - </dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>targetType</code> - </dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+</dl>
+</li>
+</ul>
 <a id="canConvert(java.lang.Class,java.lang.Class)">
 <!--   -->
 </a>
@@ -331,25 +370,48 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="lookupConverter(java.lang.Class,java.lang.Class)">
+<a id="lookupConverterFactory(java.lang.Class,java.lang.Class)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>lookupConverter</h4>
-<pre class="methodSignature">protected&nbsp;&lt;T&gt;&nbsp;<a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;java.lang.Object,&#8203;T&gt;&nbsp;lookupConverter&#8203;(java.lang.Class&lt;?&gt;&nbsp;sourceType,
-                                                                  java.lang.Class&lt;T&gt;&nbsp;targetType)</pre>
-<div class="block">Looks up the best fit converter that is registered in this conversion
- service. Considers the type hierarchy of <code>sourceType</code>.</div>
+<h4>lookupConverterFactory</h4>
+<pre class="methodSignature">protected&nbsp;&lt;S,&#8203;T&gt;&nbsp;<a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;&nbsp;lookupConverterFactory&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                                                                                           java.lang.Class&lt;T&gt;&nbsp;targetType)</pre>
+<div class="block">Looks up the best fit converter factory that is registered in this conversion
+ service. Considers the type hierarchy of <code>sourceType</code>.
+ <p>
+ This method first tries to lookup the converter factory in cache via a fast
+ lookup. In case the converter factory is not yet cached, the entire class
+ hierarchies of the <code>sourceType</code> and <code>targetType</code> are checked.</div>
 <dl>
-<dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - the target type parameter</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceType</code> - the source type</dd>
 <dd><code>targetType</code> - the target type</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the looked up converter, or <code>null</code>, if no converter could be
-         found</dd>
+<dd>the looked up converter factory, or <code>null</code>, if no converter
+         factory could be found</dd>
+</dl>
+</li>
+</ul>
+<a id="findConverterFactory(com.github.actionfx.core.converter.ConversionService.ConvertiblePair)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findConverterFactory</h4>
+<pre class="methodSignature">protected&nbsp;&lt;S,&#8203;T&gt;&nbsp;<a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;&nbsp;findConverterFactory&#8203;(<a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter">ConversionService.ConvertiblePair</a>&nbsp;convertiblePair)</pre>
+<div class="block">Finds a suiting converter factory by iterating over the entire class
+ hierarchies of the source and target types of the <a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter"><code>ConversionService.ConvertiblePair</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>S</code> - the source type</dd>
+<dd><code>T</code> - the target type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>convertiblePair</code> - the convertible pair</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the found converter factory, or <code>null</code>, if no converter factory
+         could be found.</dd>
 </dl>
 </li>
 </ul>

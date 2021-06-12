@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":6,"i4":6,"i5":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6,"i5":6,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -229,14 +229,23 @@ implements java.util.function.Consumer&lt;java.lang.Object&gt;</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createControlWrapper(java.lang.String,com.github.actionfx.core.view.View)">createControlWrapper</a></span>&#8203;(java.lang.String&nbsp;controlId,
-                    <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createControlWrapper(com.github.actionfx.core.view.View,java.lang.String)">createControlWrapper</a></span>&#8203;(<a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
+                    java.lang.String&nbsp;controlId)</code></th>
 <td class="colLast">
 <div class="block">Creates a <a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> for a control identified by
  <code>controlId</code>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>protected <a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a>[]</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createControlWrapper(com.github.actionfx.core.view.View,java.lang.String...)">createControlWrapper</a></span>&#8203;(<a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
+                    java.lang.String...&nbsp;controlIds)</code></th>
+<td class="colLast">
+<div class="block">Creates an array of <a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> for controls identified by
+ <code>controlIds</code>.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createNodeWrapper(java.lang.String,com.github.actionfx.core.view.View)">createNodeWrapper</a></span>&#8203;(java.lang.String&nbsp;nodeId,
                  <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</code></th>
@@ -244,7 +253,7 @@ implements java.util.function.Consumer&lt;java.lang.Object&gt;</pre>
 <div class="block">Creates a <a href="../../view/graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>NodeWrapper</code></a> for a node identified by <code>nodeId</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#extend(java.lang.Object,E,A)">extend</a></span>&#8203;(java.lang.Object&nbsp;controller,
       <a href="AbstractAnnotationBasedControllerExtension.html" title="type parameter in AbstractAnnotationBasedControllerExtension">E</a>&nbsp;annotatedElement,
@@ -254,7 +263,7 @@ implements java.util.function.Consumer&lt;java.lang.Object&gt;</pre>
  controller instance, as well as the annotated element and one annotation.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected abstract java.util.Map&lt;<a href="AbstractAnnotationBasedControllerExtension.html" title="type parameter in AbstractAnnotationBasedControllerExtension">E</a>,&#8203;java.util.List&lt;<a href="AbstractAnnotationBasedControllerExtension.html" title="type parameter in AbstractAnnotationBasedControllerExtension">A</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupAnnotatedElements(java.lang.Object)">lookupAnnotatedElements</a></span>&#8203;(java.lang.Object&nbsp;controller)</code></th>
 <td class="colLast">
@@ -263,7 +272,7 @@ implements java.util.function.Consumer&lt;java.lang.Object&gt;</pre>
  repeatable) annotations.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected javafx.beans.property.BooleanProperty</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupBooleanProperty(java.lang.Object,java.lang.String)">lookupBooleanProperty</a></span>&#8203;(java.lang.Object&nbsp;instance,
                      java.lang.String&nbsp;booleanPropertyPath)</code></th>
@@ -398,21 +407,41 @@ implements java.util.function.Consumer&lt;java.lang.Object&gt;</pre>
 </dl>
 </li>
 </ul>
-<a id="createControlWrapper(java.lang.String,com.github.actionfx.core.view.View)">
+<a id="createControlWrapper(com.github.actionfx.core.view.View,java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createControlWrapper</h4>
-<pre class="methodSignature">protected&nbsp;<a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a>&nbsp;createControlWrapper&#8203;(java.lang.String&nbsp;controlId,
-                                              <a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view)</pre>
+<pre class="methodSignature">protected&nbsp;<a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a>&nbsp;createControlWrapper&#8203;(<a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
+                                              java.lang.String&nbsp;controlId)</pre>
 <div class="block">Creates a <a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> for a control identified by
  <code>controlId</code>. The control with the given ID is supposed to by inside the
  given <code>view</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>controlId</code> - the control ID for that the wrapper shall be created</dd>
 <dd><code>view</code> - the view containing the control with id <code>controlId</code></dd>
+<dd><code>controlId</code> - the control ID for that the wrapper shall be created</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the control wrapper instance</dd>
+</dl>
+</li>
+</ul>
+<a id="createControlWrapper(com.github.actionfx.core.view.View,java.lang.String...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createControlWrapper</h4>
+<pre class="methodSignature">protected&nbsp;<a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a>[]&nbsp;createControlWrapper&#8203;(<a href="../../view/View.html" title="interface in com.github.actionfx.core.view">View</a>&nbsp;view,
+                                                java.lang.String...&nbsp;controlIds)</pre>
+<div class="block">Creates an array of <a href="../../view/graph/ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> for controls identified by
+ <code>controlIds</code>. The controls with the given ID are supposed to by inside
+ the given <code>view</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>view</code> - the view containing the control with id <code>controlId</code></dd>
+<dd><code>controlIds</code> - the control IDs for that the wrapper shall be created</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the control wrapper instance</dd>
 </dl>
