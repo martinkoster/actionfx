@@ -39,6 +39,7 @@ import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
@@ -46,6 +47,7 @@ import com.github.actionfx.core.annotation.AFXUseFilteredList;
 
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 
 @AFXController(viewId = "bookCatalogueView", fxml = "/fxml/BookCatalogueView.fxml")
@@ -53,6 +55,11 @@ public class BookCatalogueController {
 
 	@FXML
 	private CheckListView<String> categoriesCheckListView;
+
+	// enable button, when user selects a book
+	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+	@FXML
+	private Button addToShoppingCartButton;
 
 	@AFXUseFilteredList
 	@AFXEnableMultiSelection

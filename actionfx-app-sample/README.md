@@ -118,6 +118,11 @@ public class BookCatalogueController {
 	@FXML
 	private CheckListView<String> categoriesCheckListView;
 
+	// enable button, when user selects a book
+	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+	@FXML
+	private Button addToShoppingCartButton;
+	
 	@AFXUseFilteredList
 	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
