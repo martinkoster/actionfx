@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 1.2.0 (02.05.2021)
+## 1.2.0 (12.06.2021)
 - Annotation @AFXOnAction now supports asynchronous method invocation via attribute 'async'.
 - Support for working with simple dialogs like confirmation-, information-, warning-, error-, file handling- and text input dialogs.
 - Added annotation @AFXRequiresUserConfirmation: Methods are only executed after the user confirms via a confirmation dialog.
