@@ -442,8 +442,8 @@ Attribute 							| Description
 **Example:**
 
 ```java
-		@AFXConverter(MovieStringConverter.class)
-		private final ComboBox<Movie> comboBox = new ComboBox<>();	
+	@AFXConverter(MovieStringConverter.class)
+	private final ComboBox<Movie> comboBox = new ComboBox<>();	
 ```
 
 #### Annotation @AFXOnAction

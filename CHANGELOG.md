@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Added annotation @AFXRequiresUserConfirmation: Methods are only executed after the user confirms via a confirmation dialog.
 - Added method argument annotations @AFXFromFileOpenDialog, @AFXFromFileSaveDialog, @AFXFromFileChooserDialog and @AFXFromTextInputDialog to request values from the user via dialogs.
 - Changed @AFXOnAction#controlId attribute to @AFXOnAction#nodeId as also regular nodes (not controls) can have an "onAction" property (e.g. "MenuItem").
+- Added field annotations @AFXEnableNode and @AFXDisableNode to control a node's disabledProperty() depending on other control values
 - Added new sample application "TextEditor"
 
 ## 1.1.0 (01.05.2021)

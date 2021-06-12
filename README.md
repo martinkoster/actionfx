@@ -20,6 +20,18 @@ For a quick introduction to ActionFX, you can refer to the [sample applications]
 - **Choose the container technique on your own**: It is up to the developer to decide whether to use a Spring container or not. For smaller applications with just a few views it might be an overkill to integrate Spring. However, for larger applications Spring can be useful for dependency injection and its great integration technologies. Thus, Spring or Spring Boot can be easily used within ActionFX to manage controller and views as Spring beans. None of the features of ActionFX itself will force you to!
 - **Extensibility**: ActionFX features are implemented as "controller extension", where each annotation and extension is encapsulated in its own controller extension class. Developers can register and extend ActionFX by their own controller extensions. Controller extensions are applied to the controller after instantiation, after dependency injection, but before methods annotated with `@PostConstruct` are invoked. 
 
+## Feature Overview
+
+ActionFX provides the following features in a declarative fashion without requiring you to write code: 
+- Use Dependency Injection with ActionFX directly or with a Spring container
+- Define controllers using FXML or statically implemented views
+- View handling through annotations e.g. injecting nested views into a scene graph or navigate to a certain view
+- Inject control values e.g. from a `javafx.scene.control.TextField` into methods by annotating method arguments
+- Wiring the `onActionProperty` of scene graph nodes to methods by using annotations
+- Configure complex table views or even tree table views by just using annotations, which avoids a lot of code lines compared to pure JavaFX
+- Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the user supplied input in other controls like text fields or table views
+- Integrate user confirmation dialogues or simple text input dialogs in a declarative fashion also via annotations
+- Out-of-the-box internationalization support through resource bundle integration (for Spring a `org.springframework.context.MessageSource` can be leverage)
 
 ## Module Overview
 
