@@ -35,7 +35,7 @@ import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 
-import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Control;
 
 /**
@@ -144,20 +144,27 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
 	}
 
 	/**
-	 * Looks up a {@link BooleanProperty} inside the given {@code instance}.
+	 * Looks up a {@link ObservableValue} inside the given {@code instance}.
 	 *
-	 * @param instance            the instance
-	 * @param booleanPropertyPath the property path (potentially nested) pointing to
-	 *                            a {@link BooleanProperty}
-	 * @return the looked-up boolean property, or {@code null}, if the property can
+	 * @param instance     the instance
+	 * @param propertyPath the property path (potentially nested) pointing to a
+	 *                     {@link ObservableValue}
+	 * @return the looked-up observable value, or {@code null}, if the property can
 	 *         not be looked up
 	 */
-	protected BooleanProperty lookupBooleanProperty(final Object instance, final String booleanPropertyPath) {
-		BooleanProperty booleanProperty = null;
-		if (!"".equals(booleanPropertyPath)) {
-			booleanProperty = (BooleanProperty) ReflectionUtils.getNestedFieldValue(booleanPropertyPath, instance);
+	@SuppressWarnings("unchecked")
+	protected <T extends ObservableValue<?>> T lookupObservableValue(final Object instance, final String propertyPath,
+			final Class<T> expectedType) {
+		if (!"".equals(propertyPath)) {
+			final Object fieldValue = ReflectionUtils.getNestedFieldValue(propertyPath, instance);
+			if (fieldValue != null && !expectedType.isAssignableFrom(fieldValue.getClass())) {
+				throw new IllegalArgumentException(
+						"Property '" + propertyPath + "' in class '" + instance.getClass().getCanonicalName()
+								+ "' is not of expected type '" + expectedType.getCanonicalName() + "'!");
+			}
+			return (T) fieldValue;
 		}
-		return booleanProperty;
+		return null;
 	}
 
 }

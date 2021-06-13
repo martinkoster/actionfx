@@ -57,8 +57,8 @@ public class OnControlValueChangeMethodControllerExtension
 	protected void extend(final Object controller, final Method annotatedElement,
 			final AFXOnControlValueChange annotation) {
 		final View view = ControllerWrapper.getViewFrom(controller);
-		final BooleanProperty listenerActionBooleanProperty = lookupBooleanProperty(controller,
-				annotation.listenerActiveBooleanProperty());
+		final BooleanProperty listenerActionBooleanProperty = lookupObservableValue(controller,
+				annotation.listenerActiveBooleanProperty(), BooleanProperty.class);
 		final ControlWrapper controlWrapper = createControlWrapper(view, annotation.controlId());
 		// check, whether the wrapped control supports multi-selection or only single
 		// selection

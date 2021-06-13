@@ -61,8 +61,8 @@ public class OnLoadControlDataMethodControllerExtension
 	@Override
 	protected void extend(final Object controller, final Method annotatedElement, final AFXLoadControlData annotation) {
 		final View view = ControllerWrapper.getViewFrom(controller);
-		final BooleanProperty loadingActiveBooleanProperty = lookupBooleanProperty(controller,
-				annotation.loadingActiveBooleanProperty());
+		final BooleanProperty loadingActiveBooleanProperty = lookupObservableValue(controller,
+				annotation.loadingActiveBooleanProperty(), BooleanProperty.class);
 		final ControlWrapper controlWrapper = createControlWrapper(view, annotation.controlId());
 		// check, whether the wrapped control supports multi-selection or only single
 		// selection

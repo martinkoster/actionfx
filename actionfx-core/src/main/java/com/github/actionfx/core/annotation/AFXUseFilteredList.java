@@ -28,6 +28,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -56,4 +57,14 @@ public @interface AFXUseFilteredList {
 	 *         inside a {@link SortedList}.
 	 */
 	public boolean wrapInSortedList() default false;
+
+	/**
+	 * Optional expression that is resolved to an {@link ObservableValue} holding a
+	 * filter {@link Predicate}, that is set as filter predicate in the
+	 * {@link FilteredList} and is observed for changes.
+	 *
+	 * @return an expression that points to a field of type {@link ObservableValue}
+	 *         and holds a {@link Predicate}.
+	 */
+	public String filterPredicateProperty() default "";
 }

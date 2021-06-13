@@ -123,7 +123,7 @@ public class BookCatalogueController {
 	@FXML
 	private Button addToShoppingCartButton;
 	
-	@AFXUseFilteredList
+	@AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
 	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
@@ -135,6 +135,9 @@ public class BookCatalogueController {
 	// this annotation
 	@Inject
 	private ShoppingCartController shoppingCartController;
+
+	// holds the predicate that filters our book table
+	private final ObjectProperty<Predicate<Book>> catalogueFilterPredicateProperty = new SimpleObjectProperty<>(b -> true);
 
 	@PostConstruct
 	public void initialize() {
@@ -203,8 +206,7 @@ public class BookCatalogueController {
 	 */
 	public void applyPredicate(final String filterText, final List<String> selectedCategories) {
 		final Predicate<Book> p = b -> selectedCategories.contains(b.getCategory());
-		final FilteredList<Book> filteredList = (FilteredList<Book>) bookTableView.getItems();
-		filteredList.setPredicate(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
+		catalogueFilterPredicateProperty.set(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
 	}
 }
 ```
@@ -221,7 +223,7 @@ The catalogue view holds a ControlsFX `CheckListView` which displays the categor
 The actual books are displayed in a `javafx.scene.layout.TableView` which is configured to support a multi-selection and a filtering. Additionally, it is configured, which data is displayed in which column via the `AFXCellValueConfig` annotation:
 
 ```java
-	@AFXUseFilteredList
+	@AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
 	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
