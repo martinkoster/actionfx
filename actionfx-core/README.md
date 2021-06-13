@@ -559,14 +559,23 @@ Attribute 							| Description
 `filterPredicateProperty`        | Optional expression that is resolved to an `ObservableValue` holding a filter `Predicate`, that is set as filter predicate in the `FilteredList` and is observed for changes.
 
 **Example:**
+
 ```java
 	@AFXUseFilteredList
 	@FXML
 	private TableView<String> filteredTable;
-...
+    
 	@AFXUseFilteredList(wrapInSortedList=true)
 	@FXML
 	private TableView<String> filteredAndSortedTable;
+	
+	private final ObjectProperty<Predicate<String>> filterPredicateProperty = new SimpleObjectProperty<>(
+			b -> true);
+			
+	@AFXUseFilteredList(filterPredicateProperty = "filterPredicateProperty")
+	@FXML
+	private TableView<String> filteredTableWithBoundFilterPredicate;
+			
 ```
 
 ### Annotations for controlling the disabled state of a Node
