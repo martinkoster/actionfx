@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.view;
 
+import java.util.ResourceBundle;
+
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
@@ -132,6 +134,13 @@ public interface View {
 	 * @return the controller instance
 	 */
 	Object getController();
+
+	/**
+	 * Gets the resource bundle associated with this view.
+	 *
+	 * @return the resource bundle
+	 */
+	ResourceBundle getResourceBundle();
 
 	/**
 	 * Looks up a node that carries the supplied {@code nodeId}.

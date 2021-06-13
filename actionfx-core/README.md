@@ -570,7 +570,7 @@ Attribute 							| Description
 	private TableView<String> filteredAndSortedTable;
 	
 	private final ObjectProperty<Predicate<String>> filterPredicateProperty = new SimpleObjectProperty<>(
-			b -> true);
+			s -> true);
 			
 	@AFXUseFilteredList(filterPredicateProperty = "filterPredicateProperty")
 	@FXML

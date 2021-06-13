@@ -283,6 +283,7 @@ public abstract class AbstractView implements View {
 		return stylesheets;
 	}
 
+	@Override
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}

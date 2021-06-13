@@ -28,15 +28,14 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
-import com.github.actionfx.core.test.TestController;
+import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
@@ -59,7 +58,7 @@ class ControllerWrapperTest {
 	@Test
 	void testSetView_andThenGetView() {
 		// GIVEN
-		final ControllerWrapper<TestController> wrapper = new ControllerWrapper<>(createEnhancedTestController());
+		final ControllerWrapper<TestController> wrapper = new ControllerWrapper<>(new TestController());
 		final View view = Mockito.mock(View.class);
 
 		// WHEN
@@ -73,7 +72,7 @@ class ControllerWrapperTest {
 	void testSetViewOn_andThenGetViewFrom() {
 		// GIVEN
 		final View view = Mockito.mock(View.class);
-		final TestController controller = createEnhancedTestController();
+		final TestController controller = new TestController();
 
 		// WHEN
 		ControllerWrapper.setViewOn(controller, view);
@@ -85,7 +84,8 @@ class ControllerWrapperTest {
 	@Test
 	void testGetSetView_classIsNotEnhanced() {
 		// GIVEN
-		final ControllerWrapper<TestController> wrapper = new ControllerWrapper<>(createUnenhancedTestController());
+		final ControllerWrapper<TestControllerWithoutView> wrapper = new ControllerWrapper<>(
+				new TestControllerWithoutView());
 		final View view = Mockito.mock(View.class);
 
 		// WHEN (then exception is expected)
@@ -96,7 +96,7 @@ class ControllerWrapperTest {
 	@TestInFxThread
 	void testGetWindow() {
 		// GIVEN
-		final TestController controller = createEnhancedTestController();
+		final TestController controller = new TestController();
 		final AFXController afxController = AnnotationUtils.findAnnotation(TestController.class, AFXController.class);
 		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
 		ControllerWrapper.setViewOn(controller, fxmlView);
@@ -112,9 +112,23 @@ class ControllerWrapperTest {
 	}
 
 	@Test
+	@TestInFxThread
+	void testGetResourceBundleFrom() {
+		// GIVEN
+		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources");
+		final TestControllerWithResourceBundle controller = new TestControllerWithResourceBundle(resourceBundle);
+
+		// WHEN
+		final ResourceBundle bundle = ControllerWrapper.getResourceBundleFrom(controller);
+
+		// THEN
+		assertThat(bundle, sameInstance(resourceBundle));
+	}
+
+	@Test
 	void testGetScene() {
 		// GIVEN
-		final TestController controller = createEnhancedTestController();
+		final TestController controller = new TestController();
 		final AFXController afxController = AnnotationUtils.findAnnotation(TestController.class, AFXController.class);
 		final FxmlView fxmlView = new FxmlView(afxController.viewId(), afxController.fxml(), controller);
 		ControllerWrapper.setViewOn(controller, fxmlView);
@@ -128,18 +142,21 @@ class ControllerWrapperTest {
 		assertThat(nodeScene, sameInstance(scene));
 	}
 
-	TestController createEnhancedTestController() {
-		try {
-			final ActionFXByteBuddyEnhancer enhancer = new ActionFXByteBuddyEnhancer();
-			final Class<?> controllerClass = enhancer.enhanceClass(TestController.class);
-			return (TestController) controllerClass.getDeclaredConstructor().newInstance();
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw new IllegalStateException("Can not instantiate TestController!", e);
-		}
+	@AFXController(viewId = "testId", fxml = "/testfxml/SampleView.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {
+			"cssClass1", "cssClass2" })
+	public static class TestController {
+		public View _view;
 	}
 
-	TestController createUnenhancedTestController() {
-		return new TestController();
+	public static class TestControllerWithoutView {
+	}
+
+	public static class TestControllerWithResourceBundle {
+
+		public View _view;
+
+		public TestControllerWithResourceBundle(final ResourceBundle resourceBundle) {
+			_view = ViewCreator.create().resourceBundle(resourceBundle);
+		}
 	}
 }

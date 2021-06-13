@@ -24,6 +24,7 @@
 package com.github.actionfx.core.instrumentation;
 
 import java.lang.reflect.Field;
+import java.util.ResourceBundle;
 
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
@@ -76,6 +77,15 @@ public class ControllerWrapper<T> {
 	}
 
 	/**
+	 * Gets the {@link ResourceBundle} from the wrapped controller.
+	 *
+	 * @return the resource bundle
+	 */
+	public ResourceBundle getResourceBundle() {
+		return getView().getResourceBundle();
+	}
+
+	/**
 	 * Gets the {@link Scene} that the controller's view is part of. In case the
 	 * view has not yet been added to a scene, {@code null} is returned.
 	 *
@@ -117,6 +127,17 @@ public class ControllerWrapper<T> {
 	 */
 	public static View getViewFrom(final Object controller) {
 		return of(controller).getView();
+	}
+
+	/**
+	 * Convenient static method for getting the {@link ResourceBundle} from the
+	 * supplied controller.
+	 *
+	 * @param controller the controller to get the resource bundle from
+	 * @return the retrieved {@link ResourceBundle}
+	 */
+	public static ResourceBundle getResourceBundleFrom(final Object controller) {
+		return of(controller).getResourceBundle();
 	}
 
 	/**

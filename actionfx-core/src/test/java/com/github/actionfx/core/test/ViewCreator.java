@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.test;
 
+import java.util.ResourceBundle;
+
 import com.github.actionfx.core.view.AbstractView;
 
 import javafx.scene.Node;
@@ -65,6 +67,11 @@ public class ViewCreator {
 		public StaticView appendNode(final Node node, final String nodeId) {
 			node.setId(nodeId);
 			((AnchorPane) getRootNode()).getChildren().add(node);
+			return this;
+		}
+
+		public StaticView resourceBundle(final ResourceBundle resourceBundle) {
+			this.resourceBundle = resourceBundle;
 			return this;
 		}
 	}
