@@ -382,7 +382,7 @@ The action for emptying the shopping cart is quite simple and straight-forward b
 
 As you can see here, this method is also annotated with `@AFXRequiresUserConfirmation`. That means that this method is only executed, after the user confirms a confirmation dialog with the given title, header and content text. In case the user cancels this confirmation dialog, the method is not executed and by that, the shopping cart is not emptied.
 
-For the starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we combine the `AFXOnAction` annotation with the `AFXShowView` annotation that opens the defined view with name `checkoutView` is a new window (`showInNewWindow=true`).
+For starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we combine the `AFXOnAction` annotation with the `AFXShowView` annotation that opens the defined view with name `checkoutView` is a new window (`showInNewWindow=true`).
 
 ```java
 	@AFXOnAction(nodeId = "checkoutButton")

@@ -1,10 +1,10 @@
 # Module "actionfx-testing"
 
-This module contains JUnit 5 test extensions for testing Javactionfx- and ActionFX components.
+This module contains JUnit 5 test extensions for testing JavaFX- and ActionFX components.
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
-[actionfx-testing](README.md) | This module contains JUnit 5 classes for unit- and integration testing of JavaFX and ActionFX components. This is achieved by JUnit 5 extensions [FxThreadForAllMonocleExtension](actionfx-testing/src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java) and [FxThreadForEachMonocleExtension](actionfx-testing/src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java) to run tests inside the JavaFX thread. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-testing/index.html) 
+[actionfx-testing](README.md) | This module contains JUnit 5 classes for unit- and integration testing of JavaFX and ActionFX components. This is achieved by JUnit 5 extensions [FxThreadForAllMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java) and [FxThreadForEachMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java) to run tests inside the JavaFX thread. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-testing/index.html) 
 
 **Gradle Dependency**
 
@@ -26,7 +26,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-testing", versi
 
 The following code snippets demonstrate the usage of the JUnit 5 testing framework of ActionFX:
 
-### Using one Javactionfx-application thread through all test methods
+### Using one JavaFX application thread through all test methods
 
 In this scenario, one JavaFX thread is created that all test methods can use (but not run inside in), by using [@FxThreadForAllMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java):
 
@@ -45,7 +45,7 @@ class ActionFXTest {
 } 
 ```
 
-### Using a new Javactionfx-application thread for each test method
+### Using a new JavaFX application thread for each test method
 
 In this scenario, each method is executed with a new, fresh JavaFX thread(but not run inside in), by using [@FxThreadForEachMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java):
 
@@ -64,7 +64,7 @@ class ActionFXTest {
 }
 ```
 
-### Execute a single test method inside the Javactionfx-thread
+### Execute a single test method inside the JavaFX thread
 
 In the code sample below, method `testFirst()` is annotated by [@TestInFxThread](src/main/java/com/github/actionfx/testing/annotation/TestInFxThread.java) and by that, this method is executed inside the JavaFX thread, while method `testSecond()` is **not** executed in the JavaFX thread.
 
@@ -84,7 +84,7 @@ class ActionFXTest {
 }
 ```
 
-### Execute all test methods inside the JavaFX-thread
+### Execute all test methods inside the JavaFX thread
 
 By using the annotation [@TestInFxThread](src/main/java/com/github/actionfx/testing/annotation/TestInFxThread.java) on class-level, all test methods are executed inside the JavaFX thread. There is no need to annotate the single test methods themselves.
 
