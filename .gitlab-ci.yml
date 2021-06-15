@@ -80,6 +80,6 @@ releaseToNexus:
   script:
     - apt-get install -y gnupg
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
-    - gpg --batch --export-secret-key $SECRET_KEY -o ~/.gnupg/secring.gpg
+    - gpg --export-secret-key --batch -o ~/.gnupg/secring.gpg
     - ./gradlew uploadArchives -x test
   
