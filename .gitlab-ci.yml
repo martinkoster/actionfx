@@ -13,6 +13,7 @@ before_script:
   - export GPG_TTY=$(tty)
   - apt-get update && apt-get install -y libxtst6 libgtk2.0-0
   - apt-get install -y gnupg
+  - apt-get install pinentry-tty
   - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
   - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
       
