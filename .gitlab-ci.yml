@@ -62,7 +62,7 @@ integrationtest:
 reportCodeCoverage:
   stage: quality
   script:
-    - ./gradlew codeCoverageReport
+    - ./gradlew codeCoverageReport -x test
     - ./gradlew sonarqube -x test
   artifacts:
     paths:
@@ -81,5 +81,5 @@ releaseToNexus:
     - apt-get install -y gnupg
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg --keyring secring.gpg --export-secret-key $SECRET_KEY -o ~/.gnupg/secring.gpg
-    - ./gradlew uploadArchives
+    - ./gradlew uploadArchives -x test
   
