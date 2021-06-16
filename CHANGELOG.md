@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 1.3.0 (13.06.2021)
+## 1.3.0 (16.06.2021)
 - Added attribute 'filterPredicateProperty' to annotation @AFXUseFilteredList in order to bind a predicate to the filtered list directly
 - Extended ControllerWrapper class to retrieve the java.util.ResourceBundle from the controller instance
 

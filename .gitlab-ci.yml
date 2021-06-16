@@ -87,5 +87,5 @@ releaseToNexus:
     - echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
-    - ./gradlew uploadArchives -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=~/.gnupg/secring.pgp
+    - ./gradlew uploadArchives -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.pgp
   
