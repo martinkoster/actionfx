@@ -10,12 +10,6 @@ before_script:
 #  - echo `pwd` # debug
 #  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
   - export GRADLE_USER_HOME=`pwd`/.gradle
-  - export GPG_TTY=$(tty)
-  - apt-get update && apt-get install -y libxtst6 libgtk2.0-0
-  - apt-get install -y gnupg
-  - apt-get install pinentry-tty
-  - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
-  - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
       
 cache:
   paths:
@@ -53,6 +47,7 @@ unittest:
 integrationtest:
   stage: test
   script:
+    - apt-get update && apt-get install -y libxtst6 libgtk2.0-0
     - ./gradlew integrationTest
   artifacts:
     paths:
@@ -84,8 +79,13 @@ releaseToNexus:
   when: manual
   script:
     - export GPG_TTY=$(tty)
+    - apt-get update
     - apt-get install -y gnupg
+    - apt-get install -y gpg-agent
+    - gpg -v --list-keys
+    - echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
+    - echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
-    - gpg --export-secret-key --batch -o ~/.gnupg/secring.gpg
-    - ./gradlew uploadArchives -x test
+    - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
+    - ./gradlew uploadArchives -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=~/.gnupg/secring.pgp
   
