@@ -2,9 +2,9 @@ image: adoptopenjdk/openjdk11:jdk-11.0.10_9-ubuntu
     
 stages:
   - build
-  - deploy
   - test
   - quality
+  - deploy
     
 before_script:
 #  - echo `pwd` # debug
@@ -85,12 +85,8 @@ releaseToNexus:
     - gpg -v --list-keys
     - echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
     - echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
-    - mkdir ~/.gradle
-    - echo "ossrhUsername=$NEXUS_USERNAME" >> ~/.gradle/gradle.properties
-    - echo "ossrhPassword=$NEXUS_PASSWORD" >> ~/.gradle/gradle.properties
-    - echo "nexusUsername=$NEXUS_USERNAME" >> ~/.gradle/gradle.properties
-    - echo "nexusPassword=$NEXUS_PASSWORD" >> ~/.gradle/gradle.properties
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
-    - ./gradlew uploadArchives closeAndReleaseRepository -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg -PossrhUsername=$NEXUS_USERNAME -PossrhPassword=$NEXUS_PASSWORD -PnexusUsername=$NEXUS_USERNAME -PnexusPassword=$NEXUS_PASSWORD
+    - ./gradlew uploadArchives -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg -PossrhUsername=$NEXUS_USERNAME -PossrhPassword=$NEXUS_PASSWORD -PnexusUsername=$NEXUS_USERNAME -PnexusPassword=$NEXUS_PASSWORD
+    - ./gradlew closeAndReleaseRepository -x test -PossrhUsername=$NEXUS_USERNAME -PossrhPassword=$NEXUS_PASSWORD -PnexusUsername=$NEXUS_USERNAME -PnexusPassword=$NEXUS_PASSWORD
   
