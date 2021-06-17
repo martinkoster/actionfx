@@ -90,6 +90,7 @@ releaseToNexus:
     - echo "ossrhPassword=$NEXUS_PASSWORD" >> ~/.gradle/gradle.properties
     - echo "nexusUsername=$NEXUS_USERNAME" >> ~/.gradle/gradle.properties
     - echo "nexusPassword=$NEXUS_PASSWORD" >> ~/.gradle/gradle.properties
+    - cat ~/.gradle/gradle.properties
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
     - ./gradlew uploadArchives -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg
