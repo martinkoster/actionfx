@@ -24,10 +24,12 @@
 package com.github.actionfx.core.container.extension;
 
 import java.lang.reflect.Field;
+import java.util.function.Predicate;
 
 import com.github.actionfx.core.annotation.AFXUseFilteredList;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -53,11 +55,51 @@ public class UseFilteredListControllerExtension extends AbstractAnnotatedFieldCo
 				.of(getFieldValue(controller, annotatedElement, Control.class));
 		final ObservableList list = controlWrapper.getValues();
 		final FilteredList filteredList = new FilteredList(list);
+		if (!"".equals(annotation.filterPredicateProperty())) {
+			bindFilteredListPredicate(controller, annotatedElement, annotation, filteredList);
+		}
 		if (annotation.wrapInSortedList()) {
 			controlWrapper.setValues(new SortedList(filteredList));
 		} else {
 			controlWrapper.setValues(filteredList);
 		}
+	}
+
+	/**
+	 * Binds the predicate of the filtered list to the observable value specified as
+	 * part of the {@link AFXUseFilteredList} annotation.
+	 *
+	 * @param controller       the controller
+	 * @param annotatedElement the annotated field
+	 * @param annotation       the annotation
+	 * @param filteredList     the filtered list
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void bindFilteredListPredicate(final Object controller, final Field annotatedElement,
+			final AFXUseFilteredList annotation, final FilteredList filteredList) {
+		final ObservableValue<?> observableValue = lookupObservableValue(controller,
+				annotation.filterPredicateProperty(), ObservableValue.class);
+		if (observableValue == null) {
+			throw new IllegalStateException(
+					"Attribute 'filterPredicateProperty' in @AFXUseFilteredList annotation on field '"
+							+ annotatedElement.getName() + "' in class '" + controller.getClass().getCanonicalName()
+							+ "' resolved to null!");
+		}
+		final Object propertyValue = observableValue.getValue();
+		if (propertyValue == null) {
+			throw new IllegalStateException(
+					"Attribute 'filterPredicateProperty' in @AFXUseFilteredList annotation on field '"
+							+ annotatedElement.getName() + "' in class '" + controller.getClass().getCanonicalName()
+							+ "' resolved to an ObservableValue, but its value is null!");
+
+		}
+		if (!Predicate.class.isAssignableFrom(propertyValue.getClass())) {
+			throw new IllegalStateException(
+					"Attribute 'filterPredicateProperty' in @AFXUseFilteredList annotation on field '"
+							+ annotatedElement.getName() + "' in class '" + controller.getClass().getCanonicalName()
+							+ "' resolved to an ObservableValue, but its value is not a java.util.function.Predicate!");
+		}
+		filteredList.predicateProperty().bind(observableValue);
 	}
 
 }

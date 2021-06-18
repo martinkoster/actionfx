@@ -9,7 +9,7 @@ Module | Description | API Documentation
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.2.0"
+implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.3.0"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-core</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -556,16 +556,26 @@ The following attributes are available inside the annotation:
 Attribute 							| Description 
 ----------------------------------- | -------------------------------------------------
 `wrapInSortedList` 				| Optionally the `FilteredList` can be additionally wrapped inside a `javafx.collections.transformation.SortedList`. Default is however `false`.
+`filterPredicateProperty`        | Optional expression that is resolved to an `ObservableValue` holding a filter `Predicate`, that is set as filter predicate in the `FilteredList` and is observed for changes.
 
 **Example:**
+
 ```java
 	@AFXUseFilteredList
 	@FXML
 	private TableView<String> filteredTable;
-...
+    
 	@AFXUseFilteredList(wrapInSortedList=true)
 	@FXML
 	private TableView<String> filteredAndSortedTable;
+	
+	private final ObjectProperty<Predicate<String>> filterPredicateProperty = new SimpleObjectProperty<>(
+			s -> true);
+			
+	@AFXUseFilteredList(filterPredicateProperty = "filterPredicateProperty")
+	@FXML
+	private TableView<String> filteredTableWithBoundFilterPredicate;
+			
 ```
 
 ### Annotations for controlling the disabled state of a Node

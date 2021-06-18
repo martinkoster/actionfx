@@ -45,7 +45,8 @@ import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.annotation.AFXUseFilteredList;
 
-import javafx.collections.transformation.FilteredList;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
@@ -61,7 +62,7 @@ public class BookCatalogueController {
 	@FXML
 	private Button addToShoppingCartButton;
 
-	@AFXUseFilteredList
+	@AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
 	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
@@ -73,6 +74,10 @@ public class BookCatalogueController {
 	// this annotation
 	@Inject
 	private ShoppingCartController shoppingCartController;
+
+	// holds the predicate that filters our book table
+	private final ObjectProperty<Predicate<Book>> catalogueFilterPredicateProperty = new SimpleObjectProperty<>(
+			b -> true);
 
 	@PostConstruct
 	public void initialize() {
@@ -141,7 +146,6 @@ public class BookCatalogueController {
 	 */
 	public void applyPredicate(final String filterText, final List<String> selectedCategories) {
 		final Predicate<Book> p = b -> selectedCategories.contains(b.getCategory());
-		final FilteredList<Book> filteredList = (FilteredList<Book>) bookTableView.getItems();
-		filteredList.setPredicate(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
+		catalogueFilterPredicateProperty.set(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
 	}
 }

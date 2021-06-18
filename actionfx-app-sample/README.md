@@ -123,7 +123,7 @@ public class BookCatalogueController {
 	@FXML
 	private Button addToShoppingCartButton;
 	
-	@AFXUseFilteredList
+	@AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
 	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
@@ -135,6 +135,9 @@ public class BookCatalogueController {
 	// this annotation
 	@Inject
 	private ShoppingCartController shoppingCartController;
+
+	// holds the predicate that filters our book table
+	private final ObjectProperty<Predicate<Book>> catalogueFilterPredicateProperty = new SimpleObjectProperty<>(b -> true);
 
 	@PostConstruct
 	public void initialize() {
@@ -203,8 +206,7 @@ public class BookCatalogueController {
 	 */
 	public void applyPredicate(final String filterText, final List<String> selectedCategories) {
 		final Predicate<Book> p = b -> selectedCategories.contains(b.getCategory());
-		final FilteredList<Book> filteredList = (FilteredList<Book>) bookTableView.getItems();
-		filteredList.setPredicate(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
+		catalogueFilterPredicateProperty.set(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
 	}
 }
 ```
@@ -221,7 +223,7 @@ The catalogue view holds a ControlsFX `CheckListView` which displays the categor
 The actual books are displayed in a `javafx.scene.layout.TableView` which is configured to support a multi-selection and a filtering. Additionally, it is configured, which data is displayed in which column via the `AFXCellValueConfig` annotation:
 
 ```java
-	@AFXUseFilteredList
+	@AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
 	@AFXEnableMultiSelection
 	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
 	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
@@ -380,7 +382,7 @@ The action for emptying the shopping cart is quite simple and straight-forward b
 
 As you can see here, this method is also annotated with `@AFXRequiresUserConfirmation`. That means that this method is only executed, after the user confirms a confirmation dialog with the given title, header and content text. In case the user cancels this confirmation dialog, the method is not executed and by that, the shopping cart is not emptied.
 
-For the starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we combine the `AFXOnAction` annotation with the `AFXShowView` annotation that opens the defined view with name `checkoutView` is a new window (`showInNewWindow=true`).
+For starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we combine the `AFXOnAction` annotation with the `AFXShowView` annotation that opens the defined view with name `checkoutView` is a new window (`showInNewWindow=true`).
 
 ```java
 	@AFXOnAction(nodeId = "checkoutButton")
