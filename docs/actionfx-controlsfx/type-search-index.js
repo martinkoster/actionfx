@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"com.github.actionfx.controlsfx.selection","l":"CheckModelSelectionModel"}]
