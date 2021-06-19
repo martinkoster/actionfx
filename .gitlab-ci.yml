@@ -81,6 +81,7 @@ publishJavaDoc:
     GRGIT_USER: ${GRGIT_USER}
     GRGIT_PASS: ${GRGIT_PASS}    
   script:
+    - ./gradlew copyJavaDocToDocs -x test
     - ./gradlew gitPublishPush -x test 
     
 releaseToMavenCentral:

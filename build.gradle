@@ -172,7 +172,7 @@ configure(allprojects) { project ->
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
 	task copyJavaDocToDocs(type: Copy) {
 	    from "$buildDir/docs/javadoc"
-	    into "${rootProject.projectDir}/docs/${project.name}"
+	    into "${rootProject.projectDir}/docs/${version}/${project.name}"
 	}
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
@@ -236,8 +236,8 @@ gitPublish {
 
     // what to publish, this is a standard CopySpec
     contents {
-        from(javadoc) {
-            into "api/${version}"
+        from("${rootProject.projectDir}/docs/${version}") {
+            into "docs/${version}"
         }
     }
 
