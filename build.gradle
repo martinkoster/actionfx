@@ -229,8 +229,7 @@ modifyPom {
 }
 
 gitPublish {
-    // where to publish to (repo must exist)
-    repoUri = 'koster@gmx.de:martinkoster/actionfx.git'
+    repoUri = 'https://github.com/martinkoster/actionfx.git'
 
     // branch will be created if it doesn't exist
     branch = 'gh-pages'

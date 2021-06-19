@@ -77,6 +77,9 @@ reportCodeCoverage:
 publishJavaDoc:
   stage: deploy
   when: manual
+  variables:
+    GRGIT_USER: ${GRGIT_USER}
+    GRGIT_PASS: ${GRGIT_PASS}    
   script:
     - ./gradlew gitPublishPush -x test 
     
