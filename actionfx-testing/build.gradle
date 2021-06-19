@@ -40,7 +40,7 @@ modifyPom {
         inceptionYear '2020'
 	
         scm {
-            url 'https://https://github.com/martinkoster/actionfx'
+            url 'https://github.com/martinkoster/actionfx'
             connection 'scm:https://github.com/martinkoster/actionfx.git'
             developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
         }

@@ -42,7 +42,15 @@ configure(allprojects) { project ->
         mavenCentral()
         jcenter()
         mavenLocal()
+        
+        // for gradle-git-publish
+	    maven {
+	  		name = 'ajoberstar-backup'
+	  		url = 'https://ajoberstar.org/bintray-backup/'
+		}
     }
+    
+
     
 	// In this section you declare additional sourceSets
 	sourceSets {

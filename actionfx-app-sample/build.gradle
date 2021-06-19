@@ -46,7 +46,7 @@ modifyPom {
     project {
         name 'ActionFX: app-sample'
         description 'Sample applications for ActionFX'
-        url 'https://https://github.com/martinkoster/actionfx'
+        url 'https://github.com/martinkoster/actionfx'
         inceptionYear '2020'
 	
         scm {

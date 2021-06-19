@@ -52,7 +52,7 @@ modifyPom {
     project {
         name 'ActionFX: afx-spring-boot'
         description 'Spring and Spring Boot support for ActionFX'
-        url 'https://https://github.com/martinkoster/actionfx'
+        url 'https://github.com/martinkoster/actionfx'
         inceptionYear '2020'
 	
         scm {

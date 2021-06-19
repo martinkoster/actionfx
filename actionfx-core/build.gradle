@@ -48,7 +48,7 @@ modifyPom {
     project {
         name 'ActionFX: afx-core'
         description 'Core-Library of ActionFX'
-        url 'https://https://github.com/martinkoster/actionfx'
+        url 'https://github.com/martinkoster/actionfx'
         inceptionYear '2020'
 	
         scm {
