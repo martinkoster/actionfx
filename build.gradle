@@ -4,6 +4,7 @@ plugins {
     id "com.bmuschko.nexus" version "${gradleNexusPlugin}"
     id "io.codearte.nexus-staging" version "${gradleNexusStagingPlugin}"
     id "org.sonarqube" version "${sonarQubePlugin}"
+    id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
 }
 
 wrapper {
@@ -188,9 +189,6 @@ configure(allprojects) { project ->
     }
 }
 
-////////////////////////
-// Build / Publishing //
-////////////////////////
 modifyPom {
     project {
         name 'actionfx'
@@ -220,6 +218,30 @@ modifyPom {
             }
         }
     }
+}
+
+gitPublish {
+    // where to publish to (repo must exist)
+    repoUri = 'koster@gmx.de:martinkoster/actionfx.git'
+
+    // branch will be created if it doesn't exist
+    branch = 'gh-pages'
+
+    // what to publish, this is a standard CopySpec
+    contents {
+        from(javadoc) {
+            into "api/${version}"
+        }
+    }
+
+    // what to keep in the existing branch (include=keep)
+    preserve {
+        include '1.0.0/**'
+        exclude '1.0.0/temp.txt'
+    }
+
+    // message used when committing changes
+    commitMessage = "Publishing JavaDoc for ActionFX API version ${version}"
 }
 
 configure(rootProject) {

@@ -9,7 +9,7 @@ Module | Description | API Documentation
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", version: "1.3.0"
+implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", version: "1.4.0"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", v
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-spring-boot</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 

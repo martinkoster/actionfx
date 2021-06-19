@@ -2,9 +2,9 @@ image: adoptopenjdk/openjdk11:jdk-11.0.10_9-ubuntu
     
 stages:
   - build
+  - deploy
   - test
   - quality
-  - deploy
     
 before_script:
 #  - echo `pwd` # debug
@@ -73,8 +73,14 @@ reportCodeCoverage:
       - actionfx-spring-boot/build/
       - actionfx-app-sample/build/
     expire_in: 1 week
+
+publishJavaDoc:
+  stage: deploy
+  when: manual
+  script:
+    - ./gradlew gitPublishPush -x test 
     
-releaseToNexus:
+releaseToMavenCentral:
   stage: deploy
   when: manual
   script:

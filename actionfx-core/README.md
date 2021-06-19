@@ -9,7 +9,7 @@ Module | Description | API Documentation
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.3.0"
+implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.4.0"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-core</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
