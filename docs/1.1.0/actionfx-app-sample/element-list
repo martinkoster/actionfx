@@ -1,0 +1,9 @@
+com.github.actionfx.bookstoreapp.controller
+com.github.actionfx.bookstoreapp.core.app
+com.github.actionfx.bookstoreapp.model
+com.github.actionfx.bookstoreapp.spring.app
+com.github.actionfx.common.converter
+com.github.actionfx.datacontainerapp.app
+com.github.actionfx.datacontainerapp.controller
+com.github.actionfx.datacontainerapp.model
+com.github.actionfx.datacontainerapp.view
