@@ -4,7 +4,7 @@ This module contains an integration of the [ControlsFX](https://github.com/contr
 
 Module | Description | API Documentation | Gradle Dependency 
 ------ | ----------- | ----------------- | ----------
-[actionfx-controlsfx](README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-controls/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.1.0"`
+[actionfx-controlsfx](README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/1.1.0/actionfx-controls/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.1.0"`
 
 ## Using ControlsFX in an ActionFX application
 
