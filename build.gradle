@@ -243,8 +243,7 @@ gitPublish {
 
     // what to keep in the existing branch (include=keep)
     preserve {
-        include '1.0.0/**'
-        exclude '1.0.0/temp.txt'
+        include 'docs/**'
     }
 
     // message used when committing changes
@@ -252,10 +251,9 @@ gitPublish {
 }
 
 configure(rootProject) {
-	//apply plugin: 'io.codearte.nexus-staging'
-	
 	nexusStaging {
 	    packageGroup = "com.github.martinkoster" //optional if packageGroup == project.getGroup()
+	    stagingProfileId = "com.github.martinkoster"
 	}
 }
 
