@@ -4,7 +4,7 @@ This module contains application sample with and without Spring as bean containe
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
-[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-app-sample/index.html) 
+[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.3.0/actionfx-app-sample/index.html) 
 
 This module contains the following demo applications:
 
