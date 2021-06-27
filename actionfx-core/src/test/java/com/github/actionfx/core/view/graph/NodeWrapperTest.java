@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,6 +93,12 @@ class NodeWrapperTest {
 		assertThat(wrapperWithTabPane().isLeafNode(), equalTo(false));
 		assertThat(wrapperWithTab().isLeafNode(), equalTo(false));
 		assertThat(wrapperWithCanvas().isLeafNode(), equalTo(true));
+	}
+
+	@Test
+	void testIsControl() {
+		assertThat(wrapperWithScrollPane().isControl(), equalTo(true));
+		assertThat(wrapperWithAnchorPane().isControl(), equalTo(false));
 	}
 
 	@Test
@@ -446,6 +453,19 @@ class NodeWrapperTest {
 		// THEN (check expected visited order of breadth-first search, stopped at
 		// "tabTwo")
 		assertThat(ids, contains("borderPane", "scrollPane", "tabPane", "vbox", "listView", "tabOne", "tabTwo"));
+	}
+
+	@Test
+	void testGetNodesAsStream() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = wrapperWithHierarchy();
+
+		// WHEN
+		final List<String> ids = nodeWrapper.getNodesAsStream().map(NodeWrapper::getId).collect(Collectors.toList());
+
+		// THEN (check expected visited order of depth-first search)
+		assertThat(ids, contains("borderPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo", "canvas",
+				"vbox", "anchorPane", "gridPane"));
 	}
 
 	@Test

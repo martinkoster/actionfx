@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.4.0 (30.06.2021)
+- Updated dependencies:
+  * ByteBuddy to 1.11.5
+  * New dependency commons-beanutils 1.9.4
+  
 ## 1.3.0 (16.06.2021)
 - Added attribute 'filterPredicateProperty' to annotation @AFXUseFilteredList in order to bind a predicate to the filtered list directly
 - Extended ControllerWrapper class to retrieve the java.util.ResourceBundle from the controller instance

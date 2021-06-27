@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.github.actionfx.core.utils.ReflectionUtils;
+import com.github.actionfx.core.beans.BeanWrapper;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper;
@@ -156,7 +156,7 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
 	protected <T extends ObservableValue<?>> T lookupObservableValue(final Object instance, final String propertyPath,
 			final Class<T> expectedType) {
 		if (!"".equals(propertyPath)) {
-			final Object fieldValue = ReflectionUtils.getNestedFieldValue(propertyPath, instance);
+			final Object fieldValue = BeanWrapper.of(instance).getPropertyValue(propertyPath);
 			if (fieldValue != null && !expectedType.isAssignableFrom(fieldValue.getClass())) {
 				throw new IllegalArgumentException(
 						"Property '" + propertyPath + "' in class '" + instance.getClass().getCanonicalName()

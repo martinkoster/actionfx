@@ -37,6 +37,7 @@ import com.github.actionfx.core.container.extension.ConverterControllerExtension
 import com.github.actionfx.core.container.extension.DisableNodeControllerExtension;
 import com.github.actionfx.core.container.extension.EnableMultiSelectionControllerExtension;
 import com.github.actionfx.core.container.extension.EnableNodeControllerExtension;
+import com.github.actionfx.core.container.extension.FormBindingControllerExtension;
 import com.github.actionfx.core.container.extension.NestedViewControllerExtension;
 import com.github.actionfx.core.container.extension.OnActionMethodControllerExtension;
 import com.github.actionfx.core.container.extension.OnControlValueChangeMethodControllerExtension;
@@ -72,6 +73,7 @@ public class ControllerInstancePostProcessor {
 		controllerExtensions.add(new DisableNodeControllerExtension());
 		controllerExtensions.add(new OnLoadControlDataMethodControllerExtension());
 		controllerExtensions.add(new OnControlValueChangeMethodControllerExtension());
+		controllerExtensions.add(new FormBindingControllerExtension());
 
 		// add the custom controller extensions
 		controllerExtensions.addAll(customControllerExtension);

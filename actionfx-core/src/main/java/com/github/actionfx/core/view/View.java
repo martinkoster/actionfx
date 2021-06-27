@@ -24,7 +24,9 @@
 package com.github.actionfx.core.view;
 
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
+import com.github.actionfx.core.bind.BindingTargetResolver;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
@@ -37,7 +39,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
- * Interface for JavaFX views.
+ * Interface for ActionFX views. It provides common routines to show or hide a
+ * view, or to lookup nodes within the scene graph.
  *
  * @author koster
  *
@@ -150,4 +153,38 @@ public interface View {
 	 *         the given {@code nodeId}
 	 */
 	NodeWrapper lookupNode(String nodeId);
+
+	/**
+	 * Returns a stream to all nodes that participate in this view, starting from
+	 * the root note (see{@link #getRootNode()}). The order of nodes in the stream
+	 * corresponds to a depth-first search approach.
+	 *
+	 * @return the nodes of this view as a stream
+	 */
+	Stream<NodeWrapper> getViewNodesAsStream();
+
+	/**
+	 * Performs a data binding between the supplied {@code model} and the controls
+	 * that are part of this view.
+	 *
+	 * @param model          the model to bind (can be a Java domain object with or
+	 *                       without JavaFX properties)
+	 * @param implementation of {@link BindingTargetResolver} that resolves a field
+	 *                       from the {@code model} to a control in this view.
+	 */
+	void bind(Object model, BindingTargetResolver resolver);
+
+	/**
+	 * Removes any binding between this view and a model object (usually bound via
+	 * {@link #bind(Object)}).
+	 *
+	 * @param model the model to unbind
+	 */
+	void unbind(Object model);
+
+	/**
+	 * Removes all bindings that have been established via former calls to
+	 * {@link #bind(Object, BindingTargetResolver)}.
+	 */
+	void unbindAll();
 }

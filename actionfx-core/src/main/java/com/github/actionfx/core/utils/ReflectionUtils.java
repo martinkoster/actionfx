@@ -43,9 +43,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javafx.beans.property.Property;
-import javafx.beans.value.ObservableValue;
-
 /**
  * Utils for handling reflections.
  *
@@ -160,109 +157,6 @@ public class ReflectionUtils {
 			result.addAll(getAllSuperClassesAndInterfaces(clazz.getSuperclass()));
 		}
 		return result;
-	}
-
-	/**
-	 * Retrieves a field value described by a nested path
-	 * ({@code nestedPropertyPath}.
-	 * <p>
-	 * In case the {@link nestedPathProperty} resolves to an instance of type
-	 * {@link Property}, the property value and not the property itself is returned
-	 * (because we do not do direct field access, but we use the corresponding
-	 * getter-method. Getter-methods on properties return the value, not the
-	 * property).
-	 * <p>
-	 * In case you need access to the {@link Property} instance itself, please use
-	 * method {@link #getNestedFieldProperty(String, Object)}, which uses the
-	 * property-getter and not the regular getter for retrieving the field instance.
-	 * <p>
-	 * In case one of the path elements of the nested path evaluates to
-	 * {@code null}, {@code null} is returned by this method.
-	 *
-	 * @param nestedPropertyPath a nested path to a property
-	 * @param rootInstance       the instance that the nested property path is
-	 *                           referring to
-	 * @return the instance that is the provider of the filed
-	 */
-	public static Object getNestedFieldValue(final String nestedPropertyPath, final Object rootInstance) {
-		return getNestedFieldValue(nestedPropertyPath, rootInstance, Object.class);
-	}
-
-	/**
-	 * Retrieves a field value described by a nested path
-	 * ({@code nestedPropertyPath}. The value is expected to be of type
-	 * {@link ObservableValue}.
-	 * <p>
-	 * Unlike method {@link #getNestedFieldValue(String, Object)}, this method uses
-	 * the "property-getter" method for accessing the property (which is
-	 * "propertyNameProperty()" for a property with name "propertyName").
-	 * <p>
-	 * In case one of the path elements of the nested path evaluates to
-	 * {@code null}, {@code null} is returned by this method.
-	 *
-	 * @param nestedPropertyPath a nested path to a property
-	 * @param rootInstance       the instance that the nested property path is
-	 *                           referring to
-	 * @return the instance that is the provider of the property
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> ObservableValue<T> getNestedFieldProperty(final String nestedPropertyPath,
-			final Object rootInstance) {
-		return getNestedFieldValue(nestedPropertyPath, rootInstance, ObservableValue.class);
-	}
-
-	/**
-	 * Follows the given {@code nestedPropertyPath} along the given
-	 * {@code rootInstance} and extracts a value that is expected of given
-	 * {@code expectedType}.
-	 *
-	 * @param nestedPropertyPath the nested property path
-	 * @param rootInstance       the instance holding the property
-	 * @param expectedType       the type that is expected
-	 * @return the extracted value
-	 */
-	public static <T> T getNestedFieldValue(final String nestedPropertyPath, final Object rootInstance,
-			final Class<T> expectedType) {
-		final int dotIndex = nestedPropertyPath.indexOf('.');
-		if (dotIndex == -1 || dotIndex == nestedPropertyPath.length() - 1) {
-			return extractValueFromNonNestedPath(nestedPropertyPath, rootInstance, expectedType, dotIndex);
-		} else {
-			final String nextPropertyPathElement = nestedPropertyPath.substring(0, dotIndex);
-			final String remainingPropertyPath = nestedPropertyPath.substring(dotIndex + 1);
-			final Object nextInstance = extractPropertyValue(rootInstance, nextPropertyPathElement);
-			if (nextInstance == null) {
-				return null;
-			} else {
-				return getNestedFieldValue(remainingPropertyPath, nextInstance, expectedType);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T> T extractValueFromNonNestedPath(final String propertyName, final Object rootInstance,
-			final Class<T> expectedType, final int dotIndex) {
-		// no nested path? then the rootInstance is the instance that holds the field
-		// itself - we just need to check the type that the caller wants to have
-		// returned
-		final String cleanedPropertyName = dotIndex == -1 ? propertyName : propertyName.substring(0, dotIndex);
-		if (ObservableValue.class.isAssignableFrom(expectedType)) {
-			// use "property-getter" for accessing the value ("Property" implements
-			// "ObservableValue", so this
-			// branch is also executed for expectedType == "Property")
-			return (T) extractProperty(rootInstance, cleanedPropertyName);
-		} else {
-			// use regular "getter" for extracting the value
-			final Object value = extractPropertyValue(rootInstance, cleanedPropertyName);
-			if (value == null) {
-				return null;
-			} else if (!expectedType.isAssignableFrom(value.getClass())) {
-				throw new IllegalStateException("Field at nested path '" + propertyName + "' inside class '"
-						+ rootInstance.getClass().getCanonicalName() + "' does not resolve to type '"
-						+ expectedType.getCanonicalName() + "'!");
-			} else {
-				return (T) value;
-			}
-		}
 	}
 
 	/**
@@ -753,69 +647,6 @@ public class ReflectionUtils {
 	}
 
 	/**
-	 * Gets the value of a property with name {@code propertyName}. Preferably, the
-	 * getter-method is accessed for retrieving the property value. If there is no
-	 * getter available for the property, a direct field access is tried.
-	 * <p>
-	 * This method does not support nested paths.
-	 *
-	 * @param instance     the instance holding the
-	 * @param propertyName the name of the property
-	 * @return the property value
-	 */
-	private static Object extractPropertyValue(final Object instance, final String propertyName) {
-		final Class<?> clazz = instance.getClass();
-		final Field field = findField(clazz, propertyName);
-		if (field == null) {
-			throw new IllegalStateException(
-					"Class '" + clazz.getCanonicalName() + "' does not have a field with name '" + propertyName + "'!");
-		}
-		// check different ways of accessing the field value, preferably through the
-		// getter
-		final Method method = findMethod(clazz, getterMethodName(field));
-		if (method != null) {
-			// if getter-method is available, we take the value through the getter
-			return invokeMethod(method, instance);
-		} else {
-			return getFieldValue(field, instance);
-		}
-	}
-
-	/**
-	 * Gets the property with name {@code propertyName}. For this method, it is
-	 * expected that the propertyName evaluates to an instance of {@link Property}.
-	 * If this is not the case, an {@link ClassCastException} will be thrown
-	 * <p>
-	 * Preferably, the property-getter-method (e.g. "propertyNameProperty()") is
-	 * accessed for retrieving the property value. If there is no getter available
-	 * for the property, a direct field access is tried.
-	 * <p>
-	 * This method does not support nested paths.
-	 *
-	 * @param instance     the instance holding the
-	 * @param propertyName the name of the property
-	 * @return the property value
-	 */
-	@SuppressWarnings("unchecked")
-	private static <T> ObservableValue<T> extractProperty(final Object instance, final String propertyName) {
-		final Class<?> clazz = instance.getClass();
-		final Field field = findField(clazz, propertyName);
-		if (field == null) {
-			throw new IllegalStateException(
-					"Class '" + clazz.getCanonicalName() + "' does not have a field with name '" + propertyName + "'!");
-		}
-		// check different ways of accessing the field value, preferably through the
-		// getter
-		final Method method = findMethod(clazz, propertyGetterMethodName(field));
-		if (method != null) {
-			// if getter-method is available, we take the value through the getter
-			return invokeMethod(method, instance);
-		} else {
-			return (Property<T>) getFieldValue(field, instance);
-		}
-	}
-
-	/**
 	 * Callback optionally used to filter methods to be operated on by a method
 	 * callback.
 	 */
@@ -844,5 +675,4 @@ public class ReflectionUtils {
 		 */
 		boolean matches(Field field);
 	}
-
 }

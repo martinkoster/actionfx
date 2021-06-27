@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.actionfx.core.annotation.AFXNestedView;
 import com.github.actionfx.core.utils.AnnotationUtils;
@@ -48,6 +49,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
@@ -214,6 +216,16 @@ public class NodeWrapper {
 	 */
 	public boolean isTab() {
 		return isOfType(Tab.class);
+	}
+
+	/**
+	 * Checks, whether the wrapped object is a {@link Control}.
+	 *
+	 * @return {@code true}, if the wrapped node is a {@link Control}, {@code false}
+	 *         otherwise.
+	 */
+	public boolean isControl() {
+		return isOfType(Control.class);
 	}
 
 	/**
@@ -530,6 +542,34 @@ public class NodeWrapper {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Returns a stream to all nodes, starting from this {@link NodeWrapper}. The
+	 * order of nodes in the stream corresponds to a depth-first search approach.
+	 *
+	 * @return the nodes as a stream
+	 */
+	public Stream<NodeWrapper> getNodesAsStream() {
+		return Stream.concat(Stream.of(this), getChildrenNodesAsStream().flatMap(NodeWrapper::getNodesAsStream));
+	}
+
+	/**
+	 * Returns a stream to all children nodes, excluding this {@link NodeWrapper}.
+	 * The order of nodes in the stream corresponds to a depth-first search
+	 * approach.
+	 *
+	 * @return the children nodes as a stream
+	 */
+	private Stream<NodeWrapper> getChildrenNodesAsStream() {
+		if (supportsMultipleChildren()) {
+			return getChildren().stream().map(NodeWrapper::of);
+		} else if (supportsSingleChild()) {
+			final Object child = getSingleChildProperty().getValue();
+			return child == null ? Stream.empty() : Stream.of(getSingleChildProperty().getValue()).map(NodeWrapper::of);
+		} else {
+			return Stream.empty();
+		}
 	}
 
 	/**

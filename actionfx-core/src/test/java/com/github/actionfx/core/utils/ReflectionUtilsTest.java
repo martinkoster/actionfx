@@ -27,8 +27,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
@@ -47,7 +45,6 @@ import org.junit.jupiter.api.Test;
 import com.github.actionfx.core.test.ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation;
 import com.github.actionfx.core.utils.ReflectionUtils.FieldFilter;
 
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -127,126 +124,6 @@ class ReflectionUtilsTest {
 		// THEN
 		assertThat(result, containsInAnyOrder(ClassWithSuperClassAndInterface.class, SuperClassWithInterface.class,
 				Interface1.class, Interface2.class, Interface3.class, Object.class));
-	}
-
-	@Test
-	void getNestedFieldValue_pathIsNotNested() {
-		// GIVEN
-		final NestedElement nestedElement = new NestedElement(null, null);
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement", classWithNestedElement),
-				sameInstance(nestedElement));
-	}
-
-	@Test
-	void getNestedFieldValue_pathIsNotNested_endsWithDot() {
-		// GIVEN
-		final NestedElement nestedElement = new NestedElement(null, null);
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement.", classWithNestedElement),
-				sameInstance(nestedElement));
-	}
-
-	@Test
-	void getNestedFieldValue_isNested() {
-		// GIVEN
-		final NestedElement nestedElement = new NestedElement(new StringValueType("hello"),
-				new StringValueType("world"));
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement.fieldWithGetter.value", classWithNestedElement),
-				equalTo("hello"));
-	}
-
-	@Test
-	void getNestedFieldValue_onePathElementIsNull() {
-		// GIVEN
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldValue("nestedElement.fieldWithGetter.value", classWithNestedElement),
-				nullValue());
-	}
-
-	@Test
-	void getNestedFieldValue_onePathElementHasNoGetter_directFieldAccessIsExecuted() {
-		// GIVEN
-		final NestedElement nestedElement = new NestedElement(new StringValueType("hello"),
-				new StringValueType("world"));
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
-
-		// WHEN and THEN
-		assertThat(
-				ReflectionUtils.getNestedFieldValue("nestedElement.fieldWithoutGetter.value", classWithNestedElement),
-				equalTo("world"));
-	}
-
-	@Test
-	void getNestedFieldProperty_pathIsNotNested() {
-		// GIVEN
-		final StringPropertyType stringPropertyType = new StringPropertyType("hello world");
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldProperty("value", stringPropertyType),
-				sameInstance(stringPropertyType.valueProperty()));
-	}
-
-	@Test
-	void getNestedFieldProperty_pathIsNotNested_endsWithDot() {
-		// GIVEN
-		final StringPropertyType stringPropertyType = new StringPropertyType("hello world");
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldProperty("value.", stringPropertyType),
-				sameInstance(stringPropertyType.valueProperty()));
-	}
-
-	@Test
-	void getNestedFieldProperty_isNested() {
-		// GIVEN
-		final StringPropertyType helloPropertyType = new StringPropertyType("hello");
-		final StringPropertyType worldPropertyType = new StringPropertyType("world");
-
-		final NestedElementWithProperties nestedElementWithProperties = new NestedElementWithProperties(
-				helloPropertyType, worldPropertyType);
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null,
-				nestedElementWithProperties);
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldProperty("nestedElementWithProperties.fieldWithGetter.value",
-				classWithNestedElement), sameInstance(helloPropertyType.valueProperty()));
-	}
-
-	@Test
-	void getNestedFieldProperty_onePathElementIsNull() {
-		// GIVEN
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
-
-		// WHEN and THEN
-		assertThat(
-				ReflectionUtils.getNestedFieldProperty("nestedElement.fieldWithGetter.value", classWithNestedElement),
-				nullValue());
-	}
-
-	@Test
-	void getNestedFieldProperty_onePathElementHasNoGetter_directFieldAccessIsExecuted() {
-		// GIVEN
-		final StringPropertyType helloPropertyType = new StringPropertyType("hello");
-		final StringPropertyType worldPropertyType = new StringPropertyType("world");
-
-		final NestedElementWithProperties nestedElementWithProperties = new NestedElementWithProperties(
-				helloPropertyType, worldPropertyType);
-		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null,
-				nestedElementWithProperties);
-
-		// WHEN and THEN
-		assertThat(ReflectionUtils.getNestedFieldProperty("nestedElementWithProperties.fieldWithoutGetter.value",
-				classWithNestedElement), sameInstance(worldPropertyType.valueProperty()));
 	}
 
 	@Test
@@ -593,125 +470,6 @@ class ReflectionUtilsTest {
 				string = new SimpleStringProperty();
 			}
 			return string;
-		}
-	}
-
-	/**
-	 * Class that holds a nested element
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class ClassWithNestedElement {
-
-		private final NestedElement nestedElement;
-
-		private final NestedElementWithProperties nestedElementWithProperties;
-
-		public ClassWithNestedElement(final NestedElement nestedElement,
-				final NestedElementWithProperties nestedElementWithProperties) {
-			this.nestedElement = nestedElement;
-			this.nestedElementWithProperties = nestedElementWithProperties;
-		}
-
-		public NestedElement getNestedElement() {
-			return nestedElement;
-		}
-
-		public NestedElementWithProperties getNestedElementWithProperties() {
-			return nestedElementWithProperties;
-		}
-
-	}
-
-	/**
-	 * Class that holds 2 fields, one that can be accessed via a getter and one that
-	 * required direct field access.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class NestedElement {
-
-		private final StringValueType fieldWithGetter;
-
-		@SuppressWarnings("unused")
-		private final StringValueType fieldWithoutGetter;
-
-		public NestedElement(final StringValueType fieldWithGetter, final StringValueType fieldWithoutGetter) {
-			this.fieldWithGetter = fieldWithGetter;
-			this.fieldWithoutGetter = fieldWithoutGetter;
-		}
-
-		public StringValueType getFieldWithGetter() {
-			return fieldWithGetter;
-		}
-	}
-
-	/**
-	 * Class that holds 2 fields, one that can be accessed via a getter and one that
-	 * required direct field access. The values itself are Property-based.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class NestedElementWithProperties {
-
-		private final StringPropertyType fieldWithGetter;
-
-		@SuppressWarnings("unused")
-		private final StringPropertyType fieldWithoutGetter;
-
-		public NestedElementWithProperties(final StringPropertyType fieldWithGetter,
-				final StringPropertyType fieldWithoutGetter) {
-			this.fieldWithGetter = fieldWithGetter;
-			this.fieldWithoutGetter = fieldWithoutGetter;
-		}
-
-		public StringPropertyType getFieldWithGetter() {
-			return fieldWithGetter;
-		}
-	}
-
-	/**
-	 * Class holding a single string value that can be accessed through a getter.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class StringValueType {
-
-		private final String value;
-
-		public StringValueType(final String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-
-	/**
-	 * Class holding a single string property that can be accessed through a getter.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class StringPropertyType {
-
-		private final StringProperty value = new SimpleStringProperty();
-
-		public StringPropertyType(final String value) {
-			this.value.set(value);
-		}
-
-		public String getValue() {
-			return value.get();
-		}
-
-		public Property<String> valueProperty() {
-			return value;
 		}
 	}
 

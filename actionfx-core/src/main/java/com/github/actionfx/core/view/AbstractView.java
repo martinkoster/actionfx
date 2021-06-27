@@ -23,14 +23,18 @@
  */
 package com.github.actionfx.core.view;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
+import com.github.actionfx.core.bind.BindingTargetResolver;
 import com.github.actionfx.core.utils.AFXUtils;
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
@@ -42,7 +46,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
- * Abstract base class for view implementations.
+ * Abstract base class for an ActionFX view implementations.
  *
  * @author koster
  *
@@ -209,6 +213,11 @@ public abstract class AbstractView implements View {
 		});
 	}
 
+	@Override
+	public Stream<NodeWrapper> getViewNodesAsStream() {
+		return NodeWrapper.of(rootNode).getNodesAsStream();
+	}
+
 	/**
 	 * Initializes the given {@link Stage} with the parameters defined for this
 	 * view.
@@ -288,4 +297,48 @@ public abstract class AbstractView implements View {
 		return resourceBundle;
 	}
 
+	@Override
+	public void bind(final Object model, final BindingTargetResolver resolver) {
+		final List<Field> fields = ReflectionUtils.findAllDeclaredFields(model.getClass());
+	}
+
+	@Override
+	public void unbind(final Object model) {
+
+	}
+
+	@Override
+	public void unbindAll() {
+
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (id == null ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final AbstractView other = (AbstractView) obj;
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		return true;
+	}
 }

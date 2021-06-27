@@ -190,4 +190,5 @@ class FxmlViewTest {
 		// check that the node is now cached!
 		assertThat(view.lookupCache.get("textField"), equalTo(textFieldWrapper));
 	}
+
 }

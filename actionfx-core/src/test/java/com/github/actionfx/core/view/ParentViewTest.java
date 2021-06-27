@@ -27,9 +27,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,6 +92,19 @@ class ParentViewTest {
 		assertThat(controller.label.getText(), equalTo("Hello World"));
 		assertThat(controller.tableView, notNullValue());
 		assertThat(controller.tableView.getId(), equalTo("tableView"));
+	}
+
+	@Test
+	void testGetViewNodesAsStream() {
+		// GIVEN
+		final ParentView view = new ParentView("viewId", ViewClass.class, new ViewController());
+
+		// WHEN
+		final List<String> idList = view.getViewNodesAsStream()
+				.map(wrapper -> wrapper.getWrapped().getClass().getSimpleName()).collect(Collectors.toList());
+
+		// THEN
+		assertThat(idList, contains("ViewClass", "HBox", "Label", "String", "TableView"));
 	}
 
 	/**

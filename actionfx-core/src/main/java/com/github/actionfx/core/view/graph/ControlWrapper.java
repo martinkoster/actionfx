@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.actionfx.core.beans.BeanWrapper;
 import com.github.actionfx.core.collections.ValueChangeAwareObservableList;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.utils.ReflectionUtils;
@@ -869,7 +870,7 @@ public class ControlWrapper extends NodeWrapper {
 		}
 
 		public <V> ObservableValue<V> getValueProperty(final Control control) {
-			return ReflectionUtils.getNestedFieldProperty(valueProperty, control);
+			return BeanWrapper.of(control).getObservableValue(valueProperty);
 		}
 
 		public boolean hasValuesObservableList() {
@@ -884,15 +885,15 @@ public class ControlWrapper extends NodeWrapper {
 				final String[] propertyNames = valuesObservableList.split(",");
 				final List<ObservableValue<V>> observableValues = new ArrayList<>();
 				for (final String propertyName : propertyNames) {
-					final ObservableValue<V> observable = ReflectionUtils.getNestedFieldProperty(propertyName.trim(),
-							control);
+					final ObservableValue<V> observable = BeanWrapper.of(control)
+							.getObservableValue(propertyName.trim());
 					if (observable != null) {
 						observableValues.add(observable);
 					}
 				}
 				return new ValueChangeAwareObservableList<>(observableValues);
 			} else {
-				return ReflectionUtils.getNestedFieldValue(valuesObservableList, control, ObservableList.class);
+				return (ObservableList<V>) BeanWrapper.of(control).getPropertyValue(valuesObservableList);
 			}
 		}
 
@@ -906,7 +907,7 @@ public class ControlWrapper extends NodeWrapper {
 		}
 
 		public Object getSelectionModel(final Control control) {
-			return ReflectionUtils.getNestedFieldValue(selectionModelProperty, control, Object.class);
+			return BeanWrapper.of(control).getPropertyValue(selectionModelProperty);
 		}
 
 		private boolean hasValue(final String value) {
