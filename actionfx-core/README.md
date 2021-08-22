@@ -511,8 +511,6 @@ Attribute 					| Description
 
 **Example:**
 
-**Example:**
-
 ```java
 		@AFXFormBinding(controlPrefix = "customer", controlSuffix = "Control")
 		private final ObjectProperty<CustomerModel> modelWithNameBasedBinding = new SimpleObjectProperty<>();
@@ -556,13 +554,13 @@ This example shows the setup on how to bind an instance of type `CustomerModel` 
 
 The view itself has controls `customerFirstNameControl`, `customerLastNameControl`, `customerCountryControl`, `customerSelectedProductsControl` and `customerTermsAndConditionsControl`. The controls do not need to be injected into the controller via `@FXML`. However, the view needs to have controls with these particular IDs for the binding to work.
 
-Please note that the domain object `CustomerModel` is not forced to have JavaFX properties. It would be sufficient for the class to have plain Java types like `java.lang.String`, `java.util.List`or `java.lang.Boolean` instead of the property versions of it. In case the domain object has plain Java types, an unidirectional binding is applied. That means that the value from the domain object is set into the control on initial binding / setting into the annotated `ObjectProperty` and changed in the model instance, when the value in the control is changed. In a lot of cases, this might be sufficient.
+Please note that the domain object `CustomerModel` is not forced to have JavaFX properties. It would be sufficient for the class to have plain Java types like `java.lang.String`, `java.util.List`or `java.lang.Boolean` instead of the property versions of it. In case the domain object has plain Java types, an unidirectional binding is applied. That means that the value from the domain object is set into the control on initial binding / setting into the annotated `ObjectProperty` and changed in the model instance, when the value of the JavaFX control is changed. In many cases this might be sufficient.
 
 #### Annotation @AFXFormMapping
 
-The repeatable annotation [@AFXFormMapping](src/main/java/com/github/actionfx/core/annotation/AFXFormMapping.java)  can be applied at field level on a `javafx.beans.property.ObjectProperty` additionally to a [@AFXFormBinding](src/main/java/com/github/actionfx/core/annotation/AFXFormBinding.java) annotation to explicitly map a field in a model class to a control name.
+The repeatable annotation [@AFXFormMapping](src/main/java/com/github/actionfx/core/annotation/AFXFormMapping.java)  can be applied at field level on a `javafx.beans.property.ObjectProperty` additionally to a [@AFXFormBinding](#annotation-afxformbinding) annotation to explicitly map a field in a model class to a control name.
 
-Please note: Using this annotation on a field without a [@AFXFormBinding](src/main/java/com/github/actionfx/core/annotation/AFXFormBinding.java) annotation will have no effect.
+**Please note:** Using this annotation on a field without a [@AFXFormBinding](#annotation-afxformbinding) annotation will have no effect.
 
 The following attributes are available inside the annotation:
 
