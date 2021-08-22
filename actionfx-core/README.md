@@ -489,11 +489,11 @@ Attribute 					| Description
 ```
 ### Annotations for declarative Form-Binding
 
-Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control, finding the desired JavaFX property and then decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
+Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control and finding the desired JavaFX property (does the control have a `valueProperty`, do you need to navigate over a `SelectionModel`? What was the value again of a `CheckBox`?). Then, the developer need to decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
 
 Also the structure of the domain object itself influences the binding code, as the domain object can either have also JavaFX properties (for bidirectional binding) or just plain Java type properties like `java.lang.String`. Having just plain Java types on the other hand is often sufficient for simple forms and even reduces the code inside the Java domain object. 
 
-No matter, which type of domain object you have, ActionFX simplifies binding a domain object to a form a lot and reduces the code to a minimum.
+No matter, which type of domain object you have, ActionFX simplifies binding a domain object to a form a lot and reduces the code to a minimum. ActionFX allows to bind a property of a custom Java domain class to a control's user value (please visit also section [User Value of Controls](#user-value-of-controls) for what the user value of a particular JavaFX control is).
 
 #### Annotation @AFXFormBinding
 
