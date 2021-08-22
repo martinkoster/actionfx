@@ -34,9 +34,9 @@ import com.github.actionfx.core.annotation.AFXFormMapping.AFXFormMappings;
 import javafx.beans.property.ObjectProperty;
 
 /**
- * Annotation that can be applied at field level on a {@link ObjectProperty}
- * additionally to a {@link AFXFormBinding} annotation to explicitly map a field
- * in a model class to a control name.
+ * Repeatable annotation that can be applied at field level on a
+ * {@link ObjectProperty} additionally to a {@link AFXFormBinding} annotation to
+ * explicitly map a field in a model class to a control name.
  * <p>
  * Please note: Using this annotation on a field without a
  * {@link AFXFormBinding} annotation will have no effect.

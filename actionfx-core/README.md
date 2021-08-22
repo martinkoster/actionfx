@@ -42,6 +42,9 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)
       - [Annotation @AFXConverter (Field Annotation)](#annotation-afxconverter)
       - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction)
+    + [Annotations for declarative Form-Binding](#annotations-for-declarative-form-binding)  
+      - [Annotation @AFXFormBinding (Field Annotation)](#annotation-afxformbinding)
+      - [Annotation @AFXFormMapping (Field Annotation)](#annotation-afxformmapping)
     + [Annotations for configuring Tables](#annotations-for-configuring-tables)      
       - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
@@ -469,6 +472,7 @@ Attribute 					| Description
 
 
 **Example:**
+
 ```java
 	// for the @AFXOnAction annotation to work, it is not required that the button is injected via @FXML
 	@FXML
@@ -483,6 +487,141 @@ Attribute 					| Description
 		// do some action stuff
 	}
 ```
+### Annotations for declarative Form-Binding
+
+Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control, finding the desired JavaFX property and then decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
+
+Also the structure of the domain object itself influences the binding code, as the domain object can either have also JavaFX properties (for bidirectional binding) or just plain Java type properties like `java.lang.String`. Having just plain Java types on the other hand is often sufficient for simple forms and even reduces the code inside the Java domain object. 
+
+No matter, which type of domain object you have, ActionFX simplifies binding a domain object to a form a lot and reduces the code to a minimum.
+
+#### Annotation @AFXFormBinding
+
+The [@AFXFormBinding](src/main/java/com/github/actionfx/core/annotation/AFXFormBinding.java) annotation can be applied at field level on a `javafx.beans.property.ObjectProperty`, which holds a model object that will be bound to controls inside the view.
+
+When changing the value of the `javafx.beans.property.ObjectProperty`, then the previously bound object is unbound and the new value is freshly bound to the view's controls.
+
+The following attributes are available inside the annotation:
+
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`disableNameBasedMapping`| Flag that determines whether name-based field to control mapping shall be disabled or not. Example: In case a field in the model class is named `userName`, then the expected control ID inside the view is e.g. `userName` or `userNameTextField}` (that is even supported without specifying a suffix). If `disableNameBasedMapping` is set to `true`, then all mappings need to be explicitly defined via the additional annotation [@AFXFormMapping (Field Annotation)](#annotation-afxformmapping) on the same field.
+`controlPrefix`           | Optional prefix for identifying controls in the scene graph that are prefixed by a certain token. For example, when a field name in the model class is called `userName`, then a corresponding control of name `selectedUserName`, when `selected` is set as `controlPrefix`. Default value is the empty string "".
+`controlSuffix`           | Optional suffix for identifying controls in the scene graph that are suffixed by a certain token. For example, when a field name in the model class is called `userName`, then a corresponding control of name `userNameOld`, when `old` is set as `controlSuffix`. Default value is the empty string.
+
+**Example:**
+
+**Example:**
+
+```java
+		@AFXFormBinding(controlPrefix = "customer", controlSuffix = "Control")
+		private final ObjectProperty<CustomerModel> modelWithNameBasedBinding = new SimpleObjectProperty<>();
+		
+		// The controls that are used as binding target
+		// These don't need to be necessarily injected via @FXML!
+		@FXML
+		public TextField customerFirstNameControl;
+
+		@FXML
+		public TextField customerLastNameControl;
+
+		@FXML
+		public ChoiceBox<String> customerCountryControl;
+
+		@FXML
+		public ListView<String> customerSelectedProductsControl;
+
+		@FXML
+		public CheckBox customerTermsAndConditionsControl;
+   ...
+
+	// the model class used for form binding
+	public class CustomerModel {
+
+		private final StringProperty firstName = new SimpleStringProperty();
+
+		private final StringProperty lastName = new SimpleStringProperty();
+
+		private final StringProperty country = new SimpleStringProperty();
+
+		private final ObservableList<String> selectedProducts = FXCollections.observableArrayList();
+
+		private final BooleanProperty termsAndConditions = new SimpleBooleanProperty();
+	
+	   // JavaFX property-getter and setter go here...
+	}
+```
+
+This example shows the setup on how to bind an instance of type `CustomerModel` to the view by setting the instance into the annotated ObjectProperty. The properties inside the `CustomerModel` instance are bound bidirectionally. 
+
+The view itself has controls `customerFirstNameControl`, `customerLastNameControl`, `customerCountryControl`, `customerSelectedProductsControl` and `customerTermsAndConditionsControl`. The controls do not need to be injected into the controller via `@FXML`. However, the view needs to have controls with these particular IDs for the binding to work.
+
+Please note that the domain object `CustomerModel` is not forced to have JavaFX properties. It would be sufficient for the class to have plain Java types like `java.lang.String`, `java.util.List`or `java.lang.Boolean` instead of the property versions of it. In case the domain object has plain Java types, an unidirectional binding is applied. That means that the value from the domain object is set into the control on initial binding / setting into the annotated `ObjectProperty` and changed in the model instance, when the value in the control is changed. In a lot of cases, this might be sufficient.
+
+#### Annotation @AFXFormMapping
+
+The repeatable annotation [@AFXFormMapping](src/main/java/com/github/actionfx/core/annotation/AFXFormMapping.java)  can be applied at field level on a `javafx.beans.property.ObjectProperty` additionally to a [@AFXFormBinding](src/main/java/com/github/actionfx/core/annotation/AFXFormBinding.java) annotation to explicitly map a field in a model class to a control name.
+
+Please note: Using this annotation on a field without a [@AFXFormBinding](src/main/java/com/github/actionfx/core/annotation/AFXFormBinding.java) annotation will have no effect.
+
+The following attributes are available inside the annotation:
+
+Attribute 					| Description 
+--------------------------- | -------------------------------------------------
+`name`                     | The name of the field inside the model class.
+`controlId`               | The ID of the control that shall be mapped to the field name in the model class.
+
+**Example:**
+
+This example shows how a JavaFX control with the specified `controlId` is mapped to a Java property with the given `name` inside the class `CustomerModel`.
+
+```java
+		// the mappings are taken for matching binding targets.
+		// name based matchings are explicitly disabled here.
+		@AFXFormBinding(disableNameBasedMapping = true)
+		@AFXFormMapping(controlId = "customerFirstNameControl", name = "firstName")
+		@AFXFormMapping(controlId = "customerLastNameControl", name = "lastName")
+		@AFXFormMapping(controlId = "customerCountryControl", name = "country")
+		@AFXFormMapping(controlId = "customerSelectedProductsControl", name = "selectedProducts")
+		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", name = "termsAndConditions")
+		private final ObjectProperty<CustomerModel> modelWithNameBasedBinding = new SimpleObjectProperty<>();
+		
+		// The controls that are used as binding target
+		// These don't need to be necessarily injected via @FXML!
+		@FXML
+		public TextField customerFirstNameControl;
+
+		@FXML
+		public TextField customerLastNameControl;
+
+		@FXML
+		public ChoiceBox<String> customerCountryControl;
+
+		@FXML
+		public ListView<String> customerSelectedProductsControl;
+
+		@FXML
+		public CheckBox customerTermsAndConditionsControl;
+   ...
+
+	// the model class used for form binding
+	public class CustomerModel {
+
+		private final StringProperty firstName = new SimpleStringProperty();
+
+		private final StringProperty lastName = new SimpleStringProperty();
+
+		private final StringProperty country = new SimpleStringProperty();
+
+		private final ObservableList<String> selectedProducts = FXCollections.observableArrayList();
+
+		private final BooleanProperty termsAndConditions = new SimpleBooleanProperty();
+	
+	   // JavaFX property-getter and setter go here...
+	}
+```
+
+
 
 ### Annotations for configuring Tables
 

@@ -267,7 +267,7 @@ class FormBindingControllerExtensionTest {
 		private final ObjectProperty<CustomerModel> modelWithNameBasedBinding = new SimpleObjectProperty<>();
 
 		// the mappings are taken for matching binding targets - name based matchings
-		// are explicitely disabled
+		// are explicitly disabled
 		@AFXFormBinding(disableNameBasedMapping = true)
 		@AFXFormMapping(controlId = "customerFirstNameControl", name = "firstName")
 		@AFXFormMapping(controlId = "customerLastNameControl", name = "lastName")

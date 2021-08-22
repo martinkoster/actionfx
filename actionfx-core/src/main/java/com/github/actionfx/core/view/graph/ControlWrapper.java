@@ -764,8 +764,8 @@ public class ControlWrapper extends NodeWrapper {
 	/**
 	 * Tries to perform a bidirectional binding of the control's user value with the
 	 * given {@code beanPropertyReference}. Bidirectional binding is possible, if
-	 * the supplied {@code beanPropertyReference} is an {@link Observable} that also
-	 * also to write values to it.
+	 * the supplied {@code beanPropertyReference} is an {@link Observable} that
+	 * allows also to write values to it.
 	 * <p>
 	 * In case only a unidirectional binding is possible, an unidirectional binding
 	 * is established.
