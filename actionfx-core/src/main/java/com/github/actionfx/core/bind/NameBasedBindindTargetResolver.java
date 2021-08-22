@@ -23,16 +23,11 @@
  */
 package com.github.actionfx.core.bind;
 
-import java.lang.reflect.Field;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
-import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.scene.control.Control;
+import net.bytebuddy.implementation.bind.MethodDelegationBinder.BindingResolver;
 
 /**
  * Implementation of a {@link BindingTargetResolver} that looks for controls
@@ -40,14 +35,16 @@ import javafx.scene.control.Control;
  * <p>
  * For example, a field with name "userName" can be resolved to a control with
  * IDs "userName", "userNameTextField", etc.
+ * <p>
+ * Please note: This {@link BindingResolver} is not suitable for nested
+ * properties inside a Java hierarchy. For nested properties please use
+ * {@link MappingBasedBindingTargetResolver}.
  *
  *
  * @author koster
  *
  */
 public class NameBasedBindindTargetResolver extends AbstractCachingBindingTargetResolver {
-
-	private static final Logger LOG = LoggerFactory.getLogger(NameBasedBindindTargetResolver.class);
 
 	private final String controlPrefix;
 
@@ -76,27 +73,33 @@ public class NameBasedBindindTargetResolver extends AbstractCachingBindingTarget
 	}
 
 	@Override
-	public Control resolveInternal(final View view, final Field field) {
-		final String fieldName = field.getName();
-		final Optional<NodeWrapper> foundControl = view.getViewNodesAsStream()
-				.filter(nodeWrapper -> nodeWrapper.isControl()
-						&& nodeWrapper.getId().toLowerCase().startsWith(controlNameToken(fieldName)))
-				.findFirst();
-		if (foundControl.isEmpty()) {
-			return null;
+	public BindingTarget resolveInternal(final Control control, final Object bean, final View view) {
+		final String controlId = control.getId();
+		final String fieldName = guessFieldName(controlId);
+		// check, if Java bean has a property with this name
+		if (ReflectionUtils.findField(bean.getClass(), fieldName) != null) {
+			return new BindingTarget(control, bean.getClass(), fieldName);
 		} else {
-			return foundControl.get().getWrapped();
+			return null;
 		}
 	}
 
 	/**
-	 * Generates the expected control name token that is used for matching.
+	 * Tries to guess the field name based on the supplied {@code controlId},
+	 * removing potential control pre- and suffixes.s
 	 *
-	 * @param fieldName the field name
-	 * @return the control name used for matching
+	 * @param controlId the ID of a control
+	 * @return the field name that would be expected to match the given
+	 *         {@link controlId}
 	 */
-	private String controlNameToken(final String fieldName) {
-		return (controlPrefix + fieldName + controlSuffix).toLowerCase();
+	private String guessFieldName(final String controlId) {
+		String fieldName = controlId;
+		if (controlPrefix != null && !"".equals(controlPrefix) && fieldName.startsWith(controlPrefix)) {
+			fieldName = ReflectionUtils.decapitalizeBeanProperty(fieldName.substring(controlPrefix.length()));
+		}
+		if (controlSuffix != null && !"".equals(controlSuffix) && fieldName.endsWith(controlSuffix)) {
+			fieldName = fieldName.substring(0, fieldName.length() - controlSuffix.length());
+		}
+		return fieldName;
 	}
-
 }

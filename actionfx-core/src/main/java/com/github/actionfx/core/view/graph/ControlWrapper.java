@@ -38,7 +38,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.actionfx.core.beans.BeanPropertyReference;
 import com.github.actionfx.core.beans.BeanWrapper;
+import com.github.actionfx.core.bind.Binding;
+import com.github.actionfx.core.bind.ObservableListBinding;
+import com.github.actionfx.core.bind.ObservableValueBinding;
 import com.github.actionfx.core.collections.ValueChangeAwareObservableList;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.utils.ReflectionUtils;
@@ -91,6 +95,8 @@ import javafx.util.StringConverter;
 
 public class ControlWrapper extends NodeWrapper {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ControlWrapper.class);
+
 	/**
 	 * Key to {@link Node#getProperties()} under that an instance of this control
 	 * wrapper is stored after construction.
@@ -102,8 +108,6 @@ public class ControlWrapper extends NodeWrapper {
 	 * full canonical class name of the control.
 	 */
 	public static final String PROPERTIES_TEMPLATE = "/afxcontrolwrapper/%s.properties";
-
-	private static final Logger LOG = LoggerFactory.getLogger(ControlWrapper.class);
 
 	// cache for control configurations read from external Properties-file
 	private static final Map<Class<? extends Control>, ControlConfig> CONTROL_CONFIG_CACHE = Collections
@@ -138,6 +142,8 @@ public class ControlWrapper extends NodeWrapper {
 	private ObservableValue<?> valueProperty;
 	private ObservableList<?> valuesObservableList;
 	private SelectionModel<?> selectionModel;
+
+	// active bindings for this control
 
 	public ControlWrapper(final Control control) {
 		super(control);
@@ -756,6 +762,84 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
+	 * Tries to perform a bidirectional binding of the control's user value with the
+	 * given {@code beanPropertyReference}. Bidirectional binding is possible, if
+	 * the supplied {@code beanPropertyReference} is an {@link Observable} that also
+	 * also to write values to it.
+	 * <p>
+	 * In case only a unidirectional binding is possible, an unidirectional binding
+	 * is established.
+	 * <p>
+	 * In case an unidirectional binding is not possible, e.g. because the supplied
+	 * {@code beanPropertyReference} is not an {@link Observable}, but e.g. a
+	 * string, the value of the {@code beanPropertyReference} is just set to the
+	 * user value of the wrapped control.
+	 *
+	 * @param beanPropertyReference the bean property reference to use as binding
+	 *                              target
+	 * @return the established {@link Binding} instance that can be used to unbind
+	 *         the binding source again
+	 */
+	public Binding bindUserValue(final BeanPropertyReference<?> beanPropertyReference) {
+		final Observable userValueObservable = getUserValueAsObservable();
+		if (isObservableList(userValueObservable)) {
+			return bindUserValueOfTypeObservableList((ObservableList<?>) userValueObservable, beanPropertyReference);
+		} else if (isObservableValue(userValueObservable)) {
+			return bindUserValueOfTypeObservableValue((ObservableValue<?>) userValueObservable, beanPropertyReference);
+		} else {
+			throw new IllegalStateException("User value of wrapped control " + getWrappedType()
+					+ " is neither an ObservableList nor an ObservableValue!");
+		}
+	}
+
+	/**
+	 * Binding routine for user values of type {@link ObservableList}.
+	 *
+	 * @param userValueObservableList the observable list of the underlying control
+	 *                                to use as binding target
+	 * @param beanPropertyReference   the bean property reference to use as binding
+	 *                                target
+	 * @return the {@link Binding} instance that can be used to unbind the binding
+	 *         source again
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> Binding bindUserValueOfTypeObservableList(final ObservableList<T> userValueObservableList,
+			final BeanPropertyReference<?> beanPropertyReference) {
+		final Object bindingSource = beanPropertyReference.getValue();
+		if (bindingSource == null) {
+			throw new IllegalStateException("Can not bind 'null' value to an an ObservableList!");
+		}
+		if (List.class.isAssignableFrom(bindingSource.getClass())) {
+			final ObservableListBinding<T> binding = new ObservableListBinding<>((List<T>) bindingSource,
+					userValueObservableList, getSelectionModel());
+			binding.bind();
+			return binding;
+		} else {
+			throw new IllegalStateException(
+					"Unable to bind a value of type '" + bindingSource.getClass() + "' to an ObservableList!");
+		}
+	}
+
+	/**
+	 * Binding routine for user values of type {@link ObservableValue}.
+	 *
+	 * @param userObservableValue   the observable value of the underlying control
+	 *                              to use as binding target
+	 * @param beanPropertyReference the bean property reference to use as binding
+	 *                              target
+	 * @return the {@link Binding} instance that can be used to unbind the binding
+	 *         source again
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> Binding bindUserValueOfTypeObservableValue(final ObservableValue<T> userObservableValue,
+			final BeanPropertyReference<?> beanPropertyReference) {
+		final ObservableValueBinding<T> binding = new ObservableValueBinding<>(
+				(BeanPropertyReference<T>) beanPropertyReference, userObservableValue, getSelectionModel());
+		binding.bind();
+		return binding;
+	}
+
+	/**
 	 * Checks, whether the given {@link ObservableValue} has a value set.
 	 *
 	 * @param observableValue the observable value
@@ -870,7 +954,7 @@ public class ControlWrapper extends NodeWrapper {
 		}
 
 		public <V> ObservableValue<V> getValueProperty(final Control control) {
-			return BeanWrapper.of(control).getObservableValue(valueProperty);
+			return BeanWrapper.of(control).getFxProperty(valueProperty);
 		}
 
 		public boolean hasValuesObservableList() {
@@ -885,8 +969,7 @@ public class ControlWrapper extends NodeWrapper {
 				final String[] propertyNames = valuesObservableList.split(",");
 				final List<ObservableValue<V>> observableValues = new ArrayList<>();
 				for (final String propertyName : propertyNames) {
-					final ObservableValue<V> observable = BeanWrapper.of(control)
-							.getObservableValue(propertyName.trim());
+					final ObservableValue<V> observable = BeanWrapper.of(control).getFxProperty(propertyName.trim());
 					if (observable != null) {
 						observableValues.add(observable);
 					}
@@ -914,5 +997,4 @@ public class ControlWrapper extends NodeWrapper {
 			return !"".equals(value);
 		}
 	}
-
 }

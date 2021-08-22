@@ -24,6 +24,7 @@
 package com.github.actionfx.core.beans;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -60,9 +61,9 @@ class SingleExpressionTest {
 
 	@Test
 	void testGetKey() {
-		assertThat(expr(null).getKey(), equalTo(""));
-		assertThat(expr("").getKey(), equalTo(""));
-		assertThat(expr("field").getKey(), equalTo(""));
+		assertThat(expr(null).getKey(), nullValue());
+		assertThat(expr("").getKey(), nullValue());
+		assertThat(expr("field").getKey(), nullValue());
 		assertThat(expr("field[2]").getKey(), equalTo(""));
 		assertThat(expr("field(map.key)").getKey(), equalTo("map.key"));
 		assertThrows(IllegalArgumentException.class, () -> expr("field(map.key").getKey());

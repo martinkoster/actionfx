@@ -23,16 +23,12 @@
  */
 package com.github.actionfx.core.beans;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
-import com.github.actionfx.core.utils.ReflectionUtils;
-
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ObservableValue;
 
 /**
@@ -42,6 +38,8 @@ import javafx.beans.value.ObservableValue;
  *
  */
 public class BeanWrapper {
+
+	private static final Map<CacheKey, BeanProperty<?>> PROPERTY_CACHE = Collections.synchronizedMap(new HashMap<>());
 
 	private final Object bean;
 
@@ -65,8 +63,7 @@ public class BeanWrapper {
 	}
 
 	/**
-	 * Retrieves a field value described by a nested path
-	 * {@code nestedPropertyPath}.
+	 * Retrieves a value described by a nested path {@code nestedPropertyPath}.
 	 * <p>
 	 * In case the {@link nestedPathProperty} resolves to an instance of type
 	 * {@link ObservableValue}, the property value and not the property itself is
@@ -75,7 +72,7 @@ public class BeanWrapper {
 	 * not the property).
 	 * <p>
 	 * In case you need access to the {@link ObservableValue} instance itself,
-	 * please use method {@link #getObservableValue(String, Object)}, which uses the
+	 * please use method {@link #getFxProperty(String)}, which uses the
 	 * property-getter and not the regular getter for retrieving the field instance.
 	 * <p>
 	 * In case one of the path elements of the nested path evaluates to
@@ -84,68 +81,73 @@ public class BeanWrapper {
 	 * @param nestedPropertyPath a nested path to a property
 	 * @return the instance that is the provider of the filed
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T getPropertyValue(final String nestedPropertyPath) {
-		return (T) getPropertyValue(nestedPropertyPath, Object.class);
+		final BeanPropertyReference<T> reference = getBeanPropertyReference(nestedPropertyPath);
+		if (reference == null) {
+			// can happen, when one of the path elements resolves to null
+			return null;
+		}
+		return reference.getValue();
 	}
 
 	/**
-	 * /** Retrieves a field value described by a nested path
+	 * Retrieves a JavaFX property described by a nested path
 	 * ({@code nestedPropertyPath}. The value is expected to be of type
-	 * {@link ObservableValue}.
+	 * {@link ReadOnlyProperty}.
 	 * <p>
-	 * Unlike method {@link #getPropertyValue(String, Object)}, this method uses the
-	 * "property-getter" method for accessing the property (which is
-	 * "propertyNameProperty()" for a property with name "propertyName").
+	 * This method uses the "property-getter" method for accessing the property
+	 * (which is "propertyNameProperty()" for a property with name "propertyName").
+	 * <p>
+	 * In case one of the path elements of the nested path evaluates to
+	 * {@code null}, {@code null} is returned by this method.
+	 * <p>
+	 * In case, there is no
+	 *
+	 * @param nestedPropertyPath a nested path to a property
+	 * @return the instance that is the provider of the property
+	 */
+	public <T> ReadOnlyProperty<T> getFxProperty(final String nestedPropertyPath) {
+		final BeanPropertyReference<T> reference = getBeanPropertyReference(nestedPropertyPath);
+		if (reference == null) {
+			// can happen, when one of the path elements resolves to null
+			return null;
+		}
+		return reference.getFxProperty();
+	}
+
+	/**
+	 * Retrieves a property reference described by a nested path
+	 * {@code nestedPropertyPath}.
 	 * <p>
 	 * In case one of the path elements of the nested path evaluates to
 	 * {@code null}, {@code null} is returned by this method.
 	 *
 	 * @param nestedPropertyPath a nested path to a property
-	 * @return the instance that is the provider of the property
+	 * @return the property
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> ObservableValue<T> getObservableValue(final String nestedPropertyPath) {
-		return getPropertyValue(nestedPropertyPath, ObservableValue.class);
-	}
-
-	/**
-	 * Follows the given {@code nestedPropertyPath} along the given
-	 * {@code rootInstance} and extracts a value that is expected of given
-	 * {@code expectedType}.
-	 * <p>
-	 * The values are retrieved from the underlying wrapper by using preferably
-	 * getter-methods. In case a field does not offer a getter-method, direct field
-	 * access is performed.
-	 * <p>
-	 * In case the {@code expectedType} is of type {@link ObservableValue}, then the
-	 * corresponding property-getter method is invoked (which is <field>Property())
-	 *
-	 * @param nestedPropertyPath the nested property path
-	 * @param expectedType       the type that is expected
-	 * @return the extracted value
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getPropertyValue(final String nestedPropertyPath, final Class<T> expectedType) {
+	public <T> BeanPropertyReference<T> getBeanPropertyReference(final String nestedPropertyPath) {
 		final NestedExpression expression = new NestedExpression(nestedPropertyPath);
-		BeanWrapper current = this;
+		BeanProperty<?> property = null;
+		Object value = bean;
 		final Iterator<SingleExpression> it = expression.iterator();
 		while (it.hasNext()) {
 			final SingleExpression se = it.next();
-			if (current.getBean() == null) {
+			if (value == null) {
+				// one of the path elements "in the middle" is null
 				return null;
-			} else if (se.isIndexed()) {
-				current = BeanWrapper.of(current.getIndexedProperty(se.getPropertyName(), se.getIndex()));
-			} else if (se.isMapped()) {
-				current = BeanWrapper.of(current.getMappedProperty(se.getPropertyName(), se.getKey()));
-			} else if (it.hasNext()) {
-				current = BeanWrapper.of(current.getSimplePropertyValue(se.getPropertyName(), Object.class));
 			} else {
-				// expected type is only relevant for the last iteration
-				current = BeanWrapper.of(current.getSimplePropertyValue(se.getPropertyName(), expectedType));
+				property = getBeanProperty(value.getClass(), se.getPropertyName(), se.getIndex(), se.getKey());
+			}
+			if (it.hasNext()) {
+				// in case there are further path elements, we need to resolve the value for the
+				// next iteration
+				value = property.getValue(value);
+			} else {
+				return new BeanPropertyReference<>((BeanProperty<T>) property, value);
 			}
 		}
-		return (T) current.getBean();
+		return null;
 	}
 
 	/**
@@ -158,136 +160,93 @@ public class BeanWrapper {
 	}
 
 	/**
-	 * Return the value of the specified indexed property of the specified bean,
-	 * with no type conversions. In addition to supporting the JavaBeans
-	 * specification, this method has been extended to support {@link List} objects
-	 * as well.
+	 * Gets the property, either from cache or by creating a new instance (which is
+	 * then again cached).
 	 *
-	 * @param propertyName simple property name of the property value to be
-	 *                     extracted
-	 * @param index        Index of the property value to be extracted
-	 * @return the indexed property value
+	 * @param beanClass the bean class
+	 * @param name      the property name
+	 * @param index     the index (in case of indexed property, {@code -1}
+	 *                  otherwise)
+	 * @param mapKey    the mapping key (in case of mapped property, {@code null}
+	 *                  otherwise)
+	 * @return the property
 	 */
-	private Object getIndexedProperty(final String propertyName, final int index) {
-		try {
-			return PropertyUtils.getIndexedProperty(bean, propertyName, index);
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			throw new IllegalArgumentException("Unable to access indexed property of name '" + propertyName
-					+ "' in class '" + bean.getClass().getCanonicalName() + "' at index '" + index + "'!", e);
-		}
+	private static BeanProperty<?> getBeanProperty(final Class<?> beanClass, final String name, final int index,
+			final String mapKey) {
+		return PROPERTY_CACHE.computeIfAbsent(CacheKey.of(beanClass, name, index, mapKey),
+				cacheKey -> new BeanProperty<>(beanClass, name, index, mapKey));
 	}
 
-	/**
-	 * Return the value of the specified mapped property of the specified bean, with
-	 * no type conversions.
-	 *
-	 * @param propertyName Mapped property name of the property value to be
-	 *                     extracted
-	 * @param key          Key of the property value to be extracted
-	 * @return the mapped property value
-	 */
-	private Object getMappedProperty(final String propertyName, final String key) {
-		try {
-			return PropertyUtils.getMappedProperty(bean, propertyName, key);
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			throw new IllegalArgumentException("Unable to access mapped property of name '" + propertyName
-					+ "' in class '" + bean.getClass().getCanonicalName() + "' with key '" + key + "'!", e);
-		}
-	}
+	private static class CacheKey {
 
-	/**
-	 * Gets the value of a property with name {@code propertyName}.
-	 * <p>
-	 * The following logic is applied for accessing the property value:
-	 * <ul>
-	 * <li>In case the expected value is an {@link ObservableValue}, then the
-	 * property getter is tried (with pattern {@code <fieldName>Property()})</li>
-	 * <li>In case step 1 did not apply or there was no property-getter, the regular
-	 * get-method is invoked ({@code get<fieldName>()}).</li>
-	 * <li>In case the two steps before failed, direct field access is tried.</li>
-	 * </ul>
-	 * <p>
-	 * This method does not support nested paths.
-	 *
-	 * @param instance      the instance holding the
-	 * @param propertyName  the name of the property
-	 * @param exptectedType the expected type
-	 * @return the property value
-	 */
-	protected <T> T getSimplePropertyValue(final String propertyName, final Class<T> exptectedType) {
-		final Class<?> clazz = bean.getClass();
-		final Field field = ReflectionUtils.findField(clazz, propertyName);
-		if (field == null) {
-			throw new IllegalStateException(
-					"Class '" + clazz.getCanonicalName() + "' does not have a field with name '" + propertyName + "'!");
+		private final Class<?> clazz;
+
+		private final String name;
+
+		private final int index;
+
+		private final String mapKey;
+
+		public CacheKey(final Class<?> clazz, final String name, final int index, final String mapKey) {
+			this.clazz = clazz;
+			this.name = name;
+			this.index = index;
+			this.mapKey = mapKey;
 		}
-		// if the expected value is an ObservableValue, we preferable access the
-		// property getter method
-		if (ObservableValue.class.isAssignableFrom(exptectedType)) {
-			final Method propertyGetterMethod = ReflectionUtils.findMethod(clazz,
-					propertyGetterMethodName(field.getName()));
-			if (propertyGetterMethod != null) {
-				// if property-getter-method is available, we take the value through the getter
-				return cast(ReflectionUtils.invokeMethod(propertyGetterMethod, bean), exptectedType);
+
+		static CacheKey of(final Class<?> clazz, final String name, final int index, final String mapKey) {
+			return new CacheKey(clazz, name, index, mapKey);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + (clazz == null ? 0 : clazz.hashCode());
+			result = prime * result + index;
+			result = prime * result + (mapKey == null ? 0 : mapKey.hashCode());
+			result = prime * result + (name == null ? 0 : name.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
 			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final CacheKey other = (CacheKey) obj;
+			if (clazz == null) {
+				if (other.clazz != null) {
+					return false;
+				}
+			} else if (!clazz.equals(other.clazz)) {
+				return false;
+			}
+			if (index != other.index) {
+				return false;
+			}
+			if (mapKey == null) {
+				if (other.mapKey != null) {
+					return false;
+				}
+			} else if (!mapKey.equals(other.mapKey)) {
+				return false;
+			}
+			if (name == null) {
+				if (other.name != null) {
+					return false;
+				}
+			} else if (!name.equals(other.name)) {
+				return false;
+			}
+			return true;
 		}
-		final Method getterMethod = ReflectionUtils.findMethod(clazz,
-				getterMethodName(field.getName(), field.getType().equals(boolean.class)));
-		if (getterMethod != null) {
-			// if getter-method is available, we take the value through the getter
-			return cast(ReflectionUtils.invokeMethod(getterMethod, bean), exptectedType);
-		} else {
-			return cast(ReflectionUtils.getFieldValue(field, bean), exptectedType);
-		}
-	}
 
-	/**
-	 * Constructs the {@code getter}-method name for the supplied {@link field}
-	 *
-	 * @param fieldName the field name for that the {@code getter}-method name shall
-	 *                  be constructed
-	 * @return the {@code getter}-method name
-	 */
-	private static String getterMethodName(final String fieldName, final boolean isPrimitiveBoolean) {
-		return (isPrimitiveBoolean ? "is" : "get") + fieldName.substring(0, 1).toUpperCase()
-				+ (fieldName.length() > 1 ? fieldName.substring(1, fieldName.length()) : "");
 	}
-
-	/**
-	 * Constructs the {@code property-getter}-method name for the supplied
-	 * {@link field}.
-	 * <p>
-	 * The name of the property-getter for a field with name "field" is derived as
-	 * {@code fieldProperty}.
-	 *
-	 * @param field the field for that the {@code getter}-method name shall be
-	 *              constructed
-	 * @return the {@code getter}-method name
-	 */
-	private static String propertyGetterMethodName(final String fieldName) {
-		return fieldName + "Property";
-	}
-
-	/**
-	 * Performs a type check, if the {@code value} can be cast to {@code expected}.
-	 * If this is not possible, an {@link IllegalStateException} is thrown. If it is
-	 * possible, the value is casted.
-	 *
-	 * @param <T>          the type
-	 * @param value        the value
-	 * @param expectedType the expected type
-	 * @return the casted value
-	 */
-	@SuppressWarnings("unchecked")
-	private static <T> T cast(final Object value, final Class<T> expectedType) {
-		if (value == null) {
-			return null;
-		}
-		if (!expectedType.isAssignableFrom(value.getClass())) {
-			throw new IllegalStateException(
-					"Value '" + value + "' can not be cast to '" + expectedType.getCanonicalName() + "'!");
-		}
-		return (T) value;
-	}
-
 }

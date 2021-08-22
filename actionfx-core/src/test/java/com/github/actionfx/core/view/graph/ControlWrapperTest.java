@@ -43,16 +43,21 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.beans.BeanPropertyReference;
+import com.github.actionfx.core.beans.BeanWrapper;
 import com.github.actionfx.core.collections.ValueChangeAwareObservableList;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -1474,6 +1479,146 @@ class ControlWrapperTest {
 		assertThat(wrapper.getConverterProperty(), nullValue());
 	}
 
+	@Test
+	void testBindUserValue_bidirectionalBinding_typeProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<String> bindingSource = beanWrapper.getBeanPropertyReference("stringValue");
+		final TextField textField = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(textField.getText(), equalTo("Hello World"));
+		textField.setText("Hello back");
+		assertThat(bindingSource.getValue(), equalTo("Hello back"));
+	}
+
+	@Test
+	void testBindUserValue_bidirectionalBinding_typeReadOnlyProperty_withSelectionModel() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.choiceBox(false);
+		final Model model = new Model();
+		model.setStringValue("Choice 2");
+		final BeanWrapper beanWrapper = new BeanWrapper(model);
+		final BeanPropertyReference<String> bindingSource = beanWrapper.getBeanPropertyReference("stringValue");
+		final ChoiceBox<String> choiceBox = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(choiceBox.getValue(), equalTo("Choice 2"));
+		choiceBox.getSelectionModel().select("Choice 3");
+		assertThat(bindingSource.getValue(), equalTo("Choice 3"));
+		bindingSource.setValue("Choice 1");
+		assertThat(choiceBox.getValue(), equalTo("Choice 1"));
+	}
+
+	@Test
+	void testBindUserValue_unidirectionalBinding_typeReadOnlyProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<String> bindingSource = beanWrapper.getBeanPropertyReference("readOnly");
+		final TextField textField = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(textField.getText(), equalTo("Hello World"));
+	}
+
+	@Test
+	void testBindUserValue_valueSetting_typeProperty() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<String> bindingSource = beanWrapper.getBeanPropertyReference("plainString");
+		final TextField textField = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(textField.getText(), equalTo("Hello World"));
+		textField.setText("Hello back");
+		assertThat(bindingSource.getValue(), equalTo("Hello back"));
+	}
+
+	@Test
+	void testBindUserValue_bidirectionalBinding_typeObservableList_targetObservableListIsNotReadOnly() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.customControlWithObservableList();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<ObservableList<String>> bindingSource = beanWrapper
+				.getBeanPropertyReference("observableList");
+		final CustomControlWithObservableList control = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(control.getTargetItems(), contains("Choice 1", "Choice 2"));
+		control.getTargetItems().add("Choice 3");
+		assertThat(bindingSource.getValue(), contains("Choice 1", "Choice 2", "Choice 3"));
+	}
+
+	@Test
+	void testBindUserValue_bidirectionalBinding_typeObservableList_targetObservableListIsReadOnly() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.listView(true);
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<ObservableList<String>> bindingSource = beanWrapper
+				.getBeanPropertyReference("observableList");
+		final ListView<String> listView = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 1", "Choice 2"));
+		listView.getSelectionModel().select("Choice 3");
+		assertThat(bindingSource.getValue(), contains("Choice 1", "Choice 2", "Choice 3"));
+	}
+
+	@Test
+	void testBindUserValue_unidirectionalBinding_typeObservableList_targetObservableListIsReadOnly() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.listView(true);
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<ObservableList<String>> bindingSource = beanWrapper
+				.getBeanPropertyReference("observableList");
+		final ListView<String> listView = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindUserValue(bindingSource);
+
+		// THEN
+		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 1", "Choice 2"));
+		listView.getSelectionModel().select("Choice 3");
+		assertThat(bindingSource.getValue(), contains("Choice 1", "Choice 2", "Choice 3"));
+	}
+
+	@Test
+	void testBindUserValue_bindingNotPossible_typeObservableList() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.listView(true);
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<String> bindingSource = beanWrapper.getBeanPropertyReference("plainString");
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> wrapper.bindUserValue(bindingSource));
+
+		// THEN
+		assertThat(ex.getMessage(),
+				containsString("Unable to bind a value of type 'class java.lang.String' to an ObservableList!"));
+	}
+
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {
 		assertThat(wrapper.getValue(), equalTo(expectedValue));
 	}
@@ -1604,6 +1749,91 @@ class ControlWrapperTest {
 
 		public final void setConverter(final String converter) {
 			converterProperty().set(converter);
+		}
+
+	}
+
+	private class ReadOnlyPropertyImpl extends ReadOnlyStringProperty {
+
+		private final String value;
+
+		public ReadOnlyPropertyImpl(final String value) {
+			this.value = value;
+		}
+
+		@Override
+		public Object getBean() {
+			return null;
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public void addListener(final ChangeListener<? super String> listener) {
+		}
+
+		@Override
+		public void removeListener(final ChangeListener<? super String> listener) {
+		}
+
+		@Override
+		public void addListener(final InvalidationListener listener) {
+		}
+
+		@Override
+		public void removeListener(final InvalidationListener listener) {
+		}
+
+		@Override
+		public String get() {
+			return value;
+		}
+
+	}
+
+	public class Model {
+
+		private final StringProperty stringValue = new SimpleStringProperty("Hello World");
+
+		private final ReadOnlyPropertyImpl readOnly = new ReadOnlyPropertyImpl("Hello World");
+
+		private final ObservableList<String> observableList = FXCollections.observableArrayList("Choice 1", "Choice 2");
+
+		private String plainString = "Hello World";
+
+		public final StringProperty stringValueProperty() {
+			return stringValue;
+		}
+
+		public final String getStringValue() {
+			return stringValueProperty().get();
+		}
+
+		public final void setStringValue(final String stringValue) {
+			stringValueProperty().set(stringValue);
+		}
+
+		public ObservableList<String> getObservableList() {
+			return observableList;
+		}
+
+		public String getPlainString() {
+			return plainString;
+		}
+
+		public void setPlainString(final String plainString) {
+			this.plainString = plainString;
+		}
+
+		public final ReadOnlyPropertyImpl readOnlyProperty() {
+			return readOnly;
+		}
+
+		public final String getReadOnly() {
+			return readOnlyProperty().get();
 		}
 
 	}

@@ -396,6 +396,12 @@ class ReflectionUtilsTest {
 		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Short.class), equalTo(Short.class));
 	}
 
+	@Test
+	void testDecapitalizeBeanProperty() {
+		assertThat(ReflectionUtils.decapitalizeBeanProperty("JavaBeanProperty"), equalTo("javaBeanProperty"));
+		assertThat(ReflectionUtils.decapitalizeBeanProperty("JProperty"), equalTo("JProperty"));
+	}
+
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {
 		assertThat(methods, notNullValue());
 		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList()), hasItems(exptectedFieldNames)); // hasItems

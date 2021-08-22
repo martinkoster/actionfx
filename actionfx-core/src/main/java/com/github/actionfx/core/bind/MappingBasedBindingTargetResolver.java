@@ -23,18 +23,16 @@
  */
 package com.github.actionfx.core.bind;
 
-import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Optional;
 
 import com.github.actionfx.core.view.View;
-import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.scene.control.Control;
 
 /**
  * Implementation of a {@link BindingTargetResolver} that uses an internal
- * mapping for field names to control IDs for resolving to a control.
+ * mapping for field names (also nested fields are supported) to control IDs for
+ * resolving to a control.
  * <p>
  * In case there is no explicit mapping specified, the control can be looked up
  * by matching the field name.
@@ -46,29 +44,31 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
 
 	private final boolean disableNameBasedMapping;
 
-	private final Map<String, String> fieldToControlMap;
+	private final Map<String, String> controlToFieldMap;
 
 	/**
 	 * Constructor accepting a map of field name to control ID mappings.
 	 *
-	 * @param fieldToControlMap       map containing field name to control ID
-	 *                                mappings
+	 * @param controlToFieldMap       map containing the control ID to field
+	 *                                mappings (key is the control ID, value the
+	 *                                field name or a nested path to a field)
 	 * @param disableNameBasedMapping If set to {@code true}, all mappings are
 	 *                                solely taken from {@code fieldToControlMap}.
 	 *                                If set to {@code false}, name-based resolution
 	 *                                is applied as fallback.
 	 */
-	public MappingBasedBindingTargetResolver(final Map<String, String> fieldToControlMap,
+	public MappingBasedBindingTargetResolver(final Map<String, String> controlToFieldMap,
 			final boolean disableNameBasedMapping) {
-		this(fieldToControlMap, disableNameBasedMapping, "", "");
+		this(controlToFieldMap, disableNameBasedMapping, "", "");
 	}
 
 	/**
 	 * Constructor accepting a map of field name to control ID mappings, plus a
 	 * control prefix or suffix for resolution.
 	 *
-	 * @param fieldToControlMap       map containing field name to control ID
-	 *                                mappings
+	 * @param controlToFieldMap       map containing the control ID to field
+	 *                                mappings (key is the control ID, value the
+	 *                                field name or a nested path to a field)
 	 * @param disableNameBasedMapping If set to {@code true}, all mappings are
 	 *                                solely taken from {@code fieldToControlMap}.
 	 *                                If set to {@code false}, name-based resolution
@@ -76,27 +76,21 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
 	 * @param controlPrefix           a control prefix
 	 * @param controlSuffix           a control suffix
 	 */
-	public MappingBasedBindingTargetResolver(final Map<String, String> fieldToControlMap,
+	public MappingBasedBindingTargetResolver(final Map<String, String> controlToFieldMap,
 			final boolean disableNameBasedMapping, final String controlPrefix, final String controlSuffix) {
 		super(controlPrefix, controlSuffix);
 		this.disableNameBasedMapping = disableNameBasedMapping;
-		this.fieldToControlMap = fieldToControlMap;
+		this.controlToFieldMap = controlToFieldMap;
 	}
 
 	@Override
-	public Control resolveInternal(final View view, final Field field) {
-		final String fieldName = field.getName();
-		final String controlId = fieldToControlMap.get(fieldName);
-		if (controlId != null) {
-			final Optional<NodeWrapper> foundControl = view.getViewNodesAsStream()
-					.filter(nodeWrapper -> nodeWrapper.isControl() && nodeWrapper.getId().equalsIgnoreCase(controlId))
-					.findFirst();
-			if (foundControl.isPresent()) {
-				return foundControl.get().getWrapped();
-			}
+	public BindingTarget resolveInternal(final Control control, final Object bean, final View view) {
+		final String fieldPath = controlToFieldMap.get(control.getId());
+		if (fieldPath != null) {
+			return new BindingTarget(control, bean.getClass(), fieldPath);
 		}
 		// mapping did not bring a resolution, shall we try the name based mapping?
-		return disableNameBasedMapping ? null : super.resolveInternal(view, field);
+		return disableNameBasedMapping ? null : super.resolveInternal(control, bean, view);
 	}
 
 }

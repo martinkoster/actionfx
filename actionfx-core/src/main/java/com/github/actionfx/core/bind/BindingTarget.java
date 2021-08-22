@@ -23,27 +23,49 @@
  */
 package com.github.actionfx.core.bind;
 
-import java.util.List;
-
-import com.github.actionfx.core.view.View;
+import javafx.scene.control.Control;
 
 /**
- * Interface for resolving a field into a control that acts as a binding target.
+ * Describes a desired binding between a {@link Control} and a value inside a
+ * JavaBean.
  *
  * @author koster
  *
  */
-public interface BindingTargetResolver {
+public class BindingTarget {
+
+	private final Control control;
+
+	private final Class<?> beanClass;
+
+	private final String beanPathExpression;
 
 	/**
-	 * Resolves the given {@code bean} and {@code view} to a list of
-	 * {@link BindingTarget} describing the relation between controls inside the
-	 * view and a field value inside a bean hierarchy.
+	 * Constructor accepting all required arguments for defining a binding target.
 	 *
-	 * @param bean the root bean instance holding values to bind to controls
-	 * @param view the view holing controls
-	 * @return the resolved {@link BindingTarget}s
+	 * @param control            the control holding the value to bind
+	 * @param beanClass          the model bean class
+	 * @param beanPathExpression the bean path expression relative to the root been
+	 *                           (used for nested beans inside a bean hierarchy).
+	 *                           Expression is empty, in case the
+	 *                           {@code owningInstance} is the {@code rootInstance}
 	 */
-	List<BindingTarget> resolve(Object bean, View view);
+	public BindingTarget(final Control control, final Class<?> beanClass, final String beanPathExpression) {
+		this.control = control;
+		this.beanClass = beanClass;
+		this.beanPathExpression = beanPathExpression;
+	}
+
+	public Control getControl() {
+		return control;
+	}
+
+	public String getBeanPathExpression() {
+		return beanPathExpression;
+	}
+
+	public Object getBeanClass() {
+		return beanClass;
+	}
 
 }

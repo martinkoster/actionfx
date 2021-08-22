@@ -92,6 +92,8 @@ public class ParentView extends AbstractView {
 			return constructorWithResourceBundle.newInstance(resourceBundle);
 		} catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException
 				| InstantiationException e) {
+			// no constructor found accepting RessourceBundle - so we try the default
+			// constructor next
 		}
 		// no constructor with ResourceBundle as argument? Then we use the default
 		// no-argument constructor
@@ -113,4 +115,15 @@ public class ParentView extends AbstractView {
 			ReflectionUtils.setFieldValue(field, controller, nodeWrapper.getWrapped());
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return super.equals(obj);
+	}
+
 }

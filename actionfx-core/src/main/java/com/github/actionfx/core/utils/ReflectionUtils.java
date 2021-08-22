@@ -537,6 +537,32 @@ public class ReflectionUtils {
 	}
 
 	/**
+	 * Decapitalizes the given {@code propertyName} using Java Bean conventions.
+	 * <p>
+	 * Example:
+	 * <p>
+	 * <ul>
+	 * <li>decapitalize("JavaBeanProperty") = "javaBeanProperty"</li>
+	 * <li>decapitalize("JProperty") = "JProperty"</li>
+	 * </ul>
+	 *
+	 * @param propertyName the property name to decapitalize
+	 * @return the decapitalized property name
+	 */
+	public static String decapitalizeBeanProperty(final String propertyName) {
+		if (propertyName.isEmpty() || startsWithSeveralUpperCaseLetters(propertyName)) {
+			return propertyName;
+		} else {
+			return propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
+		}
+	}
+
+	private static boolean startsWithSeveralUpperCaseLetters(final String propertyName) {
+		final char[] chars = propertyName.toCharArray();
+		return chars.length >= 2 && Character.isUpperCase(chars[0]) && Character.isUpperCase(chars[1]);
+	}
+
+	/**
 	 * Finds all public/private/protected/package protected methods with a return
 	 * type in a given {@code clazz}.
 	 * <p>

@@ -24,22 +24,18 @@
 package com.github.actionfx.core.bind;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 
-import java.lang.reflect.Field;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
@@ -55,66 +51,57 @@ import javafx.scene.layout.HBox;
 class NameBasedBindindTargetResolverTest {
 
 	@Test
-	void testResolve_controlHasFieldPrefix() {
+	void testResolve_controlHasFieldSuffix() {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClass(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "helloWorld");
-		final NameBasedBindindTargetResolver resolver = new NameBasedBindindTargetResolver();
+		final Model model = new Model();
+		final NameBasedBindindTargetResolver resolver = new NameBasedBindindTargetResolver("", "Label");
 
 		// WHEN
-		final Control control = resolver.resolve(view, field);
+		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(control, notNullValue());
-		assertThat(control, instanceOf(Label.class));
-		assertThat(((Label) control).getId(), equalTo("helloWorldLabel"));
+		assertThat(targets, hasSize(2));
+		assertBindingTarget(targets, 0, "helloWorldLabel", Model.class, "helloWorld");
+		assertBindingTarget(targets, 1, "tableView", Model.class, "tableView");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	void testResolve_controlMatchesFieldName() {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClass(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "tableView");
+		final Model model = new Model();
 		final NameBasedBindindTargetResolver resolver = new NameBasedBindindTargetResolver();
 
 		// WHEN
-		final Control control = resolver.resolve(view, field);
+		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(control, notNullValue());
-		assertThat(control, instanceOf(TableView.class));
-		assertThat(((TableView<String>) control).getId(), equalTo("tableView"));
-	}
-
-	@Test
-	void testResolve_noMatchingControl() {
-		// GIVEN
-		final View view = new ParentView("viewId", new ViewClass(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "nonMatching");
-		final NameBasedBindindTargetResolver resolver = new NameBasedBindindTargetResolver();
-
-		// WHEN
-		final Control control = resolver.resolve(view, field);
-
-		// THEN
-		assertThat(control, nullValue());
+		assertThat(targets, hasSize(1));
+		assertBindingTarget(targets, 0, "tableView", Model.class, "tableView");
 	}
 
 	@Test
 	void testResolve_usingControlPrefixAndSuffix() {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClassWithPrefixAndSuffix(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "helloWorld");
-		final NameBasedBindindTargetResolver resolver = new NameBasedBindindTargetResolver("prefix", "suffix");
+		final Model model = new Model();
+		final NameBasedBindindTargetResolver resolver = new NameBasedBindindTargetResolver("prefix", "Suffix");
 
 		// WHEN
-		final Control control = resolver.resolve(view, field);
+		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(control, notNullValue());
-		assertThat(control, instanceOf(Label.class));
-		assertThat(((Label) control).getId(), equalTo("prefixHelloWorldSuffixLabel"));
+		assertThat(targets, hasSize(1));
+		assertBindingTarget(targets, 0, "prefixHelloWorldSuffix", Model.class, "helloWorld");
+	}
+
+	private static void assertBindingTarget(final List<BindingTarget> targets, final int index, final String controlId,
+			final Class<?> beanClass, final String beanPathExpression) {
+		final BindingTarget target = targets.get(index);
+		assertThat(target.getControl().getId(), equalTo(controlId));
+		assertThat(target.getBeanClass(), equalTo(beanClass));
+		assertThat(target.getBeanPathExpression(), equalTo(beanPathExpression));
 	}
 
 	/**
@@ -167,7 +154,7 @@ class NameBasedBindindTargetResolverTest {
 			final HBox hbox = new HBox();
 
 			final Label label = new Label("Hello World");
-			label.setId("prefixHelloWorldSuffixLabel");
+			label.setId("prefixHelloWorldSuffix");
 
 			hbox.getChildren().addAll(label);
 

@@ -23,18 +23,19 @@
  */
 package com.github.actionfx.core.view;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import com.github.actionfx.core.bind.BindingModelProxy;
+import com.github.actionfx.core.bind.BindingTarget;
 import com.github.actionfx.core.bind.BindingTargetResolver;
 import com.github.actionfx.core.utils.AFXUtils;
-import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
@@ -80,6 +81,10 @@ public abstract class AbstractView implements View {
 	// each view instance holds its lookup cache, so that consecutive lookups are
 	// not expensive (requires a tree traversal each time otherwise)
 	protected final Map<String, NodeWrapper> lookupCache = Collections.synchronizedMap(new HashMap<>());
+
+	// map of bound model instances and their used binding model proxies
+	protected final Map<Object, BindingModelProxy> boundModelInstancesMap = Collections
+			.synchronizedMap(new IdentityHashMap<>());
 
 	@Override
 	public String getId() {
@@ -218,6 +223,37 @@ public abstract class AbstractView implements View {
 		return NodeWrapper.of(rootNode).getNodesAsStream();
 	}
 
+	@Override
+	public void bind(final Object model, final BindingTargetResolver resolver) {
+		final List<BindingTarget> bindingTargets = resolver.resolve(model, this);
+		if (bindingTargets.isEmpty()) {
+			// nothing to bind
+			return;
+		}
+		final BindingModelProxy bindingModelProxy = new BindingModelProxy(model, bindingTargets);
+		bindingModelProxy.bind();
+		boundModelInstancesMap.put(model, bindingModelProxy);
+	}
+
+	@Override
+	public void unbind(final Object model) {
+		final BindingModelProxy bindingModelProxy = boundModelInstancesMap.get(model);
+		if (bindingModelProxy == null) {
+			// model is not bound
+			return;
+		}
+		bindingModelProxy.unbind();
+		boundModelInstancesMap.remove(model);
+	}
+
+	@Override
+	public void unbindAll() {
+		while (!boundModelInstancesMap.isEmpty()) {
+			final var model = boundModelInstancesMap.keySet().iterator().next();
+			unbind(model);
+		}
+	}
+
 	/**
 	 * Initializes the given {@link Stage} with the parameters defined for this
 	 * view.
@@ -295,21 +331,6 @@ public abstract class AbstractView implements View {
 	@Override
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
-	}
-
-	@Override
-	public void bind(final Object model, final BindingTargetResolver resolver) {
-		final List<Field> fields = ReflectionUtils.findAllDeclaredFields(model.getClass());
-	}
-
-	@Override
-	public void unbind(final Object model) {
-
-	}
-
-	@Override
-	public void unbindAll() {
-
 	}
 
 	@Override

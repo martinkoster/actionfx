@@ -135,7 +135,7 @@ class BeanWrapperTest {
 		final StringPropertyType stringPropertyType = new StringPropertyType("hello world");
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(stringPropertyType).getObservableValue("value"),
+		assertThat(BeanWrapper.of(stringPropertyType).getFxProperty("value"),
 				sameInstance(stringPropertyType.valueProperty()));
 	}
 
@@ -153,7 +153,7 @@ class BeanWrapperTest {
 		// WHEN and THEN
 		assertThat(
 				BeanWrapper.of(classWithNestedElement)
-						.getObservableValue("nestedElementWithProperties.fieldWithGetter.value"),
+						.getFxProperty("nestedElementWithProperties.fieldWithGetter.value"),
 				sameInstance(helloPropertyType.valueProperty()));
 	}
 
@@ -163,7 +163,7 @@ class BeanWrapperTest {
 		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithNestedElement).getObservableValue("nestedElement.fieldWithGetter.value"),
+		assertThat(BeanWrapper.of(classWithNestedElement).getFxProperty("nestedElement.fieldWithGetter.value"),
 				nullValue());
 	}
 
@@ -181,7 +181,7 @@ class BeanWrapperTest {
 		// WHEN and THEN
 		assertThat(
 				BeanWrapper.of(classWithNestedElement)
-						.getObservableValue("nestedElementWithProperties.fieldWithoutGetter.value"),
+						.getFxProperty("nestedElementWithProperties.fieldWithoutGetter.value"),
 				sameInstance(worldPropertyType.valueProperty()));
 	}
 

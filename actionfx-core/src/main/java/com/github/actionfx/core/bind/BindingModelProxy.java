@@ -23,21 +23,51 @@
  */
 package com.github.actionfx.core.bind;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.github.actionfx.core.beans.BeanPropertyReference;
+import com.github.actionfx.core.beans.BeanWrapper;
+import com.github.actionfx.core.view.graph.ControlWrapper;
+
 /**
  * Proxy around a model class that is used for form binding.
  *
  * @author koster
  *
  */
-public class BindingModelProxy {
+public class BindingModelProxy extends BeanWrapper {
 
-	private final BindingTargetResolver bindingTargetResolver;
+	private final List<BindingTarget> bindingTargets = new ArrayList<>();
 
-	private final Object model;
+	private final List<Binding> activeBindings = new ArrayList<>();
 
-	public BindingModelProxy(final Object model, final BindingTargetResolver bindingTargetResolver) {
-		this.model = model;
-		this.bindingTargetResolver = bindingTargetResolver;
+	public BindingModelProxy(final Object model, final List<BindingTarget> bindingTargets) {
+		super(model);
+		this.bindingTargets.addAll(bindingTargets);
 	}
 
+	/**
+	 * Performs a binding between the {@code model} and the supplied
+	 * {@code bindingTargets}.
+	 */
+	public void bind() {
+		for (final BindingTarget bindingTarget : bindingTargets) {
+			final BeanPropertyReference<?> reference = getBeanPropertyReference(bindingTarget.getBeanPathExpression());
+			// in case one of the path elements in "beanPathExpression" resolved to null, a
+			// return value of null needs to be handled
+			if (reference == null) {
+				continue;
+			}
+			final ControlWrapper controlWrapper = ControlWrapper.of(bindingTarget.getControl());
+			activeBindings.add(controlWrapper.bindUserValue(reference));
+		}
+	}
+
+	/**
+	 * Unbinds all {@code bindingTargets} again from the supplied {@code model}.
+	 */
+	public void unbind() {
+		activeBindings.forEach(Binding::unbind);
+	}
 }

@@ -23,28 +23,43 @@
  */
 package com.github.actionfx.core.view;
 
+import static com.github.actionfx.core.test.utils.TestUtils.assertControlHasUserValue;
+import static com.github.actionfx.core.test.utils.TestUtils.enterValue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXShowView;
+import com.github.actionfx.core.bind.BindingTargetResolver;
+import com.github.actionfx.core.bind.MappingBasedBindingTargetResolver;
 import com.github.actionfx.core.container.instantiation.MultilingualViewController;
-import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -189,6 +204,269 @@ class FxmlViewTest {
 		assertThat(textFieldWrapper.getWrapped(), instanceOf(TextField.class));
 		// check that the node is now cached!
 		assertThat(view.lookupCache.get("textField"), equalTo(textFieldWrapper));
+	}
+
+	@Test
+	void testBind() {
+		// GIVEN
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final CustomerModel model = createCustomerModel();
+		final BindingTargetResolver resolver = createBindingTargetResolver();
+
+		// WHEN
+		view.bind(model, resolver);
+
+		// THEN
+		assertControlHasUserValue(view, "firstNameTextField", "Please enter first name");
+		assertControlHasUserValue(view, "lastNameTextField", "Please enter last name");
+		assertControlHasUserValue(view, "countryChoiceBox", "Germany");
+		assertControlHasUserValue(view, "streetTextField", "Please enter street");
+		assertControlHasUserValue(view, "postalCodeTextField", "Please enter postal code");
+		assertControlHasUserValue(view, "cityTextField", "Please enter city");
+		assertControlHasUserValue(view, "shoppingCartListView", Arrays.asList("Item 1", "Item 2", "Item 3"));
+
+		// check binding by entering values in the controls
+		enterValue(view, "firstNameTextField", "John");
+		enterValue(view, "lastNameTextField", "Doe");
+		enterValue(view, "countryChoiceBox", "USA");
+		enterValue(view, "streetTextField", "1600 Pennsylvania Avenue");
+		enterValue(view, "postalCodeTextField", "20500");
+		enterValue(view, "cityTextField", "Washington");
+		enterValue(view, "shoppingCartListView", Arrays.asList("Item 4", "Item 5"));
+
+		// check that model has the entered values reflected
+		assertThat(model.getFirstName(), equalTo("John"));
+		assertThat(model.getLastName(), equalTo("Doe"));
+		assertThat(model.getCountry(), equalTo("USA"));
+		assertThat(model.getStreet(), equalTo("1600 Pennsylvania Avenue"));
+		assertThat(model.getPostalCode(), equalTo("20500"));
+		assertThat(model.getCity(), equalTo("Washington"));
+		assertThat(model.getSelectedProducts(), contains("Item 4", "Item 5"));
+	}
+
+	@Test
+	void testUnbind() {
+		// GIVEN
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final CustomerModel model = createCustomerModel();
+		final BindingTargetResolver resolver = createBindingTargetResolver();
+		view.bind(model, resolver);
+
+		// WHEN
+		view.unbind(model);
+
+		// THEN
+		assertControlHasUserValue(view, "firstNameTextField", "Please enter first name");
+		assertControlHasUserValue(view, "lastNameTextField", "Please enter last name");
+		assertControlHasUserValue(view, "countryChoiceBox", "Germany");
+		assertControlHasUserValue(view, "streetTextField", "Please enter street");
+		assertControlHasUserValue(view, "postalCodeTextField", "Please enter postal code");
+		assertControlHasUserValue(view, "cityTextField", "Please enter city");
+		assertControlHasUserValue(view, "shoppingCartListView", Arrays.asList("Item 1", "Item 2", "Item 3"));
+
+		// check binding by entering values in the controls
+		enterValue(view, "firstNameTextField", "John");
+		enterValue(view, "lastNameTextField", "Doe");
+		enterValue(view, "countryChoiceBox", "USA");
+		enterValue(view, "streetTextField", "1600 Pennsylvania Avenue");
+		enterValue(view, "postalCodeTextField", "20500");
+		enterValue(view, "cityTextField", "Washington");
+		enterValue(view, "shoppingCartListView", Arrays.asList("Item 4", "Item 5"));
+
+		// check that model has the old values, as model is no longer bound
+		assertThat(model.getFirstName(), equalTo("Please enter first name"));
+		assertThat(model.getLastName(), equalTo("Please enter last name"));
+		assertThat(model.getCountry(), equalTo("Germany"));
+		assertThat(model.getStreet(), equalTo("Please enter street"));
+		assertThat(model.getPostalCode(), equalTo("Please enter postal code"));
+		assertThat(model.getCity(), equalTo("Please enter city"));
+		assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
+	}
+
+	@Test
+	void testUnbindAll() {
+		// GIVEN
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final CustomerModel model = createCustomerModel();
+		final BindingTargetResolver resolver = createBindingTargetResolver();
+		view.bind(model, resolver);
+
+		// WHEN
+		view.unbindAll();
+
+		// THEN
+		assertControlHasUserValue(view, "firstNameTextField", "Please enter first name");
+		assertControlHasUserValue(view, "lastNameTextField", "Please enter last name");
+		assertControlHasUserValue(view, "countryChoiceBox", "Germany");
+		assertControlHasUserValue(view, "streetTextField", "Please enter street");
+		assertControlHasUserValue(view, "postalCodeTextField", "Please enter postal code");
+		assertControlHasUserValue(view, "cityTextField", "Please enter city");
+		assertControlHasUserValue(view, "shoppingCartListView", Arrays.asList("Item 1", "Item 2", "Item 3"));
+
+		// check binding by entering values in the controls
+		enterValue(view, "firstNameTextField", "John");
+		enterValue(view, "lastNameTextField", "Doe");
+		enterValue(view, "countryChoiceBox", "USA");
+		enterValue(view, "streetTextField", "1600 Pennsylvania Avenue");
+		enterValue(view, "postalCodeTextField", "20500");
+		enterValue(view, "cityTextField", "Washington");
+		enterValue(view, "shoppingCartListView", Arrays.asList("Item 4", "Item 5"));
+
+		// check that model has the old values, as model is no longer bound
+		assertThat(model.getFirstName(), equalTo("Please enter first name"));
+		assertThat(model.getLastName(), equalTo("Please enter last name"));
+		assertThat(model.getCountry(), equalTo("Germany"));
+		assertThat(model.getStreet(), equalTo("Please enter street"));
+		assertThat(model.getPostalCode(), equalTo("Please enter postal code"));
+		assertThat(model.getCity(), equalTo("Please enter city"));
+		assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
+	}
+
+	private CustomerModel createCustomerModel() {
+		final CustomerModel model = new CustomerModel();
+		model.setFirstName("Please enter first name");
+		model.setLastName("Please enter last name");
+		model.setCountry("Germany");
+		model.setStreet("Please enter street");
+		model.setPostalCode("Please enter postal code");
+		model.setCity("Please enter city");
+		model.getSelectedProducts().addAll(Arrays.asList("Item 1", "Item 2", "Item 3"));
+		return model;
+	}
+
+	private BindingTargetResolver createBindingTargetResolver() {
+		final Map<String, String> controlToFieldMap = new HashMap<>();
+		controlToFieldMap.put("firstNameTextField", "firstName");
+		controlToFieldMap.put("lastNameTextField", "lastName");
+		controlToFieldMap.put("countryChoiceBox", "country");
+		controlToFieldMap.put("streetTextField", "street");
+		controlToFieldMap.put("postalCodeTextField", "postalCode");
+		controlToFieldMap.put("cityTextField", "city");
+		controlToFieldMap.put("shoppingCartListView", "selectedProducts");
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(controlToFieldMap,
+				false);
+		return resolver;
+	}
+
+	/**
+	 * Test controller that holds the {@link AFXController} and {@link AFXShowView}
+	 * annotations.
+	 *
+	 * @author koster
+	 *
+	 */
+	@AFXController(viewId = "testId", fxml = "/testfxml/SampleView.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {
+			"cssClass1", "cssClass2" })
+	public class TestController {
+
+		@AFXShowView()
+		public void actionMethod() {
+			System.out.println("Original Method");
+		}
+	}
+
+	/**
+	 * Test controller for the customer form.
+	 *
+	 * @author koster
+	 *
+	 */
+	public class CustomerController {
+
+		@FXML
+		private ChoiceBox<String> countryChoiceBox;
+
+		@FXML
+		private ListView<String> shoppingCartListView;
+
+		void init() {
+			countryChoiceBox.getItems().addAll("Germany", "France", "Spain", "Italy", "Portugal", "UK", "USA");
+			shoppingCartListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			shoppingCartListView.getItems().addAll(Arrays.asList("Item 1", "Item 2", "Item 3", "Item 4", "Item 5"));
+		}
+	}
+
+	/**
+	 * The model used to bind to the customer form.
+	 *
+	 * @author koster
+	 *
+	 */
+	public class CustomerModel {
+
+		private String firstName;
+
+		private String lastName;
+
+		private String country;
+
+		private String street;
+
+		private String postalCode;
+
+		private String city;
+
+		// observable list that can be bidirectionally bound
+		private final List<String> selectedProducts = FXCollections.observableArrayList();
+
+		public String getFirstName() {
+			return firstName;
+		}
+
+		public void setFirstName(final String firstName) {
+			this.firstName = firstName;
+		}
+
+		public String getLastName() {
+			return lastName;
+		}
+
+		public void setLastName(final String lastName) {
+			this.lastName = lastName;
+		}
+
+		public String getPostalCode() {
+			return postalCode;
+		}
+
+		public void setPostalCode(final String postalCode) {
+			this.postalCode = postalCode;
+		}
+
+		public String getCity() {
+			return city;
+		}
+
+		public void setCity(final String city) {
+			this.city = city;
+		}
+
+		public String getCountry() {
+			return country;
+		}
+
+		public void setCountry(final String country) {
+			this.country = country;
+		}
+
+		public List<String> getSelectedProducts() {
+			return selectedProducts;
+		}
+
+		public String getStreet() {
+			return street;
+		}
+
+		public void setStreet(final String street) {
+			this.street = street;
+		}
+
 	}
 
 }

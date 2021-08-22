@@ -23,10 +23,12 @@
  */
 package com.github.actionfx.core.bind;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.github.actionfx.core.view.View;
 
@@ -42,59 +44,66 @@ import javafx.scene.control.Control;
 public abstract class AbstractCachingBindingTargetResolver implements BindingTargetResolver {
 
 	// the actual cache - resolution is tried against the cache
-	private final Map<CacheKey, Control> bindingTargetCache = Collections.synchronizedMap(new HashMap<>());
+	private final Map<CacheKey, List<BindingTarget>> bindingTargetCache = Collections
+			.synchronizedMap(new IdentityHashMap<>());
 
 	@Override
-	public Control resolve(final View view, final Field field) {
-		return bindingTargetCache.computeIfAbsent(CacheKey.of(view, field),
-				cacheKey -> resolveInternal(cacheKey.getView(), cacheKey.getField()));
+	public List<BindingTarget> resolve(final Object bean, final View view) {
+		return bindingTargetCache.computeIfAbsent(CacheKey.from(bean.getClass(), view),
+				cacheKey -> resolveInternal(bean, view));
+	}
+
+	/**
+	 * Resolve the actual binding targets by checking all controls in the given
+	 * {@code view}, whether these are candidates for a binding.
+	 *
+	 * @param bean the root bean instance holding values to bind to controls
+	 * @param view the view holing controls
+	 * @return the resolved {@link BindingTarget}s
+	 */
+	protected List<BindingTarget> resolveInternal(final Object bean, final View view) {
+		return view.getViewNodesAsStream()
+				.filter(nodeWrapper -> Control.class.isAssignableFrom(nodeWrapper.getWrappedType()))
+				.map(node -> resolveInternal((Control) node.getWrapped(), bean, view)).filter(Objects::nonNull)
+				.collect(Collectors.toList());
 	}
 
 	/**
 	 * Method to be overridden to resolve the actual binding target.
 	 *
-	 * @param view  the view holing controls
-	 * @param field the field
-	 * @return the binding target control
+	 * @param control the control that is potential binding target
+	 *
+	 * @param bean    the root bean instance holding values to bind to controls
+	 * @param view    the view holing controls
+	 * @return the resolved {@link BindingTarget}, or {@code null}, if resolution is
+	 *         not possible.
 	 */
-	protected abstract Control resolveInternal(final View view, Field field);
+	protected abstract BindingTarget resolveInternal(Control control, final Object bean, final View view);
 
 	/**
-	 * Cache key implementation for storing views and fields in hash maps.
+	 * Cache key class.
 	 *
 	 * @author koster
 	 *
 	 */
 	private static class CacheKey {
 
+		private final Class<?> beanClass;
+
 		private final View view;
 
-		private final Field field;
-
-		public CacheKey(final View view, final Field field) {
+		private CacheKey(final Class<?> beanClass, final View view) {
+			this.beanClass = beanClass;
 			this.view = view;
-			this.field = field;
 		}
 
-		public static CacheKey of(final View view, final Field field) {
-			return new CacheKey(view, field);
-		}
-
-		public View getView() {
-			return view;
-		}
-
-		public Field getField() {
-			return field;
+		static CacheKey from(final Class<?> beanClass, final View view) {
+			return new CacheKey(beanClass, view);
 		}
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (field == null ? 0 : field.hashCode());
-			result = prime * result + (view == null ? 0 : view.hashCode());
-			return result;
+			return Objects.hash(beanClass, view);
 		}
 
 		@Override
@@ -109,21 +118,7 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 				return false;
 			}
 			final CacheKey other = (CacheKey) obj;
-			if (field == null) {
-				if (other.field != null) {
-					return false;
-				}
-			} else if (!field.equals(other.field)) {
-				return false;
-			}
-			if (view == null) {
-				if (other.view != null) {
-					return false;
-				}
-			} else if (!view.equals(other.view)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(beanClass, other.beanClass) && Objects.equals(view, other.view);
 		}
 
 	}

@@ -23,27 +23,36 @@
  */
 package com.github.actionfx.core.bind;
 
-import java.util.List;
-
-import com.github.actionfx.core.view.View;
-
 /**
- * Interface for resolving a field into a control that acts as a binding target.
+ * Abstract base class for different binding implementations.
  *
+ * @param <S> the source type for the binding
+ * @param <T> the target type for the binding
  * @author koster
  *
  */
-public interface BindingTargetResolver {
+public abstract class AbstractBinding<S, T> implements Binding {
+
+	protected S source;
+
+	protected T target;
 
 	/**
-	 * Resolves the given {@code bean} and {@code view} to a list of
-	 * {@link BindingTarget} describing the relation between controls inside the
-	 * view and a field value inside a bean hierarchy.
+	 * Base constructor that accepts the source and target instance for the binding.
 	 *
-	 * @param bean the root bean instance holding values to bind to controls
-	 * @param view the view holing controls
-	 * @return the resolved {@link BindingTarget}s
+	 * @param source the source instance
+	 * @param target the target instance
 	 */
-	List<BindingTarget> resolve(Object bean, View view);
+	protected AbstractBinding(final S source, final T target) {
+		this.source = source;
+		this.target = target;
+	}
 
+	public T getTarget() {
+		return target;
+	}
+
+	public void setTarget(final T target) {
+		this.target = target;
+	}
 }

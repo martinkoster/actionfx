@@ -30,14 +30,13 @@ import java.util.stream.Collectors;
 
 import com.github.actionfx.core.annotation.AFXFormBinding;
 import com.github.actionfx.core.annotation.AFXFormMapping;
+import com.github.actionfx.core.bind.MappingBasedBindingTargetResolver;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
-import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.scene.control.Control;
 
 /**
  * Extends controllers for binding a value inside an annotated field of type
@@ -66,16 +65,38 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
 					+ "' is annotated by @AFXFormBinding, is not of expected type javafx.beans.property.ObjectProperty!");
 		}
 		final ObjectProperty<?> objectProperty = (ObjectProperty<?>) fieldValue;
-		final Object objectPropertyValue = objectProperty.getValue();
 		final View view = ControllerWrapper.getViewFrom(controller);
 		final List<AFXFormMapping> mappingAnnotations = AnnotationUtils.findAllAnnotations(annotatedElement,
 				AFXFormMapping.class);
-		final Map<String, String> fieldToControlMap = mappingAnnotations.stream()
-				.collect(Collectors.toMap(AFXFormMapping::name, AFXFormMapping::controlId));
+		final Map<String, String> controlToFieldMap = mappingAnnotations.stream()
+				.collect(Collectors.toMap(AFXFormMapping::controlId, AFXFormMapping::name));
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(controlToFieldMap,
+				annotation.disableNameBasedMapping(), annotation.controlPrefix(), annotation.controlSuffix());
+		prepareBinding(objectProperty, view, resolver);
+	}
 
-		final ControlWrapper controlWrapper = ControlWrapper
-				.of(getFieldValue(controller, annotatedElement, Control.class));
-		controlWrapper.enableMultiSelection();
+	/**
+	 * Prepares the binding between a model object inside the supplied
+	 * {@code objectProperty} and controls inside the given {@code view}.
+	 * <p>
+	 * In case the value in the {@code objectProperty} is not null, an immediate
+	 * binding is required. Additionally, when changing the model inside the
+	 * property, the binding with the new model is created.
+	 *
+	 * @param objectProperty the property holding the model class
+	 * @param view           the view holding the controls
+	 * @param resolver       the binding target resolver
+	 */
+	private void prepareBinding(final ObjectProperty<?> objectProperty, final View view,
+			final MappingBasedBindingTargetResolver resolver) {
+		final Object objectPropertyValue = objectProperty.getValue();
+		if (objectPropertyValue != null) {
+			view.bind(objectPropertyValue, resolver);
+		}
+		objectProperty.addListener((observable, oldValue, newValue) -> {
+			view.unbind(oldValue);
+			view.bind(newValue, resolver);
+		});
 	}
 
 }

@@ -23,27 +23,18 @@
  */
 package com.github.actionfx.core.bind;
 
-import java.util.List;
-
-import com.github.actionfx.core.view.View;
-
 /**
- * Interface for resolving a field into a control that acts as a binding target.
+ * Interface for different type of bindings.
  *
  * @author koster
  *
+ * @param <S> the binding source type
+ * @param <T> the binding target type
  */
-public interface BindingTargetResolver {
+public interface Binding {
 
-	/**
-	 * Resolves the given {@code bean} and {@code view} to a list of
-	 * {@link BindingTarget} describing the relation between controls inside the
-	 * view and a field value inside a bean hierarchy.
-	 *
-	 * @param bean the root bean instance holding values to bind to controls
-	 * @param view the view holing controls
-	 * @return the resolved {@link BindingTarget}s
-	 */
-	List<BindingTarget> resolve(Object bean, View view);
+	void bind();
+
+	void unbind();
 
 }

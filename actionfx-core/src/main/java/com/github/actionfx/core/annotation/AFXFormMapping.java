@@ -24,9 +24,12 @@
 package com.github.actionfx.core.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.github.actionfx.core.annotation.AFXFormMapping.AFXFormMappings;
 
 import javafx.beans.property.ObjectProperty;
 
@@ -41,6 +44,7 @@ import javafx.beans.property.ObjectProperty;
  * @author koster
  *
  */
+@Repeatable(AFXFormMappings.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXFormMapping {
@@ -59,4 +63,17 @@ public @interface AFXFormMapping {
 	 * @return the control ID
 	 */
 	public String controlId();
+
+	/**
+	 * Annotation to make {@link AFXFormMapping} repeatable.
+	 *
+	 * @author MartinKoster
+	 *
+	 */
+	@Target({ ElementType.FIELD })
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AFXFormMappings {
+
+		AFXFormMapping[] value();
+	}
 }

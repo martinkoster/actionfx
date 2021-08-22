@@ -78,7 +78,7 @@ public class SingleExpression extends Expression {
 	 */
 	public String getKey() {
 		if (getValue() == null || getValue().length() == 0) {
-			return "";
+			return null;
 		}
 		for (int i = 0; i < getValue().length(); i++) {
 			final char c = getValue().charAt(i);
@@ -92,7 +92,7 @@ public class SingleExpression extends Expression {
 				return getValue().substring(i + 1, end);
 			}
 		}
-		return "";
+		return null;
 	}
 
 	/**

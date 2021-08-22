@@ -24,23 +24,19 @@
 package com.github.actionfx.core.bind;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
-import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -58,55 +54,64 @@ class MappingBasedBindindTargetResolverTest {
 	void testResolve() {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClass(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "username");
+		final Model model = new Model();
 		final var fieldToControlMap = new HashMap<String, String>();
-		fieldToControlMap.put("username", "someControlId");
+		fieldToControlMap.put("someControlId", "username");
 		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(fieldToControlMap,
 				false);
 
 		// WHEN
-		final Control control = resolver.resolve(view, field);
+		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(control, notNullValue());
-		assertThat(control, instanceOf(TextField.class));
-		assertThat(((TextField) control).getId(), equalTo("someControlId"));
+		assertThat(targets, hasSize(2));
+		assertBindingTarget(targets, 0, "someControlId", Model.class, "username");
+		assertBindingTarget(targets, 1, "password", Model.class, "password");
 	}
 
 	@Test
 	void testResolve_withDisableNameBasedMappingAsFallback() {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClass(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "password");
+		final Model model = new Model();
 		final var fieldToControlMap = new HashMap<String, String>();
-		fieldToControlMap.put("username", "someControlId");
+		fieldToControlMap.put("someControlId", "username");
 		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(fieldToControlMap,
 				true);
 
 		// WHEN
-		final Control control = resolver.resolve(view, field);
+		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(control, nullValue());
+		assertThat(targets, hasSize(1));
+		assertBindingTarget(targets, 0, "someControlId", Model.class, "username");
 	}
 
 	@Test
 	void testResolve_usingNameBasedResolutionAsFallback_withPrefixAndSuffix() {
 		// GIVEN
-		final View view = new ParentView("viewId", new ViewClass(), new Controller());
-		final Field field = ReflectionUtils.findField(Model.class, "password");
+		final View view = new ParentView("viewId", new ViewClassWithPrefixAndSuffix(), new Controller());
+		final Model model = new Model();
 		final var fieldToControlMap = new HashMap<String, String>();
-		fieldToControlMap.put("userName", "someControlId");
+		fieldToControlMap.put("someControlId", "username");
 		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(fieldToControlMap,
-				false, "prefix", "suffix");
+				false, "prefix", "Suffix");
 
 		// WHEN
-		final Control control = resolver.resolve(view, field);
+		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(control, notNullValue());
-		assertThat(control, instanceOf(TextField.class));
-		assertThat(((TextField) control).getId(), equalTo("prefixPasswordSuffix"));
+		assertThat(targets, hasSize(2));
+		assertBindingTarget(targets, 0, "someControlId", Model.class, "username");
+		assertBindingTarget(targets, 1, "prefixPasswordSuffix", Model.class, "password");
+	}
+
+	private static void assertBindingTarget(final List<BindingTarget> targets, final int index, final String controlId,
+			final Class<?> beanClass, final String beanPathExpression) {
+		final BindingTarget target = targets.get(index);
+		assertThat(target.getControl().getId(), equalTo(controlId));
+		assertThat(target.getBeanClass(), equalTo(beanClass));
+		assertThat(target.getBeanPathExpression(), equalTo(beanPathExpression));
 	}
 
 	/**
@@ -131,6 +136,28 @@ class MappingBasedBindindTargetResolverTest {
 	public static class ViewClass extends AnchorPane {
 
 		public ViewClass() {
+			final HBox hbox = new HBox();
+
+			final TextField userNameTextField = new TextField();
+			userNameTextField.setId("someControlId");
+
+			final TextField textField = new TextField();
+			textField.setId("password");
+			hbox.getChildren().addAll(userNameTextField, textField);
+
+			getChildren().add(hbox);
+		}
+	}
+
+	/**
+	 * View class with prefix and suffix.
+	 *
+	 * @author koster
+	 *
+	 */
+	public static class ViewClassWithPrefixAndSuffix extends AnchorPane {
+
+		public ViewClassWithPrefixAndSuffix() {
 			final HBox hbox = new HBox();
 
 			final TextField userNameTextField = new TextField();
