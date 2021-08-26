@@ -28,6 +28,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.github.actionfx.core.view.graph.ControlProperties;
+
 /**
  * Annotation to be applied to method arguments to retrieve the user value from
  * the specified control.
@@ -60,4 +62,14 @@ public @interface AFXControlValue {
 	 *         argument
 	 */
 	public String value();
+
+	/**
+	 * The control's property where the value shall be retrieved from. Default is
+	 * the user value of the control
+	 * ({@link ControlProperties#USER_VALUE_OBSERVABLE}).
+	 *
+	 * @return the property where the value shall be retrieved from
+	 */
+	public ControlProperties sourceProperty() default ControlProperties.USER_VALUE_OBSERVABLE;
+
 }

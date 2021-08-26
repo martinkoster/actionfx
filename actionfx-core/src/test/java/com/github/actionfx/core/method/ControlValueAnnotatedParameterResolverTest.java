@@ -40,6 +40,7 @@ import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
+import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.scene.control.ListView;
@@ -58,7 +59,7 @@ import javafx.scene.layout.VBox;
 class ControlValueAnnotatedParameterResolverTest {
 
 	@Test
-	void testResolved_textField_singleValue() {
+	void testResolved_textField_valueTakenFromUserValue() {
 		// GIVEN
 		final ClassWithMethods instance = new ClassWithMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "methodWithString");
@@ -73,9 +74,25 @@ class ControlValueAnnotatedParameterResolverTest {
 		assertThat(value, equalTo("Hello World"));
 	}
 
+	@Test
+	void testResolved_textField_valueTakenFromSingleValue() {
+		// GIVEN
+		final ClassWithMethods instance = new ClassWithMethods();
+		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "methodWithSourcePropertySingleValue");
+		final Parameter parameter = method.getParameters()[0];
+		final AFXControlValue annotation = parameter.getAnnotation(AFXControlValue.class);
+		final ControlValueAnnotatedParameterResolver resolver = new ControlValueAnnotatedParameterResolver();
+
+		// WHEN
+		final String value = resolver.resolve(instance, method, parameter, annotation, String.class);
+
+		// THEN
+		assertThat(value, equalTo("Hello World"));
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
-	void testResolved_listView_listValue() {
+	void testResolved_listView_valueTakenFromUserValue() {
 		// GIVEN
 		final ClassWithMethods instance = new ClassWithMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "methodWithListArgument");
@@ -88,7 +105,23 @@ class ControlValueAnnotatedParameterResolverTest {
 
 		// THEN
 		assertThat(value, contains("Item 2", "Item 3"));
+	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	void testResolved_listView_valueTakenFromItemsObservableList() {
+		// GIVEN
+		final ClassWithMethods instance = new ClassWithMethods();
+		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "methodWithSourcePropertyItems");
+		final Parameter parameter = method.getParameters()[0];
+		final AFXControlValue annotation = parameter.getAnnotation(AFXControlValue.class);
+		final ControlValueAnnotatedParameterResolver resolver = new ControlValueAnnotatedParameterResolver();
+
+		// WHEN
+		final List<String> value = resolver.resolve(instance, method, parameter, annotation, List.class);
+
+		// THEN
+		assertThat(value, contains("Item 1", "Item 2", "Item 3"));
 	}
 
 	@Test
@@ -141,9 +174,9 @@ class ControlValueAnnotatedParameterResolverTest {
 				() -> resolver.resolve(instance, method, parameter, annotation, List.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("User value retrieved for control with ID='textField'"));
+		assertThat(ex.getMessage(), containsString("Value retrieved for control with ID='textField'"));
 		assertThat(ex.getMessage(),
-				containsString(" is not compatible with the method argument of type 'java.util.List'!"));
+				containsString(" is not compatible with the method argument of type 'interface java.util.List'!"));
 	}
 
 	@Test
@@ -175,7 +208,15 @@ class ControlValueAnnotatedParameterResolverTest {
 		public void methodWithString(@AFXControlValue("textField") final String textValue) {
 		}
 
+		public void methodWithSourcePropertySingleValue(
+				@AFXControlValue(value = "textField", sourceProperty = ControlProperties.SINGLE_VALUE_PROPERTY) final String textValue) {
+		}
+
 		public void methodWithListArgument(@AFXControlValue("listView") final List<String> selectedEntries) {
+		}
+
+		public void methodWithSourcePropertyItems(
+				@AFXControlValue(value = "listView", sourceProperty = ControlProperties.ITEMS_OBSERVABLE_LIST) final List<String> entries) {
 		}
 
 		public void methodWithUnknownControl(@AFXControlValue("someUnknownControl") final String textValue) {

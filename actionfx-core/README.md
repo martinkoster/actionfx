@@ -417,6 +417,7 @@ The following attributes are available inside the annotation:
 Attribute 					| Description 
 --------------------------- | -------------------------------------------------
 `value`						| ID of the control whose value shall be bound to the annotated method argument
+`sourceProperty`          | The control's property where the value shall be retrieved from. Default is the user value of the control `USER_VALUE_OBSERVABLE`. Other possible values are `SINGLE_VALUE_PROPERTY` (text in a text field - but which is the user value at the same time) or `ITEMS_OBSERVABLE_LIST` (e.g. items in a table view or list view).
 
 **Example:**
 ```java
@@ -568,7 +569,7 @@ Attribute 					| Description
 --------------------------- | -------------------------------------------------
 `propertyName`            | The name of the field inside the model class. The value can be also a nested path using the "." notation for Java beans.
 `controlId`               | The ID of the control that shall be mapped to the field name in the model class.
-`targetProperty`          | The control's target property that shall be used as binding target. Default is the user value of the control (`USERVALUE`). Other possible values are `VALUE` (text in a text field - but which is the user value at the same time) or `ITEMS` (e.g. items in a table view or list view).
+`targetProperty`          | The control's target property that shall be used as binding target. Default is the user value of the control (`USER_VALUE_OBSERVABLE`). Other possible values are `SINGLE_VALUE_PROPERTY` (text in a text field - but which is the user value at the same time) or `ITEMS_OBSERVABLE_LIST` (e.g. items in a table view or list view).
 
 **Example:**
 
