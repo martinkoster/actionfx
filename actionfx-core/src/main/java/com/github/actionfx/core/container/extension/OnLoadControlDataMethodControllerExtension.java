@@ -66,7 +66,7 @@ public class OnLoadControlDataMethodControllerExtension
 		final ControlWrapper controlWrapper = createControlWrapper(view, annotation.controlId());
 		// check, whether the wrapped control supports multi-selection or only single
 		// selection
-		if (controlWrapper.supportsValues()) {
+		if (controlWrapper.supportsItems()) {
 			populateControlsObservableList(controller, annotatedElement, loadingActiveBooleanProperty, controlWrapper,
 					annotation.async());
 		} else if (controlWrapper.supportsValue()) {
@@ -100,7 +100,7 @@ public class OnLoadControlDataMethodControllerExtension
 	private void populateControlsObservableList(final Object instance, final Method method,
 			final BooleanProperty loadingActiveBooleanProperty, final ControlWrapper controlWrapper,
 			final boolean asynchronous) {
-		final ObservableList<Object> valuesObservableList = controlWrapper.getValues();
+		final ObservableList<Object> valuesObservableList = controlWrapper.getItems();
 		final ControllerMethodInvocationAdapter methodInvocationAdapter = createMethodInvocationAdapter(instance,
 				method);
 		if (loadingActiveBooleanProperty == null || loadingActiveBooleanProperty.get()) {

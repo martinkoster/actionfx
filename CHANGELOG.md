@@ -2,7 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## 1.4.0 (30.06.2021)
-- Support for mapping a custom domain object to form controls via @AFXFormBinding and @AFXFormMapping
+- Support for mapping a custom domain object to form controls via @AFXFormBinding and @AFXFormMapping.
+- Added convenience methods for accessing the view from a controller to class "ActionFX" (showView, showViewAndWait, hideView)
 - Updated dependencies:
   * ByteBuddy to 1.11.5
   * New dependency commons-beanutils 1.9.4

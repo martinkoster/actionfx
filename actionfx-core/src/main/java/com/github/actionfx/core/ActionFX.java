@@ -46,6 +46,7 @@ import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
@@ -368,14 +369,63 @@ public class ActionFX {
 	}
 
 	/**
+	 * Returns the {@link View} associated with the supplied {@code controller}.
+	 *
+	 * @param controller the controller for that the view shall be retrieved
+	 * @return the view associated with the supplied controller
+	 */
+	public View getView(final Object controller) {
+		return ControllerWrapper.of(controller).getView();
+	}
+
+	/**
+	 * Hides the view associated with the supplied {@code controller}. This method
+	 * is useful for closing (modal) dialogs from its controller.
+	 *
+	 * @param controller the controller thats view shall be hidden
+	 */
+	public void hideView(final Object controller) {
+		getView(controller).hide();
+	}
+
+	/**
 	 * Displays the main view in the primary stage.
 	 *
 	 * @param primaryStage the primary stage
 	 */
-	public void displayMainView(final Stage primaryStage) {
+	public void showMainView(final Stage primaryStage) {
 		setPrimaryStage(primaryStage);
 		final View view = getMainView();
 		view.show(primaryStage);
+	}
+
+	/**
+	 * Shows the view of the supplied {@code controller}.
+	 *
+	 * @param controller the controller thats view shall be shown
+	 */
+	public void showView(final Object controller) {
+		getView(controller).show();
+	}
+
+	/**
+	 * Shows the view of the supplied {@code controller} inside the given
+	 * {@link Stage}.
+	 *
+	 * @param controller the controller thats view shall be shown
+	 * @param stage      the stage where the view shall be displayed inside
+	 */
+	public void showView(final Object controller, final Stage stage) {
+		getView(controller).show(stage);
+	}
+
+	/**
+	 * Shows the view of the supplied {@code controller} in a modal dialog.
+	 *
+	 * @param controller the controller thats view shall be shown
+	 */
+	public void showViewAndWait(final Object controller) {
+		getView(controller).showAndWait();
 	}
 
 	/**

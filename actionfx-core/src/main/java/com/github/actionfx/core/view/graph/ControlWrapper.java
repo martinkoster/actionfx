@@ -123,7 +123,7 @@ public class ControlWrapper extends NodeWrapper {
 
 	// property keys that are expected in a control-specific properties file
 	private static final String PROPERTY_KEY_VALUE_PROPERTY = "valueProperty";
-	private static final String PROPERTY_KEY_VALUES_OBSERVABLE_LIST = "valuesObservableList";
+	private static final String PROPERTY_KEY_ITEMS_OBSERVABLE_LIST = "itemsObservableList";
 	private static final String PROPERTY_KEY_SELECTION_MODEL_PROPERTY = "selectionModelProperty";
 
 	// property keys that are expected for a selection model wrapper
@@ -186,7 +186,7 @@ public class ControlWrapper extends NodeWrapper {
 	 *         otherwise.
 	 */
 	public boolean supportsMultipleValues() {
-		return controlConfig.hasValuesObservableList();
+		return controlConfig.hasItemsObservableList();
 	}
 
 	/**
@@ -220,16 +220,16 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Get all values from the underlying wrapped {@link Control}.
+	 * Get all items from the underlying wrapped {@link Control}.
 	 *
-	 * @return all allowed values of the underlying wrapped {@link Control}.
+	 * @return all items of the underlying wrapped {@link Control}.
 	 */
 	@SuppressWarnings("unchecked")
-	public <V> ObservableList<V> getValues() {
+	public <V> ObservableList<V> getItems() {
 		if (valuesObservableList == null) {
 			final Control control = getWrapped();
-			if (controlConfig.hasValuesObservableList()) {
-				valuesObservableList = controlConfig.getValuesObservableList(control);
+			if (controlConfig.hasItemsObservableList()) {
+				valuesObservableList = controlConfig.getItemsObservableList(control);
 			} else {
 				// values are not supported - we return an empty list here...
 				valuesObservableList = FXCollections.emptyObservableList();
@@ -291,8 +291,8 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Checks, whether the wrapped {@link Control} supports a "values" property
-	 * (e.g. for @{@link javafx.scene.control.ChoiceBox} that is the
+	 * Checks, whether the wrapped {@link Control} supports a "items" property (e.g.
+	 * for @{@link javafx.scene.control.ChoiceBox} that is the
 	 * {@link javafx.scene.control.ChoiceBox#itemsProperty()} as configured in the
 	 * properties file on classpath
 	 * {@code /afxcontrolwrapper/javafx.scene.control.ChoiceBox.properties).}
@@ -300,8 +300,8 @@ public class ControlWrapper extends NodeWrapper {
 	 * @return {@code true}, if a value property is available and accessible,
 	 *         {@code false} otherwise.
 	 */
-	public boolean supportsValues() {
-		return controlConfig.hasValuesObservableList();
+	public boolean supportsItems() {
+		return controlConfig.hasItemsObservableList();
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class ControlWrapper extends NodeWrapper {
 						+ "' as a javafx.scene.control.SelectionModel, is the properties configuration for the control to wrap correct?");
 			}
 			final ConstructorBasedInstantiationSupplier<? extends SelectionModel<?>> instantiationSupplier = new ConstructorBasedInstantiationSupplier<>(
-					selectionModelWrapperClass, controlSpecificSelectionModel, getValues());
+					selectionModelWrapperClass, controlSpecificSelectionModel, getItems());
 			return instantiationSupplier.get();
 		}
 	}
@@ -447,7 +447,7 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Gets values or the value from the wrapped {@link Control}.
+	 * Gets the items or the value from the wrapped {@link Control}.
 	 * <p>
 	 * The value is assumed to be one of the following (entries with higher order
 	 * are of higher priority):
@@ -463,8 +463,8 @@ public class ControlWrapper extends NodeWrapper {
 	 * Unlike method {@link #getUserValue()}, this method does not consider selected
 	 * values through a {@link SelectionModel}.
 	 */
-	public Object getValuesOrValue() {
-		final Observable observable = getValueOrValuesAsObservable();
+	public Object getItemsOrValue() {
+		final Observable observable = getValueOrItemsAsObservable();
 		return getValueFromObservable(observable);
 	}
 
@@ -508,7 +508,7 @@ public class ControlWrapper extends NodeWrapper {
 		} else if (supportsSelection()) {
 			return getSelectedValueProperty();
 		} else {
-			return getValueOrValuesAsObservable();
+			return getValueOrItemsAsObservable();
 		}
 	}
 
@@ -522,11 +522,11 @@ public class ControlWrapper extends NodeWrapper {
 	 *
 	 * @return the value as an observable
 	 */
-	public Observable getValueOrValuesAsObservable() {
+	public Observable getValueOrItemsAsObservable() {
 		if (supportsValue()) {
 			return getValueProperty();
-		} else if (supportsValues()) {
-			return getValues();
+		} else if (supportsItems()) {
+			return getItems();
 		} else {
 			// no user value supported, we simply return null here
 			return null;
@@ -570,14 +570,14 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Adds a change listener to the values observable list of the wrapped
+	 * Adds a change listener to the items observable list of the wrapped
 	 * {@link Control}.
 	 *
 	 * @param <V>            the value type
 	 * @param changeListener the list change listener to add
 	 */
-	public <V> void addValuesChangeListener(final ListChangeListener<V> changeListener) {
-		final ObservableList<V> observableList = getValues();
+	public <V> void addItemsChangeListener(final ListChangeListener<V> changeListener) {
+		final ObservableList<V> observableList = getItems();
 		if (observableList != null) {
 			observableList.addListener(changeListener);
 			addedValuesChangeListener.add(changeListener);
@@ -585,11 +585,11 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Removes all attached values change listener.
+	 * Removes all attached items change listener.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void removeAllValuesChangeListener() {
-		final ObservableList<?> observableList = getValues();
+	public void removeAllItemsChangeListener() {
+		final ObservableList<?> observableList = getItems();
 		if (observableList != null) {
 			for (final ListChangeListener listener : addedValuesChangeListener) {
 				observableList.removeListener(listener);
@@ -678,9 +678,9 @@ public class ControlWrapper extends NodeWrapper {
 	 * @param <V>       the value type
 	 * @param valueList the value list to set
 	 */
-	public <V> void setValues(final ObservableList<V> valueList) {
-		if (controlConfig.hasValuesObservableList()) {
-			controlConfig.setValuesObservableList(getWrapped(), valueList);
+	public <V> void setItems(final ObservableList<V> valueList) {
+		if (controlConfig.hasItemsObservableList()) {
+			controlConfig.setItemsObservableList(getWrapped(), valueList);
 			valuesObservableList = valueList;
 		} else {
 			throw new IllegalStateException("Control of type '" + getWrappedType().getCanonicalName()
@@ -714,15 +714,15 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Checks, whether the wrapped control has either values or a value set. Values
-	 * are e.g. text in a {@link TextField} or values in a {@link TableView} (even
+	 * Checks, whether the wrapped control has either items or a value set. A value
+	 * is e.g. text in a {@link TextField} or items in a {@link TableView} (even
 	 * when not selected).
 	 *
 	 * @return {@code true}, if the wrapped control has values set, {@code false}
 	 *         otherwise.
 	 */
-	public boolean hasValueOrValuesSet() {
-		final Observable observable = getValueOrValuesAsObservable();
+	public boolean hasValueOrItemsSet() {
+		final Observable observable = getValueOrItemsAsObservable();
 		if (observable == null) {
 			return false;
 		}
@@ -762,18 +762,8 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Tries to perform a bidirectional binding of the control's user value with the
-	 * given {@code beanPropertyReference}. Bidirectional binding is possible, if
-	 * the supplied {@code beanPropertyReference} is an {@link Observable} that
-	 * allows also to write values to it.
-	 * <p>
-	 * In case only a unidirectional binding is possible, an unidirectional binding
-	 * is established.
-	 * <p>
-	 * In case an unidirectional binding is not possible, e.g. because the supplied
-	 * {@code beanPropertyReference} is not an {@link Observable}, but e.g. a
-	 * string, the value of the {@code beanPropertyReference} is just set to the
-	 * user value of the wrapped control.
+	 * Performs a binding between the attribute referenced by
+	 * {@code beanPropertyReference} with the control's user value.
 	 *
 	 * @param beanPropertyReference the bean property reference to use as binding
 	 *                              target
@@ -781,37 +771,123 @@ public class ControlWrapper extends NodeWrapper {
 	 *         the binding source again
 	 */
 	public Binding bindUserValue(final BeanPropertyReference<?> beanPropertyReference) {
-		final Observable userValueObservable = getUserValueAsObservable();
-		if (isObservableList(userValueObservable)) {
-			return bindUserValueOfTypeObservableList((ObservableList<?>) userValueObservable, beanPropertyReference);
-		} else if (isObservableValue(userValueObservable)) {
-			return bindUserValueOfTypeObservableValue((ObservableValue<?>) userValueObservable, beanPropertyReference);
+		return bind(beanPropertyReference, ControlProperties.USER_VALUE_OBSERVABLE);
+	}
+
+	/**
+	 * Performs a binding between the attribute referenced by
+	 * {@code beanPropertyReference} with the control's "items" (e.g. the items in a
+	 * table view).
+	 *
+	 * @param beanPropertyReference the bean property reference to use as binding
+	 *                              target
+	 * @return the established {@link Binding} instance that can be used to unbind
+	 *         the binding source again
+	 */
+	public Binding bindItemsObservableList(final BeanPropertyReference<?> beanPropertyReference) {
+		return bind(beanPropertyReference, ControlProperties.ITEMS_OBSERVABLE_LIST);
+	}
+
+	/**
+	 * Performs a binding between the attribute referenced by
+	 * {@code beanPropertyReference} with the control's single value (e.g. a text in
+	 * a textfield).
+	 *
+	 * @param beanPropertyReference the bean property reference to use as binding
+	 *                              target
+	 * @return the established {@link Binding} instance that can be used to unbind
+	 *         the binding source again
+	 */
+	public Binding bindSingleValueProperty(final BeanPropertyReference<?> beanPropertyReference) {
+		return bind(beanPropertyReference, ControlProperties.SINGLE_VALUE_PROPERTY);
+	}
+
+	/**
+	 * Performs a binding of the control's property with the given
+	 * {@code beanPropertyReference}. Depending of the data type referenced by the
+	 * supplied {@link BeanPropertyReference} and the desired target binding
+	 * property expressed by {@code controlProperty} different types of bindings are
+	 * created.
+	 * <p>
+	 * Bidirectional binding is possible, if the supplied
+	 * {@code beanPropertyReference} is an {@link Observable} that allows also to
+	 * write values to it (e.g. a {@link Property}).
+	 * <p>
+	 * In case the control's property is a
+	 * {@link javafx.beans.property.ReadyOnlyProperty}, but the control offers a
+	 * {@link SelectionModel} for manipulating the read-only property, a
+	 * bidirectional binding is even also possible. This is e.g. the case for
+	 * selected item(s) in a {@link javafx.scene.control.ListView}.
+	 * <p>
+	 * In case only a unidirectional binding is possible (e.g. for a
+	 * {@link javafx.beans.property.ReadOnlyProperty}) an unidirectional binding is
+	 * established.
+	 * <p>
+	 * In case an unidirectional binding is not possible, e.g. because the supplied
+	 * {@code beanPropertyReference} is not an {@link Observable}, but e.g. a
+	 * string, the value of the {@code beanPropertyReference} is just set to the
+	 * property of the wrapped control and changes in the control will be again
+	 * reflected in the provided {@code beanPropertyReference} (which corresponds to
+	 * a unidirectional binding logically).
+	 *
+	 * @param beanPropertyReference the bean property reference to use as binding
+	 *                              target
+	 * @return the established {@link Binding} instance that can be used to unbind
+	 *         the binding source again
+	 */
+	public Binding bind(final BeanPropertyReference<?> beanPropertyReference, final ControlProperties controlProperty) {
+		Observable observable;
+		switch (controlProperty) {
+		case SINGLE_VALUE_PROPERTY:
+			observable = getValueProperty();
+			break;
+		case ITEMS_OBSERVABLE_LIST:
+			observable = getItems();
+			break;
+		case USER_VALUE_OBSERVABLE:
+			observable = getUserValueAsObservable();
+			break;
+		default:
+			throw new IllegalStateException("Unsupported ControlProperties of type '" + controlProperty + "'!");
+		}
+		if (isObservableList(observable)) {
+			return bindTypeObservableList((ObservableList<?>) observable, beanPropertyReference,
+					controlProperty == ControlProperties.USER_VALUE_OBSERVABLE);
+		} else if (isObservableValue(observable)) {
+			return bindTypeObservableValue((ObservableValue<?>) observable, beanPropertyReference,
+					controlProperty == ControlProperties.USER_VALUE_OBSERVABLE);
 		} else {
-			throw new IllegalStateException("User value of wrapped control " + getWrappedType()
-					+ " is neither an ObservableList nor an ObservableValue!");
+			throw new IllegalStateException("Property '" + controlProperty + "' of wrapped control " + getWrappedType()
+					+ " is neither an ObservableList nor an ObservableValue, but of type '" + observable.getClass()
+					+ "'!");
 		}
 	}
 
 	/**
-	 * Binding routine for user values of type {@link ObservableList}.
+	 * Binding routine for control properties of type {@link ObservableList}.
 	 *
-	 * @param userValueObservableList the observable list of the underlying control
-	 *                                to use as binding target
-	 * @param beanPropertyReference   the bean property reference to use as binding
-	 *                                target
+	 * @param observableList              the observable list of the underlying
+	 *                                    control to use as binding target
+	 * @param beanPropertyReference       the bean property reference to use as
+	 *                                    binding target
+	 * @param useSelectionModelForBinding {@code true}, if manipulation of the
+	 *                                    supplied {@code observableList} shall be
+	 *                                    done via the selection model of this
+	 *                                    control, {@code false}, if manipulation
+	 *                                    shall be directly performed.
 	 * @return the {@link Binding} instance that can be used to unbind the binding
 	 *         source again
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> Binding bindUserValueOfTypeObservableList(final ObservableList<T> userValueObservableList,
-			final BeanPropertyReference<?> beanPropertyReference) {
+	protected <T> Binding bindTypeObservableList(final ObservableList<T> observableList,
+			final BeanPropertyReference<?> beanPropertyReference, final boolean useSelectionModelForBinding) {
 		final Object bindingSource = beanPropertyReference.getValue();
 		if (bindingSource == null) {
 			throw new IllegalStateException("Can not bind 'null' value to an an ObservableList!");
 		}
 		if (List.class.isAssignableFrom(bindingSource.getClass())) {
 			final ObservableListBinding<T> binding = new ObservableListBinding<>((List<T>) bindingSource,
-					userValueObservableList, getSelectionModel());
+					observableList, useSelectionModelForBinding ? getSelectionModel() : null);
 			binding.bind();
 			return binding;
 		} else {
@@ -821,20 +897,26 @@ public class ControlWrapper extends NodeWrapper {
 	}
 
 	/**
-	 * Binding routine for user values of type {@link ObservableValue}.
+	 * Binding routine for control properties of type {@link ObservableValue}.
 	 *
-	 * @param userObservableValue   the observable value of the underlying control
-	 *                              to use as binding target
-	 * @param beanPropertyReference the bean property reference to use as binding
-	 *                              target
+	 * @param observableValue             the observable value of the underlying
+	 *                                    control to use as binding target
+	 * @param beanPropertyReference       the bean property reference to use as
+	 *                                    binding target
+	 * @param useSelectionModelForBinding {@code true}, if manipulation of the
+	 *                                    supplied {@code observableList} shall be
+	 *                                    done via the selection model of this
+	 *                                    control, {@code false}, if manipulation
+	 *                                    shall be directly performed.
 	 * @return the {@link Binding} instance that can be used to unbind the binding
 	 *         source again
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> Binding bindUserValueOfTypeObservableValue(final ObservableValue<T> userObservableValue,
-			final BeanPropertyReference<?> beanPropertyReference) {
+	protected <T> Binding bindTypeObservableValue(final ObservableValue<T> observableValue,
+			final BeanPropertyReference<?> beanPropertyReference, final boolean useSelectionModelForBinding) {
 		final ObservableValueBinding<T> binding = new ObservableValueBinding<>(
-				(BeanPropertyReference<T>) beanPropertyReference, userObservableValue, getSelectionModel());
+				(BeanPropertyReference<T>) beanPropertyReference, observableValue,
+				useSelectionModelForBinding ? getSelectionModel() : null);
 		binding.bind();
 		return binding;
 	}
@@ -924,7 +1006,7 @@ public class ControlWrapper extends NodeWrapper {
 	 */
 	private ControlConfig mapToControlConfig(final Properties properties) {
 		return new ControlConfig(properties.getProperty(PROPERTY_KEY_VALUE_PROPERTY, "").trim(),
-				properties.getProperty(PROPERTY_KEY_VALUES_OBSERVABLE_LIST, "").trim(),
+				properties.getProperty(PROPERTY_KEY_ITEMS_OBSERVABLE_LIST, "").trim(),
 				properties.getProperty(PROPERTY_KEY_SELECTION_MODEL_PROPERTY, "").trim());
 	}
 
@@ -938,14 +1020,14 @@ public class ControlWrapper extends NodeWrapper {
 
 		private final String valueProperty;
 
-		private final String valuesObservableList;
+		private final String itemsObservableList;
 
 		private final String selectionModelProperty;
 
-		public ControlConfig(final String valueProperty, final String valuesObservableList,
+		public ControlConfig(final String valueProperty, final String itemsObservableList,
 				final String selectionModelProperty) {
 			this.valueProperty = valueProperty;
-			this.valuesObservableList = valuesObservableList;
+			this.itemsObservableList = itemsObservableList;
 			this.selectionModelProperty = selectionModelProperty;
 		}
 
@@ -957,16 +1039,16 @@ public class ControlWrapper extends NodeWrapper {
 			return BeanWrapper.of(control).getFxProperty(valueProperty);
 		}
 
-		public boolean hasValuesObservableList() {
-			return hasValue(valuesObservableList);
+		public boolean hasItemsObservableList() {
+			return hasValue(itemsObservableList);
 		}
 
 		@SuppressWarnings("unchecked")
-		public <V> ObservableList<V> getValuesObservableList(final Control control) {
+		public <V> ObservableList<V> getItemsObservableList(final Control control) {
 			// check, if the property holds a comma-separated list of single properties to
 			// combine in an observable list
-			if (valuesObservableList.contains(",")) {
-				final String[] propertyNames = valuesObservableList.split(",");
+			if (itemsObservableList.contains(",")) {
+				final String[] propertyNames = itemsObservableList.split(",");
 				final List<ObservableValue<V>> observableValues = new ArrayList<>();
 				for (final String propertyName : propertyNames) {
 					final ObservableValue<V> observable = BeanWrapper.of(control).getFxProperty(propertyName.trim());
@@ -976,13 +1058,13 @@ public class ControlWrapper extends NodeWrapper {
 				}
 				return new ValueChangeAwareObservableList<>(observableValues);
 			} else {
-				return (ObservableList<V>) BeanWrapper.of(control).getPropertyValue(valuesObservableList);
+				return (ObservableList<V>) BeanWrapper.of(control).getPropertyValue(itemsObservableList);
 			}
 		}
 
-		public <V> void setValuesObservableList(final Control control, final ObservableList<V> values) {
-			final Field field = ReflectionUtils.findField(control.getClass(), valuesObservableList);
-			ReflectionUtils.setFieldValueBySetter(field, control, values);
+		public <V> void setItemsObservableList(final Control control, final ObservableList<V> items) {
+			final Field field = ReflectionUtils.findField(control.getClass(), itemsObservableList);
+			ReflectionUtils.setFieldValueBySetter(field, control, items);
 		}
 
 		public boolean hasSelectionModelProperty() {

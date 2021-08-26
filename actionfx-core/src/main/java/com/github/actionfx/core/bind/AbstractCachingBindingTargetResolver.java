@@ -24,6 +24,7 @@
 package com.github.actionfx.core.bind;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,23 +63,28 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @return the resolved {@link BindingTarget}s
 	 */
 	protected List<BindingTarget> resolveInternal(final Object bean, final View view) {
-		return view.getViewNodesAsStream()
+		final List<BindingTarget> result = view.getViewNodesAsStream()
 				.filter(nodeWrapper -> Control.class.isAssignableFrom(nodeWrapper.getWrappedType()))
-				.map(node -> resolveInternal((Control) node.getWrapped(), bean, view)).filter(Objects::nonNull)
+				.map(node -> resolveInternal((Control) node.getWrapped(), bean, view)).flatMap(List::stream)
 				.collect(Collectors.toList());
+		Collections.sort(result, new BindingTargetComparator());
+		return result;
 	}
 
 	/**
-	 * Method to be overridden to resolve the actual binding target.
+	 * Method to be overridden to resolve the actual binding targets. Please note
+	 * that one control can result in multiple binding targets (different properties
+	 * of one control can be bound). Thus, this method returns a list of binding
+	 * targets.
 	 *
 	 * @param control the control that is potential binding target
 	 *
 	 * @param bean    the root bean instance holding values to bind to controls
 	 * @param view    the view holing controls
-	 * @return the resolved {@link BindingTarget}, or {@code null}, if resolution is
-	 *         not possible.
+	 * @return the resolved {@link BindingTarget}s, or an empty list, if resolution
+	 *         is not possible.
 	 */
-	protected abstract BindingTarget resolveInternal(Control control, final Object bean, final View view);
+	protected abstract List<BindingTarget> resolveInternal(Control control, final Object bean, final View view);
 
 	/**
 	 * Cache key class.
@@ -122,4 +128,22 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 		}
 
 	}
+
+	/**
+	 * Comparator implementation for {@link BindingTarget} in order to guarantee
+	 * that target properties of type "items" and "value" are bound before
+	 * properties of type "user value".
+	 *
+	 * @author koster
+	 *
+	 */
+	private static class BindingTargetComparator implements Comparator<BindingTarget> {
+
+		@Override
+		public int compare(final BindingTarget o1, final BindingTarget o2) {
+			return Integer.compare(o1.getTargetProperty().getOrder(), o2.getTargetProperty().getOrder());
+		}
+
+	}
+
 }

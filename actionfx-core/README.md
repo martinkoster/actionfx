@@ -566,8 +566,9 @@ The following attributes are available inside the annotation:
 
 Attribute 					| Description 
 --------------------------- | -------------------------------------------------
-`name`                     | The name of the field inside the model class.
+`propertyName`            | The name of the field inside the model class. The value can be also a nested path using the "." notation for Java beans.
 `controlId`               | The ID of the control that shall be mapped to the field name in the model class.
+`targetProperty`          | The control's target property that shall be used as binding target. Default is the user value of the control (`USERVALUE`). Other possible values are `VALUE` (text in a text field - but which is the user value at the same time) or `ITEMS` (e.g. items in a table view or list view).
 
 **Example:**
 
@@ -577,12 +578,12 @@ This example shows how a JavaFX control with the specified `controlId` is mapped
 		// the mappings are taken for matching binding targets.
 		// name based matchings are explicitly disabled here.
 		@AFXFormBinding(disableNameBasedMapping = true)
-		@AFXFormMapping(controlId = "customerFirstNameControl", name = "firstName")
-		@AFXFormMapping(controlId = "customerLastNameControl", name = "lastName")
-		@AFXFormMapping(controlId = "customerCountryControl", name = "country")
-		@AFXFormMapping(controlId = "customerSelectedProductsControl", name = "selectedProducts")
-		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", name = "termsAndConditions")
-		private final ObjectProperty<CustomerModel> modelWithNameBasedBinding = new SimpleObjectProperty<>();
+		@AFXFormMapping(controlId = "customerFirstNameControl", propertyName = "firstName")
+		@AFXFormMapping(controlId = "customerLastNameControl", propertyName = "lastName")
+		@AFXFormMapping(controlId = "customerCountryControl", propertyName = "country")
+		@AFXFormMapping(controlId = "customerSelectedProductsControl", propertyName = "selectedProducts")
+		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", propertyName = "termsAndConditions")
+		private final ObjectProperty<CustomerModel> modelWithMappingBasedBinding = new SimpleObjectProperty<>();
 		
 		// The controls that are used as binding target
 		// These don't need to be necessarily injected via @FXML!
@@ -996,13 +997,13 @@ The properties file for an `javafx.scene.control.TreeView` is shown here as an e
 # Property Key                  | Property Value                                             | Example Values
 # -------------------------------------------------------------------------------------------------------------------------------------------------------
 # valueProperty                 | Property name holding a single "value"                     | "text" (e.g. for TextField), "value" (e.g. for ComboBox)
-# valuesObservableList          | Name of an observable list holding all possible "values"   | "items" (e.g. for ComboBox)
+# itemsObservableList          | Name of an observable list holding all possible "values"   | "items" (e.g. for ComboBox)
 # selectionModelProperty        | Property name holding the "selectionModel"                 | "selectionModel" (e.g. for TableView)
 #
 #  In case a certain property is not supported by the control (e.g. no support for a "SelectionModel"), then the property must be left empty.
 #
 valueProperty=root
-valuesObservableList=
+itemsObservableList=
 selectionModelProperty=selectionModel
 ```
 In case you have a custom control implemented or you are using a 3rd party controls library, you can provide a properties file in the following location in the classpath: `/afxcontrolwrapper/<full-qualified-class-name>.properties`

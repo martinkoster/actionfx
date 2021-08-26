@@ -53,15 +53,15 @@ public class UseFilteredListControllerExtension extends AbstractAnnotatedFieldCo
 	protected void extend(final Object controller, final Field annotatedElement, final AFXUseFilteredList annotation) {
 		final ControlWrapper controlWrapper = ControlWrapper
 				.of(getFieldValue(controller, annotatedElement, Control.class));
-		final ObservableList list = controlWrapper.getValues();
+		final ObservableList list = controlWrapper.getItems();
 		final FilteredList filteredList = new FilteredList(list);
 		if (!"".equals(annotation.filterPredicateProperty())) {
 			bindFilteredListPredicate(controller, annotatedElement, annotation, filteredList);
 		}
 		if (annotation.wrapInSortedList()) {
-			controlWrapper.setValues(new SortedList(filteredList));
+			controlWrapper.setItems(new SortedList(filteredList));
 		} else {
-			controlWrapper.setValues(filteredList);
+			controlWrapper.setItems(filteredList);
 		}
 	}
 

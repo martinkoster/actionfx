@@ -132,7 +132,7 @@ class ActionFXIntegrationTest {
 		final Stage stage = new Stage();
 
 		// WHEN
-		actionFX.displayMainView(stage);
+		actionFX.showMainView(stage);
 
 		// THEN (stage holds scene which in turn holds the view)
 		assertThat(stage.getScene(), notNullValue());

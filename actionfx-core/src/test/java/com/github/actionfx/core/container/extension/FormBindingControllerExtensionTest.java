@@ -30,8 +30,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -40,6 +38,7 @@ import com.github.actionfx.core.annotation.AFXFormBinding;
 import com.github.actionfx.core.annotation.AFXFormMapping;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.View;
+import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.BooleanProperty;
@@ -70,6 +69,7 @@ class FormBindingControllerExtensionTest {
 	void testAccept_withNameBasedMatching() {
 		// GIVEN
 		final CustomerController controller = new CustomerController();
+		controller.customerSelectedProductsControl.getItems().addAll("Item 1", "Item 2", "Item 3", "Item 4", "Item 5");
 		final FormBindingControllerExtension extension = new FormBindingControllerExtension();
 		final CustomerModel model = createCustomerModel("John", "Doe", "USA", true, "Item 1", "Item 2");
 
@@ -127,6 +127,8 @@ class FormBindingControllerExtensionTest {
 		assertThat(controller.customerFirstNameControl.getText(), equalTo("John"));
 		assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
 		assertThat(controller.customerCountryControl.getValue(), equalTo("USA"));
+		assertThat(controller.customerSelectedProductsControl.getItems(),
+				contains("Item 1", "Item 2", "Item 3", "Item 4", "Item 5"));
 		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(),
 				contains("Item 1", "Item 2"));
 		assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
@@ -162,6 +164,7 @@ class FormBindingControllerExtensionTest {
 	void testAccept_modelIsChanged() {
 		// GIVEN
 		final CustomerController controller = new CustomerController();
+		controller.customerSelectedProductsControl.getItems().addAll("Item 1", "Item 2", "Item 3", "Item 4", "Item 5");
 		final FormBindingControllerExtension extension = new FormBindingControllerExtension();
 		final CustomerModel model1 = createCustomerModel("John", "Doe", "USA", true, "Item 1", "Item 2");
 		final CustomerModel model2 = createCustomerModel("Joe", "Dalton", "France", false, "Item 3", "Item 4",
@@ -223,6 +226,7 @@ class FormBindingControllerExtensionTest {
 		model.setLastName(lastName);
 		model.setCountry(country);
 		model.setTermsAndConditions(termsAndConditions);
+		model.getAllProducts().addAll("Item 1", "Item 2", "Item 3", "Item 4", "Item 5");
 		model.getSelectedProducts().addAll(selectedProducts);
 		return model;
 	}
@@ -269,11 +273,12 @@ class FormBindingControllerExtensionTest {
 		// the mappings are taken for matching binding targets - name based matchings
 		// are explicitly disabled
 		@AFXFormBinding(disableNameBasedMapping = true)
-		@AFXFormMapping(controlId = "customerFirstNameControl", name = "firstName")
-		@AFXFormMapping(controlId = "customerLastNameControl", name = "lastName")
-		@AFXFormMapping(controlId = "customerCountryControl", name = "country")
-		@AFXFormMapping(controlId = "customerSelectedProductsControl", name = "selectedProducts")
-		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", name = "termsAndConditions")
+		@AFXFormMapping(controlId = "customerFirstNameControl", propertyName = "firstName")
+		@AFXFormMapping(controlId = "customerLastNameControl", targetProperty = ControlProperties.SINGLE_VALUE_PROPERTY, propertyName = "lastName")
+		@AFXFormMapping(controlId = "customerCountryControl", propertyName = "country")
+		@AFXFormMapping(controlId = "customerSelectedProductsControl", targetProperty = ControlProperties.USER_VALUE_OBSERVABLE, propertyName = "selectedProducts")
+		@AFXFormMapping(controlId = "customerSelectedProductsControl", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST, propertyName = "allProducts")
+		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", propertyName = "termsAndConditions")
 		private final ObjectProperty<CustomerModel> modelWithMappingBasedBinding = new SimpleObjectProperty<>();
 
 		CustomerController() {
@@ -285,8 +290,6 @@ class FormBindingControllerExtensionTest {
 
 			customerCountryControl.getItems().addAll("Germany", "France", "Spain", "Italy", "Portugal", "UK", "USA");
 			customerSelectedProductsControl.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			customerSelectedProductsControl.getItems()
-					.addAll(Arrays.asList("Item 1", "Item 2", "Item 3", "Item 4", "Item 5"));
 
 			_view = ViewCreator.create().appendNode(customerFirstNameControl, "customerFirstNameControl")
 					.appendNode(customerLastNameControl, "customerLastNameControl")
@@ -337,6 +340,8 @@ class FormBindingControllerExtensionTest {
 		private final StringProperty lastName = new SimpleStringProperty();
 
 		private final StringProperty country = new SimpleStringProperty();
+
+		private final ObservableList<String> allProducts = FXCollections.observableArrayList();
 
 		private final ObservableList<String> selectedProducts = FXCollections.observableArrayList();
 
@@ -392,6 +397,10 @@ class FormBindingControllerExtensionTest {
 
 		public final void setTermsAndConditions(final boolean termsAndConditions) {
 			termsAndConditionsProperty().set(termsAndConditions);
+		}
+
+		public ObservableList<String> getAllProducts() {
+			return allProducts;
 		}
 
 	}

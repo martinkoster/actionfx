@@ -115,8 +115,8 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 		}
 		if (whenAllControlsHaveValues.length > 0) {
 			builder.addNewPredicate(booleanOp).forControlWrapper(whenAllControlsHaveValues)
-					.observableExtractorFunction(ControlWrapper::getValueOrValuesAsObservable)
-					.allFulfilledFunction(ControlWrapper::hasValueOrValuesSet);
+					.observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
+					.allFulfilledFunction(ControlWrapper::hasValueOrItemsSet);
 		}
 		if (whenAtLeastOneContolHasUserValue.length > 0) {
 			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneContolHasUserValue)
@@ -125,8 +125,8 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 		}
 		if (whenAtLeastOneControlHasValues.length > 0) {
 			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneControlHasValues)
-					.observableExtractorFunction(ControlWrapper::getValueOrValuesAsObservable)
-					.atLeastOneFulfilledFunction(ControlWrapper::hasValueOrValuesSet);
+					.observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
+					.atLeastOneFulfilledFunction(ControlWrapper::hasValueOrItemsSet);
 		}
 		return builder;
 	}

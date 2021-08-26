@@ -30,6 +30,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,9 +58,11 @@ import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhan
 import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.View;
+import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 /**
@@ -245,6 +248,88 @@ class ActionFXTest {
 		assertThat(service, notNullValue());
 		assertThat(service.getObservableLocale(), notNullValue());
 		assertThat(service.getObservableLocale().getValue(), equalTo(Locale.US));
+	}
+
+	@Test
+	void testGetView() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		final View view = actionFX.getView(controller);
+
+		// THEN
+		assertThat(view, sameInstance(mockView));
+	}
+
+	@Test
+	void testShowView() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showView(controller);
+
+		// THEN
+		verify(mockView, times(1)).show();
+	}
+
+	@Test
+	@TestInFxThread
+	void testShowView_withStageSupplied() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+		final Stage stage = new Stage();
+
+		// WHEN
+		actionFX.showView(controller, stage);
+
+		// THEN
+		verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
+	}
+
+	@Test
+	void testShowViewAndWait() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showViewAndWait(controller);
+
+		// THEN
+		verify(mockView, times(1)).showAndWait();
+	}
+
+	@Test
+	void testHideView() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		actionFX.hideView(controller);
+
+		// THEN
+		verify(mockView, times(1)).hide();
 	}
 
 	@Test
@@ -458,6 +543,10 @@ class ActionFXTest {
 
 	public static class AppClassWithoutAFXApplicationAnnotation {
 
+	}
+
+	public static class Controller {
+		public View _view;
 	}
 
 }

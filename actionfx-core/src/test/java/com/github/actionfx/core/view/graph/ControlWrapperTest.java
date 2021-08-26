@@ -500,7 +500,7 @@ class ControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Menu 2");
-		assertThat(wrapper.getValues(), equalTo(button.getItems()));
+		assertThat(wrapper.getItems(), equalTo(button.getItems()));
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Menu 2");
@@ -729,7 +729,7 @@ class ControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, "Menu 2");
-		assertThat(wrapper.getValues(), equalTo(button.getItems()));
+		assertThat(wrapper.getItems(), equalTo(button.getItems()));
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, "Menu 2");
@@ -748,7 +748,7 @@ class ControlWrapperTest {
 		assertSupportsValues(wrapper, true);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertThat(wrapper.getValues(), equalTo(pane.getItems()));
+		assertThat(wrapper.getItems(), equalTo(pane.getItems()));
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, pane.getItems());
@@ -844,7 +844,7 @@ class ControlWrapperTest {
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertValues(wrapper.getValues(), pane.getTabs().get(0), pane.getTabs().get(1), pane.getTabs().get(2));
+		assertValues(wrapper.getItems(), pane.getTabs().get(0), pane.getTabs().get(1), pane.getTabs().get(2));
 		assertSelectedValue(wrapper, pane.getTabs().get(0));
 		assertSelectedValues(wrapper, pane.getTabs().get(0));
 		assertUserValue(wrapper, pane.getTabs().get(0));
@@ -864,7 +864,7 @@ class ControlWrapperTest {
 		assertSupportsSelection(wrapper, true);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertValues(wrapper.getValues(), pane.getTabs().get(0), pane.getTabs().get(1), pane.getTabs().get(2));
+		assertValues(wrapper.getItems(), pane.getTabs().get(0), pane.getTabs().get(1), pane.getTabs().get(2));
 		assertSelectedValue(wrapper, pane.getTabs().get(1));
 		assertSelectedValues(wrapper, pane.getTabs().get(1));
 		assertUserValue(wrapper, pane.getTabs().get(1));
@@ -991,7 +991,7 @@ class ControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertValues(wrapper.getValues(), c.getItems().get(0), c.getItems().get(1), c.getItems().get(2));
+		assertValues(wrapper.getItems(), c.getItems().get(0), c.getItems().get(1), c.getItems().get(2));
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
 		assertUserValue(wrapper, c.getItems());
@@ -1198,7 +1198,7 @@ class ControlWrapperTest {
 		cc.setValueThree("three");
 
 		// WHEN
-		final ObservableList<String> values = wrapper.getValues();
+		final ObservableList<String> values = wrapper.getItems();
 
 		// THEN
 		assertThat(values, instanceOf(ValueChangeAwareObservableList.class));
@@ -1344,7 +1344,7 @@ class ControlWrapperTest {
 		final ChoiceBox<String> choiceBox = wrapper.getWrapped();
 
 		// WHEN
-		wrapper.addValuesChangeListener(listener);
+		wrapper.addItemsChangeListener(listener);
 		choiceBox.getItems().add("Choice 4");
 
 		// THEN
@@ -1354,7 +1354,7 @@ class ControlWrapperTest {
 		changeListenerFired.set(false);
 
 		// and WHEN (the listener is removed again)
-		wrapper.removeAllValuesChangeListener();
+		wrapper.removeAllItemsChangeListener();
 
 		// and WHEN (a value change occurs)
 		choiceBox.getItems().add("Choice 5");
@@ -1423,24 +1423,24 @@ class ControlWrapperTest {
 	void testSetValues_useAFilteredList() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlWrapperProvider.tableView(false);
-		final FilteredList<String> filteredList = new FilteredList<>(wrapper.getValues());
+		final FilteredList<String> filteredList = new FilteredList<>(wrapper.getItems());
 
 		// WHEN
-		wrapper.setValues(filteredList);
+		wrapper.setItems(filteredList);
 
 		// THEN
-		assertThat(wrapper.getValues(), sameInstance(filteredList));
+		assertThat(wrapper.getItems(), sameInstance(filteredList));
 	}
 
 	@Test
 	void testSetValues_valuesAreNotSupported() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlWrapperProvider.textField();
-		final FilteredList<String> filteredList = new FilteredList<>(wrapper.getValues());
+		final FilteredList<String> filteredList = new FilteredList<>(wrapper.getItems());
 
 		// WHEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
-				() -> wrapper.setValues(filteredList));
+				() -> wrapper.setItems(filteredList));
 
 		// THEN
 		assertThat(ex.getMessage(), containsString("has no 'values' property that can be set!"));
@@ -1477,6 +1477,58 @@ class ControlWrapperTest {
 
 		// WHEN and THEN
 		assertThat(wrapper.getConverterProperty(), nullValue());
+	}
+
+	@Test
+	void testBindSingleValueProperty() {
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<String> bindingSource = beanWrapper.getBeanPropertyReference("stringValue");
+		final TextField textField = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindSingleValueProperty(bindingSource);
+
+		// THEN
+		assertThat(textField.getText(), equalTo("Hello World"));
+		textField.setText("Hello back");
+		assertThat(bindingSource.getValue(), equalTo("Hello back"));
+	}
+
+	@Test
+	void testBindItemsObservableList_customComponent() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.customControlWithObservableList();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<ObservableList<String>> bindingSource = beanWrapper
+				.getBeanPropertyReference("observableList");
+		final CustomControlWithObservableList control = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindItemsObservableList(bindingSource);
+
+		// THEN
+		assertThat(control.getSourceItems(), contains("Choice 1", "Choice 2"));
+		control.getSourceItems().add("Choice 3");
+		assertThat(bindingSource.getValue(), contains("Choice 1", "Choice 2", "Choice 3"));
+	}
+
+	@Test
+	void testBindItemsObservableList_choiceBox_withSelectionModelTakingNoEffect() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.choiceBox(false);
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<ObservableList<String>> bindingSource = beanWrapper
+				.getBeanPropertyReference("observableList");
+		final ChoiceBox<String> control = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bindItemsObservableList(bindingSource);
+
+		// THEN
+		assertThat(control.getItems(), contains("Choice 1", "Choice 2"));
+		control.getItems().add("Choice 3");
+		assertThat(bindingSource.getValue(), contains("Choice 1", "Choice 2", "Choice 3"));
 	}
 
 	@Test
@@ -1625,7 +1677,7 @@ class ControlWrapperTest {
 
 	@SuppressWarnings("unchecked")
 	private static <V> void assertValues(final ControlWrapper wrapper, final V... expectedValues) {
-		assertThat(wrapper.getValues(), contains(expectedValues));
+		assertThat(wrapper.getItems(), contains(expectedValues));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1634,7 +1686,7 @@ class ControlWrapperTest {
 	}
 
 	private static <V> void assertValuesAreEmpty(final ControlWrapper wrapper) {
-		assertThat(wrapper.getValues(), hasSize(0));
+		assertThat(wrapper.getItems(), hasSize(0));
 	}
 
 	private static void assertSupportsSelection(final ControlWrapper wrapper, final boolean expected) {
@@ -1650,7 +1702,7 @@ class ControlWrapperTest {
 	}
 
 	private static void assertSupportsValues(final ControlWrapper wrapper, final boolean expected) {
-		assertThat(wrapper.supportsValues(), equalTo(expected));
+		assertThat(wrapper.supportsItems(), equalTo(expected));
 	}
 
 	private static <V> void assertSelectedValue(final ControlWrapper wrapper, final V expectedValue) {
@@ -1697,11 +1749,11 @@ class ControlWrapperTest {
 	}
 
 	private static void assertValueOrValuesSet(final ControlWrapper wrapper) {
-		assertThat(wrapper.hasValueOrValuesSet(), equalTo(true));
+		assertThat(wrapper.hasValueOrItemsSet(), equalTo(true));
 	}
 
 	private static void assertValueOrValuesNotSet(final ControlWrapper wrapper) {
-		assertThat(wrapper.hasValueOrValuesSet(), equalTo(false));
+		assertThat(wrapper.hasValueOrItemsSet(), equalTo(false));
 	}
 
 	/**

@@ -75,11 +75,11 @@ public class OnControlValueChangeMethodControllerExtension
 			final TimedChangeListener<?> changeListener = createValueChangeListener(controller, annotatedElement,
 					annotation.timeoutMs(), listenerActionBooleanProperty);
 			controlWrapper.addValueChangeListener(changeListener);
-		} else if (controlWrapper.supportsValues()) {
+		} else if (controlWrapper.supportsItems()) {
 			final TimedListChangeListener<?> changeListener = createListChangeListener(controller, annotatedElement,
-					annotation.timeoutMs(), listenerActionBooleanProperty, controlWrapper::getValues,
+					annotation.timeoutMs(), listenerActionBooleanProperty, controlWrapper::getItems,
 					controlWrapper::getValue);
-			controlWrapper.addValuesChangeListener(changeListener);
+			controlWrapper.addItemsChangeListener(changeListener);
 		} else {
 			throw new IllegalStateException("Control with ID='" + annotation.controlId()
 					+ "' does not support user input listening! Please check your ActionFX annotations inside constroller '"

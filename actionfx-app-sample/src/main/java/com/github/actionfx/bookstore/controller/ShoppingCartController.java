@@ -25,6 +25,8 @@ package com.github.actionfx.bookstore.controller;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.github.actionfx.bookstore.model.Book;
 import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
@@ -64,6 +66,9 @@ public class ShoppingCartController {
 	@FXML
 	private TableView<Book> bookTableView;
 
+	@Inject
+	private CheckoutController checkoutController;
+
 	@AFXOnAction(nodeId = "removeAllButton")
 	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
 	public void emptyShoppingCart() {
@@ -79,8 +84,8 @@ public class ShoppingCartController {
 	@AFXOnAction(nodeId = "checkoutButton")
 	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
-		// no to-do here as of the moment. Displaying of the view is achieved by
-		// annotation "AFXShowView"
+		// place the order into the checkout controller
+		checkoutController.startCheckout(bookTableView.getItems());
 	}
 
 	public void addToShoppingCart(final List<Book> books) {

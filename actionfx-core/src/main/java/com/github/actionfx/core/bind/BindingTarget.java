@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.bind;
 
+import com.github.actionfx.core.view.graph.ControlProperties;
+
 import javafx.scene.control.Control;
 
 /**
@@ -36,6 +38,8 @@ public class BindingTarget {
 
 	private final Control control;
 
+	private final ControlProperties targetProperty;
+
 	private final Class<?> beanClass;
 
 	private final String beanPathExpression;
@@ -44,14 +48,18 @@ public class BindingTarget {
 	 * Constructor accepting all required arguments for defining a binding target.
 	 *
 	 * @param control            the control holding the value to bind
+	 * @param targetProperty     the target property of the control that shall be
+	 *                           used as binding target
 	 * @param beanClass          the model bean class
 	 * @param beanPathExpression the bean path expression relative to the root been
 	 *                           (used for nested beans inside a bean hierarchy).
 	 *                           Expression is empty, in case the
 	 *                           {@code owningInstance} is the {@code rootInstance}
 	 */
-	public BindingTarget(final Control control, final Class<?> beanClass, final String beanPathExpression) {
+	public BindingTarget(final Control control, final ControlProperties targetProperty, final Class<?> beanClass,
+			final String beanPathExpression) {
 		this.control = control;
+		this.targetProperty = targetProperty;
 		this.beanClass = beanClass;
 		this.beanPathExpression = beanPathExpression;
 	}
@@ -66,6 +74,10 @@ public class BindingTarget {
 
 	public Object getBeanClass() {
 		return beanClass;
+	}
+
+	public ControlProperties getTargetProperty() {
+		return targetProperty;
 	}
 
 }

@@ -36,10 +36,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.Test;
@@ -51,6 +49,7 @@ import com.github.actionfx.core.annotation.AFXShowView;
 import com.github.actionfx.core.bind.BindingTargetResolver;
 import com.github.actionfx.core.bind.MappingBasedBindingTargetResolver;
 import com.github.actionfx.core.container.instantiation.MultilingualViewController;
+import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
@@ -341,16 +340,14 @@ class FxmlViewTest {
 	}
 
 	private BindingTargetResolver createBindingTargetResolver() {
-		final Map<String, String> controlToFieldMap = new HashMap<>();
-		controlToFieldMap.put("firstNameTextField", "firstName");
-		controlToFieldMap.put("lastNameTextField", "lastName");
-		controlToFieldMap.put("countryChoiceBox", "country");
-		controlToFieldMap.put("streetTextField", "street");
-		controlToFieldMap.put("postalCodeTextField", "postalCode");
-		controlToFieldMap.put("cityTextField", "city");
-		controlToFieldMap.put("shoppingCartListView", "selectedProducts");
-		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(controlToFieldMap,
-				false);
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(false);
+		resolver.registerMapping("firstNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, "firstName");
+		resolver.registerMapping("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, "lastName");
+		resolver.registerMapping("countryChoiceBox", ControlProperties.USER_VALUE_OBSERVABLE, "country");
+		resolver.registerMapping("streetTextField", ControlProperties.USER_VALUE_OBSERVABLE, "street");
+		resolver.registerMapping("postalCodeTextField", ControlProperties.USER_VALUE_OBSERVABLE, "postalCode");
+		resolver.registerMapping("cityTextField", ControlProperties.USER_VALUE_OBSERVABLE, "city");
+		resolver.registerMapping("shoppingCartListView", ControlProperties.USER_VALUE_OBSERVABLE, "selectedProducts");
 		return resolver;
 	}
 

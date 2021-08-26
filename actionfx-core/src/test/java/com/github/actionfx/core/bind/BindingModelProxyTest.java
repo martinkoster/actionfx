@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -132,7 +133,7 @@ class BindingModelProxyTest {
 	}
 
 	private static BindingTarget bindingTarget(final Control control, final String path) {
-		return new BindingTarget(control, Model.class, path);
+		return new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, Model.class, path);
 	}
 
 	public class Model {

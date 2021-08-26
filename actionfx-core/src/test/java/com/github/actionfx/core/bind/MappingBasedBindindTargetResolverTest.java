@@ -27,7 +27,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -35,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
+import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.scene.control.TextField;
@@ -55,10 +55,8 @@ class MappingBasedBindindTargetResolverTest {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClass(), new Controller());
 		final Model model = new Model();
-		final var fieldToControlMap = new HashMap<String, String>();
-		fieldToControlMap.put("someControlId", "username");
-		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(fieldToControlMap,
-				false);
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(false);
+		resolver.registerMapping("someControlId", ControlProperties.USER_VALUE_OBSERVABLE, "username");
 
 		// WHEN
 		final List<BindingTarget> targets = resolver.resolve(model, view);
@@ -74,10 +72,8 @@ class MappingBasedBindindTargetResolverTest {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClass(), new Controller());
 		final Model model = new Model();
-		final var fieldToControlMap = new HashMap<String, String>();
-		fieldToControlMap.put("someControlId", "username");
-		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(fieldToControlMap,
-				true);
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(true);
+		resolver.registerMapping("someControlId", ControlProperties.USER_VALUE_OBSERVABLE, "username");
 
 		// WHEN
 		final List<BindingTarget> targets = resolver.resolve(model, view);
@@ -92,10 +88,9 @@ class MappingBasedBindindTargetResolverTest {
 		// GIVEN
 		final View view = new ParentView("viewId", new ViewClassWithPrefixAndSuffix(), new Controller());
 		final Model model = new Model();
-		final var fieldToControlMap = new HashMap<String, String>();
-		fieldToControlMap.put("someControlId", "username");
-		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(fieldToControlMap,
-				false, "prefix", "Suffix");
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(false, "prefix",
+				"Suffix");
+		resolver.registerMapping("someControlId", ControlProperties.USER_VALUE_OBSERVABLE, "username");
 
 		// WHEN
 		final List<BindingTarget> targets = resolver.resolve(model, view);

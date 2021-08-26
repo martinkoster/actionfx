@@ -23,8 +23,13 @@
  */
 package com.github.actionfx.core.bind;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
+import com.github.actionfx.core.view.graph.ControlProperties;
 
 import javafx.scene.control.Control;
 import net.bytebuddy.implementation.bind.MethodDelegationBinder.BindingResolver;
@@ -73,14 +78,15 @@ public class NameBasedBindindTargetResolver extends AbstractCachingBindingTarget
 	}
 
 	@Override
-	public BindingTarget resolveInternal(final Control control, final Object bean, final View view) {
+	public List<BindingTarget> resolveInternal(final Control control, final Object bean, final View view) {
 		final String controlId = control.getId();
 		final String fieldName = guessFieldName(controlId);
 		// check, if Java bean has a property with this name
 		if (ReflectionUtils.findField(bean.getClass(), fieldName) != null) {
-			return new BindingTarget(control, bean.getClass(), fieldName);
+			return Arrays.asList(
+					new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, bean.getClass(), fieldName));
 		} else {
-			return null;
+			return Collections.emptyList();
 		}
 	}
 

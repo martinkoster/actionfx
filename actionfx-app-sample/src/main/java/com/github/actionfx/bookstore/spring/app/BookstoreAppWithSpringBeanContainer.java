@@ -56,7 +56,7 @@ public class BookstoreAppWithSpringBeanContainer {
 
 		@Override
 		public void start(final Stage primaryStage) throws Exception {
-			ActionFX.getInstance().displayMainView(primaryStage);
+			ActionFX.getInstance().showMainView(primaryStage);
 		}
 	}
 }

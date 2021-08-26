@@ -30,6 +30,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.github.actionfx.core.annotation.AFXFormMapping.AFXFormMappings;
+import com.github.actionfx.core.view.graph.ControlProperties;
 
 import javafx.beans.property.ObjectProperty;
 
@@ -50,11 +51,12 @@ import javafx.beans.property.ObjectProperty;
 public @interface AFXFormMapping {
 
 	/**
-	 * The name of the field inside the model class.
+	 * The name of the field inside the model class. The value can be also a nested
+	 * path using the "." notation for Java beans.
 	 *
 	 * @return the name of the field inside the model class.
 	 */
-	public String name();
+	public String propertyName();
 
 	/**
 	 * The ID of the control that shall be mapped to the field name in the model
@@ -63,6 +65,15 @@ public @interface AFXFormMapping {
 	 * @return the control ID
 	 */
 	public String controlId();
+
+	/**
+	 * The control's target property that shall be used as binding target. Default
+	 * is the user value of the control
+	 * ({@link ControlProperties#USER_VALUE_OBSERVABLE}).
+	 *
+	 * @return the target property description of the control's binding target
+	 */
+	public ControlProperties targetProperty() default ControlProperties.USER_VALUE_OBSERVABLE;
 
 	/**
 	 * Annotation to make {@link AFXFormMapping} repeatable.

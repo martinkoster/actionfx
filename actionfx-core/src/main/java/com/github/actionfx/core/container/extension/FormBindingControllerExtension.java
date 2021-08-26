@@ -25,8 +25,6 @@ package com.github.actionfx.core.container.extension;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.annotation.AFXFormBinding;
 import com.github.actionfx.core.annotation.AFXFormMapping;
@@ -68,10 +66,10 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
 		final View view = ControllerWrapper.getViewFrom(controller);
 		final List<AFXFormMapping> mappingAnnotations = AnnotationUtils.findAllAnnotations(annotatedElement,
 				AFXFormMapping.class);
-		final Map<String, String> controlToFieldMap = mappingAnnotations.stream()
-				.collect(Collectors.toMap(AFXFormMapping::controlId, AFXFormMapping::name));
-		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(controlToFieldMap,
+		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(
 				annotation.disableNameBasedMapping(), annotation.controlPrefix(), annotation.controlSuffix());
+		mappingAnnotations
+				.forEach(fm -> resolver.registerMapping(fm.controlId(), fm.targetProperty(), fm.propertyName()));
 		prepareBinding(objectProperty, view, resolver);
 	}
 
@@ -98,5 +96,4 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
 			view.bind(newValue, resolver);
 		});
 	}
-
 }
