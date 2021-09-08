@@ -28,6 +28,7 @@ import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +36,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.utils.ReflectionUtils;
 
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.util.StringConverter;
 
@@ -58,25 +62,68 @@ public class ConversionService {
 	@SuppressWarnings("rawtypes")
 	private static final Map<ConvertiblePair, ConverterFactory> CONVERTER_FACTORY_ACCESS_CACHE = new HashMap<>();
 
+	// in case there is no more specific to-string converter is registered, this
+	// converter is used as fallback
+	private static final Converter<Object, String> FALLBACK_TO_STRING_CONVERTER = new ObjectToStringConverter();
+
+	// locale used from locale-specific conversion
+	private final Property<Locale> localeProperty = new SimpleObjectProperty<>();
+
 	static {
 		registerConverter();
 	}
 
-	private final ObservableValue<Locale> observableLocale;
+	/**
+	 * Standard constructor that tries to retrieve a {@link Locale} from a
+	 * potentially setup {@link ActionFX} instance. In case there is no
+	 * {@link ActionFX} instance is setup, the default system locale is taken.
+	 */
+	public ConversionService() {
+		this(ActionFX.isConfigured() ? ActionFX.getInstance().getObservableLocale()
+				: new SimpleObjectProperty<>(Locale.getDefault()));
+	}
+
+	/**
+	 * Constructor accepting a {@link Locale} wrapped in an {@link ObservableValue},
+	 * so that changes to this {@link ObservableValue} are also affecting the
+	 * convesion routines of this service.
+	 *
+	 * @param localeProperty the locale obervable value
+	 */
+	public ConversionService(final ObservableValue<Locale> localeProperty) {
+		this.localeProperty.bind(localeProperty);
+	}
 
 	/**
 	 * Convert the given {@code source} to the specified {@code targetType}.
 	 *
 	 * @param <S>
 	 *
-	 * @param source     the source object to convert (may be {@code null})
-	 * @param targetType the target type to convert to (required)
+	 * @param source        the source object to convert (may be {@code null})
+	 * @param targetType    the target type to convert to (required)
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat})
 	 * @return the converted object, an instance of targetType
-	 * @throws ConversionException      if a conversion exception occurred
-	 * @throws IllegalArgumentException if targetType is {@code null}
+	 *
+	 */
+	public <T> T convert(final Object source, final Class<T> targetType) {
+		return convert(source, targetType, null);
+	}
+
+	/**
+	 * Convert the given {@code source} to the specified {@code targetType}.
+	 *
+	 * @param <S>
+	 *
+	 * @param source        the source object to convert (may be {@code null})
+	 * @param targetType    the target type to convert to (required)
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat})
+	 * @return the converted object, an instance of targetType
+	 *
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T convert(final Object source, final Class<T> targetType) {
+	public <T> T convert(final Object source, final Class<T> targetType, final String formatPattern) {
 		if (source == null) {
 			if (!targetType.isPrimitive()) {
 				return null;
@@ -85,27 +132,76 @@ public class ConversionService {
 					+ "' as it is a primitive!");
 		}
 		if (targetType.isAssignableFrom(source.getClass())) {
+			// no conversion required, source is of targetType already
 			return (T) source;
 		}
-		final Converter<Object, T> converter = (Converter<Object, T>) createConverter(source.getClass(), targetType);
+		final Converter<Object, T> converter = (Converter<Object, T>) createConverter(source.getClass(), targetType,
+				formatPattern);
 		if (converter != null) {
-			return converter.convert(source);
+			return converter.apply(source);
 		}
 		throw new IllegalArgumentException("Unable to convert type '" + source.getClass().getCanonicalName()
 				+ "' to type '" + targetType.getCanonicalName() + "'!");
 	}
 
 	/**
-	 * Creates a JavaFX string converter for the specified
+	 * Creates a JavaFX string converter for the specified {@code targetType}.
 	 *
-	 * @param <T>
-	 * @param targetType
-	 * @return
+	 * @param <T>        the target type parameter
+	 * @param targetType the target type class
+	 * @return the created string converter
 	 */
 	public <T> StringConverter<T> createStringConverter(final Class<T> targetType) {
-		final Converter<T, String> toStringConverter = createConverter(targetType, String.class);
-		final Converter<String, T> fromStringConverter = createConverter(String.class, targetType);
+		return createStringConverter(targetType, null);
+	}
+
+	/**
+	 * Creates a JavaFX string converter for the specified {@code targetType}.
+	 *
+	 * @param <T>           the target type parameter
+	 * @param targetType    the target type class
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat})
+	 * @return the created string converter
+	 */
+	public <T> StringConverter<T> createStringConverter(final Class<T> targetType, final String formatPattern) {
+		final Converter<T, String> toStringConverter = createConverter(targetType, String.class, formatPattern);
+		final Converter<String, T> fromStringConverter = createConverter(String.class, targetType, formatPattern);
 		return new GenericStringConverter<>(toStringConverter, fromStringConverter);
+	}
+
+	/**
+	 * Creates a {@link BidirectionalConverter} for the given {@code sourceType} and
+	 * {@code targetType}.
+	 *
+	 * @param <S>        the source type
+	 * @param <T>        the target type
+	 * @param sourceType the source type class
+	 * @param targetType the target type class
+	 * @return the created bidirectional converter
+	 */
+	public <S, T> BidirectionalConverter<S, T> createBidirectionalConverter(final Class<S> sourceType,
+			final Class<T> targetType) {
+		return createBidirectionalConverter(sourceType, targetType, null);
+	}
+
+	/**
+	 * Creates a {@link BidirectionalConverter} for the given {@code sourceType} and
+	 * {@code targetType}.
+	 *
+	 * @param <S>           the source type
+	 * @param <T>           the target type
+	 * @param sourceType    the source type class
+	 * @param targetType    the target type class
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat})
+	 * @return the created bidirectional converter
+	 */
+	public <S, T> BidirectionalConverter<S, T> createBidirectionalConverter(final Class<S> sourceType,
+			final Class<T> targetType, final String formatPattern) {
+		final Converter<T, S> toConverter = createConverter(targetType, sourceType, formatPattern); // NOSONAR
+		final Converter<S, T> fromConverter = createConverter(sourceType, targetType, formatPattern);
+		return new GenericBidirectionalConverter<>(fromConverter, toConverter);
 	}
 
 	/**
@@ -126,19 +222,25 @@ public class ConversionService {
 	 * {@code targetType}. In case there is no converter for handling these source
 	 * and target types, {@code null} will be returned.
 	 *
-	 * @param <S>        the source type parameter
-	 * @param <T>        the target type parameter
-	 * @param sourceType the source type
-	 * @param targetType the target type
+	 * @param <S>           the source type parameter
+	 * @param <T>           the target type parameter
+	 * @param sourceType    the source type
+	 * @param targetType    the target type
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat})
 	 * @return the created converter, or {@link null}, in case there is no converter
 	 *         available for the specified types
 	 */
-	private <S, T> Converter<S, T> createConverter(final Class<S> sourceType, final Class<T> targetType) {
+	@SuppressWarnings("unchecked")
+	protected <S, T> Converter<S, T> createConverter(final Class<S> sourceType, final Class<T> targetType,
+			final String formatPattern) {
 		final ConverterFactory<S, T> converterFactory = lookupConverterFactory(sourceType, targetType);
 		if (converterFactory == null) {
-			return null;
+			// in case there is no particular factory for a toString-converter, we return
+			// the fallback toString converter
+			return targetType == String.class ? (Converter<S, T>) FALLBACK_TO_STRING_CONVERTER : null;
 		}
-		return converterFactory.create(sourceType, targetType);
+		return converterFactory.create(sourceType, targetType, localeProperty.getValue(), formatPattern);
 	}
 
 	/**
@@ -245,47 +347,62 @@ public class ConversionService {
 	@SuppressWarnings("unchecked")
 	private static void registerConverter() {
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(File.class, Path.class),
-				(sourceClass, targetClass) -> new FileToPathConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new FileToPathConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(File.class, String.class),
-				(sourceClass, targetClass) -> new FileToStringConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new FileToStringConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(File.class, URI.class),
-				(sourceClass, targetClass) -> new FileToURIConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new FileToURIConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Path.class),
-				(sourceClass, targetClass) -> new StringToPathConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new StringToPathConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, File.class),
-				(sourceClass, targetClass) -> new StringToFileConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new StringToFileConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, URI.class),
-				(sourceClass, targetClass) -> new StringToURIConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new StringToURIConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(URI.class, Path.class),
-				(sourceClass, targetClass) -> new URIToPathConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new URIToPathConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(URI.class, File.class),
-				(sourceClass, targetClass) -> new URIToFileConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new URIToFileConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(URI.class, String.class),
-				(sourceClass, targetClass) -> new URIToStringConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new URIToStringConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(Path.class, File.class),
-				(sourceClass, targetClass) -> new PathToFileConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new PathToFileConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(Path.class, URI.class),
-				(sourceClass, targetClass) -> new PathToURIConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new PathToURIConverter());
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(Path.class, String.class),
-				(sourceClass, targetClass) -> new PathToStringConverter());
+				(sourceClass, targetClass, locale, formatPattern) -> new PathToStringConverter());
+
+		// Number conversions
+
+		// string -> floating point
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Double.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new StringToDoubleConverter(formatPattern, locale, true));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, double.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new StringToDoubleConverter(formatPattern, locale, false));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Float.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new StringToFloatConverter(formatPattern, locale, true));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, float.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new StringToFloatConverter(formatPattern, locale, false));
+
+		// floating point -> string
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Double.class, String.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new DoubleToStringConverter(formatPattern, locale, true));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(double.class, String.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new DoubleToStringConverter(formatPattern, locale, false));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Float.class, String.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new FloatToStringConverter(formatPattern, locale, true));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(float.class, String.class), (sourceClass, targetClass, locale,
+				formatPattern) -> new FloatToStringConverter(formatPattern, locale, false));
+
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(Number.class, Number.class),
-				(sourceClass, targetClass) -> new NumberToNumberConverter<>(targetClass));
+				(sourceClass, targetClass, locale, formatPattern) -> new NumberToNumberConverter<>(targetClass));
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Number.class),
-				(sourceClass, targetClass) -> new StringToNumberConverter<>(targetClass));
-	}
+				(sourceClass, targetClass, locale, formatPattern) -> new StringToNumberConverter<>(targetClass));
 
-	/**
-	 * Constructor accepting an observable locale that this service can react on on
-	 * changes.
-	 *
-	 * @param observableLocale the locale as an observable value
-	 */
-	public ConversionService(final ObservableValue<Locale> observableLocale) {
-		this.observableLocale = observableLocale;
-	}
-
-	public ObservableValue<Locale> getObservableLocale() {
-		return observableLocale;
+		// Date converter
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Date.class),
+				(sourceClass, targetClass, locale, formatPattern) -> new StringToDateConverter(formatPattern, locale));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Date.class, String.class),
+				(sourceClass, targetClass, locale, formatPattern) -> new DateToStringConverter(formatPattern, locale));
 	}
 
 	/**
@@ -371,13 +488,23 @@ public class ConversionService {
 		/**
 		 * Creates a new instance of a {@link Converter}
 		 *
-		 * @param <S>         the source type
-		 * @param <T>         the target type
-		 * @param sourceClass the source class
-		 * @param targetClass the target class
+		 * @param <S>           the source type
+		 * @param <T>           the target type
+		 * @param sourceClass   the source class
+		 * @param targetClass   the target class
+		 * @param locale        an optional, nullable locale to use for formatting
+		 * @param formatPattern an optional, nullable format pattern (e.g. for
+		 *                      {@link java.text.NumberFormat})
 		 * @return the created converter instance
 		 */
-		public Converter<S, T> create(Class<S> sourceClass, Class<T> targetClass);
+		public Converter<S, T> create(Class<S> sourceClass, Class<T> targetClass, Locale locale, String formatPattern);
 	}
 
+	public final Property<Locale> localePropertyProperty() {
+		return localeProperty;
+	}
+
+	public final Locale getLocaleProperty() {
+		return localePropertyProperty().getValue();
+	}
 }

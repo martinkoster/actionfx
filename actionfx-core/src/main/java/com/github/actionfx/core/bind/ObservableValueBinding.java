@@ -23,7 +23,10 @@
  */
 package com.github.actionfx.core.bind;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.beans.BeanPropertyReference;
+import com.github.actionfx.core.converter.ConversionService;
+import com.github.actionfx.core.utils.AFXUtils;
 
 import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
@@ -50,23 +53,19 @@ import javafx.scene.control.SelectionModel;
  * @author koster
  *
  */
-public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyReference<E>, ObservableValue<E>> {
-
-	/**
-	 * Describes the internal binding type that will be established.
-	 *
-	 * @author koster
-	 *
-	 */
-	private enum BindingType {
-		BIDRECTIONAL, UNIDIRECTIONAL, VALUEBASED
-	}
+public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyReference<S>, ObservableValue<E>> {
 
 	private final BindingType bindingType;
 
 	private SelectionModel<E> selectionModel;
 
-	private final ChangeListener<E> contentBinding;
+	private final BindingListener contentBinding;
+
+	private boolean bound = false;
+
+	private Class<? extends E> targetType;
+
+	private final ConversionService conversionService;
 
 	/**
 	 * Constructor accepting a binding source and binding target, while the binding
@@ -75,7 +74,7 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 	 * @param source the binding source
 	 * @param target the binding target
 	 */
-	public ObservableValueBinding(final BeanPropertyReference<E> source, final ObservableValue<E> target) {
+	public ObservableValueBinding(final BeanPropertyReference<S> source, final ObservableValue<E> target) {
 		this(source, target, null);
 	}
 
@@ -95,55 +94,61 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 	 * @param selectionModel an optional selection model for manipulating the value
 	 *                       in the binding {@code target}
 	 */
-	public ObservableValueBinding(final BeanPropertyReference<E> source, final ObservableValue<E> target,
+	@SuppressWarnings("unchecked")
+	public ObservableValueBinding(final BeanPropertyReference<S> source, final ObservableValue<E> target,
 			final SelectionModel<E> selectionModel) {
 		super(source, target);
 		this.selectionModel = selectionModel;
+		this.conversionService = ActionFX.isInitialized() ? ActionFX.getInstance().getConversionService()
+				: new ConversionService();
 		bindingType = selectBindingType(source);
-		contentBinding = new SelectionModelAwareChangeListener();
+		contentBinding = new BindingListener();
+		targetType = (Class<? extends E>) AFXUtils.determineObservableValueType(target);
 	}
 
 	@Override
 	public void bind() {
 		switch (bindingType) {
-		case BIDRECTIONAL:
+		case BIDIRECTIONAL:
 			bindBidirectional();
 			break;
+		default:
 		case UNIDIRECTIONAL:
 			bindUnidirectional();
 			break;
-		case VALUEBASED:
-		default:
-			bindValue();
-			break;
 		}
+		bound = true;
 	}
 
 	@Override
 	public void unbind() {
 		switch (bindingType) {
-		case BIDRECTIONAL:
+		case BIDIRECTIONAL:
 			unbindBidirectional();
 			break;
+		default:
 		case UNIDIRECTIONAL:
 			unbindUnidirectional();
 			break;
-		case VALUEBASED:
-		default:
-			unbindValue();
-			break;
 		}
+		bound = false;
+	}
+
+	@Override
+	public BindingType getBindingType() {
+		return bindingType;
+	}
+
+	@Override
+	public boolean isBound() {
+		return bound;
 	}
 
 	/**
 	 * Binds {@code source} and {@code target} bidirectionally.
 	 */
 	protected void bindBidirectional() {
-		if (useSelectionModelForBinding()) {
-			transferValueViaSelectionModel();
-		} else {
-			transferValueViaSetting();
-		}
+		setTargetValue(source.getValue());
 		source.getFxProperty().addListener(contentBinding);
 		target.addListener(contentBinding);
 	}
@@ -160,11 +165,7 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 	 * Binds {@code source} and {@code target} unidirectionally.
 	 */
 	protected void bindUnidirectional() {
-		if (useSelectionModelForBinding()) {
-			transferValueViaSelectionModel();
-		} else {
-			transferValueViaSetting();
-		}
+		setTargetValue(source.getValue());
 		target.addListener(contentBinding);
 	}
 
@@ -173,32 +174,6 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 	 */
 	protected void unbindUnidirectional() {
 		target.removeListener(contentBinding);
-	}
-
-	/**
-	 * Binds {@code source} and {@code target} by setting the value of source into
-	 * target.
-	 */
-	protected void bindValue() {
-		this.bindUnidirectional();
-	}
-
-	/**
-	 * Unbinds {@code source} and {@code target} after a value-based binding.
-	 */
-	protected void unbindValue() {
-		this.unbindUnidirectional();
-	}
-
-	private void transferValueViaSelectionModel() {
-		selectionModel.select(source.getValue());
-	}
-
-	@SuppressWarnings("unchecked")
-	private void transferValueViaSetting() {
-		if (WritableValue.class.isAssignableFrom(target.getClass())) {
-			((WritableValue<E>) target).setValue(source.getValue());
-		}
 	}
 
 	/**
@@ -219,7 +194,7 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 	 * @param source the binding source
 	 * @return the determined binding type
 	 */
-	private BindingType selectBindingType(final BeanPropertyReference<E> source) {
+	private BindingType selectBindingType(final BeanPropertyReference<?> source) {
 		if (source.hasFxProperty()) {
 			final Class<?> propertyClass = source.getFxProperty() != null ? source.getFxProperty().getClass() : null;
 			if (propertyClass == null) {
@@ -228,42 +203,57 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 			}
 			if (Property.class.isAssignableFrom(propertyClass) || useSelectionModelForBinding()) {
 				// bi-directional binding possible
-				return BindingType.BIDRECTIONAL;
+				return BindingType.BIDIRECTIONAL;
 			} else {
 				// only uni-directional binding is possible
 				return BindingType.UNIDIRECTIONAL;
 			}
 		} else {
 			// source is not an observable, so we will do a value-based binding
-			return BindingType.VALUEBASED;
+			return BindingType.UNIDIRECTIONAL;
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private void setTargetValue(final S value) {
+		final E targetValue = toType(value, targetType);
+		if (useSelectionModelForBinding()) {
+			selectionModel.select(targetValue);
+		} else {
+			if (WritableValue.class.isAssignableFrom(target.getClass())) {
+				((WritableValue<E>) target).setValue(targetValue);
+			}
+		}
+	}
+
+	private <T> T toType(final Object value, final Class<T> type) {
+		return conversionService.convert(value, type);
+	}
+
 	/**
-	 * Change listener that is aware of a potential {@link SelectionModel}. In case
-	 * such a {@link SelectionModel} is provided, the {@code target} is only
-	 * manipulated through this selection model.
+	 * Change listener that is makes use of the
+	 * {@link ObservableValueBinding#setTargetValue(Object)} method, which uses a
+	 * potentially supplied selection model to manipulate the target list
+	 * indirectly.
 	 *
 	 * @author koster
 	 *
 	 */
-	private class SelectionModelAwareChangeListener implements ChangeListener<E> {
+	private class BindingListener implements ChangeListener<Object> {
 
 		private boolean updating = false;
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public void changed(final ObservableValue<? extends E> sourceProperty, final E oldValue, final E newValue) {
+		public void changed(final ObservableValue<? extends Object> sourceProperty, final Object oldValue,
+				final Object newValue) {
 			if (!updating) {
 				try {
 					updating = true;
 					if (source.hasFxProperty() && sourceProperty == source.getFxProperty()) {
-						if (useSelectionModelForBinding()) {
-							selectionModel.select(newValue);
-						} else {
-							((Property<E>) target).setValue(newValue);
-						}
+						setTargetValue((S) newValue);
 					} else {
-						source.setValue(newValue);
+						setSourceValue((E) newValue);
 					}
 				} catch (final RuntimeException e) {
 					restoreOldValue(sourceProperty, oldValue, e);
@@ -274,17 +264,14 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 			}
 		}
 
-		private void restoreOldValue(final ObservableValue<? extends E> sourceProperty, final E oldValue,
+		@SuppressWarnings("unchecked")
+		private void restoreOldValue(final ObservableValue<? extends Object> sourceProperty, final Object oldValue,
 				final RuntimeException e) {
 			try {
 				if (source.hasFxProperty() && sourceProperty == source.getFxProperty()) {
-					if (useSelectionModelForBinding()) {
-						selectionModel.select(oldValue);
-					} else {
-						((Property<E>) target).setValue(oldValue);
-					}
+					setTargetValue((S) oldValue);
 				} else {
-					source.setValue(oldValue);
+					setSourceValue((E) oldValue);
 				}
 			} catch (final Exception e2) {
 				e2.addSuppressed(e);
@@ -296,5 +283,10 @@ public class ObservableValueBinding<E> extends AbstractBinding<BeanPropertyRefer
 			}
 			throw new IllegalStateException("Bidirectional binding failed, setting to the previous value", e);
 		}
+
+		private void setSourceValue(final E value) {
+			source.setValue(toType(value, source.getType()));
+		}
 	}
+
 }

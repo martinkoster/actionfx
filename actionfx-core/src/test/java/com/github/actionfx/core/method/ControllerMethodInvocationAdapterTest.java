@@ -306,9 +306,9 @@ class ControllerMethodInvocationAdapterTest {
 		// WHEN and THEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> methodInvocationAdapter("voidMethodWithInjectedControlArgumentsOfIncompatibleType"));
-		assertThat(ex.getMessage(), containsString("User value retrieved for control with ID='textField'"));
+		assertThat(ex.getMessage(), containsString("Value retrieved for control with ID='textField'"));
 		assertThat(ex.getMessage(),
-				containsString(" is not compatible with the method argument of type 'java.util.List'!"));
+				containsString(" is not compatible with the method argument of type 'interface java.util.List'!"));
 	}
 
 	@Test

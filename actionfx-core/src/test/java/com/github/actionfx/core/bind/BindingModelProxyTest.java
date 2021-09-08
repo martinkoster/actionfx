@@ -133,7 +133,7 @@ class BindingModelProxyTest {
 	}
 
 	private static BindingTarget bindingTarget(final Control control, final String path) {
-		return new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, Model.class, path);
+		return new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, Model.class, path, "");
 	}
 
 	public class Model {

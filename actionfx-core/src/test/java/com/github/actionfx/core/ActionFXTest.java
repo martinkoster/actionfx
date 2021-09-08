@@ -84,9 +84,13 @@ class ActionFXTest {
 	@Test
 	void testBuilder_minimal_withConfigurationClass_sampleApp() {
 		// WHEN
+		assertThat(ActionFX.isConfigured(), equalTo(false));
+		assertThat(ActionFX.isInitialized(), equalTo(false));
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// THEN
+		assertThat(ActionFX.isConfigured(), equalTo(true));
+		assertThat(ActionFX.isInitialized(), equalTo(false));
 		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
 		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
@@ -142,7 +146,7 @@ class ActionFXTest {
 
 		// WHEN and THEN (
 		assertThat(actionFX, notNullValue());
-		assertThrows(IllegalStateException.class, () -> ActionFX.builder().build());
+		assertThrows(IllegalStateException.class, ActionFX::builder);
 	}
 
 	@Test
@@ -163,12 +167,16 @@ class ActionFXTest {
 	@Test
 	void testScanComponents_usingDefaultBeanContainer() {
 		// GIVEN
+		assertThat(ActionFX.isConfigured(), equalTo(false));
+		assertThat(ActionFX.isInitialized(), equalTo(false));
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
 		// WHEN
 		actionFX.scanForActionFXComponents();
 
 		// THEN
+		assertThat(ActionFX.isConfigured(), equalTo(true));
+		assertThat(ActionFX.isInitialized(), equalTo(true));
 		final View view = actionFX.getView("mainView");
 		final MainController mainControllerById = actionFX.getBean("mainController");
 		final MainController mainControllerByClassName = actionFX.getBean(MainController.class);
@@ -246,8 +254,6 @@ class ActionFXTest {
 
 		// THEN
 		assertThat(service, notNullValue());
-		assertThat(service.getObservableLocale(), notNullValue());
-		assertThat(service.getObservableLocale().getValue(), equalTo(Locale.US));
 	}
 
 	@Test

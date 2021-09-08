@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Locale;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,8 +48,6 @@ import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
-
-import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * JUnit test for {@link FromFileSaveDialogParameterResolver}.
@@ -73,8 +70,7 @@ class FromTextInputDialogParameterResolverTest {
 		actionFX = new ActionFXMock();
 		dialogController = Mockito.mock(DialogController.class);
 		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
-		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN,
-				new ConversionService(new SimpleObjectProperty<>(Locale.US)));
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
 	}
 
 	@AfterEach

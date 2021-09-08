@@ -56,6 +56,8 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 
 	private boolean bindBidirectional;
 
+	private boolean bound = false;
+
 	/**
 	 * Constructor accepting the binding source and binding target, where the source
 	 * can be of type {@link List} and the binding target must be of type
@@ -100,6 +102,7 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 		} else {
 			this.bindUnidirectional();
 		}
+		bound = true;
 	}
 
 	@Override
@@ -109,6 +112,17 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 		} else {
 			this.unbindUnidirectional();
 		}
+		bound = false;
+	}
+
+	@Override
+	public BindingType getBindingType() {
+		return bindBidirectional ? BindingType.BIDIRECTIONAL : BindingType.UNIDIRECTIONAL;
+	}
+
+	@Override
+	public boolean isBound() {
+		return bound;
 	}
 
 	/**
@@ -147,7 +161,7 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 	/**
 	 * Removes a unidirectional binding between {@code source} and {@code target}.
 	 */
-	public void unbindUnidirectional() {
+	protected void unbindUnidirectional() {
 		target.removeListener(listContentBinding);
 	}
 
@@ -299,4 +313,5 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 			}
 		}
 	}
+
 }

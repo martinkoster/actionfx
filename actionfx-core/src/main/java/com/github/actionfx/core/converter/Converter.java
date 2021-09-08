@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.converter;
 
+import java.util.function.Function;
+
 /**
  * A converter converts a source object of type {@code S} to a target of type
  * {@code T}.
@@ -31,8 +33,7 @@ package com.github.actionfx.core.converter;
  * @param <T> the target type
  * @author koster
  */
-@FunctionalInterface
-public interface Converter<S, T> {
+public interface Converter<S, T> extends Function<S, T> {
 
 	/**
 	 * Convert the source object of type {@code S} to target type {@code T}.
@@ -45,5 +46,10 @@ public interface Converter<S, T> {
 	 *                                  desired target type
 	 */
 	T convert(S source);
+
+	@Override
+	default T apply(final S source) {
+		return convert(source);
+	}
 
 }

@@ -21,41 +21,41 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Date;
+import java.util.Locale;
+
+import org.junit.jupiter.api.Test;
 
 /**
- * Interface for different type of bindings.
+ * JUnit test case for {@link DateToStringConverter}.
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+class StringToDateConverterTest {
 
-	/**
-	 * Performs a binding.
-	 */
-	void bind();
+	@Test
+	void testApply() {
+		// GIVEN
+		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
 
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
+		// THEN
+		assertThat(converter.apply("05.09.2021 11:46:00"), equalTo(new Date(1630835160000l)));
+	}
 
-	/**
-	 * Returns the binding type.
-	 *
-	 * @return the binding type.
-	 */
-	BindingType getBindingType();
+	@Test
+	void testApply_invalidDateString() {
+		// GIVEN
+		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+		// THEN
+		assertThat(converter.apply("invald"), nullValue());
+	}
 
 }

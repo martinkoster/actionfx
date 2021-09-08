@@ -59,7 +59,7 @@ public class BeanProperty<T> {
 
 	private Field field;
 
-	private Class<?> type;
+	private Class<? extends T> type;
 
 	private int index;
 
@@ -254,7 +254,7 @@ public class BeanProperty<T> {
 	 *
 	 * @return the type of the property
 	 */
-	public Class<?> getType() {
+	public Class<? extends T> getType() {
 		return type;
 	}
 
@@ -288,6 +288,7 @@ public class BeanProperty<T> {
 		initializeField();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initializeGetterAndType() {
 		// check "get<name>"
 		getter = ReflectionUtils.findMethod(beanClass, getterMethodName(name, false));
@@ -296,10 +297,11 @@ public class BeanProperty<T> {
 			getter = ReflectionUtils.findMethod(beanClass, getterMethodName(name, true));
 		}
 		if (getter != null) {
-			type = getter.getReturnType();
+			type = (Class<T>) getter.getReturnType();
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initializeSetterAndType() {
 		final Method candidate = ReflectionUtils.findMethod(beanClass, setterMethodName(name));
 		if (candidate != null) {
@@ -307,7 +309,7 @@ public class BeanProperty<T> {
 			if (parameterTypes.length == 1) {
 				setter = candidate;
 				if (type == null) {
-					type = parameterTypes[0];
+					type = (Class<T>) parameterTypes[0];
 				}
 			}
 		}

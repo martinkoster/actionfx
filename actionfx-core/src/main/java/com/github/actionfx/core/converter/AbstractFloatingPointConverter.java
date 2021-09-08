@@ -21,41 +21,39 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
- * Interface for different type of bindings.
+ * Base class for converters that convert a floating point number like
+ * {@link Float} or {@link Double}.
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+public abstract class AbstractFloatingPointConverter<S, T> implements Converter<S, T> {
 
-	/**
-	 * Performs a binding.
-	 */
-	void bind();
+	protected DecimalFormat numberFormat;
 
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
+	protected String formatPattern;
 
-	/**
-	 * Returns the binding type.
-	 *
-	 * @return the binding type.
-	 */
-	BindingType getBindingType();
+	protected AbstractFloatingPointConverter(final String formatPattern, final Locale locale) {
+		this.numberFormat = (DecimalFormat) NumberFormat.getInstance(locale);
+		if (formatPattern != null) {
+			this.numberFormat.applyPattern(formatPattern);
+		}
+		this.formatPattern = formatPattern;
+	}
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+	public NumberFormat getNumberFormat() {
+		return numberFormat;
+	}
+
+	public String getFormatPattern() {
+		return formatPattern;
+	}
 
 }

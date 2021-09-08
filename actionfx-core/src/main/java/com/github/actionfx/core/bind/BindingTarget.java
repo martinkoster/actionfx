@@ -40,6 +40,8 @@ public class BindingTarget {
 
 	private final ControlProperties targetProperty;
 
+	private final String formatPattern;
+
 	private final Class<?> beanClass;
 
 	private final String beanPathExpression;
@@ -55,13 +57,17 @@ public class BindingTarget {
 	 *                           (used for nested beans inside a bean hierarchy).
 	 *                           Expression is empty, in case the
 	 *                           {@code owningInstance} is the {@code rootInstance}
+	 * @param formatPattern      an optional format pattern that is used as
+	 *                           constructor argument for a supplied
+	 *                           {@code converter}.
 	 */
 	public BindingTarget(final Control control, final ControlProperties targetProperty, final Class<?> beanClass,
-			final String beanPathExpression) {
+			final String beanPathExpression, final String formatPattern) {
 		this.control = control;
 		this.targetProperty = targetProperty;
 		this.beanClass = beanClass;
 		this.beanPathExpression = beanPathExpression;
+		this.formatPattern = formatPattern;
 	}
 
 	public Control getControl() {
@@ -78,6 +84,10 @@ public class BindingTarget {
 
 	public ControlProperties getTargetProperty() {
 		return targetProperty;
+	}
+
+	public String getFormatPattern() {
+		return formatPattern;
 	}
 
 }

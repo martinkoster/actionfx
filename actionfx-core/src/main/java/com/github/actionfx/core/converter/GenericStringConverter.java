@@ -33,7 +33,7 @@ import javafx.util.StringConverter;
  * @author koster
  *
  */
-public class GenericStringConverter<T> extends StringConverter<T> {
+public class GenericStringConverter<T> extends StringConverter<T> implements BidirectionalConverter<T, String> {
 
 	private final Converter<T, String> toStringConverter;
 
@@ -42,8 +42,8 @@ public class GenericStringConverter<T> extends StringConverter<T> {
 	/**
 	 * Constructor accepting a to-string and a from-string converter.
 	 *
-	 * @param toStringConverter
-	 * @param fromStringConverter
+	 * @param toStringConverter   the to-string converter
+	 * @param fromStringConverter the from-string converter
 	 */
 	public GenericStringConverter(final Converter<T, String> toStringConverter,
 			final Converter<String, T> fromStringConverter) {
@@ -73,11 +73,22 @@ public class GenericStringConverter<T> extends StringConverter<T> {
 
 	@Override
 	public String toString(final T value) {
-		return toStringConverter.convert(value);
+		return to(value);
 	}
 
 	@Override
 	public T fromString(final String value) {
-		return fromStringConverter.convert(value);
+		return from(value);
 	}
+
+	@Override
+	public String to(final T source) {
+		return toStringConverter.apply(source);
+	}
+
+	@Override
+	public T from(final String target) {
+		return fromStringConverter.apply(target);
+	}
+
 }

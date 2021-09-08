@@ -836,6 +836,52 @@ public class ControlWrapper extends NodeWrapper {
 	 *         the binding source again
 	 */
 	public Binding bind(final BeanPropertyReference<?> beanPropertyReference, final ControlProperties controlProperty) {
+		return bind(beanPropertyReference, controlProperty, null);
+	}
+
+	/**
+	 * Performs a binding of the control's property with the given
+	 * {@code beanPropertyReference}. Depending of the data type referenced by the
+	 * supplied {@link BeanPropertyReference} and the desired target binding
+	 * property expressed by {@code controlProperty} different types of bindings are
+	 * created.
+	 * <p>
+	 * Bidirectional binding is possible, if the supplied
+	 * {@code beanPropertyReference} is an {@link Observable} that allows also to
+	 * write values to it (e.g. a {@link Property}).
+	 * <p>
+	 * In case the control's property is a
+	 * {@link javafx.beans.property.ReadyOnlyProperty}, but the control offers a
+	 * {@link SelectionModel} for manipulating the read-only property, a
+	 * bidirectional binding is even also possible. This is e.g. the case for
+	 * selected item(s) in a {@link javafx.scene.control.ListView}.
+	 * <p>
+	 * In case only a unidirectional binding is possible (e.g. for a
+	 * {@link javafx.beans.property.ReadOnlyProperty}) an unidirectional binding is
+	 * established.
+	 * <p>
+	 * In case an unidirectional binding is not possible, e.g. because the supplied
+	 * {@code beanPropertyReference} is not an {@link Observable}, but e.g. a
+	 * string, the value of the {@code beanPropertyReference} is just set to the
+	 * property of the wrapped control and changes in the control will be again
+	 * reflected in the provided {@code beanPropertyReference} (which corresponds to
+	 * a unidirectional binding logically).
+	 * <p>
+	 * An additional {@link StringConverter} can be provided to perform type
+	 * conversion between the {@code beanPropertyReference} the control's property.
+	 *
+	 * @param beanPropertyReference the bean property reference to use as binding
+	 *                              target
+	 * @param controlProperty       the property inside this control acting as
+	 *                              binding target
+	 * @param converter             an optional converter to use for converting the
+	 *                              value from {@code beanPropertyReference} to the
+	 *                              control's property value.
+	 * @return the established {@link Binding} instance that can be used to unbind
+	 *         the binding source again
+	 */
+	public Binding bind(final BeanPropertyReference<?> beanPropertyReference, final ControlProperties controlProperty,
+			final StringConverter<?> converter) {
 		Observable observable;
 		switch (controlProperty) {
 		case SINGLE_VALUE_PROPERTY:
@@ -914,7 +960,7 @@ public class ControlWrapper extends NodeWrapper {
 	@SuppressWarnings("unchecked")
 	protected <T> Binding bindTypeObservableValue(final ObservableValue<T> observableValue,
 			final BeanPropertyReference<?> beanPropertyReference, final boolean useSelectionModelForBinding) {
-		final ObservableValueBinding<T> binding = new ObservableValueBinding<>(
+		final ObservableValueBinding<?, T> binding = new ObservableValueBinding<>(
 				(BeanPropertyReference<T>) beanPropertyReference, observableValue,
 				useSelectionModelForBinding ? getSelectionModel() : null);
 		binding.bind();

@@ -83,8 +83,8 @@ public class NameBasedBindindTargetResolver extends AbstractCachingBindingTarget
 		final String fieldName = guessFieldName(controlId);
 		// check, if Java bean has a property with this name
 		if (ReflectionUtils.findField(bean.getClass(), fieldName) != null) {
-			return Arrays.asList(
-					new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, bean.getClass(), fieldName));
+			return Arrays.asList(new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, bean.getClass(),
+					fieldName, ""));
 		} else {
 			return Collections.emptyList();
 		}

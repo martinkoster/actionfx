@@ -570,6 +570,7 @@ Attribute 					| Description
 `propertyName`            | The name of the field inside the model class. The value can be also a nested path using the "." notation for Java beans.
 `controlId`               | The ID of the control that shall be mapped to the field name in the model class.
 `targetProperty`          | The control's target property that shall be used as binding target. Default is the user value of the control (`USER_VALUE_OBSERVABLE`). Other possible values are `SINGLE_VALUE_PROPERTY` (text in a text field - but which is the user value at the same time) or `ITEMS_OBSERVABLE_LIST` (e.g. items in a table view or list view).
+`formatPattern`           | An optional format pattern that is used to format. This parameter can be used e.g to convert floating point numbers to/from string with a specific pattern or to convert Java `java.time` datetime types to/from string.
 
 **Example:**
 

@@ -44,7 +44,6 @@ import java.lang.reflect.Parameter;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +62,6 @@ import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Window;
@@ -91,8 +89,7 @@ class FromFileOpenDialogParameterResolverTest {
 		actionFX = new ActionFXMock();
 		dialogController = Mockito.mock(DialogController.class);
 		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
-		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN,
-				new ConversionService(new SimpleObjectProperty<>(Locale.US)));
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
 		owner = Mockito.mock(Window.class);
 	}
 

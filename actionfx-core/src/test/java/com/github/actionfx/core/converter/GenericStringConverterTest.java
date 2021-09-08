@@ -51,8 +51,8 @@ class GenericStringConverterTest {
 	void onSetup() {
 		toStringConverter = Mockito.mock(Converter.class);
 		fromStringConverter = Mockito.mock(Converter.class);
-		when(toStringConverter.convert(anyInt())).thenReturn("hello world");
-		when(fromStringConverter.convert(anyString())).thenReturn(Integer.valueOf(42));
+		when(toStringConverter.apply(anyInt())).thenReturn("hello world");
+		when(fromStringConverter.apply(anyString())).thenReturn(Integer.valueOf(42));
 	}
 
 	@Test

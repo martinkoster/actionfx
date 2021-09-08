@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
  */
 class StringToNumberConverterTest {
 	@Test
-	void testConvertNumber() {
+	void testConvertNumber_nonPrimitiveTypes() {
 		final String aByte = "" + Byte.MAX_VALUE;
 		final String aShort = "" + Short.MAX_VALUE;
 		final String anInteger = "" + Integer.MAX_VALUE;
@@ -58,6 +58,29 @@ class StringToNumberConverterTest {
 		assertThat(StringToNumberConverter.to(Float.class).convert(aFloat), equalTo(Float.valueOf(Float.MAX_VALUE)));
 		assertThat(StringToNumberConverter.to(Double.class).convert(aDouble),
 				equalTo(Double.valueOf(Double.MAX_VALUE)));
+	}
+
+	@Test
+	void testConvertNumber_primitiveTypes() {
+		final String aByte = "" + Byte.MAX_VALUE;
+		final String aShort = "" + Short.MAX_VALUE;
+		final String anInteger = "" + Integer.MAX_VALUE;
+		final String aLong = "" + Long.MAX_VALUE;
+		final String aFloat = "" + Float.MAX_VALUE;
+		final String aDouble = "" + Double.MAX_VALUE;
+
+		assertThat(StringToNumberConverter.to(byte.class).convert(aByte),
+				equalTo(Byte.valueOf(Byte.MAX_VALUE).byteValue()));
+		assertThat(StringToNumberConverter.to(short.class).convert(aShort),
+				equalTo(Short.valueOf(Short.MAX_VALUE).shortValue()));
+		assertThat(StringToNumberConverter.to(int.class).convert(anInteger),
+				equalTo(Integer.valueOf(Integer.MAX_VALUE).intValue()));
+		assertThat(StringToNumberConverter.to(long.class).convert(aLong),
+				equalTo(Long.valueOf(Long.MAX_VALUE).longValue()));
+		assertThat(StringToNumberConverter.to(float.class).convert(aFloat),
+				equalTo(Float.valueOf(Float.MAX_VALUE).floatValue()));
+		assertThat(StringToNumberConverter.to(double.class).convert(aDouble),
+				equalTo(Double.valueOf(Double.MAX_VALUE).doubleValue()));
 	}
 
 	@Test

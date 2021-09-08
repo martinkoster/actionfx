@@ -21,41 +21,37 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
 
 /**
- * Interface for different type of bindings.
+ * Converts a {@link String} to a {@link java.util.Date}.
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+public class StringToDateConverter extends AbstractDateConverter<String, Date> {
 
 	/**
-	 * Performs a binding.
-	 */
-	void bind();
-
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
-
-	/**
-	 * Returns the binding type.
+	 * Accepts a format pattern like "dd.MM.yyyy hh:mm" and a locale.
 	 *
-	 * @return the binding type.
+	 * @param formatPattern the format pattern
+	 * @param locale        the locale
 	 */
-	BindingType getBindingType();
+	public StringToDateConverter(final String formatPattern, final Locale locale) {
+		super(formatPattern, locale);
+	}
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+	@Override
+	public Date convert(final String source) {
+		try {
+			return getDateFormat().parse(source);
+		} catch (final ParseException e) {
+			return null;
+		}
+	}
 
 }

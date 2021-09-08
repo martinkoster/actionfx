@@ -68,8 +68,8 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
 				AFXFormMapping.class);
 		final MappingBasedBindingTargetResolver resolver = new MappingBasedBindingTargetResolver(
 				annotation.disableNameBasedMapping(), annotation.controlPrefix(), annotation.controlSuffix());
-		mappingAnnotations
-				.forEach(fm -> resolver.registerMapping(fm.controlId(), fm.targetProperty(), fm.propertyName()));
+		mappingAnnotations.forEach(fm -> resolver.registerMapping(fm.controlId(), fm.targetProperty(),
+				fm.propertyName(), fm.formatPattern()));
 		prepareBinding(objectProperty, view, resolver);
 	}
 

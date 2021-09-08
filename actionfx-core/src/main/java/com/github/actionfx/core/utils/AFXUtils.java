@@ -28,12 +28,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.actionfx.core.view.graph.ControlWrapper;
+import com.sun.javafx.collections.MappingChange.Map;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -45,6 +47,16 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableFloatValue;
+import javafx.beans.value.ObservableIntegerValue;
+import javafx.beans.value.ObservableListValue;
+import javafx.beans.value.ObservableMapValue;
+import javafx.beans.value.ObservableNumberValue;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableSetValue;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -500,6 +512,48 @@ public class AFXUtils {
 		} catch (final IOException e) {
 			throw new IllegalStateException("Failed to load '" + classpathLocation + "'!", e);
 		}
+	}
+
+	/**
+	 * Determines the type that is stored inside the given {@link ObservableValue}.
+	 * <p>
+	 * In case the observable value holds a non-null value, the class type of this
+	 * value is returned.
+	 * <p>
+	 * In case the value is null, the implemented typed-interfaces are investigated.
+	 *
+	 * @param observableValue the observable value
+	 * @return the class type of the observable value
+	 */
+	public static Class<?> determineObservableValueType(final ObservableValue<?> observableValue) {
+		final Object value = observableValue.getValue();
+		if (value != null) {
+			return value.getClass();
+		}
+		// no value, so we have to check the implemented typed-interfaces
+		if (ObservableFloatValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Float.class;
+		} else if (ObservableDoubleValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Double.class;
+		} else if (ObservableIntegerValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Integer.class;
+		} else if (ObservableBooleanValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Boolean.class;
+		} else if (ObservableStringValue.class.isAssignableFrom(observableValue.getClass())) {
+			return String.class;
+		} else if (ObservableNumberValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Number.class;
+		} else if (ObservableObjectValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Object.class;
+		} else if (ObservableListValue.class.isAssignableFrom(observableValue.getClass())) {
+			return List.class;
+		} else if (ObservableSetValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Set.class;
+		} else if (ObservableMapValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Map.class;
+		}
+		throw new IllegalArgumentException(
+				"Unable to deterime the observable value type from '" + observableValue.getClass() + "'!");
 	}
 
 }

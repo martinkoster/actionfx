@@ -21,41 +21,31 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 /**
- * Interface for different type of bindings.
+ * JUnit test for {@link ObjectToStringConverter}.
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+class ObjectToStringConverterTest {
 
-	/**
-	 * Performs a binding.
-	 */
-	void bind();
+	@Test
+	void testApply() {
+		// GIVEN
+		final ObjectToStringConverter converter = new ObjectToStringConverter();
 
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
+		// WHEN
+		final String value = converter.apply(Integer.valueOf(42));
 
-	/**
-	 * Returns the binding type.
-	 *
-	 * @return the binding type.
-	 */
-	BindingType getBindingType();
-
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+		// THEN
+		assertThat(value, equalTo("42"));
+	}
 
 }

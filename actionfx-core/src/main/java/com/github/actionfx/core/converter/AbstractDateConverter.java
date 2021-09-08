@@ -21,41 +21,37 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
- * Interface for different type of bindings.
+ * Base class for converters that convert a {@link Date}.
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+public abstract class AbstractDateConverter<S, T> implements Converter<S, T> {
 
-	/**
-	 * Performs a binding.
-	 */
-	void bind();
+	protected String formatPattern;
 
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
+	protected Locale locale;
 
-	/**
-	 * Returns the binding type.
-	 *
-	 * @return the binding type.
-	 */
-	BindingType getBindingType();
+	protected AbstractDateConverter(final String formatPattern, final Locale locale) {
+		this.formatPattern = formatPattern;
+		this.locale = locale;
+	}
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+	public DateFormat getDateFormat() {
+		// since SimpleDateFormat is not thread-safe, we create a new instance for every
+		// conversion
+		return new SimpleDateFormat(formatPattern, locale);
+	}
+
+	public String getFormatPattern() {
+		return formatPattern;
+	}
 
 }

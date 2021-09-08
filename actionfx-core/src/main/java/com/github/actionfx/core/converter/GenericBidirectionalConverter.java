@@ -21,41 +21,42 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
 
 /**
- * Interface for different type of bindings.
+ * {@link BidirectionalConverter} that is able to use 2 {@link Converter} to
+ * perform to-/from conversion from and to the desired data type.
  *
+ * @param <S> the source type to convert from
+ * @param <T> the target type to convert to
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+public class GenericBidirectionalConverter<S, T> implements BidirectionalConverter<S, T> {
+
+	private final Converter<S, T> toConverter;
+
+	private final Converter<T, S> fromConverter;
 
 	/**
-	 * Performs a binding.
-	 */
-	void bind();
-
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
-
-	/**
-	 * Returns the binding type.
+	 * Constructor accepting a to- and a from- converter.
 	 *
-	 * @return the binding type.
+	 * @param toConverter   the to- converter
+	 * @param fromConverter the from- converter
 	 */
-	BindingType getBindingType();
+	public GenericBidirectionalConverter(final Converter<S, T> toConverter, final Converter<T, S> fromConverter) {
+		this.toConverter = toConverter;
+		this.fromConverter = fromConverter;
+	}
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+	@Override
+	public T to(final S source) {
+		return toConverter.apply(source);
+	}
+
+	@Override
+	public S from(final T target) {
+		return fromConverter.apply(target);
+	}
 
 }

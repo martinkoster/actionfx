@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.bind;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
@@ -61,6 +62,8 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(true));
 		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 2"));
 		listView.getSelectionModel().select("Choice 1");
 		assertThat(bindingSource, contains("Choice 1", "Choice 2"));
@@ -79,6 +82,8 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(true));
 		assertThat(bindingTarget, contains("Choice 2"));
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource, contains("Choice 2", "Choice 1"));
@@ -98,6 +103,8 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(true));
 		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 2"));
 		listView.getSelectionModel().select("Choice 1");
 		assertThat(bindingSource, contains("Choice 1", "Choice 2"));
@@ -114,6 +121,8 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(true));
 		assertThat(bindingTarget, contains("Choice 2"));
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource, contains("Choice 2", "Choice 1"));
@@ -132,6 +141,8 @@ class ObservableListBindingTest {
 		binding.unbind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(false));
 		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 2"));
 		listView.getSelectionModel().select("Choice 1");
 		assertThat(bindingSource, contains("Choice 2")); // no change, as it is not bound
@@ -149,6 +160,8 @@ class ObservableListBindingTest {
 		binding.unbind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(false));
 		assertThat(bindingTarget, contains("Choice 2"));
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource, contains("Choice 2")); // no change, as it is not bound
@@ -166,6 +179,8 @@ class ObservableListBindingTest {
 		binding.unbind();
 
 		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
+		assertThat(binding.isBound(), equalTo(false));
 		assertThat(bindingTarget, contains("Choice 2"));
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource, contains("Choice 2")); // no change, as it is not bound

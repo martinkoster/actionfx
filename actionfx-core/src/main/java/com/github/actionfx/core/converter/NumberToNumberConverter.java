@@ -240,17 +240,22 @@ public class NumberToNumberConverter<S extends Number, T extends Number> impleme
 	}
 
 	/**
-	 * Initializes the internal number-to-number and string-to-number conversion
-	 * functions.
+	 * Initializes the internal number-to-number conversion functions.
 	 */
 	private static void initializeNumberConversionFunctions() {
 		NUMBER_TO_NUMBER_FUNCTIONS.put(Byte.class, NumberToNumberConverter::toByte);
+		NUMBER_TO_NUMBER_FUNCTIONS.put(byte.class, NumberToNumberConverter::toByte);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(Short.class, NumberToNumberConverter::toShort);
+		NUMBER_TO_NUMBER_FUNCTIONS.put(short.class, NumberToNumberConverter::toShort);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(Integer.class, NumberToNumberConverter::toInteger);
+		NUMBER_TO_NUMBER_FUNCTIONS.put(int.class, NumberToNumberConverter::toInteger);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(Long.class, NumberToNumberConverter::toLong);
+		NUMBER_TO_NUMBER_FUNCTIONS.put(long.class, NumberToNumberConverter::toLong);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(BigInteger.class, NumberToNumberConverter::toBigInteger);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(Float.class, NumberToNumberConverter::toFloat);
+		NUMBER_TO_NUMBER_FUNCTIONS.put(float.class, NumberToNumberConverter::toFloat);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(Double.class, NumberToNumberConverter::toDouble);
+		NUMBER_TO_NUMBER_FUNCTIONS.put(double.class, NumberToNumberConverter::toDouble);
 		NUMBER_TO_NUMBER_FUNCTIONS.put(BigDecimal.class, NumberToNumberConverter::toBigDecimal);
 	}
 }

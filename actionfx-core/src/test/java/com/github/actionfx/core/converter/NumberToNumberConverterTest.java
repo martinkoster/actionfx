@@ -170,6 +170,17 @@ class NumberToNumberConverterTest {
 		assertOverflow(new BigDecimal("18446744073709551611"), Long.class);
 	}
 
+	@Test
+	void testConvert_primitiveTypes() {
+		// WHEN and THEN
+		assertThat(NumberToNumberConverter.to(long.class).convert(42), equalTo((long) 42));
+		assertThat(NumberToNumberConverter.to(byte.class).convert(42), equalTo((byte) 42));
+		assertThat(NumberToNumberConverter.to(short.class).convert(42), equalTo((short) 42));
+		assertThat(NumberToNumberConverter.to(double.class).convert(42), equalTo((double) 42));
+		assertThat(NumberToNumberConverter.to(float.class).convert(42), equalTo((float) 42));
+		assertThat(NumberToNumberConverter.to(int.class).convert(42), equalTo(42));
+	}
+
 	private void assertOverflow(final Number number, final Class<? extends Number> targetClass) {
 		final NumberToNumberConverter<Number, ? extends Number> converter = NumberToNumberConverter.to(targetClass);
 		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,

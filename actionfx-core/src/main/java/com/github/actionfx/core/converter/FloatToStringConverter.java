@@ -21,41 +21,44 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
+
+import java.util.Locale;
 
 /**
- * Interface for different type of bindings.
+ * Converts a {@link Float} to a {@link String}.
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+public class FloatToStringConverter extends AbstractFloatingPointConverter<Float, String> {
+
+	public static final Float DEFAULT_VALUE_ON_NULL = Float.valueOf(0.0f);
+
+	private final boolean allowNullValue;
 
 	/**
-	 * Performs a binding.
-	 */
-	void bind();
-
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
-
-	/**
-	 * Returns the binding type.
+	 * Constructor accepting the pattern, locale and whether {@code null} is allowed
+	 * as return value.
 	 *
-	 * @return the binding type.
+	 * @param formatPattern  the format pattern (e.g. "#,###.##")
+	 * @param locale         the locale
+	 * @param allowNullValue {@code true}, whether {@code null} can be returned on
+	 *                       an empty input, {@code false}, if {@code null} is not
+	 *                       allowed and a default value must be returned.
 	 */
-	BindingType getBindingType();
+	public FloatToStringConverter(final String formatPattern, final Locale locale, final boolean allowNullValue) {
+		super(formatPattern, locale);
+		this.allowNullValue = allowNullValue;
+	}
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+	@Override
+	public String convert(final Float source) {
+		if (source == null) {
+			return allowNullValue ? null : getNumberFormat().format(DEFAULT_VALUE_ON_NULL);
+		} else {
+			return getNumberFormat().format(source);
+		}
+	}
 
 }

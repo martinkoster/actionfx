@@ -24,6 +24,8 @@
 package com.github.actionfx.core.converter;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,9 +35,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
+
+import com.github.actionfx.core.ActionFX;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.StringConverter;
@@ -49,9 +54,29 @@ import javafx.util.StringConverter;
 class ConversionServiceTest {
 
 	@Test
+	void testConstruct_localeIsTakenFromSystem() {
+		// GIVEN
+		final ConversionService service = new ConversionService();
+
+		// WHEN and THEN
+		assertThat(service.getLocaleProperty(), equalTo(Locale.getDefault()));
+	}
+
+	@Test
+	void testConstruct_localeIsTakenFromActionFX() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().locale(Locale.UK).build();
+		final ConversionService service = new ConversionService();
+
+		// WHEN and THEN
+		assertThat(service.getLocaleProperty(), equalTo(Locale.UK));
+		actionFX.reset(); // destroy ActionFX instance again, so other test methods are not impacted
+	}
+
+	@Test
 	void testConvert_typeFile() throws IOException {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 
 		// WHEN
@@ -63,7 +88,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_typePath() throws IOException {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 
 		// WHEN
@@ -75,7 +100,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_typeURI() throws IOException {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 
 		// WHEN
@@ -87,7 +112,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_typeString() throws IOException {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 
 		// WHEN
@@ -99,7 +124,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_fromStringToNumber() {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final String number = "124";
 
 		// WHEN and THEN
@@ -111,9 +136,23 @@ class ConversionServiceTest {
 	}
 
 	@Test
+	void testConvert_fromNumberToString() {
+		// GIVEN
+		final ConversionService service = new ConversionService();
+		final String number = "124";
+
+		// WHEN and THEN
+		assertThat(service.convert(Integer.valueOf(number), String.class), equalTo("124"));
+		assertThat(service.convert(Float.valueOf(number), String.class), equalTo("124"));
+		assertThat(service.convert(Double.valueOf(number), String.class), equalTo("124"));
+		assertThat(service.convert(Short.valueOf(number), String.class), equalTo("124"));
+		assertThat(service.convert(Byte.valueOf(number), String.class), equalTo("124"));
+	}
+
+	@Test
 	void testConvert_conversionNotPossible() throws IOException {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 
 		// WHEN
@@ -125,7 +164,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_targetTypeIsCompatible() {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 
 		// WHEN
 		final Object object = service.convert("Hello World", Object.class);
@@ -137,7 +176,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_sourceIsNull_targetIsNotAPrimitive() {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 
 		// WHEN
 		final Object object = service.convert(null, Integer.class);
@@ -149,7 +188,7 @@ class ConversionServiceTest {
 	@Test
 	void testConvert_sourceIsNull_targetIsAPrimitive() {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 
 		// WHEN
 		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -160,9 +199,23 @@ class ConversionServiceTest {
 	}
 
 	@Test
+	void testConvert_withFormatPattern() {
+		// GIVEN
+		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.GERMANY));
+
+		// WHEN and THEN
+		assertThat(service.convert(42000.0, String.class, "#,###.00"), equalTo("42.000,00"));
+		assertThat(service.convert(42000.0f, String.class, "#,###.00"), equalTo("42.000,00"));
+		assertThat(service.convert("05.09.2021 11:46:00", Date.class, "dd.MM.yyyy hh:mm:ss"),
+				equalTo(new Date(1630835160000l)));
+		assertThat(service.convert(new Date(1630835160000l), String.class, "dd.MM.yyyy hh:mm:ss"),
+				equalTo("05.09.2021 11:46:00"));
+	}
+
+	@Test
 	void testCanConvert() {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 
 		// WHEN and THEN
 		assertThat(service.canConvert(File.class, String.class), equalTo(true));
@@ -185,7 +238,7 @@ class ConversionServiceTest {
 	@Test
 	void testCanConvert_typeIsIncompatible() {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 
 		// WHEN and THEN
 		assertThat(service.canConvert(File.class, Integer.class), equalTo(false));
@@ -195,7 +248,7 @@ class ConversionServiceTest {
 	@Test
 	void testCreateStringConverter() throws IOException {
 		// GIVEN
-		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.US));
+		final ConversionService service = new ConversionService();
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 
 		// WHEN
@@ -205,4 +258,36 @@ class ConversionServiceTest {
 		assertThat(converter.fromString(file.getAbsolutePath()), equalTo(file));
 		assertThat(converter.toString(file), equalTo(file.getAbsolutePath()));
 	}
+
+	@Test
+	void testCreateBidirectionalConverter_numberToNumber() {
+		// GIVEN
+		final ConversionService service = new ConversionService();
+
+		// WHEN
+		final BidirectionalConverter<Integer, Double> converter = service.createBidirectionalConverter(Integer.class,
+				Double.class);
+
+		// THEN
+		assertThat(converter, notNullValue());
+		assertThat(converter.to(Integer.valueOf(42)), equalTo(Double.valueOf(42.0)));
+		assertThat(converter.from(Double.valueOf(42.0)), equalTo(Integer.valueOf(42)));
+	}
+
+	@Test
+	void testCreateConverter_checkClassHierarchy() {
+		// GIVEN
+		final ConversionService service = new ConversionService();
+
+		// WHEN and THEN
+		assertThat(service.createConverter(String.class, Double.class, null),
+				instanceOf(StringToDoubleConverter.class));
+		assertThat(service.createConverter(String.class, Number.class, null),
+				instanceOf(StringToNumberConverter.class));
+		assertThat(service.createConverter(Double.class, String.class, null),
+				instanceOf(DoubleToStringConverter.class));
+		assertThat(service.createConverter(Number.class, String.class, null),
+				instanceOf(ObjectToStringConverter.class));
+	}
+
 }

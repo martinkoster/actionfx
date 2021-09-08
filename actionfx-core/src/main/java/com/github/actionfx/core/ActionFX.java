@@ -186,7 +186,7 @@ public class ActionFX {
 	/**
 	 * Gets an instance of {@link ActionFX}. Before calling this method, you need to
 	 * setup your application-specific configuration that ActionFX shall handle by
-	 * using the {@link #build()} method, returning an instance of
+	 * using the {@link #builder()} method, returning an instance of
 	 * {@link ActionFXBuilder}.
 	 *
 	 * @return
@@ -196,6 +196,33 @@ public class ActionFX {
 			throw new IllegalStateException("ActionFX instance has not been built yet. Call ActionFX.build() first!");
 		}
 		return instance;
+	}
+
+	/**
+	 * Returns {@code true}, in case the ActionFX instance is available and the
+	 * state is either {@link ActionFXState#INITIALIZED} or
+	 * {@link ActionFXState#CONFIGURED} , {@code false}, if the instance is not yet
+	 * setup or the state is {@link ActionFXState#UNINITIALIZED}.
+	 *
+	 * @return {@code true}, in case the ActionFX instance is properly available and
+	 *         setup for use, {@code false} otherwise
+	 */
+	public static boolean isConfigured() {
+		return instance != null
+				&& (actionFXState == ActionFXState.INITIALIZED || actionFXState == ActionFXState.CONFIGURED);
+	}
+
+	/**
+	 * Returns {@code true}, in case the ActionFX instance is available and the
+	 * state is {@link ActionFXState#INITIALIZED} , {@code false}, if the instance
+	 * is not yet setup or the state is {@link ActionFXState#UNINITIALIZED} or
+	 * {@link ActionFXState#CONFIGURED}
+	 *
+	 * @return {@code true}, in case the ActionFX instance is properly available and
+	 *         initialized, {@code false} otherwise
+	 */
+	public static boolean isInitialized() {
+		return instance != null && actionFXState == ActionFXState.INITIALIZED;
 	}
 
 	/**
@@ -267,7 +294,7 @@ public class ActionFX {
 
 		// add the conversion service that is listening to the locale
 		beanContainer.addBeanDefinition(BeanContainerFacade.CONVERSION_SERVICE_BEAN, ConversionService.class, true,
-				true, () -> new ConversionService(observableLocale));
+				true, () -> new ConversionService(getObservableLocale()));
 	}
 
 	/**

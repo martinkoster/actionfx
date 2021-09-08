@@ -21,41 +21,31 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.bind;
+package com.github.actionfx.core.converter;
 
 /**
- * Interface for different type of bindings.
+ * A converter converts a source object of type {@code S} to a target of type
+ * {@code T} and vice versa.
  *
+ * @param <S> the source type
+ * @param <T> the target type
  * @author koster
- *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
-public interface Binding {
+public interface BidirectionalConverter<S, T> {
 
 	/**
-	 * Performs a binding.
-	 */
-	void bind();
-
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
-
-	/**
-	 * Returns the binding type.
+	 * Converts the given {@code source} to the target type {@code T}.
 	 *
-	 * @return the binding type.
+	 * @param source the source to convert
+	 * @return the converted value
 	 */
-	BindingType getBindingType();
+	T to(S source);
 
 	/**
-	 * Returns the binding state of this {@link Binding}.
+	 * Converts to the type {@code S} from the given {@code target}.
 	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
+	 * @param target the target value to convert
+	 * @return the converted value
 	 */
-	boolean isBound();
-
+	S from(T target);
 }

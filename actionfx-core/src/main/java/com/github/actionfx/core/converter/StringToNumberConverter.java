@@ -324,12 +324,18 @@ public class StringToNumberConverter<T extends Number> implements Converter<Stri
 	 */
 	private static void initializeStringConversionFunctions() {
 		STRING_TO_NUMBER_FUNCTIONS.put(Byte.class, StringToNumberConverter::toByte);
+		STRING_TO_NUMBER_FUNCTIONS.put(byte.class, StringToNumberConverter::toByte);
 		STRING_TO_NUMBER_FUNCTIONS.put(Short.class, StringToNumberConverter::toShort);
+		STRING_TO_NUMBER_FUNCTIONS.put(short.class, StringToNumberConverter::toShort);
 		STRING_TO_NUMBER_FUNCTIONS.put(Integer.class, StringToNumberConverter::toInteger);
+		STRING_TO_NUMBER_FUNCTIONS.put(int.class, StringToNumberConverter::toInteger);
 		STRING_TO_NUMBER_FUNCTIONS.put(Long.class, StringToNumberConverter::toLong);
+		STRING_TO_NUMBER_FUNCTIONS.put(long.class, StringToNumberConverter::toLong);
 		STRING_TO_NUMBER_FUNCTIONS.put(BigInteger.class, StringToNumberConverter::toBigInteger);
 		STRING_TO_NUMBER_FUNCTIONS.put(Float.class, StringToNumberConverter::toFloat);
+		STRING_TO_NUMBER_FUNCTIONS.put(float.class, StringToNumberConverter::toFloat);
 		STRING_TO_NUMBER_FUNCTIONS.put(Double.class, StringToNumberConverter::toDouble);
+		STRING_TO_NUMBER_FUNCTIONS.put(double.class, StringToNumberConverter::toDouble);
 		STRING_TO_NUMBER_FUNCTIONS.put(BigDecimal.class, StringToNumberConverter::toBigDecimal);
 		STRING_TO_NUMBER_FUNCTIONS.put(Number.class, StringToNumberConverter::toBigDecimal);
 	}

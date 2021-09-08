@@ -96,7 +96,7 @@ public class BeanPropertyReference<T> {
 		return property.getName();
 	}
 
-	public Class<?> getType() {
+	public Class<? extends T> getType() {
 		return property.getType();
 	}
 

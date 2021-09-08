@@ -106,7 +106,30 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
 			final String propertyName) {
 		final List<PropertyMapping> propertyMappings = controlToPropertyListMap.computeIfAbsent(controlId,
 				id -> new ArrayList<>());
-		propertyMappings.add(new PropertyMapping(propertyName, targetProperty));
+		propertyMappings.add(new PropertyMapping(propertyName, targetProperty, ""));
+	}
+
+	/**
+	 * Registers a new mapping for a given control identified by {@code controlId},
+	 * where the {@code controlProperty} of the control shall be bound to the given
+	 * {@code propertyName} inside a Java bean. A converter class can be supplied
+	 * for type conversion. between the control's property and the property to bind.
+	 *
+	 * @param controlId      the ID of the control
+	 * @param targetProperty the property of the control that shall be bound
+	 * @param propertyName   the name of the property inside the Java bean, which
+	 *                       can be a nested path using the "." operator
+	 * @param converter      an optional string converter in case the
+	 *                       {@link #targetProperty()} and the property resolved
+	 *                       from {@link propertyName} have different data types
+	 * @param formatPattern  on optional format pattern that is used as constructor
+	 *                       argument for a potentially supplied {@code converter}.
+	 */
+	public void registerMapping(final String controlId, final ControlProperties targetProperty,
+			final String propertyName, final String formatPattern) {
+		final List<PropertyMapping> propertyMappings = controlToPropertyListMap.computeIfAbsent(controlId,
+				id -> new ArrayList<>());
+		propertyMappings.add(new PropertyMapping(propertyName, targetProperty, formatPattern));
 	}
 
 	@Override
@@ -117,7 +140,7 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
 			return disableNameBasedMapping ? Collections.emptyList() : super.resolveInternal(control, bean, view);
 		}
 		return propertyMappings.stream().map(mapping -> new BindingTarget(control, mapping.getTargetProperty(),
-				bean.getClass(), mapping.getPropertyName())).collect(Collectors.toList());
+				bean.getClass(), mapping.getPropertyName(), mapping.getFormatPattern())).collect(Collectors.toList());
 	}
 
 	/**
@@ -133,9 +156,13 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
 
 		private final ControlProperties targetProperty;
 
-		public PropertyMapping(final String propertyName, final ControlProperties targetProperty) {
+		private final String formatPattern;
+
+		public PropertyMapping(final String propertyName, final ControlProperties targetProperty,
+				final String formatPattern) {
 			this.propertyName = propertyName;
 			this.targetProperty = targetProperty;
+			this.formatPattern = formatPattern;
 		}
 
 		public String getPropertyName() {
@@ -144,6 +171,10 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
 
 		public ControlProperties getTargetProperty() {
 			return targetProperty;
+		}
+
+		public String getFormatPattern() {
+			return formatPattern;
 		}
 
 	}

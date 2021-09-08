@@ -50,8 +50,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -641,5 +644,20 @@ class AFXUtilsTest {
 		// WHEN and THEN
 		assertThat(AFXUtils.getNestedObservableList(sourceList), equalTo(sourceList));
 		assertThat(AFXUtils.getNestedObservableList(filteredList), equalTo(sourceList));
+	}
+
+	@Test
+	void testDetermineObservableValueType_withValue() {
+		assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty(0)), equalTo(Integer.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty("")), equalTo(String.class));
+	}
+
+	@Test
+	void testDetermineObservableValueType_withoutValue() {
+		assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty()), equalTo(Integer.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty(null)), equalTo(String.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleBooleanProperty()), equalTo(Boolean.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleFloatProperty()), equalTo(Float.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleDoubleProperty()), equalTo(Double.class));
 	}
 }
