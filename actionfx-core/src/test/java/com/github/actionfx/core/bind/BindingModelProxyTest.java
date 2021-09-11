@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,6 +59,7 @@ class BindingModelProxyTest {
 	private TextField textField1;
 	private ListView<String> listView;
 	private TextField textField2;
+	private TextField dateTimeTextField;
 
 	@BeforeEach
 	public void onSetup() {
@@ -68,6 +70,7 @@ class BindingModelProxyTest {
 		listView.getItems().add("Item 2");
 		listView.getItems().add("Item 3");
 		textField2 = new TextField();
+		dateTimeTextField = new TextField();
 	}
 
 	@Test
@@ -75,7 +78,8 @@ class BindingModelProxyTest {
 		// GIVEN
 		final Model model = new Model();
 		final List<BindingTarget> bindingTargets = list(bindingTarget(textField1, "stringValue"),
-				bindingTarget(listView, "observableList"), bindingTarget(textField2, "plainString"));
+				bindingTarget(listView, "observableList"), bindingTarget(textField2, "plainString"),
+				bindingTarget(dateTimeTextField, "localDateTime", "dd.MM.yyyy HH:mm"));
 		final BindingModelProxy proxy = new BindingModelProxy(model, bindingTargets);
 
 		// WHEN
@@ -85,6 +89,7 @@ class BindingModelProxyTest {
 		assertThat(textField1.getText(), equalTo("Hello World"));
 		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Item 1", "Item 2"));
 		assertThat(textField2.getText(), equalTo("Hello World"));
+		assertThat(dateTimeTextField.getText(), equalTo("05.09.2021 13:05"));
 	}
 
 	@Test
@@ -92,7 +97,8 @@ class BindingModelProxyTest {
 		// GIVEN
 		final Model model = new Model();
 		final List<BindingTarget> bindingTargets = list(bindingTarget(textField1, "stringValue"),
-				bindingTarget(listView, "observableList"), bindingTarget(textField2, "plainString"));
+				bindingTarget(listView, "observableList"), bindingTarget(textField2, "plainString"),
+				bindingTarget(dateTimeTextField, "localDateTime", "dd.MM.yyyy HH:mm"));
 		final BindingModelProxy proxy = new BindingModelProxy(model, bindingTargets);
 		proxy.bind();
 
@@ -100,11 +106,13 @@ class BindingModelProxyTest {
 		textField1.setText("Changed Value!");
 		listView.getSelectionModel().clearAndSelect(2);
 		textField2.setText("And another new value!");
+		dateTimeTextField.setText("05.10.2022 15:10");
 
 		// THEN
 		assertThat(model.stringValue.get(), equalTo("Changed Value!"));
 		assertThat(model.observableList, contains("Item 3"));
 		assertThat(model.plainString, equalTo("And another new value!"));
+		assertThat(model.localDateTime, equalTo(LocalDateTime.of(2022, 10, 5, 15, 10)));
 	}
 
 	@Test
@@ -136,6 +144,10 @@ class BindingModelProxyTest {
 		return new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, Model.class, path, "");
 	}
 
+	private static BindingTarget bindingTarget(final Control control, final String path, final String formatPattern) {
+		return new BindingTarget(control, ControlProperties.USER_VALUE_OBSERVABLE, Model.class, path, formatPattern);
+	}
+
 	public class Model {
 
 		private final StringProperty stringValue = new SimpleStringProperty("Hello World");
@@ -143,6 +155,8 @@ class BindingModelProxyTest {
 		private final ObservableList<String> observableList = FXCollections.observableArrayList("Item 1", "Item 2");
 
 		private String plainString = "Hello World";
+
+		private LocalDateTime localDateTime = LocalDateTime.of(2021, 9, 5, 13, 5);
 
 		public final StringProperty stringValueProperty() {
 			return stringValue;
@@ -166,6 +180,14 @@ class BindingModelProxyTest {
 
 		public void setPlainString(final String plainString) {
 			this.plainString = plainString;
+		}
+
+		public LocalDateTime getLocalDateTime() {
+			return localDateTime;
+		}
+
+		public void setLocalDateTime(final LocalDateTime localDateTime) {
+			this.localDateTime = localDateTime;
 		}
 
 	}

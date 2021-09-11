@@ -60,7 +60,8 @@ public class BindingModelProxy extends BeanWrapper {
 				continue;
 			}
 			final ControlWrapper controlWrapper = ControlWrapper.of(bindingTarget.getControl());
-			activeBindings.add(controlWrapper.bind(reference, bindingTarget.getTargetProperty()));
+			activeBindings.add(controlWrapper.bind(reference, bindingTarget.getTargetProperty(),
+					bindingTarget.getFormatPattern()));
 		}
 	}
 

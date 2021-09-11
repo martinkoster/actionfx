@@ -26,6 +26,7 @@ package com.github.actionfx.core.converter;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -42,10 +43,12 @@ class DateToStringConverterTest {
 	@Test
 	void testApply() {
 		// GIVEN
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
 		final DateToStringConverter converter = new DateToStringConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
+		final Date date = new Date(1630835160000l);
 
 		// THEN
-		assertThat(converter.apply(new Date(1630835160000l)), equalTo("05.09.2021 11:46:00"));
+		assertThat(converter.apply(date), equalTo(sdf.format(date)));
 	}
 
 }

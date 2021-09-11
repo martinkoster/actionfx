@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -1602,6 +1603,24 @@ class ControlWrapperTest {
 	}
 
 	@Test
+	void testBindUserValue_valueSetting_typeProperty_withFormatPattern() {
+		// GIVEN
+		final ControlWrapper wrapper = ControlWrapperProvider.textField();
+		final BeanWrapper beanWrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<LocalDateTime> bindingSource = beanWrapper
+				.getBeanPropertyReference("localDateTime");
+		final TextField textField = wrapper.getWrapped();
+
+		// WHEN
+		wrapper.bind(bindingSource, ControlProperties.SINGLE_VALUE_PROPERTY, "dd.MM.yyyy HH:mm");
+
+		// THEN
+		assertThat(textField.getText(), equalTo("05.09.2021 13:05"));
+		textField.setText("05.10.2022 15:10");
+		assertThat(bindingSource.getValue(), equalTo(LocalDateTime.of(2022, 10, 5, 15, 10)));
+	}
+
+	@Test
 	void testBindUserValue_bidirectionalBinding_typeObservableList_targetObservableListIsNotReadOnly() {
 		// GIVEN
 		final ControlWrapper wrapper = ControlWrapperProvider.customControlWithObservableList();
@@ -1856,6 +1875,8 @@ class ControlWrapperTest {
 
 		private String plainString = "Hello World";
 
+		private LocalDateTime localDateTime = LocalDateTime.of(2021, 9, 5, 13, 5);
+
 		public final StringProperty stringValueProperty() {
 			return stringValue;
 		}
@@ -1886,6 +1907,14 @@ class ControlWrapperTest {
 
 		public final String getReadOnly() {
 			return readOnlyProperty().get();
+		}
+
+		public LocalDateTime getLocalDateTime() {
+			return localDateTime;
+		}
+
+		public void setLocalDateTime(final LocalDateTime localDateTime) {
+			this.localDateTime = localDateTime;
 		}
 
 	}

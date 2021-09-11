@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.Year;
@@ -67,6 +68,7 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(Year.class).convert(now), equalTo(Year.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now), equalTo(YearMonth.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.from(now)));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now), equalTo(MonthDay.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now), equalTo(DayOfWeek.from(now)));
 	}
 
@@ -95,6 +97,8 @@ class JavaTimeToJavaTimeConverterTest {
 				equalTo(YearMonth.from(now.atZone(ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now),
 				equalTo(Month.from(now.atZone(ZoneId.systemDefault()))));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(now.atZone(ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now),
 				equalTo(DayOfWeek.from(now.atZone(ZoneId.systemDefault()))));
 	}
@@ -115,6 +119,7 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(Year.class).convert(now), equalTo(Year.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now), equalTo(YearMonth.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.from(now)));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now), equalTo(MonthDay.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now), equalTo(DayOfWeek.from(now)));
 	}
 
@@ -138,6 +143,8 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(Year.class).convert(now), equalTo(Year.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now), equalTo(YearMonth.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.from(now)));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(ZonedDateTime.of(now, ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now), equalTo(DayOfWeek.from(now)));
 	}
 
@@ -163,6 +170,8 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(Year.class).convert(now), equalTo(Year.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now), equalTo(YearMonth.from(now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.from(now)));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(ZonedDateTime.of(now, LocalTime.MIDNIGHT, ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now), equalTo(DayOfWeek.from(now)));
 	}
 
@@ -188,6 +197,8 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now),
 				equalTo(YearMonth.from(LocalDate.now())));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.from(LocalDate.now())));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(ZonedDateTime.of(LocalDate.now(), now, ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now),
 				equalTo(DayOfWeek.from(LocalDate.now())));
 	}
@@ -216,6 +227,8 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now),
 				equalTo(YearMonth.from(ZonedDateTime.of(now.atDay(1), LocalTime.MIDNIGHT, ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.JANUARY));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(ZonedDateTime.now().withDayOfMonth(1).withMonth(1))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now),
 				equalTo(DayOfWeek.from(ZonedDateTime.now().withDayOfYear(1).with(now))));
 	}
@@ -244,6 +257,8 @@ class JavaTimeToJavaTimeConverterTest {
 				equalTo(Year.from(ZonedDateTime.of(now.atDay(1), LocalTime.MIDNIGHT, ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now), equalTo(now));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(now.getMonth()));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(ZonedDateTime.of(now.atDay(1).atTime(0, 0), ZoneId.systemDefault()))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now),
 				equalTo(DayOfWeek.from(ZonedDateTime.now().withDayOfMonth(1))));
 	}
@@ -273,8 +288,46 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now),
 				equalTo(YearMonth.of(Year.now().getValue(), now)));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(now));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now),
+				equalTo(MonthDay.from(ZonedDateTime.now().withDayOfMonth(1).with(LocalTime.MIDNIGHT))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now),
 				equalTo(DayOfWeek.from(ZonedDateTime.now().withDayOfMonth(1))));
+	}
+
+	@Test
+	void testApply_fromMonthDay() {
+		// GIVEN
+		final MonthDay now = MonthDay.from(ZonedDateTime.now());
+
+		// WHEN and THEN
+		assertThat(JavaTimeToJavaTimeConverter.to(Instant.class).convert(now),
+				equalTo(ZonedDateTime.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth())
+						.with(LocalTime.MIDNIGHT).toInstant()));
+		assertThat(JavaTimeToJavaTimeConverter.to(LocalDateTime.class).convert(now),
+				equalTo(ZonedDateTime.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth())
+						.with(LocalTime.MIDNIGHT).toLocalDateTime()));
+		assertThat(JavaTimeToJavaTimeConverter.to(LocalDate.class).convert(now),
+				equalTo(ZonedDateTime.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth())
+						.with(LocalTime.MIDNIGHT).toLocalDate()));
+		assertThat(JavaTimeToJavaTimeConverter.to(LocalTime.class).convert(now),
+				equalTo(ZonedDateTime.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth())
+						.with(LocalTime.MIDNIGHT).toLocalTime()));
+		assertThat(JavaTimeToJavaTimeConverter.to(OffsetDateTime.class).convert(now),
+				equalTo(ZonedDateTime.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth())
+						.with(LocalTime.MIDNIGHT).toOffsetDateTime()));
+		assertThat(JavaTimeToJavaTimeConverter.to(OffsetTime.class).convert(now),
+				equalTo(ZonedDateTime.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth())
+						.with(LocalTime.MIDNIGHT).toOffsetDateTime().toOffsetTime()));
+		assertThat(JavaTimeToJavaTimeConverter.to(ZonedDateTime.class).convert(now), equalTo(ZonedDateTime.now()
+				.withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth()).with(LocalTime.MIDNIGHT)));
+		assertThat(JavaTimeToJavaTimeConverter.to(Year.class).convert(now), equalTo(Year.from(ZonedDateTime.now()
+				.withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth()).with(LocalTime.MIDNIGHT))));
+		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now),
+				equalTo(YearMonth.of(Year.now().getValue(), now.getMonth())));
+		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(now.getMonth()));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now), equalTo(now));
+		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now), equalTo(DayOfWeek.from(ZonedDateTime
+				.now().withMonth(now.getMonthValue()).withDayOfMonth(now.getDayOfMonth()).with(LocalTime.MIDNIGHT))));
 	}
 
 	@Test
@@ -303,6 +356,21 @@ class JavaTimeToJavaTimeConverterTest {
 		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(now), equalTo(YearMonth.from(ZonedDateTime
 				.now().withDayOfYear(1).with(TemporalAdjusters.firstInMonth(now)).with(LocalTime.MIDNIGHT))));
 		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(now), equalTo(Month.JANUARY));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(now), equalTo(MonthDay.from(ZonedDateTime
+				.now().withDayOfYear(1).with(TemporalAdjusters.firstInMonth(now)).with(LocalTime.MIDNIGHT))));
 		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(now), equalTo(now));
+	}
+
+	@Test
+	void testApply_crossChecks() {
+		// GIVEN
+		final ZonedDateTime time = ZonedDateTime.parse("2022-01-01T10:15:30+01:00[Europe/Berlin]");
+
+		// WHEN and THEN
+		assertThat(JavaTimeToJavaTimeConverter.to(DayOfWeek.class).convert(time), equalTo(DayOfWeek.SATURDAY));
+		assertThat(JavaTimeToJavaTimeConverter.to(Month.class).convert(time), equalTo(Month.JANUARY));
+		assertThat(JavaTimeToJavaTimeConverter.to(MonthDay.class).convert(time), equalTo(MonthDay.of(1, 1)));
+		assertThat(JavaTimeToJavaTimeConverter.to(Year.class).convert(time), equalTo(Year.of(2022)));
+		assertThat(JavaTimeToJavaTimeConverter.to(YearMonth.class).convert(time), equalTo(YearMonth.of(2022, 1)));
 	}
 }

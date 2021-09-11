@@ -35,6 +35,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.Month;
+import java.time.MonthDay;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Locale;
 
@@ -158,7 +165,8 @@ class ConversionServiceTest {
 		// WHEN
 		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
 				() -> service.convert(file, Integer.class));
-		assertThat(ex.getMessage(), equalTo("Unable to convert type 'java.io.File' to type 'java.lang.Integer'!"));
+		assertThat(ex.getMessage(),
+				equalTo("Unable to convert type 'class java.io.File' to type 'class java.lang.Integer'!"));
 	}
 
 	@Test
@@ -210,6 +218,36 @@ class ConversionServiceTest {
 				equalTo(new Date(1630835160000l)));
 		assertThat(service.convert(new Date(1630835160000l), String.class, "dd.MM.yyyy hh:mm:ss"),
 				equalTo("05.09.2021 11:46:00"));
+	}
+
+	@Test
+	void testConvert_withJavaTime() {
+		// GIVEN
+		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.GERMANY));
+		final ZonedDateTime time = ZonedDateTime.parse("2022-01-01T10:15:30+01:00[Europe/Berlin]");
+
+		// WHEN and THEN
+		assertThat(service.convert(time, DayOfWeek.class), equalTo(DayOfWeek.SATURDAY));
+		assertThat(service.convert(time, Month.class), equalTo(Month.JANUARY));
+		assertThat(service.convert(time, MonthDay.class), equalTo(MonthDay.of(1, 1)));
+		assertThat(service.convert(time, Year.class), equalTo(Year.of(2022)));
+		assertThat(service.convert(time, YearMonth.class), equalTo(YearMonth.of(2022, 1)));
+		assertThat(service.convert(time, String.class, "dd.MM.yyyy HH:mm"), equalTo("01.01.2022 10:15"));
+		assertThat(service.convert("2022-01-01T10:15:30+01:00", Instant.class, "yyyy-MM-dd'T'HH:mm:ssxxx"),
+				equalTo(time.toInstant()));
+	}
+
+	@Test
+	void testConvert_withDate() {
+		// GIVEN
+		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.GERMANY));
+		final ZonedDateTime javaTime = ZonedDateTime.parse("2022-01-01T10:15:30+01:00[Europe/Berlin]");
+		final Date date = Date.from(javaTime.toInstant());
+
+		// WHEN and THEN
+		assertThat(service.convert(javaTime, Date.class), equalTo(date));
+		assertThat(service.convert(date, Instant.class), equalTo(date.toInstant()));
+		assertThat(service.convert(date, ZonedDateTime.class), equalTo(javaTime));
 	}
 
 	@Test

@@ -832,6 +832,11 @@ public class ControlWrapper extends NodeWrapper {
 	 *
 	 * @param beanPropertyReference the bean property reference to use as binding
 	 *                              target
+	 * @param controlProperty       the control's property that shall be used as
+	 *                              binding target
+	 * @param formatPattern         an optional, nullable format pattern (e.g. for
+	 *                              {@link java.text.NumberFormat} or
+	 *                              {@link java.time.format.DateTimeFormatter})
 	 * @return the established {@link Binding} instance that can be used to unbind
 	 *         the binding source again
 	 */
@@ -874,14 +879,14 @@ public class ControlWrapper extends NodeWrapper {
 	 *                              target
 	 * @param controlProperty       the property inside this control acting as
 	 *                              binding target
-	 * @param converter             an optional converter to use for converting the
-	 *                              value from {@code beanPropertyReference} to the
-	 *                              control's property value.
+	 * @param formatPattern         an optional, nullable format pattern (e.g. for
+	 *                              {@link java.text.NumberFormat} or
+	 *                              {@link java.time.format.DateTimeFormatter})
 	 * @return the established {@link Binding} instance that can be used to unbind
 	 *         the binding source again
 	 */
 	public Binding bind(final BeanPropertyReference<?> beanPropertyReference, final ControlProperties controlProperty,
-			final StringConverter<?> converter) {
+			final String formatPattern) {
 		Observable observable;
 		switch (controlProperty) {
 		case SINGLE_VALUE_PROPERTY:
@@ -901,7 +906,7 @@ public class ControlWrapper extends NodeWrapper {
 					controlProperty == ControlProperties.USER_VALUE_OBSERVABLE);
 		} else if (isObservableValue(observable)) {
 			return bindTypeObservableValue((ObservableValue<?>) observable, beanPropertyReference,
-					controlProperty == ControlProperties.USER_VALUE_OBSERVABLE);
+					controlProperty == ControlProperties.USER_VALUE_OBSERVABLE, formatPattern);
 		} else {
 			throw new IllegalStateException("Property '" + controlProperty + "' of wrapped control " + getWrappedType()
 					+ " is neither an ObservableList nor an ObservableValue, but of type '" + observable.getClass()
@@ -954,15 +959,19 @@ public class ControlWrapper extends NodeWrapper {
 	 *                                    done via the selection model of this
 	 *                                    control, {@code false}, if manipulation
 	 *                                    shall be directly performed.
+	 * @param formatPattern               an optional, nullable format pattern (e.g.
+	 *                                    for {@link java.text.NumberFormat} or
+	 *                                    {@link java.time.format.DateTimeFormatter})
 	 * @return the {@link Binding} instance that can be used to unbind the binding
 	 *         source again
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> Binding bindTypeObservableValue(final ObservableValue<T> observableValue,
-			final BeanPropertyReference<?> beanPropertyReference, final boolean useSelectionModelForBinding) {
+			final BeanPropertyReference<?> beanPropertyReference, final boolean useSelectionModelForBinding,
+			final String formatPattern) {
 		final ObservableValueBinding<?, T> binding = new ObservableValueBinding<>(
 				(BeanPropertyReference<T>) beanPropertyReference, observableValue,
-				useSelectionModelForBinding ? getSelectionModel() : null);
+				useSelectionModelForBinding ? getSelectionModel() : null, formatPattern);
 		binding.bind();
 		return binding;
 	}

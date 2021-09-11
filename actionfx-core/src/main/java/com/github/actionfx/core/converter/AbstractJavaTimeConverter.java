@@ -23,42 +23,27 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import org.junit.jupiter.api.Test;
-
 /**
- * JUnit test case for {@link DateToStringConverter}.
+ * Base class for converters that convert a {@link java.time.*} type.
  *
  * @author koster
  *
  */
-class StringToDateConverterTest {
+public abstract class AbstractJavaTimeConverter<S, T> implements Converter<S, T> {
 
-	@Test
-	void testApply() {
-		// GIVEN
-		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-		final Date date = new Date(1630835160000l);
+	protected Locale locale;
 
-		// THEN
-		assertThat(converter.apply(sdf.format(date)), equalTo(date));
+	protected DateTimeFormatter dateTimeFormatter;
+
+	protected AbstractJavaTimeConverter(final String formatPattern, final Locale locale) {
+		this.locale = locale;
+		this.dateTimeFormatter = DateTimeFormatter.ofPattern(formatPattern, locale);
 	}
 
-	@Test
-	void testApply_invalidDateString() {
-		// GIVEN
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-
-		// THEN
-		assertThat(converter.apply("invald"), nullValue());
+	public DateTimeFormatter getDateTimeFormatter() {
+		return dateTimeFormatter;
 	}
-
 }

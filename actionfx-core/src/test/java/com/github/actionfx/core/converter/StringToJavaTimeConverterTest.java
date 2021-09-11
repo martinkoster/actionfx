@@ -24,41 +24,34 @@
 package com.github.actionfx.core.converter;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
 /**
- * JUnit test case for {@link DateToStringConverter}.
+ * JUnit test case for {@link StringToJavaConverter}.
  *
  * @author koster
  *
  */
-class StringToDateConverterTest {
+class StringToJavaTimeConverterTest {
 
 	@Test
-	void testApply() {
+	void testApply() throws ParseException {
 		// GIVEN
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-		final Date date = new Date(1630835160000l);
+		final StringToJavaTimeConverter<Instant> converter = new StringToJavaTimeConverter<>(Instant.class,
+				"dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
+		final Date date = sdf.parse("05.09.2021 14:07:10");
 
 		// THEN
-		assertThat(converter.apply(sdf.format(date)), equalTo(date));
-	}
-
-	@Test
-	void testApply_invalidDateString() {
-		// GIVEN
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-
-		// THEN
-		assertThat(converter.apply("invald"), nullValue());
+		assertThat(converter.apply(sdf.format(date)), equalTo(date.toInstant()));
 	}
 
 }

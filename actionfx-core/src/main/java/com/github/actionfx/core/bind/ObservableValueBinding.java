@@ -67,6 +67,8 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 
 	private final ConversionService conversionService;
 
+	private String formatPattern;
+
 	/**
 	 * Constructor accepting a binding source and binding target, while the binding
 	 * target must be an {@link Property}.
@@ -75,7 +77,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	 * @param target the binding target
 	 */
 	public ObservableValueBinding(final BeanPropertyReference<S> source, final ObservableValue<E> target) {
-		this(source, target, null);
+		this(source, target, null, null);
 	}
 
 	/**
@@ -94,10 +96,52 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	 * @param selectionModel an optional selection model for manipulating the value
 	 *                       in the binding {@code target}
 	 */
-	@SuppressWarnings("unchecked")
 	public ObservableValueBinding(final BeanPropertyReference<S> source, final ObservableValue<E> target,
 			final SelectionModel<E> selectionModel) {
+		this(source, target, selectionModel, null);
+	}
+
+	/**
+	 * Constructor accepting a binding source and binding target, while the binding
+	 * target must be an {@link Property}.
+	 *
+	 * @param source        the binding source
+	 * @param target        the binding target
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat} or
+	 *                      {@link java.time.format.DateTimeFormatter}) for type
+	 *                      conversion (if necessary)
+	 */
+	public ObservableValueBinding(final BeanPropertyReference<S> source, final ObservableValue<E> target,
+			final String formatPattern) {
+		this(source, target, null, formatPattern);
+	}
+
+	/**
+	 * Constructor accepting a binding source and binding target, while the binding
+	 * target must be an {@link Property}.
+	 * <p>
+	 * As third argument, a {@link SelectionModel} can be provided. This argument is
+	 * {@code nullable}. However, if provided, manipulation of the binding target
+	 * list is only performed through the supplied {@link SelectionModel}, as it
+	 * might be the case that the supplied binding target list does not allow the
+	 * user to add elements (this is the case e.g. for the selected items observable
+	 * list in a {@link javafx.scene.control.ListView}).
+	 *
+	 * @param source         the binding source
+	 * @param target         the binding target
+	 * @param selectionModel an optional selection model for manipulating the value
+	 *                       in the binding {@code target}
+	 * @param formatPattern  an optional, nullable format pattern (e.g. for
+	 *                       {@link java.text.NumberFormat} or
+	 *                       {@link java.time.format.DateTimeFormatter}) for type
+	 *                       conversion (if necessary)
+	 */
+	@SuppressWarnings("unchecked")
+	public ObservableValueBinding(final BeanPropertyReference<S> source, final ObservableValue<E> target,
+			final SelectionModel<E> selectionModel, final String formatPattern) {
 		super(source, target);
+		this.formatPattern = formatPattern;
 		this.selectionModel = selectionModel;
 		this.conversionService = ActionFX.isInitialized() ? ActionFX.getInstance().getConversionService()
 				: new ConversionService();
@@ -216,7 +260,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 
 	@SuppressWarnings("unchecked")
 	private void setTargetValue(final S value) {
-		final E targetValue = toType(value, targetType);
+		final E targetValue = toType(value, source.getType(), targetType);
 		if (useSelectionModelForBinding()) {
 			selectionModel.select(targetValue);
 		} else {
@@ -226,8 +270,8 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 		}
 	}
 
-	private <T> T toType(final Object value, final Class<T> type) {
-		return conversionService.convert(value, type);
+	private <T> T toType(final Object value, final Class<?> sourceType, final Class<T> targetType) {
+		return conversionService.convert(value, sourceType, targetType, formatPattern);
 	}
 
 	/**
@@ -281,11 +325,10 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 						+ " Removing the bidirectional binding from properties " + source.getName() + " and " + target,
 						e2);
 			}
-			throw new IllegalStateException("Bidirectional binding failed, setting to the previous value", e);
 		}
 
 		private void setSourceValue(final E value) {
-			source.setValue(toType(value, source.getType()));
+			source.setValue(toType(value, targetType, source.getType()));
 		}
 	}
 

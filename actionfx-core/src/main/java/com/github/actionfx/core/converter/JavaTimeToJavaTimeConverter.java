@@ -29,15 +29,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalQueries;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -58,6 +61,7 @@ import java.util.function.UnaryOperator;
  * <li>{@link java.time.YearMonth}</li>
  * <li>{@link java.time.DayOfWeek}</li>
  * <li>{@link java.time.Month}</li>
+ * <li>{@link java.time.MonthDay}</li>
  * </ul>
  * <p>
  * In case a {@link Temporal} <b>without</b> time zone information is converted
@@ -78,10 +82,10 @@ public class JavaTimeToJavaTimeConverter<S extends TemporalAccessor, T extends T
 		initializeTimeConversionFunctions();
 	}
 
-	private final Class<T> targetNumberClass;
+	private final Class<T> targetTimeType;
 
-	public JavaTimeToJavaTimeConverter(final Class<T> targetNumberClass) {
-		this.targetNumberClass = targetNumberClass;
+	public JavaTimeToJavaTimeConverter(final Class<T> targetTimeType) {
+		this.targetTimeType = targetTimeType;
 	}
 
 	/**
@@ -98,7 +102,7 @@ public class JavaTimeToJavaTimeConverter<S extends TemporalAccessor, T extends T
 
 	@Override
 	public T convert(final S source) {
-		return convertTimeToTargetClass(source, targetNumberClass);
+		return convertTimeToTargetClass(source, targetTimeType);
 	}
 
 	/**
@@ -246,12 +250,40 @@ public class JavaTimeToJavaTimeConverter<S extends TemporalAccessor, T extends T
 			final Month month = (Month) time;
 			return ZonedDateTime.of(LocalDateTime.of(Year.now(ZoneId.systemDefault()).getValue(), month, 1, 0, 0),
 					ZoneId.systemDefault());
+		} else if (MonthDay.class.isAssignableFrom(time.getClass())) {
+			final MonthDay monthDay = (MonthDay) time;
+			return ZonedDateTime.of(LocalDateTime.of(Year.now(ZoneId.systemDefault()).getValue(), monthDay.getMonth(),
+					monthDay.getDayOfMonth(), 0, 0), ZoneId.systemDefault());
 		} else if (DayOfWeek.class.isAssignableFrom(time.getClass())) {
 			final DayOfWeek dow = (DayOfWeek) time;
 			return ZonedDateTime.now().withDayOfYear(1).with(TemporalAdjusters.firstInMonth(dow))
 					.with(LocalTime.MIDNIGHT);
 		} else {
-			return ZonedDateTime.from(time);
+			// the temporal does not necessarily has a ZoneId (e.g. "java.time.Parsed" -
+			// which only has package visibility)
+			// therefore, we need to add the time zone here manually
+			final ZoneId zoneId = time.query(TemporalQueries.zone());
+			if (zoneId == null) {
+				final ZonedDateTime now = ZonedDateTime.now(); // missing information is taken from this instance
+				final int year = time.isSupported(ChronoField.YEAR) ? time.get(ChronoField.YEAR) : now.getYear();
+				final int month = time.isSupported(ChronoField.MONTH_OF_YEAR) ? time.get(ChronoField.MONTH_OF_YEAR)
+						: now.getMonthValue();
+				final int day = time.isSupported(ChronoField.DAY_OF_MONTH) ? time.get(ChronoField.DAY_OF_MONTH)
+						: now.getDayOfMonth();
+				final int hour = time.isSupported(ChronoField.HOUR_OF_DAY) ? time.get(ChronoField.HOUR_OF_DAY)
+						: now.getHour();
+				final int minute = time.isSupported(ChronoField.MINUTE_OF_HOUR) ? time.get(ChronoField.MINUTE_OF_HOUR)
+						: now.getMinute();
+				final int second = time.isSupported(ChronoField.SECOND_OF_MINUTE)
+						? time.get(ChronoField.SECOND_OF_MINUTE)
+						: now.getSecond();
+				final int nanoOfSecond = time.isSupported(ChronoField.NANO_OF_SECOND)
+						? time.get(ChronoField.NANO_OF_SECOND)
+						: now.getNano();
+				return ZonedDateTime.of(year, month, day, hour, minute, second, nanoOfSecond, now.getZone());
+			} else {
+				return ZonedDateTime.from(time);
+			}
 		}
 	}
 
@@ -301,6 +333,21 @@ public class JavaTimeToJavaTimeConverter<S extends TemporalAccessor, T extends T
 	}
 
 	/**
+	 * Converts the given Java time to an {@link MonthDay}.
+	 *
+	 * @param time the time to convert
+	 * @return the converted time
+	 */
+	private static MonthDay toMonthDay(final TemporalAccessor time) {
+		if (MonthDay.class.isAssignableFrom(time.getClass())) {
+			return (MonthDay) time;
+		} else {
+			final ZonedDateTime zdt = toZonedDateTime(time);
+			return MonthDay.from(zdt);
+		}
+	}
+
+	/**
 	 * Converts the given Java time to an {@link DayOfWeek}.
 	 *
 	 * @param time the time to convert
@@ -329,6 +376,7 @@ public class JavaTimeToJavaTimeConverter<S extends TemporalAccessor, T extends T
 		TIME_TO_TIME_FUNCTIONS.put(OffsetDateTime.class, JavaTimeToJavaTimeConverter::toOffsetDateTime);
 		TIME_TO_TIME_FUNCTIONS.put(OffsetTime.class, JavaTimeToJavaTimeConverter::toOffsetTime);
 		TIME_TO_TIME_FUNCTIONS.put(Month.class, JavaTimeToJavaTimeConverter::toMonth);
+		TIME_TO_TIME_FUNCTIONS.put(MonthDay.class, JavaTimeToJavaTimeConverter::toMonthDay);
 		TIME_TO_TIME_FUNCTIONS.put(DayOfWeek.class, JavaTimeToJavaTimeConverter::toDayOfWeek);
 	}
 }

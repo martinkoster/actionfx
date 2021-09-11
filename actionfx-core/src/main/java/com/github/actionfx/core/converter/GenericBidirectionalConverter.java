@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.converter;
 
+import java.util.function.Function;
+
 /**
  * {@link BidirectionalConverter} that is able to use 2 {@link Converter} to
  * perform to-/from conversion from and to the desired data type.
@@ -34,9 +36,9 @@ package com.github.actionfx.core.converter;
  */
 public class GenericBidirectionalConverter<S, T> implements BidirectionalConverter<S, T> {
 
-	private final Converter<S, T> toConverter;
+	private final Function<S, T> toConverter;
 
-	private final Converter<T, S> fromConverter;
+	private final Function<T, S> fromConverter;
 
 	/**
 	 * Constructor accepting a to- and a from- converter.
@@ -44,7 +46,7 @@ public class GenericBidirectionalConverter<S, T> implements BidirectionalConvert
 	 * @param toConverter   the to- converter
 	 * @param fromConverter the from- converter
 	 */
-	public GenericBidirectionalConverter(final Converter<S, T> toConverter, final Converter<T, S> fromConverter) {
+	public GenericBidirectionalConverter(final Function<S, T> toConverter, final Function<T, S> fromConverter) {
 		this.toConverter = toConverter;
 		this.fromConverter = fromConverter;
 	}

@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test;
  *
  */
 class NumberToNumberConverterTest {
+
 	@Test
 	void testConvertDoubleToBigInteger() {
 		final Double decimal = Double.valueOf(3.14d);

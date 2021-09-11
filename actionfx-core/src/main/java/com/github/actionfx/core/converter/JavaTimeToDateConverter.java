@@ -23,42 +23,27 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
-import java.util.Locale;
-
-import org.junit.jupiter.api.Test;
 
 /**
- * JUnit test case for {@link DateToStringConverter}.
+ * Converts a Java time {@link TemporalAccessor} to a {@link java.util.Date}.
  *
  * @author koster
  *
  */
-class StringToDateConverterTest {
+public class JavaTimeToDateConverter implements Converter<TemporalAccessor, Date> {
 
-	@Test
-	void testApply() {
-		// GIVEN
-		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-		final Date date = new Date(1630835160000l);
+	private final JavaTimeToJavaTimeConverter<TemporalAccessor, Instant> javaTimeConverter;
 
-		// THEN
-		assertThat(converter.apply(sdf.format(date)), equalTo(date));
+	public JavaTimeToDateConverter() {
+		javaTimeConverter = new JavaTimeToJavaTimeConverter<>(Instant.class);
 	}
 
-	@Test
-	void testApply_invalidDateString() {
-		// GIVEN
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-
-		// THEN
-		assertThat(converter.apply("invald"), nullValue());
+	@Override
+	public Date convert(final TemporalAccessor source) {
+		return Date.from(javaTimeConverter.convert(source));
 	}
 
 }

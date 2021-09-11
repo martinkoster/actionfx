@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.core.converter;
 
+import java.util.function.Function;
+
 import javafx.util.StringConverter;
 
 /**
@@ -35,9 +37,9 @@ import javafx.util.StringConverter;
  */
 public class GenericStringConverter<T> extends StringConverter<T> implements BidirectionalConverter<T, String> {
 
-	private final Converter<T, String> toStringConverter;
+	private final Function<T, String> toStringConverter;
 
-	private final Converter<String, T> fromStringConverter;
+	private final Function<String, T> fromStringConverter;
 
 	/**
 	 * Constructor accepting a to-string and a from-string converter.
@@ -45,8 +47,8 @@ public class GenericStringConverter<T> extends StringConverter<T> implements Bid
 	 * @param toStringConverter   the to-string converter
 	 * @param fromStringConverter the from-string converter
 	 */
-	public GenericStringConverter(final Converter<T, String> toStringConverter,
-			final Converter<String, T> fromStringConverter) {
+	public GenericStringConverter(final Function<T, String> toStringConverter,
+			final Function<String, T> fromStringConverter) {
 		this.toStringConverter = toStringConverter != null ? toStringConverter : defaultToStringConverter();
 		this.fromStringConverter = fromStringConverter != null ? fromStringConverter : defaultFromStringConverter();
 	}
@@ -57,7 +59,7 @@ public class GenericStringConverter<T> extends StringConverter<T> implements Bid
 	 *
 	 * @return the default to-string converter
 	 */
-	private Converter<String, T> defaultFromStringConverter() {
+	private Function<String, T> defaultFromStringConverter() {
 		return value -> null;
 	}
 
@@ -67,7 +69,7 @@ public class GenericStringConverter<T> extends StringConverter<T> implements Bid
 	 *
 	 * @return the default to-string converter
 	 */
-	private Converter<T, String> defaultToStringConverter() {
+	private Function<T, String> defaultToStringConverter() {
 		return value -> value == null ? "" : value.toString();
 	}
 

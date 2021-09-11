@@ -53,11 +53,15 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.collections.ObservableSet;
 import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
@@ -648,16 +652,23 @@ class AFXUtilsTest {
 
 	@Test
 	void testDetermineObservableValueType_withValue() {
-		assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty(0)), equalTo(Integer.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty(0)), equalTo(int.class));
 		assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty("")), equalTo(String.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleObjectProperty<>(Integer.valueOf(42))),
+				equalTo(Integer.class));
 	}
 
 	@Test
 	void testDetermineObservableValueType_withoutValue() {
-		assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty()), equalTo(Integer.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty()), equalTo(int.class));
 		assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty(null)), equalTo(String.class));
-		assertThat(AFXUtils.determineObservableValueType(new SimpleBooleanProperty()), equalTo(Boolean.class));
-		assertThat(AFXUtils.determineObservableValueType(new SimpleFloatProperty()), equalTo(Float.class));
-		assertThat(AFXUtils.determineObservableValueType(new SimpleDoubleProperty()), equalTo(Double.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleBooleanProperty()), equalTo(boolean.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleFloatProperty()), equalTo(float.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleDoubleProperty()), equalTo(double.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleObjectProperty<Integer>(null)),
+				equalTo(Object.class)); // type erasure, no chance to get the type
+		assertThat(AFXUtils.determineObservableValueType(new SimpleMapProperty<>()), equalTo(ObservableMap.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleSetProperty<>()), equalTo(ObservableSet.class));
+		assertThat(AFXUtils.determineObservableValueType(new SimpleListProperty<>()), equalTo(ObservableList.class));
 	}
 }

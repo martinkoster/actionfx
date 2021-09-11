@@ -30,6 +30,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -132,6 +134,7 @@ class FormBindingControllerExtensionTest {
 		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(),
 				contains("Item 1", "Item 2"));
 		assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
+		assertThat(controller.localDateTimeTextField.getText(), equalTo("05.09.2021 13:05"));
 
 		// check binding from control side by entering values into controls
 		controller.customerFirstNameControl.setText("Joe");
@@ -139,12 +142,14 @@ class FormBindingControllerExtensionTest {
 		controller.customerCountryControl.getSelectionModel().select("France");
 		controller.customerSelectedProductsControl.getSelectionModel().select("Item 3");
 		controller.customerTermsAndConditionsControl.setSelected(false);
+		controller.localDateTimeTextField.setText("05.10.2022 15:10");
 
 		assertThat(model.getFirstName(), equalTo("Joe"));
 		assertThat(model.getLastName(), equalTo("Dalton"));
 		assertThat(model.getCountry(), equalTo("France"));
 		assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
 		assertThat(model.isTermsAndConditions(), equalTo(false));
+		assertThat(model.getLocalDateTime(), equalTo(LocalDateTime.of(2022, 10, 5, 15, 10)));
 
 		// check binding from model side by changing values in the model
 		model.setFirstName("Jane");
@@ -152,12 +157,14 @@ class FormBindingControllerExtensionTest {
 		model.setCountry("Italy");
 		model.getSelectedProducts().clear();
 		model.setTermsAndConditions(true);
+		model.setLocalDateTime(LocalDateTime.of(2023, 11, 10, 16, 9));
 
 		assertThat(controller.customerFirstNameControl.getText(), equalTo("Jane"));
 		assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
 		assertThat(controller.customerCountryControl.getValue(), equalTo("Italy"));
 		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(), hasSize(0));
 		assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
+		assertThat(controller.localDateTimeTextField.getText(), equalTo("10.11.2023 16:09"));
 	}
 
 	@Test
@@ -266,6 +273,8 @@ class FormBindingControllerExtensionTest {
 
 		public CheckBox customerTermsAndConditionsControl;
 
+		public TextField localDateTimeTextField;
+
 		// the name of the field and control is taken for matching binding targets
 		@AFXFormBinding(disableNameBasedMapping = false, controlPrefix = "customer", controlSuffix = "Control")
 		private final ObjectProperty<CustomerModel> modelWithNameBasedBinding = new SimpleObjectProperty<>();
@@ -279,6 +288,7 @@ class FormBindingControllerExtensionTest {
 		@AFXFormMapping(controlId = "customerSelectedProductsControl", targetProperty = ControlProperties.USER_VALUE_OBSERVABLE, propertyName = "selectedProducts")
 		@AFXFormMapping(controlId = "customerSelectedProductsControl", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST, propertyName = "allProducts")
 		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", propertyName = "termsAndConditions")
+		@AFXFormMapping(controlId = "localDateTimeTextField", propertyName = "localDateTime", formatPattern = "dd.MM.yyyy HH:mm")
 		private final ObjectProperty<CustomerModel> modelWithMappingBasedBinding = new SimpleObjectProperty<>();
 
 		CustomerController() {
@@ -287,6 +297,7 @@ class FormBindingControllerExtensionTest {
 			customerCountryControl = new ChoiceBox<>();
 			customerSelectedProductsControl = new ListView<>();
 			customerTermsAndConditionsControl = new CheckBox();
+			localDateTimeTextField = new TextField();
 
 			customerCountryControl.getItems().addAll("Germany", "France", "Spain", "Italy", "Portugal", "UK", "USA");
 			customerSelectedProductsControl.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -295,7 +306,8 @@ class FormBindingControllerExtensionTest {
 					.appendNode(customerLastNameControl, "customerLastNameControl")
 					.appendNode(customerCountryControl, "customerCountryControl")
 					.appendNode(customerSelectedProductsControl, "customerSelectedProductsControl")
-					.appendNode(customerTermsAndConditionsControl, "customerTermsAndConditionsControl");
+					.appendNode(customerTermsAndConditionsControl, "customerTermsAndConditionsControl")
+					.appendNode(localDateTimeTextField, "localDateTimeTextField");
 		}
 	}
 
@@ -346,6 +358,9 @@ class FormBindingControllerExtensionTest {
 		private final ObservableList<String> selectedProducts = FXCollections.observableArrayList();
 
 		private final BooleanProperty termsAndConditions = new SimpleBooleanProperty();
+
+		private final ObjectProperty<LocalDateTime> localDateTime = new SimpleObjectProperty<>(
+				LocalDateTime.of(2021, 9, 5, 13, 5));
 
 		public final StringProperty firstNameProperty() {
 			return firstName;
@@ -401,6 +416,18 @@ class FormBindingControllerExtensionTest {
 
 		public ObservableList<String> getAllProducts() {
 			return allProducts;
+		}
+
+		public final ObjectProperty<LocalDateTime> localDateTimeProperty() {
+			return localDateTime;
+		}
+
+		public final LocalDateTime getLocalDateTime() {
+			return localDateTimeProperty().get();
+		}
+
+		public final void setLocalDateTime(final LocalDateTime localDateTime) {
+			localDateTimeProperty().set(localDateTime);
 		}
 
 	}

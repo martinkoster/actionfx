@@ -28,6 +28,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -37,8 +39,10 @@ import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -94,6 +98,62 @@ class ObservableValueBindingTest {
 	}
 
 	@Test
+	void testBind_bidirectional_withPrimitiveIntConversion() {
+		// GIVEN
+		final BeanWrapper wrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<Integer> source = wrapper.getBeanPropertyReference("objectIntegerValue");
+		final IntegerProperty target = new SimpleIntegerProperty(42);
+		final ObservableValueBinding<Integer, Number> binding = new ObservableValueBinding<>(source, target);
+
+		// WHEN
+		binding.bind();
+
+		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
+		assertThat(target.get(), equalTo(5));
+		target.set(42);
+		assertThat(source.getValue(), equalTo(Integer.valueOf(42)));
+	}
+
+	@Test
+	void testBind_unidirectional_withStringToJavaTimeConversion() {
+		// GIVEN
+		final BeanWrapper wrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<LocalDateTime> source = wrapper.getBeanPropertyReference("localDateTime");
+		final StringProperty target = new SimpleStringProperty("");
+		final ObservableValueBinding<LocalDateTime, String> binding = new ObservableValueBinding<>(source, target,
+				"dd.MM.yyyy HH:mm");
+
+		// WHEN
+		binding.bind();
+
+		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
+		assertThat(target.get(), equalTo("05.09.2021 13:05"));
+		target.set("05.10.2021 15:10");
+		assertThat(source.getValue(), equalTo(LocalDateTime.of(2021, 10, 5, 15, 10)));
+	}
+
+	@Test
+	void testBind_unidirectional_withStringToJavaTimeConversion_invalidInput_restoreOldValue() {
+		// GIVEN
+		final BeanWrapper wrapper = new BeanWrapper(new Model());
+		final BeanPropertyReference<LocalDateTime> source = wrapper.getBeanPropertyReference("localDateTime");
+		final StringProperty target = new SimpleStringProperty("");
+		final ObservableValueBinding<LocalDateTime, String> binding = new ObservableValueBinding<>(source, target,
+				"dd.MM.yyyy HH:mm");
+
+		// WHEN
+		binding.bind();
+
+		// THEN
+		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
+		assertThat(target.get(), equalTo("05.09.2021 13:05"));
+		target.set("invalid"); // invalid date input
+		assertThat(source.getValue(), equalTo(LocalDateTime.of(2021, 9, 5, 13, 5))); // old value still present
+	}
+
+	@Test
 	void testBind_bidirectional_withSelectionModel() {
 		// GIVEN
 		final Model model = new Model();
@@ -103,7 +163,7 @@ class ObservableValueBindingTest {
 
 		final ChoiceBox<String> choiceBox = new ChoiceBox<>();
 		choiceBox.getItems().addAll("Item 1", "Item 2", "Item 3");
-		final ObservableValueBinding<?, String> binding = new ObservableValueBinding<>(source,
+		final ObservableValueBinding<String, String> binding = new ObservableValueBinding<>(source,
 				choiceBox.getSelectionModel().selectedItemProperty(), choiceBox.getSelectionModel());
 
 		// WHEN
@@ -124,7 +184,7 @@ class ObservableValueBindingTest {
 		final BeanWrapper wrapper = new BeanWrapper(new Model());
 		final BeanPropertyReference<String> source = wrapper.getBeanPropertyReference("readOnly");
 		final StringProperty target = new SimpleStringProperty("");
-		final ObservableValueBinding<?, String> binding = new ObservableValueBinding<>(source, target);
+		final ObservableValueBinding<String, String> binding = new ObservableValueBinding<>(source, target);
 
 		// WHEN
 		binding.bind();
@@ -140,7 +200,7 @@ class ObservableValueBindingTest {
 		final BeanWrapper wrapper = new BeanWrapper(new Model());
 		final BeanPropertyReference<String> source = wrapper.getBeanPropertyReference("plainString");
 		final StringProperty target = new SimpleStringProperty("");
-		final ObservableValueBinding<?, String> binding = new ObservableValueBinding<>(source, target);
+		final ObservableValueBinding<String, String> binding = new ObservableValueBinding<>(source, target);
 
 		// WHEN
 		binding.bind();
@@ -272,6 +332,10 @@ class ObservableValueBindingTest {
 
 		private String plainString = "Hello World";
 
+		private final ObjectProperty<Integer> objectIntegerValue = new SimpleObjectProperty<>(Integer.valueOf(5));
+
+		private LocalDateTime localDateTime = LocalDateTime.of(2021, 9, 5, 13, 5);
+
 		public final StringProperty stringValueProperty() {
 			return stringValue;
 		}
@@ -310,6 +374,26 @@ class ObservableValueBindingTest {
 
 		public final void setIntegerValue(final int integerValue) {
 			integerValueProperty().set(integerValue);
+		}
+
+		public final ObjectProperty<Integer> objectIntegerValueProperty() {
+			return objectIntegerValue;
+		}
+
+		public final Integer getObjectIntegerValue() {
+			return objectIntegerValueProperty().get();
+		}
+
+		public final void setObjectIntegerValue(final Integer objectIntegerValue) {
+			objectIntegerValueProperty().set(objectIntegerValue);
+		}
+
+		public LocalDateTime getLocalDateTime() {
+			return localDateTime;
+		}
+
+		public void setLocalDateTime(final LocalDateTime localDateTime) {
+			this.localDateTime = localDateTime;
 		}
 
 	}

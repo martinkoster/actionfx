@@ -23,42 +23,35 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
-import org.junit.jupiter.api.Test;
-
 /**
- * JUnit test case for {@link DateToStringConverter}.
+ * Converts a {@link java.time.*} to a {@link String}.
  *
  * @author koster
  *
  */
-class StringToDateConverterTest {
+public class JavaTimeToStringConverter extends AbstractJavaTimeConverter<TemporalAccessor, String> {
 
-	@Test
-	void testApply() {
-		// GIVEN
-		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-		final Date date = new Date(1630835160000l);
+	private final JavaTimeToJavaTimeConverter<TemporalAccessor, ZonedDateTime> javaTimeConverter;
 
-		// THEN
-		assertThat(converter.apply(sdf.format(date)), equalTo(date));
+	/**
+	 * Accepts a format pattern like "dd.MM.yyyy hh:mm" and a locale.
+	 *
+	 * @param formatPattern the format pattern
+	 * @param locale        the locale
+	 */
+	public JavaTimeToStringConverter(final String formatPattern, final Locale locale) {
+		super(formatPattern, locale);
+		javaTimeConverter = new JavaTimeToJavaTimeConverter<>(ZonedDateTime.class);
 	}
 
-	@Test
-	void testApply_invalidDateString() {
-		// GIVEN
-		final StringToDateConverter converter = new StringToDateConverter("dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
-
-		// THEN
-		assertThat(converter.apply("invald"), nullValue());
+	@Override
+	public String convert(final TemporalAccessor source) {
+		// level up to zoned-date-time as we need a timezone for converting to a string
+		return getDateTimeFormatter().format(javaTimeConverter.convert(source));
 	}
 
 }

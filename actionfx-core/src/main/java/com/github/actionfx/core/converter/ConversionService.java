@@ -27,6 +27,7 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Path;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.utils.ReflectionUtils;
@@ -99,15 +101,13 @@ public class ConversionService {
 	 *
 	 * @param <S>
 	 *
-	 * @param source        the source object to convert (may be {@code null})
-	 * @param targetType    the target type to convert to (required)
-	 * @param formatPattern an optional, nullable format pattern (e.g. for
-	 *                      {@link java.text.NumberFormat})
+	 * @param source     the source object to convert (may be {@code null})
+	 * @param targetType the target type to convert to (required)
 	 * @return the converted object, an instance of targetType
 	 *
 	 */
 	public <T> T convert(final Object source, final Class<T> targetType) {
-		return convert(source, targetType, null);
+		return convert(source, source != null ? source.getClass() : null, targetType, null);
 	}
 
 	/**
@@ -122,26 +122,45 @@ public class ConversionService {
 	 * @return the converted object, an instance of targetType
 	 *
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T convert(final Object source, final Class<T> targetType, final String formatPattern) {
-		if (source == null) {
+		return convert(source, source != null ? source.getClass() : null, targetType, formatPattern);
+	}
+
+	/**
+	 * Convert the given {@code source} to the specified {@code targetType}.
+	 *
+	 * @param <T>           the target type
+	 *
+	 * @param source        the source object to convert (may be {@code null})
+	 * @param sourceTpye    the source type (important, when {@code source} itself
+	 *                      is {@code null})
+	 * @param targetType    the target type to convert to (required)
+	 * @param formatPattern an optional, nullable format pattern (e.g. for
+	 *                      {@link java.text.NumberFormat} or
+	 *                      {@link java.time.format.DateTimeFormatter})
+	 * @return the converted object, an instance of targetType
+	 *
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T convert(final Object source, final Class<?> sourceType, final Class<T> targetType,
+			final String formatPattern) {
+		if (source == null && sourceType == null) {
 			if (!targetType.isPrimitive()) {
 				return null;
 			}
 			throw new IllegalArgumentException("Can not convert 'null' to target type '" + targetType.getCanonicalName()
 					+ "' as it is a primitive!");
 		}
-		if (targetType.isAssignableFrom(source.getClass())) {
+		if (sourceType != null && targetType.isAssignableFrom(sourceType)) {
 			// no conversion required, source is of targetType already
 			return (T) source;
 		}
-		final Converter<Object, T> converter = (Converter<Object, T>) createConverter(source.getClass(), targetType,
+		final Converter<Object, T> converter = (Converter<Object, T>) createConverter(sourceType, targetType,
 				formatPattern);
 		if (converter != null) {
 			return converter.apply(source);
 		}
-		throw new IllegalArgumentException("Unable to convert type '" + source.getClass().getCanonicalName()
-				+ "' to type '" + targetType.getCanonicalName() + "'!");
+		throw new IllegalArgumentException("Unable to convert type '" + sourceType + "' to type '" + targetType + "'!");
 	}
 
 	/**
@@ -165,8 +184,10 @@ public class ConversionService {
 	 * @return the created string converter
 	 */
 	public <T> StringConverter<T> createStringConverter(final Class<T> targetType, final String formatPattern) {
-		final Converter<T, String> toStringConverter = createConverter(targetType, String.class, formatPattern);
-		final Converter<String, T> fromStringConverter = createConverter(String.class, targetType, formatPattern);
+		final Function<T, String> toStringConverter = value -> this.convert(value,
+				value != null ? value.getClass() : null, String.class, formatPattern);
+		final Function<String, T> fromStringConverter = value -> this.convert(value, String.class, targetType,
+				formatPattern);
 		return new GenericStringConverter<>(toStringConverter, fromStringConverter);
 	}
 
@@ -199,8 +220,8 @@ public class ConversionService {
 	 */
 	public <S, T> BidirectionalConverter<S, T> createBidirectionalConverter(final Class<S> sourceType,
 			final Class<T> targetType, final String formatPattern) {
-		final Converter<T, S> toConverter = createConverter(targetType, sourceType, formatPattern); // NOSONAR
-		final Converter<S, T> fromConverter = createConverter(sourceType, targetType, formatPattern);
+		final Function<T, S> toConverter = value -> this.convert(value, targetType, sourceType, formatPattern);
+		final Function<S, T> fromConverter = value -> this.convert(value, sourceType, targetType, formatPattern);
 		return new GenericBidirectionalConverter<>(fromConverter, toConverter);
 	}
 
@@ -232,7 +253,7 @@ public class ConversionService {
 	 *         available for the specified types
 	 */
 	@SuppressWarnings("unchecked")
-	protected <S, T> Converter<S, T> createConverter(final Class<S> sourceType, final Class<T> targetType,
+	protected <S, T> Function<S, T> createConverter(final Class<S> sourceType, final Class<T> targetType,
 			final String formatPattern) {
 		final ConverterFactory<S, T> converterFactory = lookupConverterFactory(sourceType, targetType);
 		if (converterFactory == null) {
@@ -403,6 +424,20 @@ public class ConversionService {
 				(sourceClass, targetClass, locale, formatPattern) -> new StringToDateConverter(formatPattern, locale));
 		CONVERTER_FACTORIES.put(ConvertiblePair.of(Date.class, String.class),
 				(sourceClass, targetClass, locale, formatPattern) -> new DateToStringConverter(formatPattern, locale));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(Date.class, TemporalAccessor.class),
+				(sourceClass, targetClass, locale, formatPattern) -> new DateToJavaTimeConverter<>(targetClass));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(TemporalAccessor.class, Date.class),
+				(sourceClass, targetClass, locale, formatPattern) -> new JavaTimeToDateConverter());
+
+		// Java Time converter
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(TemporalAccessor.class, TemporalAccessor.class),
+				(sourceClass, targetClass, locale, formatPattern) -> new JavaTimeToJavaTimeConverter<>(targetClass));
+
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, TemporalAccessor.class), (sourceClass, targetClass,
+				locale, formatPattern) -> new StringToJavaTimeConverter<>(targetClass, formatPattern, locale));
+		CONVERTER_FACTORIES.put(ConvertiblePair.of(TemporalAccessor.class, String.class), (sourceClass, targetClass,
+				locale, formatPattern) -> new JavaTimeToStringConverter(formatPattern, locale));
+
 	}
 
 	/**
@@ -486,7 +521,7 @@ public class ConversionService {
 	public interface ConverterFactory<S, T> {
 
 		/**
-		 * Creates a new instance of a {@link Converter}
+		 * Creates a new instance of a {@link Converter} / {@link Function}.
 		 *
 		 * @param <S>           the source type
 		 * @param <T>           the target type
@@ -497,7 +532,7 @@ public class ConversionService {
 		 *                      {@link java.text.NumberFormat})
 		 * @return the created converter instance
 		 */
-		public Converter<S, T> create(Class<S> sourceClass, Class<T> targetClass, Locale locale, String formatPattern);
+		public Function<S, T> create(Class<S> sourceClass, Class<T> targetClass, Locale locale, String formatPattern);
 	}
 
 	public final Property<Locale> localePropertyProperty() {
