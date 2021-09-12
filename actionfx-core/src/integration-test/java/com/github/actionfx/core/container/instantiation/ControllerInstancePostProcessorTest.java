@@ -66,7 +66,7 @@ class ControllerInstancePostProcessorTest {
 
 	@BeforeAll
 	static void beforeAll() {
-		ActionFX.builder().build();
+		ActionFX.builder().scanPackage("dummy.package").build().scanForActionFXComponents();
 	}
 
 	@Test

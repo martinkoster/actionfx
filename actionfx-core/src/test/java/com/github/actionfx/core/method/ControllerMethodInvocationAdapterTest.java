@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -62,6 +63,7 @@ import com.github.actionfx.core.annotation.AFXFromTextInputDialog;
 import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
 import com.github.actionfx.core.annotation.ArgumentHint;
 import com.github.actionfx.core.container.BeanContainerFacade;
+import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.method.ControllerMethodInvocationAdapter.ParameterValue;
@@ -85,6 +87,14 @@ import javafx.scene.control.SelectionMode;
  */
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class ControllerMethodInvocationAdapterTest {
+
+	private ActionFXMock actionFX;
+
+	@BeforeEach
+	void onSetup() {
+		actionFX = new ActionFXMock();
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+	}
 
 	@Test
 	void testInvoke_withVoidMethod() {
