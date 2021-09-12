@@ -34,11 +34,13 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.testfx.util.WaitForAsyncUtils;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.ParentView;
@@ -60,6 +62,11 @@ import javafx.scene.layout.HBox;
 class ActionFXMethodInvocationTest {
 
 	private final MethodHolder holder = Mockito.spy(new MethodHolder());
+
+	@BeforeAll
+	static void beforeAll() {
+		ActionFX.builder().scanPackage("dummy.package").build().scanForActionFXComponents();
+	}
 
 	@Test
 	void testCall_voidMethod() {
