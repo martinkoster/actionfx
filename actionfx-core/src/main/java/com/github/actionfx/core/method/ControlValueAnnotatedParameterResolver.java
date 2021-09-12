@@ -26,7 +26,9 @@ package com.github.actionfx.core.method;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXControlValue;
+import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlWrapper;
@@ -47,6 +49,7 @@ public class ControlValueAnnotatedParameterResolver implements AnnotatedParamete
 	public <T> T resolve(final Object controller, final Method method, final Parameter parameter,
 			final AFXControlValue controlValue, final Class<T> expectedType) {
 		final View view = ControllerWrapper.getViewFrom(controller);
+		final ConversionService conversionService = ActionFX.getInstance().getConversionService();
 		if (view == null) {
 			throw new IllegalStateException("There is no view associated with controller of type '"
 					+ controller.getClass().getCanonicalName() + "'!");
@@ -77,14 +80,16 @@ public class ControlValueAnnotatedParameterResolver implements AnnotatedParamete
 		default:
 			throw new IllegalStateException("Unsupported control property '" + controlValue.sourceProperty() + "'!");
 		}
-		if (value != null && !parameter.getType().isAssignableFrom(value.getClass())) {
+		if (value != null && !conversionService.canConvert(value.getClass(), expectedType)) {
 			throw new IllegalStateException("Value retrieved for control with ID='" + controlValue.value()
 					+ "' inside the view hosted by controller '" + controller.getClass()
 					+ "' is not compatible with the method argument of type '" + parameter.getType()
 					+ "'! Control value is of type '" + value.getClass() + "'");
 
 		}
-		return (T) value;
+		return value == null ? null
+				: (T) conversionService.convert(value, value.getClass(), parameter.getType(),
+						controlValue.formatPattern());
 	}
 
 }

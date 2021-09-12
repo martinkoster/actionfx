@@ -418,6 +418,7 @@ Attribute 					| Description
 --------------------------- | -------------------------------------------------
 `value`						| ID of the control whose value shall be bound to the annotated method argument
 `sourceProperty`          | The control's property where the value shall be retrieved from. Default is the user value of the control `USER_VALUE_OBSERVABLE`. Other possible values are `SINGLE_VALUE_PROPERTY` (text in a text field - but which is the user value at the same time) or `ITEMS_OBSERVABLE_LIST` (e.g. items in a table view or list view).
+`formatPattern`           | An optional format pattern that is used to format. This parameter can be used e.g to convert floating point numbers to/from string with a specific pattern or to convert Java `java.time` datetime types to/from string.
 
 **Example:**
 ```java
@@ -427,7 +428,10 @@ Attribute 					| Description
 	}
 ```
 
-
+The value of the `formatPattern` attribute needs to be adjusted depending on the underlying data types and formatter. ActionFX supports the following formatter for to/from-string conversions:
+* `java.text.NumberFormat` for converting double and float to and from string.
+* `java.text.SimpleDateFormat` for converting a `java.util.Date`to and from string.
+* `java.time.format.DateTimeFormatter`for converting classes derived from `java.time.temporal.TemporalAccessor` (e.g. `java.time.Instant`, `java.time.LocalDateTime`, `java.time.ZonedDateTime` etc.)
 
 #### Annotation @AFXConverter
 

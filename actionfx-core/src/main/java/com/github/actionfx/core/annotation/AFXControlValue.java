@@ -72,4 +72,15 @@ public @interface AFXControlValue {
 	 */
 	public ControlProperties sourceProperty() default ControlProperties.USER_VALUE_OBSERVABLE;
 
+	/**
+	 * An optional format pattern that is used to formatting / type conversion.
+	 * <p>
+	 * This parameter can be used e.g to convert floating point numbers to/from
+	 * string with a specific pattern or to convert Java {@code java.time} datetime
+	 * types to/from string.
+	 *
+	 * @return the format pattern.
+	 */
+	public String formatPattern() default "";
+
 }

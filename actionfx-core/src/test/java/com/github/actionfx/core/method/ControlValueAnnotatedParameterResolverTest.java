@@ -33,10 +33,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.ActionFXMock;
 import com.github.actionfx.core.annotation.AFXControlValue;
+import com.github.actionfx.core.container.BeanContainerFacade;
+import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.ParentView;
 import com.github.actionfx.core.view.View;
@@ -57,6 +61,13 @@ import javafx.scene.layout.VBox;
  */
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class ControlValueAnnotatedParameterResolverTest {
+	private ActionFXMock actionFX;
+
+	@BeforeEach
+	void onSetup() {
+		actionFX = new ActionFXMock();
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+	}
 
 	@Test
 	void testResolved_textField_valueTakenFromUserValue() {
@@ -88,6 +99,22 @@ class ControlValueAnnotatedParameterResolverTest {
 
 		// THEN
 		assertThat(value, equalTo("Hello World"));
+	}
+
+	@Test
+	void testResolved_textField_withFormatPattern() {
+		// GIVEN
+		final ClassWithMethods instance = new ClassWithMethods();
+		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "methodWithFormatPattern");
+		final Parameter parameter = method.getParameters()[0];
+		final AFXControlValue annotation = parameter.getAnnotation(AFXControlValue.class);
+		final ControlValueAnnotatedParameterResolver resolver = new ControlValueAnnotatedParameterResolver();
+
+		// WHEN
+		final Double value = resolver.resolve(instance, method, parameter, annotation, Double.class);
+
+		// THEN
+		assertThat(value, equalTo(Double.valueOf(42.0)));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -227,6 +254,11 @@ class ControlValueAnnotatedParameterResolverTest {
 
 		public void methodWithIncompatibleType(@AFXControlValue("textField") final List<String> selectedEntries) {
 		}
+
+		public void methodWithFormatPattern(
+				@AFXControlValue(value = "numberTextField", formatPattern = "#,###.##") final Double value) {
+		}
+
 	}
 
 	/**
@@ -241,6 +273,9 @@ class ControlValueAnnotatedParameterResolverTest {
 			final TextField textField = new TextField();
 			textField.setId("textField");
 			textField.setText("Hello World");
+			final TextField numberTextField = new TextField();
+			numberTextField.setId("numberTextField");
+			numberTextField.setText("42.00");
 			final ListView<String> listView = new ListView<>();
 			listView.setId("listView");
 			listView.getItems().addAll("Item 1", "Item 2", "Item 3");
@@ -249,7 +284,7 @@ class ControlValueAnnotatedParameterResolverTest {
 			listView.getSelectionModel().select(2);
 			final VBox vbox = new VBox();
 			vbox.setId("vbox");
-			getChildren().addAll(textField, listView, vbox);
+			getChildren().addAll(textField, numberTextField, listView, vbox);
 		}
 	}
 
