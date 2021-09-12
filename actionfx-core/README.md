@@ -421,9 +421,24 @@ Attribute 					| Description
 `formatPattern`           | An optional format pattern that is used to format. This parameter can be used e.g to convert floating point numbers to/from string with a specific pattern or to convert Java `java.time` datetime types to/from string.
 
 **Example:**
+
 ```java
+	// inject the string value of a text field
 	@AFXOnAction(controlId = "actionButton")
 	public void onButtonClicked(@AFXControlValue("usernameTextField") final String username) {
+		// do some action stuff
+	}
+	
+	// inject all items of a table view
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXControlValue(value = "tableView", sourceProperty =  ControlProperties.ITEMS_OBSERVABLE_LIST) List<String> tableItems) {
+		// do some action stuff
+	}
+	
+	// convert a string value from a text field to a java.time.LocalDateTime using the supplied format
+	// pattern and inject it
+	@AFXOnAction(controlId = "actionButton")
+	public void onButtonClicked(@AFXControlValue(value = "dateTextField", formatPattern="dd.MM.yyyy HH:mm") final LocalDateTime dateTime) {
 		// do some action stuff
 	}
 ```
