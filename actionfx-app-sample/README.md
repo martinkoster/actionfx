@@ -508,7 +508,7 @@ In the mapping declaration above, we can also see that it is possible to use dif
 	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView")
 ```
 
-What happens here is that the list of order books is bound to the `itemsProperty` of the used `javafx.scene.control.TableView` via `targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST` and in the second step, the list of order books is then bound to the **selected items list** of the table view. Means: First we fill the table view with the books from the model, and then we select all books inside the table view.
+What happens here is that the list of ordered books is bound to the `itemsProperty` of the used `javafx.scene.control.TableView` via `targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST` and in the second step, the list of ordered books is then bound to the **selected items list** of the table view. Means: First we fill the table view with the books from the model, and then we select all books inside the table view.
 
 As another feature, we are using the `@AFXEnableNode` annotation to activate the "Complete Order" button only, when the user has provided a value in all controls of the form.
 
