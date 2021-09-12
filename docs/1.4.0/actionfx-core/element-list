@@ -1,6 +1,8 @@
 com.github.actionfx.core
 com.github.actionfx.core.annotation
 com.github.actionfx.core.app
+com.github.actionfx.core.beans
+com.github.actionfx.core.bind
 com.github.actionfx.core.collections
 com.github.actionfx.core.container
 com.github.actionfx.core.container.extension

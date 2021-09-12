@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -139,9 +139,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - the type to convert to/from string</dd>
 </dl>
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;T,&#8203;java.lang.String&gt;</code></dd>
+</dl>
 <hr>
 <pre>public class <span class="typeNameLabel">GenericStringConverter&lt;T&gt;</span>
-extends javafx.util.StringConverter&lt;T&gt;</pre>
+extends javafx.util.StringConverter&lt;T&gt;
+implements <a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;T,&#8203;java.lang.String&gt;</pre>
 <div class="block"><code>StringConverter</code> that is able to use 2 <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> to perform
  to-/from-string conversion.</div>
 <dl>
@@ -168,8 +173,8 @@ extends javafx.util.StringConverter&lt;T&gt;</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(com.github.actionfx.core.converter.Converter,com.github.actionfx.core.converter.Converter)">GenericStringConverter</a></span>&#8203;(<a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>,&#8203;java.lang.String&gt;&nbsp;toStringConverter,
-                      <a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;java.lang.String,&#8203;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&gt;&nbsp;fromStringConverter)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.util.function.Function,java.util.function.Function)">GenericStringConverter</a></span>&#8203;(java.util.function.Function&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>,&#8203;java.lang.String&gt;&nbsp;toStringConverter,
+                      java.util.function.Function&lt;java.lang.String,&#8203;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&gt;&nbsp;fromStringConverter)</code></th>
 <td class="colLast">
 <div class="block">Constructor accepting a to-string and a from-string converter.</div>
 </td>
@@ -194,10 +199,24 @@ extends javafx.util.StringConverter&lt;T&gt;</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#from(java.lang.String)">from</a></span>&#8203;(java.lang.String&nbsp;target)</code></th>
+<td class="colLast">
+<div class="block">Converts to the type <code>S</code> from the given <code>target</code>.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#fromString(java.lang.String)">fromString</a></span>&#8203;(java.lang.String&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#to(T)">to</a></span>&#8203;(<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&nbsp;source)</code></th>
+<td class="colLast">
+<div class="block">Converts the given <code>source</code> to the target type <code>T</code>.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString(T)">toString</a></span>&#8203;(<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&nbsp;value)</code></th>
 <td class="colLast">&nbsp;</td>
@@ -226,19 +245,19 @@ extends javafx.util.StringConverter&lt;T&gt;</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(com.github.actionfx.core.converter.Converter,com.github.actionfx.core.converter.Converter)">
+<a id="&lt;init&gt;(java.util.function.Function,java.util.function.Function)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>GenericStringConverter</h4>
-<pre>public&nbsp;GenericStringConverter&#8203;(<a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>,&#8203;java.lang.String&gt;&nbsp;toStringConverter,
-                              <a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;java.lang.String,&#8203;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&gt;&nbsp;fromStringConverter)</pre>
+<pre>public&nbsp;GenericStringConverter&#8203;(java.util.function.Function&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>,&#8203;java.lang.String&gt;&nbsp;toStringConverter,
+                              java.util.function.Function&lt;java.lang.String,&#8203;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&gt;&nbsp;fromStringConverter)</pre>
 <div class="block">Constructor accepting a to-string and a from-string converter.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>toStringConverter</code> - </dd>
-<dd><code>fromStringConverter</code> - </dd>
+<dd><code>toStringConverter</code> - the to-string converter</dd>
+<dd><code>fromStringConverter</code> - the from-string converter</dd>
 </dl>
 </li>
 </ul>
@@ -270,13 +289,53 @@ extends javafx.util.StringConverter&lt;T&gt;</pre>
 <a id="fromString(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>fromString</h4>
 <pre class="methodSignature">public&nbsp;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&nbsp;fromString&#8203;(java.lang.String&nbsp;value)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>fromString</code>&nbsp;in class&nbsp;<code>javafx.util.StringConverter&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a id="to(java.lang.Object)">
+<!--   -->
+</a><a id="to(T)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>to</h4>
+<pre class="methodSignature">public&nbsp;java.lang.String&nbsp;to&#8203;(<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&nbsp;source)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BidirectionalConverter.html#to(S)">BidirectionalConverter</a></code></span></div>
+<div class="block">Converts the given <code>source</code> to the target type <code>T</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="BidirectionalConverter.html#to(S)">to</a></code>&nbsp;in interface&nbsp;<code><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>,&#8203;java.lang.String&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>source</code> - the source to convert</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the converted value</dd>
+</dl>
+</li>
+</ul>
+<a id="from(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>from</h4>
+<pre class="methodSignature">public&nbsp;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>&nbsp;from&#8203;(java.lang.String&nbsp;target)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="BidirectionalConverter.html#from(T)">BidirectionalConverter</a></code></span></div>
+<div class="block">Converts to the type <code>S</code> from the given <code>target</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="BidirectionalConverter.html#from(T)">from</a></code>&nbsp;in interface&nbsp;<code><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;<a href="GenericStringConverter.html" title="type parameter in GenericStringConverter">T</a>,&#8203;java.lang.String&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>target</code> - the target value to convert</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the converted value</dd>
 </dl>
 </li>
 </ul>

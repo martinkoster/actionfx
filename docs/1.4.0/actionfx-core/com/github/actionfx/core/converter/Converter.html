@@ -26,8 +26,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var data = {"i0":18,"i1":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -128,16 +128,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd><code>T</code> - the target type</dd>
 </dl>
 <dl>
-<dt>All Known Implementing Classes:</dt>
-<dd><code><a href="FileToPathConverter.html" title="class in com.github.actionfx.core.converter">FileToPathConverter</a></code>, <code><a href="FileToStringConverter.html" title="class in com.github.actionfx.core.converter">FileToStringConverter</a></code>, <code><a href="FileToURIConverter.html" title="class in com.github.actionfx.core.converter">FileToURIConverter</a></code>, <code><a href="NumberToNumberConverter.html" title="class in com.github.actionfx.core.converter">NumberToNumberConverter</a></code>, <code><a href="PathToFileConverter.html" title="class in com.github.actionfx.core.converter">PathToFileConverter</a></code>, <code><a href="PathToStringConverter.html" title="class in com.github.actionfx.core.converter">PathToStringConverter</a></code>, <code><a href="PathToURIConverter.html" title="class in com.github.actionfx.core.converter">PathToURIConverter</a></code>, <code><a href="StringToFileConverter.html" title="class in com.github.actionfx.core.converter">StringToFileConverter</a></code>, <code><a href="StringToNumberConverter.html" title="class in com.github.actionfx.core.converter">StringToNumberConverter</a></code>, <code><a href="StringToPathConverter.html" title="class in com.github.actionfx.core.converter">StringToPathConverter</a></code>, <code><a href="StringToURIConverter.html" title="class in com.github.actionfx.core.converter">StringToURIConverter</a></code>, <code><a href="URIToFileConverter.html" title="class in com.github.actionfx.core.converter">URIToFileConverter</a></code>, <code><a href="URIToPathConverter.html" title="class in com.github.actionfx.core.converter">URIToPathConverter</a></code>, <code><a href="URIToStringConverter.html" title="class in com.github.actionfx.core.converter">URIToStringConverter</a></code></dd>
+<dt>All Superinterfaces:</dt>
+<dd><code>java.util.function.Function&lt;S,&#8203;T&gt;</code></dd>
 </dl>
 <dl>
-<dt>Functional Interface:</dt>
-<dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
+<dt>All Known Implementing Classes:</dt>
+<dd><code><a href="AbstractDateConverter.html" title="class in com.github.actionfx.core.converter">AbstractDateConverter</a></code>, <code><a href="AbstractFloatingPointConverter.html" title="class in com.github.actionfx.core.converter">AbstractFloatingPointConverter</a></code>, <code><a href="AbstractJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">AbstractJavaTimeConverter</a></code>, <code><a href="DateToJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">DateToJavaTimeConverter</a></code>, <code><a href="DateToStringConverter.html" title="class in com.github.actionfx.core.converter">DateToStringConverter</a></code>, <code><a href="DoubleToStringConverter.html" title="class in com.github.actionfx.core.converter">DoubleToStringConverter</a></code>, <code><a href="FileToPathConverter.html" title="class in com.github.actionfx.core.converter">FileToPathConverter</a></code>, <code><a href="FileToStringConverter.html" title="class in com.github.actionfx.core.converter">FileToStringConverter</a></code>, <code><a href="FileToURIConverter.html" title="class in com.github.actionfx.core.converter">FileToURIConverter</a></code>, <code><a href="FloatToStringConverter.html" title="class in com.github.actionfx.core.converter">FloatToStringConverter</a></code>, <code><a href="JavaTimeToDateConverter.html" title="class in com.github.actionfx.core.converter">JavaTimeToDateConverter</a></code>, <code><a href="JavaTimeToJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">JavaTimeToJavaTimeConverter</a></code>, <code><a href="JavaTimeToStringConverter.html" title="class in com.github.actionfx.core.converter">JavaTimeToStringConverter</a></code>, <code><a href="NumberToNumberConverter.html" title="class in com.github.actionfx.core.converter">NumberToNumberConverter</a></code>, <code><a href="ObjectToStringConverter.html" title="class in com.github.actionfx.core.converter">ObjectToStringConverter</a></code>, <code><a href="PathToFileConverter.html" title="class in com.github.actionfx.core.converter">PathToFileConverter</a></code>, <code><a href="PathToStringConverter.html" title="class in com.github.actionfx.core.converter">PathToStringConverter</a></code>, <code><a href="PathToURIConverter.html" title="class in com.github.actionfx.core.converter">PathToURIConverter</a></code>, <code><a href="StringToDateConverter.html" title="class in com.github.actionfx.core.converter">StringToDateConverter</a></code>, <code><a href="StringToDoubleConverter.html" title="class in com.github.actionfx.core.converter">StringToDoubleConverter</a></code>, <code><a href="StringToFileConverter.html" title="class in com.github.actionfx.core.converter">StringToFileConverter</a></code>, <code><a href="StringToFloatConverter.html" title="class in com.github.actionfx.core.converter">StringToFloatConverter</a></code>, <code><a href="StringToJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">StringToJavaTimeConverter</a></code>, <code><a href="StringToNumberConverter.html" title="class in com.github.actionfx.core.converter">StringToNumberConverter</a></code>, <code><a href="StringToPathConverter.html" title="class in com.github.actionfx.core.converter">StringToPathConverter</a></code>, <code><a href="StringToURIConverter.html" title="class in com.github.actionfx.core.converter">StringToURIConverter</a></code>, <code><a href="URIToFileConverter.html" title="class in com.github.actionfx.core.converter">URIToFileConverter</a></code>, <code><a href="URIToPathConverter.html" title="class in com.github.actionfx.core.converter">URIToPathConverter</a></code>, <code><a href="URIToStringConverter.html" title="class in com.github.actionfx.core.converter">URIToStringConverter</a></code></dd>
 </dl>
 <hr>
-<pre>@FunctionalInterface
-public interface <span class="typeNameLabel">Converter&lt;S,&#8203;T&gt;</span></pre>
+<pre>public interface <span class="typeNameLabel">Converter&lt;S,&#8203;T&gt;</span>
+extends java.util.function.Function&lt;S,&#8203;T&gt;</pre>
 <div class="block">A converter converts a source object of type <code>S</code> to a target of type
  <code>T</code>.</div>
 <dl>
@@ -158,13 +158,18 @@ public interface <span class="typeNameLabel">Converter&lt;S,&#8203;T&gt;</span><
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default <a href="Converter.html" title="type parameter in Converter">T</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#apply(S)">apply</a></span>&#8203;(<a href="Converter.html" title="type parameter in Converter">S</a>&nbsp;source)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="Converter.html" title="type parameter in Converter">T</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convert(S)">convert</a></span>&#8203;(<a href="Converter.html" title="type parameter in Converter">S</a>&nbsp;source)</code></th>
 <td class="colLast">
@@ -172,6 +177,13 @@ public interface <span class="typeNameLabel">Converter&lt;S,&#8203;T&gt;</span><
 </td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a id="methods.inherited.from.class.java.util.function.Function">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;java.util.function.Function</h3>
+<code>andThen, compose</code></li>
+</ul>
 </li>
 </ul>
 </section>
@@ -193,7 +205,7 @@ public interface <span class="typeNameLabel">Converter&lt;S,&#8203;T&gt;</span><
 </a><a id="convert(S)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>convert</h4>
 <pre class="methodSignature"><a href="Converter.html" title="type parameter in Converter">T</a>&nbsp;convert&#8203;(<a href="Converter.html" title="type parameter in Converter">S</a>&nbsp;source)</pre>
@@ -208,6 +220,21 @@ public interface <span class="typeNameLabel">Converter&lt;S,&#8203;T&gt;</span><
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.IllegalArgumentException</code> - if the source cannot be converted to the
                                   desired target type</dd>
+</dl>
+</li>
+</ul>
+<a id="apply(java.lang.Object)">
+<!--   -->
+</a><a id="apply(S)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>apply</h4>
+<pre class="methodSignature">default&nbsp;<a href="Converter.html" title="type parameter in Converter">T</a>&nbsp;apply&#8203;(<a href="Converter.html" title="type parameter in Converter">S</a>&nbsp;source)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>apply</code>&nbsp;in interface&nbsp;<code>java.util.function.Function&lt;<a href="Converter.html" title="type parameter in Converter">S</a>,&#8203;<a href="Converter.html" title="type parameter in Converter">T</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>

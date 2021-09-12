@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -142,7 +142,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public abstract class <span class="typeNameLabel">AbstractView</span>
 extends java.lang.Object
 implements <a href="View.html" title="interface in com.github.actionfx.core.view">View</a></pre>
-<div class="block">Abstract base class for view implementations.</div>
+<div class="block">Abstract base class for an ActionFX view implementations.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>koster</dd>
@@ -168,66 +168,71 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected java.util.Map&lt;java.lang.Object,&#8203;<a href="../bind/BindingModelProxy.html" title="class in com.github.actionfx.core.bind">BindingModelProxy</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#boundModelInstancesMap">boundModelInstancesMap</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#height">height</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#icon">icon</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#id">id</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,&#8203;<a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupCache">lookupCache</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#maximized">maximized</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#modalDialogue">modalDialogue</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#posX">posX</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#posY">posY</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.util.ResourceBundle</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resourceBundle">resourceBundle</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#rootNode">rootNode</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stylesheets">stylesheets</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#width">width</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#windowTitle">windowTitle</a></span></code></th>
 <td class="colLast">&nbsp;</td>
@@ -289,89 +294,116 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)">bind</a></span>&#8203;(java.lang.Object&nbsp;model,
+    <a href="../bind/BindingTargetResolver.html" title="interface in com.github.actionfx.core.bind">BindingTargetResolver</a>&nbsp;resolver)</code></th>
+<td class="colLast">
+<div class="block">Performs a data binding between the supplied <code>model</code> and the controls
+ that are part of this view.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#detachView()">detachView</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Detaches this view from the view node's parent.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#equals(java.lang.Object)">equals</a></span>&#8203;(java.lang.Object&nbsp;obj)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getHeight()">getHeight</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getIcon()">getIcon</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getId()">getId</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The view ID, unique over all views.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPosX()">getPosX</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPosY()">getPosY</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.ResourceBundle</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getResourceBundle()">getResourceBundle</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the resource bundle associated with this view.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getRootNode()">getRootNode</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the root node of the view.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>javafx.scene.Scene</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getScene()">getScene</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the <code>Scene</code> that this view is part of.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getStylesheets()">getStylesheets</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>java.util.stream.Stream&lt;<a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getViewNodesAsStream()">getViewNodesAsStream</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Returns a stream to all nodes that participate in this view, starting from
+ the root note (see<a href="View.html#getRootNode()"><code>View.getRootNode()</code></a>).</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getWidth()">getWidth</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>javafx.stage.Window</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getWindow()">getWindow</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the <code>Window</code> where this view is currently displayed in.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getWindowTitle()">getWindowTitle</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hashCode()">hashCode</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hide()">hide</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Hides the view.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#initializeStage(javafx.stage.Stage)">initializeStage</a></span>&#8203;(javafx.stage.Stage&nbsp;stage)</code></th>
 <td class="colLast">
@@ -379,31 +411,31 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
  view.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isMaximized()">isMaximized</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isModalDialogue()">isModalDialogue</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupNode(java.lang.String)">lookupNode</a></span>&#8203;(java.lang.String&nbsp;nodeId)</code></th>
 <td class="colLast">
 <div class="block">Looks up a node that carries the supplied <code>nodeId</code>.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show()">show</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Shows the view in a new stage / new window.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show(javafx.stage.Popup,javafx.stage.Window)">show</a></span>&#8203;(javafx.stage.Popup&nbsp;popup,
     javafx.stage.Window&nbsp;owner)</code></th>
@@ -411,18 +443,34 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 <div class="block">Shows the view in the supplied <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show(javafx.stage.Stage)">show</a></span>&#8203;(javafx.stage.Stage&nbsp;stage)</code></th>
 <td class="colLast">
 <div class="block">Shows the view in the supplied <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showAndWait()">showAndWait</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Shows the view and waits in a modal fashion.</div>
+</td>
+</tr>
+<tr id="i28" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#unbind(java.lang.Object)">unbind</a></span>&#8203;(java.lang.Object&nbsp;model)</code></th>
+<td class="colLast">
+<div class="block">Removes any binding between this view and a model object (usually bound via
+ <code>#bind(Object)</code>).</div>
+</td>
+</tr>
+<tr id="i29" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#unbindAll()">unbindAll</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Removes all bindings that have been established via former calls to
+ <a href="View.html#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)"><code>View.bind(Object, BindingTargetResolver)</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -431,7 +479,7 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.com.github.actionfx.core.view.View">
@@ -567,10 +615,19 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 <a id="lookupCache">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>lookupCache</h4>
 <pre>protected final&nbsp;java.util.Map&lt;java.lang.String,&#8203;<a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&gt; lookupCache</pre>
+</li>
+</ul>
+<a id="boundModelInstancesMap">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>boundModelInstancesMap</h4>
+<pre>protected final&nbsp;java.util.Map&lt;java.lang.Object,&#8203;<a href="../bind/BindingModelProxy.html" title="class in com.github.actionfx.core.bind">BindingModelProxy</a>&gt; boundModelInstancesMap</pre>
 </li>
 </ul>
 </li>
@@ -823,6 +880,79 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 </dl>
 </li>
 </ul>
+<a id="getViewNodesAsStream()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getViewNodesAsStream</h4>
+<pre class="methodSignature">public&nbsp;java.util.stream.Stream&lt;<a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&gt;&nbsp;getViewNodesAsStream()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="View.html#getViewNodesAsStream()">View</a></code></span></div>
+<div class="block">Returns a stream to all nodes that participate in this view, starting from
+ the root note (see<a href="View.html#getRootNode()"><code>View.getRootNode()</code></a>). The order of nodes in the stream
+ corresponds to a depth-first search approach.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="View.html#getViewNodesAsStream()">getViewNodesAsStream</a></code>&nbsp;in interface&nbsp;<code><a href="View.html" title="interface in com.github.actionfx.core.view">View</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the nodes of this view as a stream</dd>
+</dl>
+</li>
+</ul>
+<a id="bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bind</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;bind&#8203;(java.lang.Object&nbsp;model,
+                 <a href="../bind/BindingTargetResolver.html" title="interface in com.github.actionfx.core.bind">BindingTargetResolver</a>&nbsp;resolver)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="View.html#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)">View</a></code></span></div>
+<div class="block">Performs a data binding between the supplied <code>model</code> and the controls
+ that are part of this view.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="View.html#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)">bind</a></code>&nbsp;in interface&nbsp;<code><a href="View.html" title="interface in com.github.actionfx.core.view">View</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>model</code> - the model to bind (can be a Java domain object with or
+                       without JavaFX properties)</dd>
+</dl>
+</li>
+</ul>
+<a id="unbind(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unbind</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;unbind&#8203;(java.lang.Object&nbsp;model)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="View.html#unbind(java.lang.Object)">View</a></code></span></div>
+<div class="block">Removes any binding between this view and a model object (usually bound via
+ <code>#bind(Object)</code>).</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="View.html#unbind(java.lang.Object)">unbind</a></code>&nbsp;in interface&nbsp;<code><a href="View.html" title="interface in com.github.actionfx.core.view">View</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>model</code> - the model to unbind</dd>
+</dl>
+</li>
+</ul>
+<a id="unbindAll()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unbindAll</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;unbindAll()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="View.html#unbindAll()">View</a></code></span></div>
+<div class="block">Removes all bindings that have been established via former calls to
+ <a href="View.html#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)"><code>View.bind(Object, BindingTargetResolver)</code></a>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="View.html#unbindAll()">unbindAll</a></code>&nbsp;in interface&nbsp;<code><a href="View.html" title="interface in com.github.actionfx.core.view">View</a></code></dd>
+</dl>
+</li>
+</ul>
 <a id="initializeStage(javafx.stage.Stage)">
 <!--   -->
 </a>
@@ -922,7 +1052,7 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 <a id="getResourceBundle()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getResourceBundle</h4>
 <pre class="methodSignature">public&nbsp;java.util.ResourceBundle&nbsp;getResourceBundle()</pre>
@@ -933,6 +1063,32 @@ implements <a href="View.html" title="interface in com.github.actionfx.core.view
 <dd><code><a href="View.html#getResourceBundle()">getResourceBundle</a></code>&nbsp;in interface&nbsp;<code><a href="View.html" title="interface in com.github.actionfx.core.view">View</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the resource bundle</dd>
+</dl>
+</li>
+</ul>
+<a id="hashCode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre class="methodSignature">public&nbsp;int&nbsp;hashCode()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a id="equals(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>equals</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;equals&#8203;(java.lang.Object&nbsp;obj)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
 </li>
 </ul>

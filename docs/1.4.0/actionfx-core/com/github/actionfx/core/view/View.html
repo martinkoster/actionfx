@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -128,7 +128,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dl>
 <hr>
 <pre>public interface <span class="typeNameLabel">View</span></pre>
-<div class="block">Interface for JavaFX views.</div>
+<div class="block">Interface for ActionFX views. It provides common routines to show or hide a
+ view, or to lookup nodes within the scene graph.</div>
 <dl>
 <dt><span class="simpleTagLabel">Author:</span></dt>
 <dd>koster</dd>
@@ -164,75 +165,92 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)">bind</a></span>&#8203;(java.lang.Object&nbsp;model,
+    <a href="../bind/BindingTargetResolver.html" title="interface in com.github.actionfx.core.bind">BindingTargetResolver</a>&nbsp;resolver)</code></th>
+<td class="colLast">
+<div class="block">Performs a data binding between the supplied <code>model</code> and the controls
+ that are part of this view.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#detachView()">detachView</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Detaches this view from the view node's parent.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getController()">getController</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the controller instance that handles actions from this view.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getId()">getId</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The view ID, unique over all views.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.ResourceBundle</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getResourceBundle()">getResourceBundle</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the resource bundle associated with this view.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getRootNode()">getRootNode</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the root node of the view.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>javafx.scene.Scene</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getScene()">getScene</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the <code>Scene</code> that this view is part of.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.util.stream.Stream&lt;<a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getViewNodesAsStream()">getViewNodesAsStream</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Returns a stream to all nodes that participate in this view, starting from
+ the root note (see<a href="#getRootNode()"><code>getRootNode()</code></a>).</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>javafx.stage.Window</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getWindow()">getWindow</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the <code>Window</code> where this view is currently displayed in.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hide()">hide</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Hides the view.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupNode(java.lang.String)">lookupNode</a></span>&#8203;(java.lang.String&nbsp;nodeId)</code></th>
 <td class="colLast">
 <div class="block">Looks up a node that carries the supplied <code>nodeId</code>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show()">show</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Shows the view in a new stage / new window.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show(javafx.stage.Popup,javafx.stage.Window)">show</a></span>&#8203;(javafx.stage.Popup&nbsp;popup,
     javafx.stage.Window&nbsp;owner)</code></th>
@@ -240,18 +258,34 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Shows the view in the supplied <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#show(javafx.stage.Stage)">show</a></span>&#8203;(javafx.stage.Stage&nbsp;stage)</code></th>
 <td class="colLast">
 <div class="block">Shows the view in the supplied <code>Stage</code>.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#showAndWait()">showAndWait</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Shows the view and waits in a modal fashion.</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#unbind(java.lang.Object)">unbind</a></span>&#8203;(java.lang.Object&nbsp;model)</code></th>
+<td class="colLast">
+<div class="block">Removes any binding between this view and a model object (usually bound via
+ <code>#bind(Object)</code>).</div>
+</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#unbindAll()">unbindAll</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Removes all bindings that have been established via former calls to
+ <a href="#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)"><code>bind(Object, BindingTargetResolver)</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -456,7 +490,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <a id="lookupNode(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>lookupNode</h4>
 <pre class="methodSignature"><a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&nbsp;lookupNode&#8203;(java.lang.String&nbsp;nodeId)</pre>
@@ -468,6 +502,67 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>the retrieved node, or <code>null</code>, in case there is no node with
          the given <code>nodeId</code></dd>
 </dl>
+</li>
+</ul>
+<a id="getViewNodesAsStream()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getViewNodesAsStream</h4>
+<pre class="methodSignature">java.util.stream.Stream&lt;<a href="graph/NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a>&gt;&nbsp;getViewNodesAsStream()</pre>
+<div class="block">Returns a stream to all nodes that participate in this view, starting from
+ the root note (see<a href="#getRootNode()"><code>getRootNode()</code></a>). The order of nodes in the stream
+ corresponds to a depth-first search approach.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the nodes of this view as a stream</dd>
+</dl>
+</li>
+</ul>
+<a id="bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bind</h4>
+<pre class="methodSignature">void&nbsp;bind&#8203;(java.lang.Object&nbsp;model,
+          <a href="../bind/BindingTargetResolver.html" title="interface in com.github.actionfx.core.bind">BindingTargetResolver</a>&nbsp;resolver)</pre>
+<div class="block">Performs a data binding between the supplied <code>model</code> and the controls
+ that are part of this view.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>model</code> - the model to bind (can be a Java domain object with or
+                       without JavaFX properties)</dd>
+<dd><code>implementation</code> - of <a href="../bind/BindingTargetResolver.html" title="interface in com.github.actionfx.core.bind"><code>BindingTargetResolver</code></a> that resolves a field
+                       from the <code>model</code> to a control in this view.</dd>
+</dl>
+</li>
+</ul>
+<a id="unbind(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unbind</h4>
+<pre class="methodSignature">void&nbsp;unbind&#8203;(java.lang.Object&nbsp;model)</pre>
+<div class="block">Removes any binding between this view and a model object (usually bound via
+ <code>#bind(Object)</code>).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>model</code> - the model to unbind</dd>
+</dl>
+</li>
+</ul>
+<a id="unbindAll()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>unbindAll</h4>
+<pre class="methodSignature">void&nbsp;unbindAll()</pre>
+<div class="block">Removes all bindings that have been established via former calls to
+ <a href="#bind(java.lang.Object,com.github.actionfx.core.bind.BindingTargetResolver)"><code>bind(Object, BindingTargetResolver)</code></a>.</div>
 </li>
 </ul>
 </li>

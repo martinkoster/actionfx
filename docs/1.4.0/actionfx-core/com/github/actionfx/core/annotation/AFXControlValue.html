@@ -84,7 +84,7 @@ loadScripts(document, 'script');</script>
 <li>Summary:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#annotation.type.required.element.summary">Required</a>&nbsp;|&nbsp;</li>
-<li>Optional</li>
+<li><a href="#annotation.type.optional.element.summary">Optional</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
@@ -169,6 +169,38 @@ public @interface <span class="memberNameLabel">AFXControlValue</span></pre>
 </li>
 </ul>
 </section>
+<!-- =========== ANNOTATION TYPE OPTIONAL MEMBER SUMMARY =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="annotation.type.optional.element.summary">
+<!--   -->
+</a>
+<h3>Optional Element Summary</h3>
+<table class="memberSummary">
+<caption><span>Optional Elements</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Optional Element</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#formatPattern()">formatPattern</a></span></code></th>
+<td class="colLast">
+<div class="block">An optional format pattern that is used to formatting / type conversion.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../view/graph/ControlProperties.html" title="enum in com.github.actionfx.core.view.graph">ControlProperties</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#sourceProperty()">sourceProperty</a></span></code></th>
+<td class="colLast">
+<div class="block">The control's property where the value shall be retrieved from.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
 </li>
 </ul>
 </div>
@@ -194,6 +226,59 @@ public @interface <span class="memberNameLabel">AFXControlValue</span></pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the node ID of a control whose value shall be taken for the method
          argument</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<!-- ============ ANNOTATION TYPE MEMBER DETAIL =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="sourceProperty()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>sourceProperty</h4>
+<pre><a href="../view/graph/ControlProperties.html" title="enum in com.github.actionfx.core.view.graph">ControlProperties</a>&nbsp;sourceProperty</pre>
+<div class="block">The control's property where the value shall be retrieved from. Default is
+ the user value of the control
+ (<a href="../view/graph/ControlProperties.html#USER_VALUE_OBSERVABLE"><code>ControlProperties.USER_VALUE_OBSERVABLE</code></a>).</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the property where the value shall be retrieved from</dd>
+</dl>
+<dl>
+<dt>Default:</dt>
+<dd>com.github.actionfx.core.view.graph.ControlProperties.USER_VALUE_OBSERVABLE</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="formatPattern()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>formatPattern</h4>
+<pre>java.lang.String&nbsp;formatPattern</pre>
+<div class="block">An optional format pattern that is used to formatting / type conversion.
+ <p>
+ This parameter can be used e.g to convert floating point numbers to/from
+ string with a specific pattern or to convert Java <code>java.time</code> datetime
+ types to/from string.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the format pattern.</dd>
+</dl>
+<dl>
+<dt>Default:</dt>
+<dd>""</dd>
 </dl>
 </li>
 </ul>
@@ -251,7 +336,7 @@ public @interface <span class="memberNameLabel">AFXControlValue</span></pre>
 <li>Summary:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#annotation.type.required.element.summary">Required</a>&nbsp;|&nbsp;</li>
-<li>Optional</li>
+<li><a href="#annotation.type.optional.element.summary">Optional</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>

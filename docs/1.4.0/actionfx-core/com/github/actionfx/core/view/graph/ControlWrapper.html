@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":9,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":9,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -263,12 +263,20 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItemsChangeListener(javafx.collections.ListChangeListener)">addItemsChangeListener</a></span>&#8203;(javafx.collections.ListChangeListener&lt;V&gt;&nbsp;changeListener)</code></th>
+<td class="colLast">
+<div class="block">Adds a change listener to the items observable list of the wrapped
+ <code>Control</code>.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addSelectedValueChangeListener(javafx.beans.value.ChangeListener)">addSelectedValueChangeListener</a></span>&#8203;(javafx.beans.value.ChangeListener&lt;V&gt;&nbsp;changeListener)</code></th>
 <td class="colLast">
 <div class="block">Adds a change listener to the selected value of the wrapped <code>Control</code>.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addSelectedValuesChangeListener(javafx.collections.ListChangeListener)">addSelectedValuesChangeListener</a></span>&#8203;(javafx.collections.ListChangeListener&lt;V&gt;&nbsp;changeListener)</code></th>
 <td class="colLast">
@@ -276,71 +284,139 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  <code>Control</code>.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addValueChangeListener(javafx.beans.value.ChangeListener)">addValueChangeListener</a></span>&#8203;(javafx.beans.value.ChangeListener&lt;V&gt;&nbsp;changeListener)</code></th>
 <td class="colLast">
 <div class="block">Adds a change listener to the value of the wrapped <code>Control</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addValuesChangeListener(javafx.collections.ListChangeListener)">addValuesChangeListener</a></span>&#8203;(javafx.collections.ListChangeListener&lt;V&gt;&nbsp;changeListener)</code></th>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bind(com.github.actionfx.core.beans.BeanPropertyReference,com.github.actionfx.core.view.graph.ControlProperties)">bind</a></span>&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+    <a href="ControlProperties.html" title="enum in com.github.actionfx.core.view.graph">ControlProperties</a>&nbsp;controlProperty)</code></th>
 <td class="colLast">
-<div class="block">Adds a change listener to the values observable list of the wrapped
- <code>Control</code>.</div>
+<div class="block">Performs a binding of the control's property with the given
+ <code>beanPropertyReference</code>.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bind(com.github.actionfx.core.beans.BeanPropertyReference,com.github.actionfx.core.view.graph.ControlProperties,java.lang.String)">bind</a></span>&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+    <a href="ControlProperties.html" title="enum in com.github.actionfx.core.view.graph">ControlProperties</a>&nbsp;controlProperty,
+    java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Performs a binding of the control's property with the given
+ <code>beanPropertyReference</code>.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bindItemsObservableList(com.github.actionfx.core.beans.BeanPropertyReference)">bindItemsObservableList</a></span>&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference)</code></th>
+<td class="colLast">
+<div class="block">Performs a binding between the attribute referenced by
+ <code>beanPropertyReference</code> with the control's "items" (e.g.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bindSingleValueProperty(com.github.actionfx.core.beans.BeanPropertyReference)">bindSingleValueProperty</a></span>&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference)</code></th>
+<td class="colLast">
+<div class="block">Performs a binding between the attribute referenced by
+ <code>beanPropertyReference</code> with the control's single value (e.g.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bindTypeObservableList(javafx.collections.ObservableList,com.github.actionfx.core.beans.BeanPropertyReference,boolean)">bindTypeObservableList</a></span>&#8203;(javafx.collections.ObservableList&lt;T&gt;&nbsp;observableList,
+                      <a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+                      boolean&nbsp;useSelectionModelForBinding)</code></th>
+<td class="colLast">
+<div class="block">Binding routine for control properties of type <code>ObservableList</code>.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bindTypeObservableValue(javafx.beans.value.ObservableValue,com.github.actionfx.core.beans.BeanPropertyReference,boolean,java.lang.String)">bindTypeObservableValue</a></span>&#8203;(javafx.beans.value.ObservableValue&lt;T&gt;&nbsp;observableValue,
+                       <a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+                       boolean&nbsp;useSelectionModelForBinding,
+                       java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Binding routine for control properties of type <code>ObservableValue</code>.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code><a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#bindUserValue(com.github.actionfx.core.beans.BeanPropertyReference)">bindUserValue</a></span>&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference)</code></th>
+<td class="colLast">
+<div class="block">Performs a binding between the attribute referenced by
+ <code>beanPropertyReference</code> with the control's user value.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#enableMultiSelection()">enableMultiSelection</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Enables multi-selection for the wrapped control.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>javafx.beans.property.ObjectProperty&lt;javafx.util.StringConverter&lt;?&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConverterProperty()">getConverterProperty</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns the "converter" property of a control.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.collections.ObservableList&lt;V&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getItems()">getItems</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Get all items from the underlying wrapped <code>Control</code>.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>java.lang.Object</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getItemsOrValue()">getItemsOrValue</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets the items or the value from the wrapped <code>Control</code>.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;V</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSelectedValue()">getSelectedValue</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the currently selected value.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.beans.value.ObservableValue&lt;V&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSelectedValueProperty()">getSelectedValueProperty</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the selected value property.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.collections.ObservableList&lt;V&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSelectedValues()">getSelectedValues</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the currently selected values.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.scene.control.SelectionModel&lt;V&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSelectionModel()">getSelectionModel</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the selection model from the wrapped control.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUserValue()">getUserValue</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the user value from the wrapped <code>Control</code>.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>javafx.beans.Observable</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUserValueAsObservable()">getUserValueAsObservable</a></span>()</code></th>
 <td class="colLast">
@@ -348,113 +424,106 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  instance of <code>ObservableValue</code> or of <code>ObservableList</code>.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;V</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValue()">getValue</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the current value of the control.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>protected java.lang.Object</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueFromObservable(javafx.beans.Observable)">getValueFromObservable</a></span>&#8203;(javafx.beans.Observable&nbsp;observable)</code></th>
 <td class="colLast">
 <div class="block">Extracts the actual value from the supplied <code>Observable</code>.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>javafx.beans.Observable</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueOrValuesAsObservable()">getValueOrValuesAsObservable</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueOrItemsAsObservable()">getValueOrItemsAsObservable</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the value as an <code>Observable</code> which is usually either an instance
  of <code>ObservableValue</code> or of <code>ObservableList</code>.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.beans.value.ObservableValue&lt;V&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValueProperty()">getValueProperty</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets the value property.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
-<td class="colFirst"><code>&lt;V&gt;&nbsp;javafx.collections.ObservableList&lt;V&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValues()">getValues</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Get all values from the underlying wrapped <code>Control</code>.</div>
-</td>
-</tr>
-<tr id="i17" class="rowColor">
-<td class="colFirst"><code>java.lang.Object</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getValuesOrValue()">getValuesOrValue</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Gets values or the value from the wrapped <code>Control</code>.</div>
-</td>
-</tr>
-<tr id="i18" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hasUserValueSet()">hasUserValueSet</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the wrapped control has a value set by the user.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hasValueOrValuesSet()">hasValueOrValuesSet</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#hasValueOrItemsSet()">hasValueOrItemsSet</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Checks, whether the wrapped control has either values or a value set.</div>
+<div class="block">Checks, whether the wrapped control has either items or a value set.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>static <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph">ControlWrapper</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#of(javafx.scene.control.Control)">of</a></span>&#8203;(javafx.scene.control.Control&nbsp;control)</code></th>
 <td class="colLast">
 <div class="block">Convenient factory method for creating a <a href="ControlWrapper.html" title="class in com.github.actionfx.core.view.graph"><code>ControlWrapper</code></a> instance.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i28" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllItemsChangeListener()">removeAllItemsChangeListener</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Removes all attached items change listener.</div>
+</td>
+</tr>
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllSelectedValueChangeListener()">removeAllSelectedValueChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached selected value change listener.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllSelectedValuesChangeListener()">removeAllSelectedValuesChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached selected values change listener.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllValueChangeListener()">removeAllValueChangeListener</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Removes all attached value change listener.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeAllValuesChangeListener()">removeAllValuesChangeListener</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Removes all attached values change listener.</div>
-</td>
-</tr>
-<tr id="i25" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>&lt;V&gt;&nbsp;void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setValues(javafx.collections.ObservableList)">setValues</a></span>&#8203;(javafx.collections.ObservableList&lt;V&gt;&nbsp;valueList)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItems(javafx.collections.ObservableList)">setItems</a></span>&#8203;(javafx.collections.ObservableList&lt;V&gt;&nbsp;valueList)</code></th>
 <td class="colLast">
 <div class="block">Sets the given <code>valueList</code> as "values" to the underlying control.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i33" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsItems()">supportsItems</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Checks, whether the wrapped <code>Control</code> supports a "items" property (e.g.</div>
+</td>
+</tr>
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsMultipleValues()">supportsMultipleValues</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the wrapped <code>Control</code> supports multiple values or not.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsMultiSelection()">supportsMultiSelection</a></span>()</code></th>
 <td class="colLast">
@@ -462,33 +531,25 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  or not.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsSelection()">supportsSelection</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the control supports a selection of values.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsSelectionModelProperty()">supportsSelectionModelProperty</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the control supports a <code>SelectionModel</code> property.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsValue()">supportsValue</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Checks, whether the wrapped <code>Control</code> supports a "value" property (e.g.</div>
-</td>
-</tr>
-<tr id="i31" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supportsValues()">supportsValues</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Checks, whether the wrapped <code>Control</code> supports a "values" property
- (e.g.</div>
 </td>
 </tr>
 </table>
@@ -497,7 +558,7 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.github.actionfx.core.view.graph.<a href="NodeWrapper.html" title="class in com.github.actionfx.core.view.graph">NodeWrapper</a></h3>
-<code><a href="NodeWrapper.html#anchorPaneAttacher(double,double,double,double)">anchorPaneAttacher</a>, <a href="NodeWrapper.html#anchorPaneFillingAttacher()">anchorPaneFillingAttacher</a>, <a href="NodeWrapper.html#applyNodeVisitorByBFS(com.github.actionfx.core.view.graph.NodeVisitor)">applyNodeVisitorByBFS</a>, <a href="NodeWrapper.html#applyNodeVisitorByDFS(com.github.actionfx.core.view.graph.NodeVisitor)">applyNodeVisitorByDFS</a>, <a href="NodeWrapper.html#attachNode(java.lang.Object,com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher)">attachNode</a>, <a href="NodeWrapper.html#borderPaneAttacher(com.github.actionfx.core.view.BorderPanePosition)">borderPaneAttacher</a>, <a href="NodeWrapper.html#colRowAttacher(int,int)">colRowAttacher</a>, <a href="NodeWrapper.html#defaultAttacher()">defaultAttacher</a>, <a href="NodeWrapper.html#getChildren()">getChildren</a>, <a href="NodeWrapper.html#getId()">getId</a>, <a href="NodeWrapper.html#getOnActionProperty()">getOnActionProperty</a>, <a href="NodeWrapper.html#getScene()">getScene</a>, <a href="NodeWrapper.html#getSingleChildProperty()">getSingleChildProperty</a>, <a href="NodeWrapper.html#getWindow()">getWindow</a>, <a href="NodeWrapper.html#getWrapped()">getWrapped</a>, <a href="NodeWrapper.html#getWrappedType()">getWrappedType</a>, <a href="NodeWrapper.html#isAnchorPane()">isAnchorPane</a>, <a href="NodeWrapper.html#isBorderPane()">isBorderPane</a>, <a href="NodeWrapper.html#isGridPane()">isGridPane</a>, <a href="NodeWrapper.html#isLeafNode()">isLeafNode</a>, <a href="NodeWrapper.html#isOfType(java.lang.Class)">isOfType</a>, <a href="NodeWrapper.html#isParent()">isParent</a>, <a href="NodeWrapper.html#isTab()">isTab</a>, <a href="NodeWrapper.html#isTabPane()">isTabPane</a>, <a href="NodeWrapper.html#listAttacher(int)">listAttacher</a>, <a href="NodeWrapper.html#listFirstAttacher()">listFirstAttacher</a>, <a href="NodeWrapper.html#listLastAttacher()">listLastAttacher</a>, <a href="NodeWrapper.html#lookup(java.lang.String)">lookup</a>, <a href="NodeWrapper.html#nodeAttacherFor(com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.annotation.AFXNestedView)">nodeAttacherFor</a>, <a href="NodeWrapper.html#of(java.lang.Object)">of</a>, <a href="NodeWrapper.html#supportsMultipleChildren()">supportsMultipleChildren</a>, <a href="NodeWrapper.html#supportsSingleChild()">supportsSingleChild</a>, <a href="NodeWrapper.html#traverseByBFS(com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.view.graph.NodeVisitor)">traverseByBFS</a>, <a href="NodeWrapper.html#traverseRecursivelyByDFS(com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.view.graph.NodeVisitor)">traverseRecursivelyByDFS</a></code></li>
+<code><a href="NodeWrapper.html#anchorPaneAttacher(double,double,double,double)">anchorPaneAttacher</a>, <a href="NodeWrapper.html#anchorPaneFillingAttacher()">anchorPaneFillingAttacher</a>, <a href="NodeWrapper.html#applyNodeVisitorByBFS(com.github.actionfx.core.view.graph.NodeVisitor)">applyNodeVisitorByBFS</a>, <a href="NodeWrapper.html#applyNodeVisitorByDFS(com.github.actionfx.core.view.graph.NodeVisitor)">applyNodeVisitorByDFS</a>, <a href="NodeWrapper.html#attachNode(java.lang.Object,com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher)">attachNode</a>, <a href="NodeWrapper.html#borderPaneAttacher(com.github.actionfx.core.view.BorderPanePosition)">borderPaneAttacher</a>, <a href="NodeWrapper.html#colRowAttacher(int,int)">colRowAttacher</a>, <a href="NodeWrapper.html#defaultAttacher()">defaultAttacher</a>, <a href="NodeWrapper.html#getChildren()">getChildren</a>, <a href="NodeWrapper.html#getId()">getId</a>, <a href="NodeWrapper.html#getNodesAsStream()">getNodesAsStream</a>, <a href="NodeWrapper.html#getOnActionProperty()">getOnActionProperty</a>, <a href="NodeWrapper.html#getScene()">getScene</a>, <a href="NodeWrapper.html#getSingleChildProperty()">getSingleChildProperty</a>, <a href="NodeWrapper.html#getWindow()">getWindow</a>, <a href="NodeWrapper.html#getWrapped()">getWrapped</a>, <a href="NodeWrapper.html#getWrappedType()">getWrappedType</a>, <a href="NodeWrapper.html#isAnchorPane()">isAnchorPane</a>, <a href="NodeWrapper.html#isBorderPane()">isBorderPane</a>, <a href="NodeWrapper.html#isControl()">isControl</a>, <a href="NodeWrapper.html#isGridPane()">isGridPane</a>, <a href="NodeWrapper.html#isLeafNode()">isLeafNode</a>, <a href="NodeWrapper.html#isOfType(java.lang.Class)">isOfType</a>, <a href="NodeWrapper.html#isParent()">isParent</a>, <a href="NodeWrapper.html#isTab()">isTab</a>, <a href="NodeWrapper.html#isTabPane()">isTabPane</a>, <a href="NodeWrapper.html#listAttacher(int)">listAttacher</a>, <a href="NodeWrapper.html#listFirstAttacher()">listFirstAttacher</a>, <a href="NodeWrapper.html#listLastAttacher()">listLastAttacher</a>, <a href="NodeWrapper.html#lookup(java.lang.String)">lookup</a>, <a href="NodeWrapper.html#nodeAttacherFor(com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.annotation.AFXNestedView)">nodeAttacherFor</a>, <a href="NodeWrapper.html#of(java.lang.Object)">of</a>, <a href="NodeWrapper.html#supportsMultipleChildren()">supportsMultipleChildren</a>, <a href="NodeWrapper.html#supportsSingleChild()">supportsSingleChild</a>, <a href="NodeWrapper.html#traverseByBFS(com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.view.graph.NodeVisitor)">traverseByBFS</a>, <a href="NodeWrapper.html#traverseRecursivelyByDFS(com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.view.graph.NodeWrapper,com.github.actionfx.core.view.graph.NodeVisitor)">traverseRecursivelyByDFS</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
@@ -652,17 +713,17 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </dl>
 </li>
 </ul>
-<a id="getValues()">
+<a id="getItems()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getValues</h4>
-<pre class="methodSignature">public&nbsp;&lt;V&gt;&nbsp;javafx.collections.ObservableList&lt;V&gt;&nbsp;getValues()</pre>
-<div class="block">Get all values from the underlying wrapped <code>Control</code>.</div>
+<h4>getItems</h4>
+<pre class="methodSignature">public&nbsp;&lt;V&gt;&nbsp;javafx.collections.ObservableList&lt;V&gt;&nbsp;getItems()</pre>
+<div class="block">Get all items from the underlying wrapped <code>Control</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>all allowed values of the underlying wrapped <code>Control</code>.</dd>
+<dd>all items of the underlying wrapped <code>Control</code>.</dd>
 </dl>
 </li>
 </ul>
@@ -733,15 +794,15 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </dl>
 </li>
 </ul>
-<a id="supportsValues()">
+<a id="supportsItems()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>supportsValues</h4>
-<pre class="methodSignature">public&nbsp;boolean&nbsp;supportsValues()</pre>
-<div class="block">Checks, whether the wrapped <code>Control</code> supports a "values" property
- (e.g. for @<code>ChoiceBox</code> that is the
+<h4>supportsItems</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;supportsItems()</pre>
+<div class="block">Checks, whether the wrapped <code>Control</code> supports a "items" property (e.g.
+ for @<code>ChoiceBox</code> that is the
  <code>ChoiceBox.itemsProperty()</code> as configured in the
  properties file on classpath
  <code>/afxcontrolwrapper/javafx.scene.control.ChoiceBox.properties).</code></div>
@@ -848,14 +909,14 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  This method considers values selected via a <code>SelectionModel</code>.</div>
 </li>
 </ul>
-<a id="getValuesOrValue()">
+<a id="getItemsOrValue()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getValuesOrValue</h4>
-<pre class="methodSignature">public&nbsp;java.lang.Object&nbsp;getValuesOrValue()</pre>
-<div class="block">Gets values or the value from the wrapped <code>Control</code>.
+<h4>getItemsOrValue</h4>
+<pre class="methodSignature">public&nbsp;java.lang.Object&nbsp;getItemsOrValue()</pre>
+<div class="block">Gets the items or the value from the wrapped <code>Control</code>.
  <p>
  The value is assumed to be one of the following (entries with higher order
  are of higher priority):
@@ -907,13 +968,13 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </dl>
 </li>
 </ul>
-<a id="getValueOrValuesAsObservable()">
+<a id="getValueOrItemsAsObservable()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getValueOrValuesAsObservable</h4>
-<pre class="methodSignature">public&nbsp;javafx.beans.Observable&nbsp;getValueOrValuesAsObservable()</pre>
+<h4>getValueOrItemsAsObservable</h4>
+<pre class="methodSignature">public&nbsp;javafx.beans.Observable&nbsp;getValueOrItemsAsObservable()</pre>
 <div class="block">Gets the value as an <code>Observable</code> which is usually either an instance
  of <code>ObservableValue</code> or of <code>ObservableList</code>. However, it is up to
  the caller to do type checks on the return value.
@@ -952,14 +1013,14 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <div class="block">Removes all attached value change listener.</div>
 </li>
 </ul>
-<a id="addValuesChangeListener(javafx.collections.ListChangeListener)">
+<a id="addItemsChangeListener(javafx.collections.ListChangeListener)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>addValuesChangeListener</h4>
-<pre class="methodSignature">public&nbsp;&lt;V&gt;&nbsp;void&nbsp;addValuesChangeListener&#8203;(javafx.collections.ListChangeListener&lt;V&gt;&nbsp;changeListener)</pre>
-<div class="block">Adds a change listener to the values observable list of the wrapped
+<h4>addItemsChangeListener</h4>
+<pre class="methodSignature">public&nbsp;&lt;V&gt;&nbsp;void&nbsp;addItemsChangeListener&#8203;(javafx.collections.ListChangeListener&lt;V&gt;&nbsp;changeListener)</pre>
+<div class="block">Adds a change listener to the items observable list of the wrapped
  <code>Control</code>.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
@@ -969,14 +1030,14 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </dl>
 </li>
 </ul>
-<a id="removeAllValuesChangeListener()">
+<a id="removeAllItemsChangeListener()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>removeAllValuesChangeListener</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;removeAllValuesChangeListener()</pre>
-<div class="block">Removes all attached values change listener.</div>
+<h4>removeAllItemsChangeListener</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;removeAllItemsChangeListener()</pre>
+<div class="block">Removes all attached items change listener.</div>
 </li>
 </ul>
 <a id="addSelectedValueChangeListener(javafx.beans.value.ChangeListener)">
@@ -1045,13 +1106,13 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
  different type, calling this method has no effect on the wrapped control.</div>
 </li>
 </ul>
-<a id="setValues(javafx.collections.ObservableList)">
+<a id="setItems(javafx.collections.ObservableList)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setValues</h4>
-<pre class="methodSignature">public&nbsp;&lt;V&gt;&nbsp;void&nbsp;setValues&#8203;(javafx.collections.ObservableList&lt;V&gt;&nbsp;valueList)</pre>
+<h4>setItems</h4>
+<pre class="methodSignature">public&nbsp;&lt;V&gt;&nbsp;void&nbsp;setItems&#8203;(javafx.collections.ObservableList&lt;V&gt;&nbsp;valueList)</pre>
 <div class="block">Sets the given <code>valueList</code> as "values" to the underlying control.
  Please note that the underlying control must allow setting an observable list
  under the "values" attribute.</div>
@@ -1079,15 +1140,15 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 </dl>
 </li>
 </ul>
-<a id="hasValueOrValuesSet()">
+<a id="hasValueOrItemsSet()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>hasValueOrValuesSet</h4>
-<pre class="methodSignature">public&nbsp;boolean&nbsp;hasValueOrValuesSet()</pre>
-<div class="block">Checks, whether the wrapped control has either values or a value set. Values
- are e.g. text in a <code>TextField</code> or values in a <code>TableView</code> (even
+<h4>hasValueOrItemsSet</h4>
+<pre class="methodSignature">public&nbsp;boolean&nbsp;hasValueOrItemsSet()</pre>
+<div class="block">Checks, whether the wrapped control has either items or a value set. A value
+ is e.g. text in a <code>TextField</code> or items in a <code>TableView</code> (even
  when not selected).</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -1099,7 +1160,7 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <a id="hasUserValueSet()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>hasUserValueSet</h4>
 <pre class="methodSignature">public&nbsp;boolean&nbsp;hasUserValueSet()</pre>
@@ -1110,6 +1171,225 @@ extends <a href="NodeWrapper.html" title="class in com.github.actionfx.core.view
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd><code>true</code>, if the wrapped control has value set by the user,
          <code>false</code> otherwise.</dd>
+</dl>
+</li>
+</ul>
+<a id="bindUserValue(com.github.actionfx.core.beans.BeanPropertyReference)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bindUserValue</h4>
+<pre class="methodSignature">public&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bindUserValue&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference)</pre>
+<div class="block">Performs a binding between the attribute referenced by
+ <code>beanPropertyReference</code> with the control's user value.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as binding
+                              target</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the established <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind
+         the binding source again</dd>
+</dl>
+</li>
+</ul>
+<a id="bindItemsObservableList(com.github.actionfx.core.beans.BeanPropertyReference)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bindItemsObservableList</h4>
+<pre class="methodSignature">public&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bindItemsObservableList&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference)</pre>
+<div class="block">Performs a binding between the attribute referenced by
+ <code>beanPropertyReference</code> with the control's "items" (e.g. the items in a
+ table view).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as binding
+                              target</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the established <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind
+         the binding source again</dd>
+</dl>
+</li>
+</ul>
+<a id="bindSingleValueProperty(com.github.actionfx.core.beans.BeanPropertyReference)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bindSingleValueProperty</h4>
+<pre class="methodSignature">public&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bindSingleValueProperty&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference)</pre>
+<div class="block">Performs a binding between the attribute referenced by
+ <code>beanPropertyReference</code> with the control's single value (e.g. a text in
+ a textfield).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as binding
+                              target</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the established <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind
+         the binding source again</dd>
+</dl>
+</li>
+</ul>
+<a id="bind(com.github.actionfx.core.beans.BeanPropertyReference,com.github.actionfx.core.view.graph.ControlProperties)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bind</h4>
+<pre class="methodSignature">public&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bind&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+                    <a href="ControlProperties.html" title="enum in com.github.actionfx.core.view.graph">ControlProperties</a>&nbsp;controlProperty)</pre>
+<div class="block">Performs a binding of the control's property with the given
+ <code>beanPropertyReference</code>. Depending of the data type referenced by the
+ supplied <a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans"><code>BeanPropertyReference</code></a> and the desired target binding
+ property expressed by <code>controlProperty</code> different types of bindings are
+ created.
+ <p>
+ Bidirectional binding is possible, if the supplied
+ <code>beanPropertyReference</code> is an <code>Observable</code> that allows also to
+ write values to it (e.g. a <code>Property</code>).
+ <p>
+ In case the control's property is a
+ <code>javafx.beans.property.ReadyOnlyProperty</code>, but the control offers a
+ <code>SelectionModel</code> for manipulating the read-only property, a
+ bidirectional binding is even also possible. This is e.g. the case for
+ selected item(s) in a <code>ListView</code>.
+ <p>
+ In case only a unidirectional binding is possible (e.g. for a
+ <code>ReadOnlyProperty</code>) an unidirectional binding is
+ established.
+ <p>
+ In case an unidirectional binding is not possible, e.g. because the supplied
+ <code>beanPropertyReference</code> is not an <code>Observable</code>, but e.g. a
+ string, the value of the <code>beanPropertyReference</code> is just set to the
+ property of the wrapped control and changes in the control will be again
+ reflected in the provided <code>beanPropertyReference</code> (which corresponds to
+ a unidirectional binding logically).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as binding
+                              target</dd>
+<dd><code>controlProperty</code> - the control's property that shall be used as
+                              binding target</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                              <code>NumberFormat</code> or
+                              <code>DateTimeFormatter</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the established <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind
+         the binding source again</dd>
+</dl>
+</li>
+</ul>
+<a id="bind(com.github.actionfx.core.beans.BeanPropertyReference,com.github.actionfx.core.view.graph.ControlProperties,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bind</h4>
+<pre class="methodSignature">public&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bind&#8203;(<a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+                    <a href="ControlProperties.html" title="enum in com.github.actionfx.core.view.graph">ControlProperties</a>&nbsp;controlProperty,
+                    java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Performs a binding of the control's property with the given
+ <code>beanPropertyReference</code>. Depending of the data type referenced by the
+ supplied <a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans"><code>BeanPropertyReference</code></a> and the desired target binding
+ property expressed by <code>controlProperty</code> different types of bindings are
+ created.
+ <p>
+ Bidirectional binding is possible, if the supplied
+ <code>beanPropertyReference</code> is an <code>Observable</code> that allows also to
+ write values to it (e.g. a <code>Property</code>).
+ <p>
+ In case the control's property is a
+ <code>javafx.beans.property.ReadyOnlyProperty</code>, but the control offers a
+ <code>SelectionModel</code> for manipulating the read-only property, a
+ bidirectional binding is even also possible. This is e.g. the case for
+ selected item(s) in a <code>ListView</code>.
+ <p>
+ In case only a unidirectional binding is possible (e.g. for a
+ <code>ReadOnlyProperty</code>) an unidirectional binding is
+ established.
+ <p>
+ In case an unidirectional binding is not possible, e.g. because the supplied
+ <code>beanPropertyReference</code> is not an <code>Observable</code>, but e.g. a
+ string, the value of the <code>beanPropertyReference</code> is just set to the
+ property of the wrapped control and changes in the control will be again
+ reflected in the provided <code>beanPropertyReference</code> (which corresponds to
+ a unidirectional binding logically).
+ <p>
+ An additional <code>StringConverter</code> can be provided to perform type
+ conversion between the <code>beanPropertyReference</code> the control's property.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as binding
+                              target</dd>
+<dd><code>controlProperty</code> - the property inside this control acting as
+                              binding target</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                              <code>NumberFormat</code> or
+                              <code>DateTimeFormatter</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the established <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind
+         the binding source again</dd>
+</dl>
+</li>
+</ul>
+<a id="bindTypeObservableList(javafx.collections.ObservableList,com.github.actionfx.core.beans.BeanPropertyReference,boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bindTypeObservableList</h4>
+<pre class="methodSignature">protected&nbsp;&lt;T&gt;&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bindTypeObservableList&#8203;(javafx.collections.ObservableList&lt;T&gt;&nbsp;observableList,
+                                             <a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+                                             boolean&nbsp;useSelectionModelForBinding)</pre>
+<div class="block">Binding routine for control properties of type <code>ObservableList</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>observableList</code> - the observable list of the underlying
+                                    control to use as binding target</dd>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as
+                                    binding target</dd>
+<dd><code>useSelectionModelForBinding</code> - <code>true</code>, if manipulation of the
+                                    supplied <code>observableList</code> shall be
+                                    done via the selection model of this
+                                    control, <code>false</code>, if manipulation
+                                    shall be directly performed.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind the binding
+         source again</dd>
+</dl>
+</li>
+</ul>
+<a id="bindTypeObservableValue(javafx.beans.value.ObservableValue,com.github.actionfx.core.beans.BeanPropertyReference,boolean,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>bindTypeObservableValue</h4>
+<pre class="methodSignature">protected&nbsp;&lt;T&gt;&nbsp;<a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind">Binding</a>&nbsp;bindTypeObservableValue&#8203;(javafx.beans.value.ObservableValue&lt;T&gt;&nbsp;observableValue,
+                                              <a href="../../beans/BeanPropertyReference.html" title="class in com.github.actionfx.core.beans">BeanPropertyReference</a>&lt;?&gt;&nbsp;beanPropertyReference,
+                                              boolean&nbsp;useSelectionModelForBinding,
+                                              java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Binding routine for control properties of type <code>ObservableValue</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>observableValue</code> - the observable value of the underlying
+                                    control to use as binding target</dd>
+<dd><code>beanPropertyReference</code> - the bean property reference to use as
+                                    binding target</dd>
+<dd><code>useSelectionModelForBinding</code> - <code>true</code>, if manipulation of the
+                                    supplied <code>observableList</code> shall be
+                                    done via the selection model of this
+                                    control, <code>false</code>, if manipulation
+                                    shall be directly performed.</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g.
+                                    for <code>NumberFormat</code> or
+                                    <code>DateTimeFormatter</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <a href="../../bind/Binding.html" title="interface in com.github.actionfx.core.bind"><code>Binding</code></a> instance that can be used to unbind the binding
+         source again</dd>
 </dl>
 </li>
 </ul>

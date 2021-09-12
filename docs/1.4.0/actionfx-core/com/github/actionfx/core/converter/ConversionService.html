@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -190,10 +190,18 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(javafx.beans.value.ObservableValue)">ConversionService</a></span>&#8203;(javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;observableLocale)</code></th>
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">ConversionService</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Constructor accepting an observable locale that this service can react on on
- changes.</div>
+<div class="block">Standard constructor that tries to retrieve a <code>Locale</code> from a
+ potentially setup <a href="../ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a> instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(javafx.beans.value.ObservableValue)">ConversionService</a></span>&#8203;(javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;localeProperty)</code></th>
+<td class="colLast">
+<div class="block">Constructor accepting a <code>Locale</code> wrapped in an <code>ObservableValue</code>,
+ so that changes to this <code>ObservableValue</code> are also affecting the
+ convesion routines of this service.</div>
 </td>
 </tr>
 </table>
@@ -225,20 +233,76 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convert(java.lang.Object,java.lang.Class,java.lang.Class,java.lang.String)">convert</a></span>&#8203;(java.lang.Object&nbsp;source,
+       java.lang.Class&lt;?&gt;&nbsp;sourceType,
+       java.lang.Class&lt;T&gt;&nbsp;targetType,
+       java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Convert the given <code>source</code> to the specified <code>targetType</code>.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convert(java.lang.Object,java.lang.Class)">convert</a></span>&#8203;(java.lang.Object&nbsp;source,
        java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
 <td class="colLast">
 <div class="block">Convert the given <code>source</code> to the specified <code>targetType</code>.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#convert(java.lang.Object,java.lang.Class,java.lang.String)">convert</a></span>&#8203;(java.lang.Object&nbsp;source,
+       java.lang.Class&lt;T&gt;&nbsp;targetType,
+       java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Convert the given <code>source</code> to the specified <code>targetType</code>.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>&lt;S,&#8203;T&gt;<br><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;S,&#8203;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createBidirectionalConverter(java.lang.Class,java.lang.Class)">createBidirectionalConverter</a></span>&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                            java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
+<td class="colLast">
+<div class="block">Creates a <a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter"><code>BidirectionalConverter</code></a> for the given <code>sourceType</code> and
+ <code>targetType</code>.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>&lt;S,&#8203;T&gt;<br><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;S,&#8203;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createBidirectionalConverter(java.lang.Class,java.lang.Class,java.lang.String)">createBidirectionalConverter</a></span>&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                            java.lang.Class&lt;T&gt;&nbsp;targetType,
+                            java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Creates a <a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter"><code>BidirectionalConverter</code></a> for the given <code>sourceType</code> and
+ <code>targetType</code>.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>protected &lt;S,&#8203;T&gt;<br>java.util.function.Function&lt;S,&#8203;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createConverter(java.lang.Class,java.lang.Class,java.lang.String)">createConverter</a></span>&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+               java.lang.Class&lt;T&gt;&nbsp;targetType,
+               java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Creates a <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> for converting the given <code>sourceType</code> to
+ <code>targetType</code>.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;javafx.util.StringConverter&lt;T&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createStringConverter(java.lang.Class)">createStringConverter</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
 <td class="colLast">
-<div class="block">Creates a JavaFX string converter for the specified</div>
+<div class="block">Creates a JavaFX string converter for the specified <code>targetType</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;javafx.util.StringConverter&lt;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#createStringConverter(java.lang.Class,java.lang.String)">createStringConverter</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;targetType,
+                     java.lang.String&nbsp;formatPattern)</code></th>
+<td class="colLast">
+<div class="block">Creates a JavaFX string converter for the specified <code>targetType</code>.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>protected &lt;S,&#8203;T&gt;<br><a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findConverterFactory(com.github.actionfx.core.converter.ConversionService.ConvertiblePair)">findConverterFactory</a></span>&#8203;(<a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter">ConversionService.ConvertiblePair</a>&nbsp;convertiblePair)</code></th>
 <td class="colLast">
@@ -246,12 +310,17 @@ extends java.lang.Object</pre>
  hierarchies of the source and target types of the <a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter"><code>ConversionService.ConvertiblePair</code></a>.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getObservableLocale()">getObservableLocale</a></span>()</code></th>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>java.util.Locale</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLocaleProperty()">getLocaleProperty</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>javafx.beans.property.Property&lt;java.util.Locale&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#localePropertyProperty()">localePropertyProperty</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected &lt;S,&#8203;T&gt;<br><a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#lookupConverterFactory(java.lang.Class,java.lang.Class)">lookupConverterFactory</a></span>&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
                       java.lang.Class&lt;T&gt;&nbsp;targetType)</code></th>
@@ -284,18 +353,31 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a id="&lt;init&gt;()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ConversionService</h4>
+<pre>public&nbsp;ConversionService()</pre>
+<div class="block">Standard constructor that tries to retrieve a <code>Locale</code> from a
+ potentially setup <a href="../ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a> instance. In case there is no
+ <a href="../ActionFX.html" title="class in com.github.actionfx.core"><code>ActionFX</code></a> instance is setup, the default system locale is taken.</div>
+</li>
+</ul>
 <a id="&lt;init&gt;(javafx.beans.value.ObservableValue)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ConversionService</h4>
-<pre>public&nbsp;ConversionService&#8203;(javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;observableLocale)</pre>
-<div class="block">Constructor accepting an observable locale that this service can react on on
- changes.</div>
+<pre>public&nbsp;ConversionService&#8203;(javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;localeProperty)</pre>
+<div class="block">Constructor accepting a <code>Locale</code> wrapped in an <code>ObservableValue</code>,
+ so that changes to this <code>ObservableValue</code> are also affecting the
+ convesion routines of this service.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>observableLocale</code> - the locale as an observable value</dd>
+<dd><code>localeProperty</code> - the locale obervable value</dd>
 </dl>
 </li>
 </ul>
@@ -326,9 +408,56 @@ extends java.lang.Object</pre>
 <dd><code>targetType</code> - the target type to convert to (required)</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the converted object, an instance of targetType</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>ConversionException</code> - if a conversion exception occurred</dd>
-<dd><code>java.lang.IllegalArgumentException</code> - if targetType is <code>null</code></dd>
+</dl>
+</li>
+</ul>
+<a id="convert(java.lang.Object,java.lang.Class,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convert</h4>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;convert&#8203;(java.lang.Object&nbsp;source,
+                     java.lang.Class&lt;T&gt;&nbsp;targetType,
+                     java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Convert the given <code>source</code> to the specified <code>targetType</code>.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>S</code> - </dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>source</code> - the source object to convert (may be <code>null</code>)</dd>
+<dd><code>targetType</code> - the target type to convert to (required)</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                      <code>NumberFormat</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the converted object, an instance of targetType</dd>
+</dl>
+</li>
+</ul>
+<a id="convert(java.lang.Object,java.lang.Class,java.lang.Class,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convert</h4>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;T&nbsp;convert&#8203;(java.lang.Object&nbsp;source,
+                     java.lang.Class&lt;?&gt;&nbsp;sourceType,
+                     java.lang.Class&lt;T&gt;&nbsp;targetType,
+                     java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Convert the given <code>source</code> to the specified <code>targetType</code>.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the target type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>source</code> - the source object to convert (may be <code>null</code>)</dd>
+<dd><code>sourceTpye</code> - the source type (important, when <code>source</code> itself
+                      is <code>null</code>)</dd>
+<dd><code>targetType</code> - the target type to convert to (required)</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                      <code>NumberFormat</code> or
+                      <code>DateTimeFormatter</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the converted object, an instance of targetType</dd>
 </dl>
 </li>
 </ul>
@@ -339,13 +468,82 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createStringConverter</h4>
 <pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;javafx.util.StringConverter&lt;T&gt;&nbsp;createStringConverter&#8203;(java.lang.Class&lt;T&gt;&nbsp;targetType)</pre>
-<div class="block">Creates a JavaFX string converter for the specified</div>
+<div class="block">Creates a JavaFX string converter for the specified <code>targetType</code>.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - </dd>
+<dd><code>T</code> - the target type parameter</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>targetType</code> - </dd>
+<dd><code>targetType</code> - the target type class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
+<dd>the created string converter</dd>
+</dl>
+</li>
+</ul>
+<a id="createStringConverter(java.lang.Class,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createStringConverter</h4>
+<pre class="methodSignature">public&nbsp;&lt;T&gt;&nbsp;javafx.util.StringConverter&lt;T&gt;&nbsp;createStringConverter&#8203;(java.lang.Class&lt;T&gt;&nbsp;targetType,
+                                                                java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Creates a JavaFX string converter for the specified <code>targetType</code>.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the target type parameter</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>targetType</code> - the target type class</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                      <code>NumberFormat</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the created string converter</dd>
+</dl>
+</li>
+</ul>
+<a id="createBidirectionalConverter(java.lang.Class,java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createBidirectionalConverter</h4>
+<pre class="methodSignature">public&nbsp;&lt;S,&#8203;T&gt;&nbsp;<a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;S,&#8203;T&gt;&nbsp;createBidirectionalConverter&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                                                                                  java.lang.Class&lt;T&gt;&nbsp;targetType)</pre>
+<div class="block">Creates a <a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter"><code>BidirectionalConverter</code></a> for the given <code>sourceType</code> and
+ <code>targetType</code>.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>S</code> - the source type</dd>
+<dd><code>T</code> - the target type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>sourceType</code> - the source type class</dd>
+<dd><code>targetType</code> - the target type class</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the created bidirectional converter</dd>
+</dl>
+</li>
+</ul>
+<a id="createBidirectionalConverter(java.lang.Class,java.lang.Class,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createBidirectionalConverter</h4>
+<pre class="methodSignature">public&nbsp;&lt;S,&#8203;T&gt;&nbsp;<a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;S,&#8203;T&gt;&nbsp;createBidirectionalConverter&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                                                                                  java.lang.Class&lt;T&gt;&nbsp;targetType,
+                                                                                  java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Creates a <a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter"><code>BidirectionalConverter</code></a> for the given <code>sourceType</code> and
+ <code>targetType</code>.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>S</code> - the source type</dd>
+<dd><code>T</code> - the target type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>sourceType</code> - the source type class</dd>
+<dd><code>targetType</code> - the target type class</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                      <code>NumberFormat</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the created bidirectional converter</dd>
 </dl>
 </li>
 </ul>
@@ -366,6 +564,33 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd><code>true</code>, if this service is able to convert the given source
          type to the specified target type</dd>
+</dl>
+</li>
+</ul>
+<a id="createConverter(java.lang.Class,java.lang.Class,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createConverter</h4>
+<pre class="methodSignature">protected&nbsp;&lt;S,&#8203;T&gt;&nbsp;java.util.function.Function&lt;S,&#8203;T&gt;&nbsp;createConverter&#8203;(java.lang.Class&lt;S&gt;&nbsp;sourceType,
+                                                                             java.lang.Class&lt;T&gt;&nbsp;targetType,
+                                                                             java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Creates a <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> for converting the given <code>sourceType</code> to
+ <code>targetType</code>. In case there is no converter for handling these source
+ and target types, <code>null</code> will be returned.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>S</code> - the source type parameter</dd>
+<dd><code>T</code> - the target type parameter</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>sourceType</code> - the source type</dd>
+<dd><code>targetType</code> - the target type</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                      <code>NumberFormat</code>)</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the created converter, or {@link null}, in case there is no converter
+         available for the specified types</dd>
 </dl>
 </li>
 </ul>
@@ -414,13 +639,22 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="getObservableLocale()">
+<a id="localePropertyProperty()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>localePropertyProperty</h4>
+<pre class="methodSignature">public final&nbsp;javafx.beans.property.Property&lt;java.util.Locale&gt;&nbsp;localePropertyProperty()</pre>
+</li>
+</ul>
+<a id="getLocaleProperty()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getObservableLocale</h4>
-<pre class="methodSignature">public&nbsp;javafx.beans.value.ObservableValue&lt;java.util.Locale&gt;&nbsp;getObservableLocale()</pre>
+<h4>getLocaleProperty</h4>
+<pre class="methodSignature">public final&nbsp;java.util.Locale&nbsp;getLocaleProperty()</pre>
 </li>
 </ul>
 </li>

@@ -164,11 +164,13 @@ public static interface <span class="typeNameLabel">ConversionService.ConverterF
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>,&#8203;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#create(java.lang.Class,java.lang.Class)">create</a></span>&#8203;(java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>&gt;&nbsp;sourceClass,
-      java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;&nbsp;targetClass)</code></th>
+<td class="colFirst"><code>java.util.function.Function&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>,&#8203;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#create(java.lang.Class,java.lang.Class,java.util.Locale,java.lang.String)">create</a></span>&#8203;(java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>&gt;&nbsp;sourceClass,
+      java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;&nbsp;targetClass,
+      java.util.Locale&nbsp;locale,
+      java.lang.String&nbsp;formatPattern)</code></th>
 <td class="colLast">
-<div class="block">Creates a new instance of a <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a></div>
+<div class="block">Creates a new instance of a <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> / <code>Function</code>.</div>
 </td>
 </tr>
 </table>
@@ -188,15 +190,17 @@ public static interface <span class="typeNameLabel">ConversionService.ConverterF
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="create(java.lang.Class,java.lang.Class)">
+<a id="create(java.lang.Class,java.lang.Class,java.util.Locale,java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>create</h4>
-<pre class="methodSignature"><a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>,&#8203;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;&nbsp;create&#8203;(java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>&gt;&nbsp;sourceClass,
-                            java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;&nbsp;targetClass)</pre>
-<div class="block">Creates a new instance of a <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a></div>
+<pre class="methodSignature">java.util.function.Function&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>,&#8203;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;&nbsp;create&#8203;(java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">S</a>&gt;&nbsp;sourceClass,
+                                              java.lang.Class&lt;<a href="ConversionService.ConverterFactory.html" title="type parameter in ConversionService.ConverterFactory">T</a>&gt;&nbsp;targetClass,
+                                              java.util.Locale&nbsp;locale,
+                                              java.lang.String&nbsp;formatPattern)</pre>
+<div class="block">Creates a new instance of a <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> / <code>Function</code>.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>S</code> - the source type</dd>
@@ -204,6 +208,9 @@ public static interface <span class="typeNameLabel">ConversionService.ConverterF
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceClass</code> - the source class</dd>
 <dd><code>targetClass</code> - the target class</dd>
+<dd><code>locale</code> - an optional, nullable locale to use for formatting</dd>
+<dd><code>formatPattern</code> - an optional, nullable format pattern (e.g. for
+                      <code>NumberFormat</code>)</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the created converter instance</dd>
 </dl>

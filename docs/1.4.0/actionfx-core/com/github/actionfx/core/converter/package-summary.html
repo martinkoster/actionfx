@@ -106,12 +106,19 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tbody>
 <tr class="altColor">
+<th class="colFirst" scope="row"><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter">BidirectionalConverter</a>&lt;S,&#8203;T&gt;</th>
+<td class="colLast">
+<div class="block">A converter converts a source object of type <code>S</code> to a target of type
+ <code>T</code> and vice versa.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="ConversionService.ConverterFactory.html" title="interface in com.github.actionfx.core.converter">ConversionService.ConverterFactory</a>&lt;S,&#8203;T&gt;</th>
 <td class="colLast">
 <div class="block">Factory interface for creating instances of converter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="Converter.html" title="interface in com.github.actionfx.core.converter">Converter</a>&lt;S,&#8203;T&gt;</th>
 <td class="colLast">
 <div class="block">A converter converts a source object of type <code>S</code> to a target of type
@@ -130,15 +137,52 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tbody>
 <tr class="altColor">
+<th class="colFirst" scope="row"><a href="AbstractDateConverter.html" title="class in com.github.actionfx.core.converter">AbstractDateConverter</a>&lt;S,&#8203;T&gt;</th>
+<td class="colLast">
+<div class="block">Base class for converters that convert a <code>Date</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="AbstractFloatingPointConverter.html" title="class in com.github.actionfx.core.converter">AbstractFloatingPointConverter</a>&lt;S,&#8203;T&gt;</th>
+<td class="colLast">
+<div class="block">Base class for converters that convert a floating point number like
+ <code>Float</code> or <code>Double</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="AbstractJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">AbstractJavaTimeConverter</a>&lt;S,&#8203;T&gt;</th>
+<td class="colLast">
+<div class="block">Base class for converters that convert a {@link java.time.*} type.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="ConversionService.html" title="class in com.github.actionfx.core.converter">ConversionService</a></th>
 <td class="colLast">
 <div class="block">Service offering conversion routines.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="ConversionService.ConvertiblePair.html" title="class in com.github.actionfx.core.converter">ConversionService.ConvertiblePair</a></th>
 <td class="colLast">
 <div class="block">A pair of source and target type, used as key for hashmap lookup.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="DateToJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">DateToJavaTimeConverter</a>&lt;T extends java.time.temporal.TemporalAccessor&gt;</th>
+<td class="colLast">
+<div class="block">Converts a <code>Date</code> to a Java time <code>TemporalAccessor</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="DateToStringConverter.html" title="class in com.github.actionfx.core.converter">DateToStringConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a <code>Date</code> to a <code>String</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="DoubleToStringConverter.html" title="class in com.github.actionfx.core.converter">DoubleToStringConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a <code>Double</code> to a <code>String</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -161,6 +205,19 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="FloatToStringConverter.html" title="class in com.github.actionfx.core.converter">FloatToStringConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a <code>Float</code> to a <code>String</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="GenericBidirectionalConverter.html" title="class in com.github.actionfx.core.converter">GenericBidirectionalConverter</a>&lt;S,&#8203;T&gt;</th>
+<td class="colLast">
+<div class="block"><a href="BidirectionalConverter.html" title="interface in com.github.actionfx.core.converter"><code>BidirectionalConverter</code></a> that is able to use 2 <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> to
+ perform to-/from conversion from and to the desired data type.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="GenericStringConverter.html" title="class in com.github.actionfx.core.converter">GenericStringConverter</a>&lt;T&gt;</th>
 <td class="colLast">
 <div class="block"><code>StringConverter</code> that is able to use 2 <a href="Converter.html" title="interface in com.github.actionfx.core.converter"><code>Converter</code></a> to perform
@@ -168,9 +225,34 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="altColor">
+<th class="colFirst" scope="row"><a href="JavaTimeToDateConverter.html" title="class in com.github.actionfx.core.converter">JavaTimeToDateConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a Java time <code>TemporalAccessor</code> to a <code>Date</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="JavaTimeToJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">JavaTimeToJavaTimeConverter</a>&lt;S extends java.time.temporal.TemporalAccessor,&#8203;T extends java.time.temporal.TemporalAccessor&gt;</th>
+<td class="colLast">
+<div class="block">Converts a <code>java.time</code> to another <code>java.time</code> instance.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="JavaTimeToStringConverter.html" title="class in com.github.actionfx.core.converter">JavaTimeToStringConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a {@link java.time.*} to a <code>String</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="NumberToNumberConverter.html" title="class in com.github.actionfx.core.converter">NumberToNumberConverter</a>&lt;S extends java.lang.Number,&#8203;T extends java.lang.Number&gt;</th>
 <td class="colLast">
 <div class="block">Converts a number to a number.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="ObjectToStringConverter.html" title="class in com.github.actionfx.core.converter">ObjectToStringConverter</a></th>
+<td class="colLast">
+<div class="block">Converter that simple calls <code>Object.toString()</code> to convert a source
+ Object to a <code>String</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -192,9 +274,33 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="altColor">
+<th class="colFirst" scope="row"><a href="StringToDateConverter.html" title="class in com.github.actionfx.core.converter">StringToDateConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a <code>String</code> to a <code>Date</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="StringToDoubleConverter.html" title="class in com.github.actionfx.core.converter">StringToDoubleConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a <code>String</code> to a <code>Double</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="StringToFileConverter.html" title="class in com.github.actionfx.core.converter">StringToFileConverter</a></th>
 <td class="colLast">
 <div class="block">Converts a <code>String</code> to a <code>File</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="StringToFloatConverter.html" title="class in com.github.actionfx.core.converter">StringToFloatConverter</a></th>
+<td class="colLast">
+<div class="block">Converts a <code>String</code> to a <code>Float</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="StringToJavaTimeConverter.html" title="class in com.github.actionfx.core.converter">StringToJavaTimeConverter</a>&lt;T extends java.time.temporal.TemporalAccessor&gt;</th>
+<td class="colLast">
+<div class="block">Converts a <code>String</code> to a {@link java.time.*} type.</div>
 </td>
 </tr>
 <tr class="rowColor">
