@@ -214,9 +214,9 @@ class ConversionServiceTest {
 		// WHEN and THEN
 		assertThat(service.convert(42000.0, String.class, "#,###.00"), equalTo("42.000,00"));
 		assertThat(service.convert(42000.0f, String.class, "#,###.00"), equalTo("42.000,00"));
-		assertThat(service.convert("05.09.2021 11:46:00", Date.class, "dd.MM.yyyy hh:mm:ss"),
+		assertThat(service.convert("05.09.2021 11:46:00", Date.class, "dd.MM.yyyy HH:mm:ss"),
 				equalTo(new Date(1630835160000l)));
-		assertThat(service.convert(new Date(1630835160000l), String.class, "dd.MM.yyyy hh:mm:ss"),
+		assertThat(service.convert(new Date(1630835160000l), String.class, "dd.MM.yyyy HH:mm:ss"),
 				equalTo("05.09.2021 11:46:00"));
 	}
 

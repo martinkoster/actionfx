@@ -45,9 +45,9 @@ class StringToJavaTimeConverterTest {
 	@Test
 	void testApply() throws ParseException {
 		// GIVEN
-		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 		final StringToJavaTimeConverter<Instant> converter = new StringToJavaTimeConverter<>(Instant.class,
-				"dd.MM.yyyy hh:mm:ss", Locale.GERMANY);
+				"dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
 		final Date date = sdf.parse("05.09.2021 14:07:10");
 
 		// THEN
