@@ -522,7 +522,7 @@ public class AFXUtils {
 		// primitive int value
 		// exposed via the "get" method. However, if we would call the "getValue"
 		// method, an auto-unboxing to
-		// "Integer" takes place, falsifying theactual contained type
+		// "Integer" takes place, falsifying the actual contained type
 		final Method method = ReflectionUtils.findMethod(observableValue.getClass(), "get");
 		// if return type of "get" method is "object" it could be a victim of type
 		// erasure, so we need to investigate further
@@ -534,10 +534,10 @@ public class AFXUtils {
 			return value.getClass();
 		}
 		// no value, so we have to check the implemented typed-interfaces
-		if (ObservableObjectValue.class.isAssignableFrom(observableValue.getClass())) {
-			return Object.class;
-		} else if (ObservableStringValue.class.isAssignableFrom(observableValue.getClass())) {
+		if (ObservableStringValue.class.isAssignableFrom(observableValue.getClass())) {
 			return String.class;
+		} else if (ObservableObjectValue.class.isAssignableFrom(observableValue.getClass())) {
+			return Object.class;
 		}
 		throw new IllegalArgumentException(
 				"Unable to deterime the observable value type from '" + observableValue.getClass() + "'!");
