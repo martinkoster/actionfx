@@ -43,13 +43,18 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SetProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.collections.ObservableSet;
 import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -536,9 +541,16 @@ public class AFXUtils {
 		// no value, so we have to check the implemented typed-interfaces
 		if (ObservableStringValue.class.isAssignableFrom(observableValue.getClass())) {
 			return String.class;
+		} else if (MapProperty.class.isAssignableFrom(observableValue.getClass())) {
+			return ObservableMap.class;
+		} else if (SetProperty.class.isAssignableFrom(observableValue.getClass())) {
+			return ObservableSet.class;
+		} else if (ListProperty.class.isAssignableFrom(observableValue.getClass())) {
+			return ObservableList.class;
 		} else if (ObservableObjectValue.class.isAssignableFrom(observableValue.getClass())) {
 			return Object.class;
 		}
+
 		throw new IllegalArgumentException(
 				"Unable to deterime the observable value type from '" + observableValue.getClass() + "'!");
 	}

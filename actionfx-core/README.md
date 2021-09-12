@@ -625,12 +625,12 @@ This example shows how a JavaFX control with the specified `controlId` is mapped
 In case the control's property and the mapped model property have different types (e.g. when binding a Double value to a JavaFX text field), an optional format pattern can be provided:
 
 ```java
-	 	...
-	 	// map Double property 'totalAmout' to text field 'totalAmountTextField' with 2 decimal places
-		@AFXFormMapping(controlId = "totalAmountTextField", propertyName = "totalAmount", formatPattern = "#,###.00")
-       ...
-	 	// map an attribute of type `java.time.LocalDateTime` to text field 'dateTimeTextField'
-		@AFXFormMapping(controlId = "dateTimeTextField", propertyName = "localDateTime", formatPattern = "dd.MM.yyyy HH:mm")
+...
+// map Double property 'totalAmout' to text field 'totalAmountTextField' with 2 decimal places
+@AFXFormMapping(controlId = "totalAmountTextField", propertyName = "totalAmount", formatPattern = "#,###.00")
+...
+// map an attribute of type `java.time.LocalDateTime` to text field 'dateTimeTextField'
+@AFXFormMapping(controlId = "dateTimeTextField", propertyName = "localDateTime", formatPattern = "dd.MM.yyyy HH:mm")
 ```
 
 In the above examples, type conversion to/from string is automatically performed during binding. 
