@@ -35,12 +35,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.Month;
 import java.time.MonthDay;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Locale;
@@ -207,16 +210,17 @@ class ConversionServiceTest {
 	}
 
 	@Test
-	void testConvert_withFormatPattern() {
+	void testConvert_withFormatPattern() throws ParseException {
 		// GIVEN
 		final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.GERMANY));
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 		// WHEN and THEN
 		assertThat(service.convert(42000.0, String.class, "#,###.00"), equalTo("42.000,00"));
 		assertThat(service.convert(42000.0f, String.class, "#,###.00"), equalTo("42.000,00"));
 		assertThat(service.convert("05.09.2021 11:46:00", Date.class, "dd.MM.yyyy HH:mm:ss"),
-				equalTo(new Date(1630835160000l)));
-		assertThat(service.convert(new Date(1630835160000l), String.class, "dd.MM.yyyy HH:mm:ss"),
+				equalTo(sdf.parse("05.09.2021 11:46:00")));
+		assertThat(service.convert(sdf.parse("05.09.2021 11:46:00"), String.class, "dd.MM.yyyy HH:mm:ss"),
 				equalTo("05.09.2021 11:46:00"));
 	}
 
@@ -247,7 +251,8 @@ class ConversionServiceTest {
 		// WHEN and THEN
 		assertThat(service.convert(javaTime, Date.class), equalTo(date));
 		assertThat(service.convert(date, Instant.class), equalTo(date.toInstant()));
-		assertThat(service.convert(date, ZonedDateTime.class), equalTo(javaTime));
+		assertThat(service.convert(date, ZonedDateTime.class),
+				equalTo(ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())));
 	}
 
 	@Test
