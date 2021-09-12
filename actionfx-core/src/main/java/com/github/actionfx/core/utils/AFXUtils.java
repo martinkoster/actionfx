@@ -552,6 +552,6 @@ public class AFXUtils {
 		}
 
 		throw new IllegalArgumentException(
-				"Unable to deterime the observable value type from '" + observableValue.getClass() + "'!");
+				"Unable to determine the observable value type from '" + observableValue.getClass() + "'!");
 	}
 }
