@@ -519,6 +519,19 @@ As another feature, we are using the `@AFXEnableNode` annotation to activate the
 	private Button completeOrderButton;
 ```
 
+Once the book store user confirms his order via the "Complete Order" button, we display a simple order summary with the values from the bound model instance to prove that the model successfully received the values from the controls:
+
+![Checkout Summary UI](docs/images/checkoutsummary.png)
+
+```java
+	@AFXOnAction(nodeId = "completeOrderButton")
+	public void completeCheckout() {
+		actionFX.showInformationDialog("Order successfully placed", createOrderSummary(), "");
+		actionFX.hideView(this);
+	}
+```
+After confirming the modal information dialog holding the order summary, we also close the modal checkout dialog via `actionFX.hideView(this)`.
+
 This completes our Book store sample application. 
 
 Source Code can be found here: [CheckoutController](src/main/java/com/github/actionfx/bookstore/controller/CheckoutController.java)
