@@ -12,6 +12,8 @@ This module contains the following demo applications:
 - [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
 - [Texteditor Demo](#texteditor-demo): A simple text editor demonstrating how to use menus, open-, save- and other dialogs with ActionFX.
 
+If you are interested in how ActionFX supports form-binding, you can directly jump into the [CheckoutController](#checkoutcontroller) implementation of the Book Store sample application.
+
 ## A Simple Book Store
 
 The sample application features a simple book store, where you can browse a book catalogue (including filtering) and add books to a shopping cart. The demo ends with a modal check-out dialogue.
@@ -397,16 +399,127 @@ Source Code can be found here: [ShoppingCartController](src/main/java/com/github
 
 #### CheckoutController 
 
-The check-out controller does not contain any logic anymore as it is the end of the demo application.
+The check-out controller implements the last step in our book store demo and demonstrates ActionFX' ability to perform a form-binding with an arbitrary Java class.
 
-However, the applied `@AFXController` annotation shows how to display the view as a modal dialog (`modal=true`) at a certain position and in a certain size:
+The form looks as follows:
+
+![Checkout UI](docs/images/checkout.png)
+
+The checkout dialog is implemented as a modal dialog that lays on top of our book store, thus the applied `@AFXController` annotation uses `modal=true`):
 
 ```java
 @AFXController(viewId = "checkoutView", fxml = "/fxml/CheckoutView.fxml", icon = "/images/book.png", title = "Check Out", modal = true, width = 600, height = 500, posX = 600, posY = 300)
 public class CheckoutController {
 
+	@AFXFormBinding
+	@AFXFormMapping(propertyName = "customer.firstName", controlId = "firstNameTextField")
+	@AFXFormMapping(propertyName = "customer.lastName", controlId = "lastNameTextField")
+	@AFXFormMapping(propertyName = "customer.country", controlId = "countryChoiceBox")
+	@AFXFormMapping(propertyName = "customer.street", controlId = "streetTextField")
+	@AFXFormMapping(propertyName = "customer.postalCode", controlId = "postalCodeTextField")
+	@AFXFormMapping(propertyName = "customer.city", controlId = "cityTextField")
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST)
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView")
+	private final ObjectProperty<OrderSummary> orderSummary = new SimpleObjectProperty<>(new OrderSummary());
+
+	@AFXEnableMultiSelection
+	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
+	@FXML
+	private TableView<Book> bookTableView;
+
+	@AFXEnableNode(whenAllContolsHaveUserValues = { "firstNameTextField", "lastNameTextField", "countryChoiceBox",
+			"streetTextField", "postalCodeTextField", "cityTextField" })
+	@FXML
+	private Button completeOrderButton;
+
+	@Inject
+	private ActionFX actionFX;
+
+	@AFXLoadControlData(controlId = "countryChoiceBox")
+	public List<String> availableCountries() {
+		return Arrays.asList("Germany", "France", "Spain", "Italy", "Portugal", "UK", "USA");
+	}
+
+	public void startCheckout(final List<Book> books) {
+		// create an order summary as model for our form-binding
+		final OrderSummary model = new OrderSummary();
+		model.getOrder().getOrderedBooks().addAll(books);
+		orderSummary.set(model);
+	}
+
+	@AFXOnAction(nodeId = "completeOrderButton")
+	public void completeCheckout() {
+		actionFX.showInformationDialog("Order successfully placed", createOrderSummary(), "");
+		actionFX.hideView(this);
+	}
+
+	private String createOrderSummary() {
+		final StringBuilder builder = new StringBuilder();
+		final OrderSummary model = orderSummary.get();
+		builder.append("Shipped to:\n");
+		final Customer customer = model.getCustomer();
+		final Order order = model.getOrder();
+		final DoubleCurrencyStringConverter converter = new DoubleCurrencyStringConverter();
+		builder.append(customer.getFirstName() + " " + customer.getLastName() + "\n");
+		builder.append(customer.getCountry() + "\n");
+		builder.append(customer.getStreet() + "\n");
+		builder.append(customer.getPostalCode() + " " + customer.getCity() + "\n");
+		builder.append("\n");
+		builder.append("Books ordered: " + order.getOrderedBooks().size() + ", Total price: "
+				+ converter.toString(order.getOrderedBooks().stream().mapToDouble(Book::getPrice).sum()));
+		return builder.toString();
+	}
+
+	@AFXOnAction(nodeId = "cancelOrderButton")
+	public void cancelCheckout() {
+		orderSummary.set(new OrderSummary());
+		actionFX.hideView(this);
+	}
 }
 ```
+
+As you can see in the class, the model object is supposed to be stored in a `javafx.beans.property.ObjectProperty`:
+
+```java
+	@AFXFormBinding
+	@AFXFormMapping(propertyName = "customer.firstName", controlId = "firstNameTextField")
+	@AFXFormMapping(propertyName = "customer.lastName", controlId = "lastNameTextField")
+	@AFXFormMapping(propertyName = "customer.country", controlId = "countryChoiceBox")
+	@AFXFormMapping(propertyName = "customer.street", controlId = "streetTextField")
+	@AFXFormMapping(propertyName = "customer.postalCode", controlId = "postalCodeTextField")
+	@AFXFormMapping(propertyName = "customer.city", controlId = "cityTextField")
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST)
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView")
+	private final ObjectProperty<OrderSummary> orderSummary = new SimpleObjectProperty<>(new OrderSummary());
+```
+
+All attributes mapped by `@AFXFormMapping` inside the instance of [OrderSummary](src/main/java/com/github/actionfx/bookstore/model/OrderSummary.java) are bound to the listed controls. 
+
+If you have a closer look at [OrderSummary](src/main/java/com/github/actionfx/bookstore/model/OrderSummary.java) and the embedded classes [Customer](src/main/java/com/github/actionfx/bookstore/model/Customer.java) and [Order](src/main/java/com/github/actionfx/bookstore/model/Order.java), you can see that these classes use Java types like `java.lang.String` and not their JavaFX property counterpart `javafx.beans.property.StringProperty`. However, using `StringProperty` is also possible in this place and would allow even a bidirectional binding between the model attribute and the control's user value property. In our show case, a unidirectional binding with the plain Java types is perfectly sufficient.
+
+It is up to the application designer, whether she/he wants to use plain Java types for unidirectional binding or JavaFX properties for bidirectional binding in their model classes.
+
+In the mapping declaration above, we can also see that it is possible to use different target properties of a control:
+
+```java
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST)
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView")
+```
+
+What happens here is that the list of order books is bound to the `itemsProperty` of the used `javafx.scene.control.TableView` via `targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST` and in the second step, the list of order books is then bound to the **selected items list** of the table view. Means: First we fill the table view with the books from the model, and then we select all books inside the table view.
+
+As another feature, we are using the `@AFXEnableNode` annotation to activate the "Complete Order" button only, when the user has provided a value in all controls of the form.
+
+```java
+	@AFXEnableNode(whenAllContolsHaveUserValues = { "firstNameTextField", "lastNameTextField", "countryChoiceBox",
+			"streetTextField", "postalCodeTextField", "cityTextField" })
+	@FXML
+	private Button completeOrderButton;
+```
+
+This completes our Book store sample application. 
 
 Source Code can be found here: [CheckoutController](src/main/java/com/github/actionfx/bookstore/controller/CheckoutController.java)
 

@@ -37,14 +37,17 @@ import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXFormBinding;
 import com.github.actionfx.core.annotation.AFXFormMapping;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
+import com.github.actionfx.core.view.graph.ControlProperties;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 
 /**
@@ -63,6 +66,7 @@ public class CheckoutController {
 	@AFXFormMapping(propertyName = "customer.street", controlId = "streetTextField")
 	@AFXFormMapping(propertyName = "customer.postalCode", controlId = "postalCodeTextField")
 	@AFXFormMapping(propertyName = "customer.city", controlId = "cityTextField")
+	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST)
 	@AFXFormMapping(propertyName = "order.orderedBooks", controlId = "bookTableView")
 	private final ObjectProperty<OrderSummary> orderSummary = new SimpleObjectProperty<>(new OrderSummary());
 
@@ -72,6 +76,11 @@ public class CheckoutController {
 	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
 	@FXML
 	private TableView<Book> bookTableView;
+
+	@AFXEnableNode(whenAllContolsHaveUserValues = { "firstNameTextField", "lastNameTextField", "countryChoiceBox",
+			"streetTextField", "postalCodeTextField", "cityTextField" })
+	@FXML
+	private Button completeOrderButton;
 
 	@Inject
 	private ActionFX actionFX;
@@ -85,7 +94,6 @@ public class CheckoutController {
 		// create an order summary as model for our form-binding
 		final OrderSummary model = new OrderSummary();
 		model.getOrder().getOrderedBooks().addAll(books);
-		bookTableView.getItems().addAll(books);
 		orderSummary.set(model);
 	}
 
