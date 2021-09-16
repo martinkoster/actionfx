@@ -175,23 +175,10 @@ configure(allprojects) { project ->
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
 	
-	extraArchive {
-	    sources = true
-	    tests = false
-	    javadoc = true
-	}
-	
 	nexusPublishing {
 	    repositories {
 	        sonatype()
 	    }
-	}
-
-
-	nexus {
-	    sign = true
-	    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-	    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
 	}
 	
     dependencies {
