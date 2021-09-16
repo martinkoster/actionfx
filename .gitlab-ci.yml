@@ -97,6 +97,5 @@ releaseToMavenCentral:
     - echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
-    - ./gradlew uploadArchives -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg -PossrhUsername=$NEXUS_USERNAME -PossrhPassword=$NEXUS_PASSWORD -PnexusUsername=$NEXUS_USERNAME -PnexusPassword=$NEXUS_PASSWORD
-    - ./gradlew closeAndReleaseRepository -x test -PossrhUsername=$NEXUS_USERNAME -PossrhPassword=$NEXUS_PASSWORD -PnexusUsername=$NEXUS_USERNAME -PnexusPassword=$NEXUS_PASSWORD
+    - ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -x test 
   
