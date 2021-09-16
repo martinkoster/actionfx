@@ -197,12 +197,6 @@ configure(allprojects) { project ->
     }
 }
 
-nexusPublishing {
-    repositories {
-        sonatype()
-    }
-}
-
 modifyPom {
     project {
         name 'actionfx'
@@ -234,6 +228,16 @@ modifyPom {
     }
 }
 
+nexusPublishing {
+    repositories {
+        sonatype {
+            stagingProfileId = "com.github.martin.koster"
+            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
+	    
 gitPublish {
     repoUri = 'https://github.com/martinkoster/actionfx.git'
 
