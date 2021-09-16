@@ -1,7 +1,8 @@
 plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java-library"
-	id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
+    id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
+    id "com.bmuschko.nexus" version "${gradleNexusPlugin}"
     id "org.sonarqube" version "${sonarQubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
 }
@@ -23,6 +24,7 @@ configure(allprojects) { project ->
     apply plugin: "maven-publish"
     apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
+	apply plugin: 'com.bmuschko.nexus'
 
     sourceCompatibility = "11" 
     targetCompatibility = "11"
@@ -175,10 +177,16 @@ configure(allprojects) { project ->
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
 	
-	nexusPublishing {
-	    repositories {
-	        sonatype()
-	    }
+	extraArchive {
+	    sources = true
+	    tests = false
+	    javadoc = true
+	}
+	
+	nexus {
+	    sign = true
+	    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+	    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
 	}
 	
     dependencies {
@@ -186,6 +194,12 @@ configure(allprojects) { project ->
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
     	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
     	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype()
     }
 }
 
@@ -240,13 +254,6 @@ gitPublish {
 
     // message used when committing changes
     commitMessage = "Publishing JavaDoc for ActionFX API version ${version}"
-}
-
-configure(rootProject) {
-	nexusStaging {
-	    packageGroup = "com.github.martinkoster" //optional if packageGroup == project.getGroup()
-	    stagingProfileId = "com.github.martinkoster"
-	}
 }
 
 ////////////////////////
