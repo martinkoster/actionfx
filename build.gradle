@@ -231,7 +231,7 @@ modifyPom {
 nexusPublishing {
     repositories {
         sonatype {
-            stagingProfileId = "com.github.martin.koster"
+            stagingProfileId = "com.github.martinkoster"
             nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
         }
