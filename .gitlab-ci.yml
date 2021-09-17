@@ -98,5 +98,5 @@ releaseToMavenCentral:
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
 #    - ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test 
-    - ./gradlew publishAllPublicationsToSonatypeRepository closeSonatypeStagingRepository -x test 
+    - ./gradlew publishAllPublicationsToSonatypeRepository closeSonatypeStagingRepository -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg
   
