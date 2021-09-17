@@ -75,6 +75,7 @@ integrationTest {
 		    }
 		}
 	}
+}
 
 sonarqube {
     skipProject = true
