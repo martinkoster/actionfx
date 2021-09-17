@@ -48,33 +48,37 @@ integrationTest {
 ////////////////////////
 // Build / Publishing //
 ////////////////////////
-modifyPom {
-    project {
-        name 'ActionFX: afx-spring-boot'
-        description 'Spring and Spring Boot support for ActionFX'
-        url 'https://github.com/martinkoster/actionfx'
-        inceptionYear '2020'
+publishing {
+    publications {
+		mavenJava(MavenPublication) {
+		    pom {
+				name = 'ActionFX: afx-spring-boot'
+				description = 'Spring and Spring Boot support for ActionFX'
+				url = 'https://https://github.com/martinkoster/actionfx'
+				inceptionYear = '2020'
 	
-        scm {
-            url 'https://https://github.com/martinkoster/actionfx'
-            connection 'scm:https://github.com/martinkoster/actionfx.git'
-            developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
-        }
+				scm {
+					url = 'https://https://github.com/martinkoster/actionfx'
+					connection = 'scm:https://github.com/martinkoster/actionfx.git'
+					developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
+				}
 	
-        licenses {
-            license {
- 	            name 'MIT License'
-	            url 'https://opensource.org/licenses/MIT'
-                distribution 'repo'
-            }
-        }
+				licenses {
+					license {
+					    name = 'MIT License'
+					    url = 'https://opensource.org/licenses/MIT'
+						distribution = 'repo'
+					}
+				}
 	
-        developers {
-            developer {
-                id 'martinkoster'
-                name 'Martin Koster'
-                email 'koster@gmx.de'
-            }
-        }
-    }
+				developers {
+				    developer {
+						id = 'martinkoster'
+						name = 'Martin Koster'
+						email = 'koster@gmx.de'
+				    }
+				}
+		    }
+		}
+	}
 }

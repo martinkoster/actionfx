@@ -2,9 +2,9 @@ plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java-library"
     id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
-    id "com.bmuschko.nexus" version "${gradleNexusPlugin}"
     id "org.sonarqube" version "${sonarQubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
+    id 'signing'
 }
 
 wrapper {
@@ -24,7 +24,6 @@ configure(allprojects) { project ->
     apply plugin: "maven-publish"
     apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
-	apply plugin: 'com.bmuschko.nexus'
 
     sourceCompatibility = "11" 
     targetCompatibility = "11"
@@ -66,6 +65,11 @@ configure(allprojects) { project ->
 
 	[compileJava, compileTestJava, compileIntegrationTestJava]*.options*.encoding = "UTF-8"
     
+    java {
+	    withJavadocJar()
+	    withSourcesJar()
+	}
+
 	test {
 		useJUnitPlatform()
 		reports {
@@ -177,18 +181,6 @@ configure(allprojects) { project ->
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
 	
-	extraArchive {
-	    sources = true
-	    tests = false
-	    javadoc = true
-	}
-	
-	nexus {
-	    sign = true
-	    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-	    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
-	}
-	
     dependencies {
 	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
@@ -197,44 +189,57 @@ configure(allprojects) { project ->
     }
 }
 
-modifyPom {
-    project {
-        name 'actionfx'
-        description 'JavaFX framework with dependency injection support.'
-        url 'https://https://github.com/martinkoster/actionfx'
-        inceptionYear '2020'
-	
-        scm {
-	    	url 'https://https://github.com/martinkoster/actionfx'
-	        connection 'scm:https://github.com/martinkoster/actionfx.git'
-	        developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
-        }
-	
-        licenses {
-        	license {
-	            name 'MIT License'
-	            url 'https://opensource.org/licenses/MIT'
-                distribution 'repo'
-            }
-        }
-	
-        developers {
-            developer {
-                id 'martinkoster'
-                name 'Martin Koster'
-                email 'koster@gmx.de'
-            }
-        }
-    }
-}
 
+
+	////////////////////////
+	// Build / Publishing //
+	////////////////////////
+	publishing {
+	    publications {
+			mavenJava(MavenPublication) {
+			    pom {
+					name = 'actionfx'
+					description = 'JavaFX framework with dependency injection support.'
+					url = 'https://https://github.com/martinkoster/actionfx'
+					inceptionYear = '2020'
+		
+					scm {
+						url = 'https://https://github.com/martinkoster/actionfx'
+						connection = 'scm:https://github.com/martinkoster/actionfx.git'
+						developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
+					}
+		
+					licenses {
+						license {
+						    name = 'MIT License'
+						    url = 'https://opensource.org/licenses/MIT'
+							distribution = 'repo'
+					    }
+					}
+		
+					developers {
+					    developer {
+							id = 'martinkoster'
+							name = 'Martin Koster'
+							email = 'koster@gmx.de'
+					    }
+					}
+			    }
+			}
+	     }
+	}	
+	
+signing {
+	sign publishing.publications.mavenJava
+}
+	
 nexusPublishing {
     repositories {
-        sonatype {
-            stagingProfileId = "com.github.martinkoster"
-            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
-        }
+		sonatype {
+		    stagingProfileId = "3f386b79449aa"
+		    nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+		}
     }
 }
 	    
