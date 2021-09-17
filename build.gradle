@@ -225,6 +225,13 @@ configure(allprojects) { project ->
 					    }
 					}
 			    }
+			    from components.java
+	            artifact(sourcesJar) {
+	                classifier = 'sources'
+	            }
+	            artifact(javadocJar) {
+	                classifier = 'javadoc'
+	            }
 			}
 	     }
 	}	
