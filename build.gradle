@@ -199,6 +199,7 @@ configure(allprojects) { project ->
 			}
 		    }
 		}
+	     }
 	}
 	
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
