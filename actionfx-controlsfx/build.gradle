@@ -33,35 +33,35 @@ integrationTest {
 // Build / Publishing //
 ////////////////////////
 publishing {
-	    publications {
+	publications {
 		mavenJava(MavenPublication) {
 		    pom {
-			name 'ActionFX: actionfx-controlsfx'
-			description 'Integration of ControlsFX into ActionFX'
-			url 'https://https://github.com/martinkoster/actionfx'
-			inceptionYear '2020'
-
-			scm {
-				url 'https://https://github.com/martinkoster/actionfx'
-				connection 'scm:https://github.com/martinkoster/actionfx.git'
-				developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
-			}
-
-			licenses {
-				license {
-				    name 'MIT License'
-				    url 'https://opensource.org/licenses/MIT'
-				distribution 'repo'
-			    }
-			}
-
-			developers {
-			    developer {
-				id 'martinkoster'
-				name 'Martin Koster'
-				email 'koster@gmx.de'
-			    }
-			}
+				name = 'ActionFX: actionfx-controlsfx'
+				description = 'Integration of ControlsFX into ActionFX'
+				url = 'https://https://github.com/martinkoster/actionfx'
+				inceptionYear = '2020'
+	
+				scm {
+					url = 'https://https://github.com/martinkoster/actionfx'
+					connection = 'scm:https://github.com/martinkoster/actionfx.git'
+					developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
+				}
+	
+				licenses {
+					license {
+					    name = 'MIT License'
+					    url = 'https://opensource.org/licenses/MIT'
+						distribution = 'repo'
+				    }
+				}
+	
+				developers {
+				    developer {
+						id = 'martinkoster'
+						name = 'Martin Koster'
+						email = 'koster@gmx.de'
+				    }
+				}
 		    }
 		}
 	}

@@ -4,6 +4,7 @@ plugins {
     id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
     id "org.sonarqube" version "${sonarQubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
+    id 'signing'
 }
 
 wrapper {
@@ -64,6 +65,11 @@ configure(allprojects) { project ->
 
 	[compileJava, compileTestJava, compileIntegrationTestJava]*.options*.encoding = "UTF-8"
     
+    java {
+	    withJavadocJar()
+	    withSourcesJar()
+	}
+
 	test {
 		useJUnitPlatform()
 		reports {
@@ -167,41 +173,6 @@ configure(allprojects) { project ->
 	// Build / Publishing //
 	////////////////////////
 
-	publishing {
-	    publications {
-		mavenJava(MavenPublication) {
-		    pom {
-			name 'actionfx'
-			description 'JavaFX framework with dependency injection support.'
-			url 'https://https://github.com/martinkoster/actionfx'
-			inceptionYear '2020'
-
-			scm {
-				url 'https://https://github.com/martinkoster/actionfx'
-				connection 'scm:https://github.com/martinkoster/actionfx.git'
-				developerConnection 'scm:git://github.com/martinkoster/actionfx.git'
-			}
-
-			licenses {
-				license {
-				    name 'MIT License'
-				    url 'https://opensource.org/licenses/MIT'
-				distribution 'repo'
-			    }
-			}
-
-			developers {
-			    developer {
-				id 'martinkoster'
-				name 'Martin Koster'
-				email 'koster@gmx.de'
-			    }
-			}
-		    }
-		}
-	     }
-	}
-	
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
 	task copyJavaDocToDocs(type: Copy) {
 	    from "$buildDir/docs/javadoc"
@@ -210,21 +181,65 @@ configure(allprojects) { project ->
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
 	
-	nexusPublishing {
-	    repositories {
-		sonatype {
-		    stagingProfileId = "3f386b79449aa"
-		    nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
-		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
-		}
-	    }
-	}
-	
     dependencies {
 	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
     	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
     	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
+    }
+}
+
+
+
+	////////////////////////
+	// Build / Publishing //
+	////////////////////////
+	publishing {
+	    publications {
+			mavenJava(MavenPublication) {
+			    pom {
+					name = 'actionfx'
+					description = 'JavaFX framework with dependency injection support.'
+					url = 'https://https://github.com/martinkoster/actionfx'
+					inceptionYear = '2020'
+		
+					scm {
+						url = 'https://https://github.com/martinkoster/actionfx'
+						connection = 'scm:https://github.com/martinkoster/actionfx.git'
+						developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
+					}
+		
+					licenses {
+						license {
+						    name = 'MIT License'
+						    url = 'https://opensource.org/licenses/MIT'
+							distribution = 'repo'
+					    }
+					}
+		
+					developers {
+					    developer {
+							id = 'martinkoster'
+							name = 'Martin Koster'
+							email = 'koster@gmx.de'
+					    }
+					}
+			    }
+			}
+	     }
+	}	
+	
+signing {
+	sign publishing.publications.mavenJava
+}
+	
+nexusPublishing {
+    repositories {
+		sonatype {
+		    stagingProfileId = "3f386b79449aa"
+		    nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+		}
     }
 }
 	    
