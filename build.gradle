@@ -66,21 +66,10 @@ configure(allprojects) { project ->
 	}
 
 	[compileJava, compileTestJava, compileIntegrationTestJava]*.options*.encoding = "UTF-8"
-    
-    java {
-	    withJavadocJar()
-	    withSourcesJar()
-	}
-	
-	task sourceJar(type: Jar) {
-	    classifier "sources"
-	    from sourceSets.main.allJava
-	}
-	
-	artifacts {
-	    archives jar
-	    archives sourceJar
-	    archives javadocJar
+
+	java {
+		withSourcesJar()
+		withJavadocJar() 
 	}
 	
 	test {
@@ -181,10 +170,16 @@ configure(allprojects) { project ->
 
         failOnError = false
     }
-    
+	
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
+	artifacts {
+	    archives jar
+	    archives sourcesJar
+	    archives javadocJar
+	}
+
 	publishing {
 	    publications {
 			mavenJava(MavenPublication) {
@@ -192,7 +187,7 @@ configure(allprojects) { project ->
 
 			    from components.java
 	
-	            artifact(sourceJar) {
+	            artifact(sourcesJar) {
 	                classifier = 'sources'
 	            }
 	            artifact(javadocJar) {
@@ -261,7 +256,11 @@ def customizePom(pom) {
         }
     }
 }
-	
+
+signing {
+   sign publishing.publications.mavenJava
+}
+
 nexusPublishing {
     repositories {
 		sonatype {
