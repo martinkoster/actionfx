@@ -185,9 +185,6 @@ configure(allprojects) { project ->
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
-	////////////////////////
-	// Build / Publishing //
-	////////////////////////
 	publishing {
 	    publications {
 			mavenJava(MavenPublication) {
