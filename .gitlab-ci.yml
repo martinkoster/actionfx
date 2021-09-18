@@ -19,7 +19,7 @@ cache:
 build:
   stage: build
   script:
-    - ./gradlew assemble -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg
+    - ./gradlew assemble
   artifacts:
     paths:
       - build/
