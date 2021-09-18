@@ -262,10 +262,6 @@ def customizePom(pom) {
     }
 }
 	
-signing {
-	sign configurations.archives
-}
-	
 nexusPublishing {
     repositories {
 		sonatype {
