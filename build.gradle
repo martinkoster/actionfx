@@ -13,6 +13,8 @@ wrapper {
     distributionUrl = "https://services.gradle.org/distributions/gradle-6.7-bin.zip"
 }
 
+description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection"
+
 ///////////////////////////////////////
 // configuration for all subprojects //
 ///////////////////////////////////////
@@ -69,7 +71,18 @@ configure(allprojects) { project ->
 	    withJavadocJar()
 	    withSourcesJar()
 	}
-
+	
+	task sourceJar(type: Jar) {
+	    classifier "sources"
+	    from sourceSets.main.allJava
+	}
+	
+	artifacts {
+	    archives jar
+	    archives sourceJar
+	    archives javadocJar
+	}
+	
 	test {
 		useJUnitPlatform()
 		reports {
@@ -151,7 +164,7 @@ configure(allprojects) { project ->
         enabled = false
         ignoreFailures = true
     }
- 
+
     javadoc {
         description = "Generates project-level javadoc for use in -javadoc jar"
 
@@ -172,6 +185,42 @@ configure(allprojects) { project ->
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
+	////////////////////////
+	// Build / Publishing //
+	////////////////////////
+	publishing {
+	    publications {
+			mavenJava(MavenPublication) {
+                customizePom(pom)
+
+			    from components.java
+	
+		        // create the sign pom artifact
+	            pom.withXml {
+	                def pomFile = file("${project.buildDir}/generated-pom.xml")
+	                writeTo(pomFile)
+	                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+	                artifact(pomAscFile) {
+	                    classifier = null
+	                    extension = 'pom.asc'
+	                }
+	            }	
+            		    
+	            artifact(sourceJar) {
+	                classifier = 'sources'
+	            }
+	            artifact(javadocJar) {
+	                classifier = 'javadoc'
+	            }
+			}
+	     }
+	}	
+	
+	model {
+	    tasks.generatePomFileForMavenJavaPublication {
+	        destination = file("${project.buildDir}/generated-pom.xml")
+	    }
+	}
 
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
 	task copyJavaDocToDocs(type: Copy) {
@@ -189,55 +238,46 @@ configure(allprojects) { project ->
     }
 }
 
+def customizePom(pom) {
+    pom.withXml {
+        def root = asNode()
 
+        // add all items necessary for maven central publication
+        root.children().last() + {
+            resolveStrategy = Closure.DELEGATE_FIRST
 
-	////////////////////////
-	// Build / Publishing //
-	////////////////////////
-	publishing {
-	    publications {
-			mavenJava(MavenPublication) {
-			    pom {
-					name = 'actionfx'
-					description = 'JavaFX framework with dependency injection support.'
-					url = 'https://https://github.com/martinkoster/actionfx'
-					inceptionYear = '2020'
+			name  "${project.name}"
+			description  "${project.description}"
+			url  'https://https://github.com/martinkoster/actionfx'
+			inceptionYear  '2020'
 		
-					scm {
-						url = 'https://https://github.com/martinkoster/actionfx'
-						connection = 'scm:https://github.com/martinkoster/actionfx.git'
-						developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
-					}
-		
-					licenses {
-						license {
-						    name = 'MIT License'
-						    url = 'https://opensource.org/licenses/MIT'
-							distribution = 'repo'
-					    }
-					}
-		
-					developers {
-					    developer {
-							id = 'martinkoster'
-							name = 'Martin Koster'
-							email = 'koster@gmx.de'
-					    }
-					}
-			    }
-			    from components.java
-	            artifact(sourcesJar) {
-	                classifier = 'sources'
-	            }
-	            artifact(javadocJar) {
-	                classifier = 'javadoc'
-	            }
+			scm {
+				url  'https://https://github.com/martinkoster/actionfx'
+				connection  'scm:https://github.com/martinkoster/actionfx.git'
+				developerConnection  'scm:git://github.com/martinkoster/actionfx.git'
 			}
-	     }
-	}	
+		
+			licenses {
+				license {
+				    name 'MIT License'
+				    url 'https://opensource.org/licenses/MIT'
+					distribution 'repo'
+			    }
+			}
+		
+			developers {
+			    developer {
+					id 'martinkoster'
+					name 'Martin Koster'
+					email 'koster@gmx.de'
+			   }
+			}
+        }
+    }
+}
 	
 signing {
-	sign publishing.publications.mavenJava
+	sign configurations.archives
 }
 	
 nexusPublishing {
