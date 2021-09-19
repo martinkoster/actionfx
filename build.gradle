@@ -183,6 +183,17 @@ configure(allprojects) { project ->
 	publishing {
 	    publications {
 			mavenJava(MavenPublication) {
+			    from components.java
+
+	            afterEvaluate {
+    		        ["sourcesJar", "javadocJar"].forEach { taskName ->
+        		      def task = tasks.findByName(taskName)
+            		  if (task != null)
+                		artifact task
+	            	}
+	           	}
+	            artifactId = archivesBaseName
+
 				pom {
 					afterEvaluate {
 						name = project.name
@@ -213,15 +224,6 @@ configure(allprojects) { project ->
 					   }
 					}
 				}
-				
-			    from components.java
-	
-	            artifact(sourcesJar) {
-	                classifier = 'sources'
-	            }
-	            artifact(javadocJar) {
-	                classifier = 'javadoc'
-	            }
 			}
 	     }
 	}	
