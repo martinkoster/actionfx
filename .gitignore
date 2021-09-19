@@ -7,7 +7,7 @@
 # eclipse specific git ignore
 .project
 .metadata
-.gradle/**
+**/.gradle/**
 **/build/**
 **/out/**
 **/bin/**
