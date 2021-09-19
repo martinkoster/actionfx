@@ -183,8 +183,37 @@ configure(allprojects) { project ->
 	publishing {
 	    publications {
 			mavenJava(MavenPublication) {
-                customizePom(pom)
-
+				pom {
+					afterEvaluate {
+						name = project.name
+						description = project.description
+					}
+					url = 'https://https://github.com/martinkoster/actionfx'
+					inceptionYear = '2020'
+				
+					scm {
+						url = 'https://https://github.com/martinkoster/actionfx'
+						connection = 'scm:https://github.com/martinkoster/actionfx.git'
+						developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
+					}
+				
+					licenses {
+						license {
+						    name = 'MIT License'
+						    url = 'https://opensource.org/licenses/MIT'
+							distribution = 'repo'
+					    }
+					}
+				
+					developers {
+					    developer {
+							id = 'martinkoster'
+							name = 'Martin Koster'
+							email = 'koster@gmx.de'
+					   }
+					}
+				}
+				
 			    from components.java
 	
 	            artifact(sourcesJar) {
@@ -216,44 +245,6 @@ configure(allprojects) { project ->
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
     	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
     	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
-    }
-}
-
-def customizePom(pom) {
-    pom.withXml {
-        def root = asNode()
-
-        // add all items necessary for maven central publication
-        root.children().last() + {
-            resolveStrategy = Closure.DELEGATE_FIRST
-
-			name  "${project.name}"
-			description  "${project.description}"
-			url  'https://https://github.com/martinkoster/actionfx'
-			inceptionYear  '2020'
-		
-			scm {
-				url  'https://https://github.com/martinkoster/actionfx'
-				connection  'scm:https://github.com/martinkoster/actionfx.git'
-				developerConnection  'scm:git://github.com/martinkoster/actionfx.git'
-			}
-		
-			licenses {
-				license {
-				    name 'MIT License'
-				    url 'https://opensource.org/licenses/MIT'
-					distribution 'repo'
-			    }
-			}
-		
-			developers {
-			    developer {
-					id 'martinkoster'
-					name 'Martin Koster'
-					email 'koster@gmx.de'
-			   }
-			}
-        }
     }
 }
 
