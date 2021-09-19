@@ -174,12 +174,6 @@ configure(allprojects) { project ->
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
-	artifacts {
-	    archives jar
-	    archives sourcesJar
-	    archives javadocJar
-	}
-
 	publishing {
 	    publications {
 			mavenJava(MavenPublication) {
