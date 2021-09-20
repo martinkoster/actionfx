@@ -99,4 +99,13 @@ releaseToMavenCentral:
     - gpg -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
 #    - ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test 
     - ./gradlew publishAllPublicationsToSonatypeRepository closeSonatypeStagingRepository -x test -Psigning.password=$GNUPGP_PASSPHRASE -Psigning.keyId=$SECRET_KEY -Psigning.secretKeyRingFile=/root/.gnupg/secring.gpg
+  artifacts:
+    paths:
+      - build/
+      - actionfx-core/build/
+      - actionfx-testing/build/
+      - actionfx-controlsfx/build/
+      - actionfx-spring-boot/build/
+      - actionfx-app-sample/build/
+    expire_in: 1 week
   
