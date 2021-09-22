@@ -238,6 +238,13 @@ configure(subprojects) { project ->
 			}
 	     }
 	}
+
+	task signJars { 
+		dependsOn( generatePomFileForMavenJavaPublication ) 
+		signing { 
+			publishing.publications.mavenJava
+		}
+	}
 }
 
 nexusPublishing {

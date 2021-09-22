@@ -28,3 +28,4 @@ integrationTest {
 		forkEvery = 1
     	maxParallelForks = 1       
 }
+
