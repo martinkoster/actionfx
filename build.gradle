@@ -180,6 +180,7 @@ configure(allprojects) { project ->
 			    from components.java
 
 	            afterEvaluate {
+			artifactId = jar.archiveBaseName
     		        ["sourcesJar", "javadocJar"].forEach { taskName ->
         		      def task = tasks.findByName(taskName)
             		  if (task != null)
