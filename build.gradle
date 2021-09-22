@@ -182,13 +182,11 @@ configure(subprojects) { project ->
 	            afterEvaluate {
 			artifactId = jar.archiveBaseName
     		        ["sourcesJar", "javadocJar"].forEach { taskName ->
-        		      def task = tasks.findByName(taskName)
-            		  if (task != null)
-                		artifact task
-	            	}
+				  def task = tasks.findByName(taskName)
+				  if (task != null)
+					artifact task
+				}
 	           	}
-	            artifactId = archivesBaseName
-
 				pom {
 					afterEvaluate {
 						name = project.name
@@ -224,7 +222,7 @@ configure(subprojects) { project ->
 	}	
 	
 	signing {
-	   sign publishing.publications.mavenJava
+	   sign project.publishing.publications.mavenJava
 	}
 
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
