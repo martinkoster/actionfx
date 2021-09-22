@@ -221,10 +221,6 @@ configure(subprojects) { project ->
 	     }
 	}	
 	
-	signing {
-	   sign project.publishing.publications.mavenJava
-	}
-
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
 	task copyJavaDocToDocs(type: Copy) {
 	    from "$buildDir/docs/javadoc"
