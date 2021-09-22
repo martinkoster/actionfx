@@ -18,7 +18,7 @@ description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with
 ///////////////////////////////////////
 // configuration for all subprojects //
 ///////////////////////////////////////
-configure(allprojects) { project ->
+configure(subprojects) { project ->
  
     apply plugin: "eclipse"
     apply plugin: "idea"
