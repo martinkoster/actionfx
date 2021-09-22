@@ -223,10 +223,8 @@ configure(subprojects) { project ->
 	     }
 	}	
 	
-	model {
-	    tasks.generatePomFileForMavenJavaPublication {
-	        destination = file("${project.buildDir}/generated-pom.xml")
-	    }
+	signing {
+	   sign publishing.publications.mavenJava
 	}
 
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
@@ -243,10 +241,6 @@ configure(subprojects) { project ->
     	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
     	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
     }
-}
-
-signing {
-   sign publishing.publications.mavenJava
 }
 
 nexusPublishing {
