@@ -198,7 +198,7 @@ configure(subprojects) { project ->
 			    from components.java
 
 	            afterEvaluate {
-			artifactId = jar.archiveBaseName
+					artifactId = project.name
     		        ["sourcesJar", "javadocJar"].forEach { taskName ->
 				  def task = tasks.findByName(taskName)
 				  if (task != null)
