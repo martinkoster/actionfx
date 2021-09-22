@@ -287,8 +287,11 @@ task codeCoverageReport(type: JacocoReport) {
         csv.enabled false
     }
 }
-codeCoverageReport.dependsOn {
-    subprojects*.test
+
+afterEvaluate {
+	codeCoverageReport.dependsOn {
+	    subprojects*.test
+	}
 }
 
 sonarqube {
