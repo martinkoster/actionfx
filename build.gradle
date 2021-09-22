@@ -18,7 +18,7 @@ description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with
 ///////////////////////////////////////
 // configuration for all subprojects //
 ///////////////////////////////////////
-configure(subprojects) { project ->
+configure(allprojects) { project ->
  
     apply plugin: "eclipse"
     apply plugin: "idea"
@@ -171,6 +171,24 @@ configure(subprojects) { project ->
         failOnError = false
     }
 	
+	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
+	task copyJavaDocToDocs(type: Copy) {
+	    from "$buildDir/docs/javadoc"
+	    into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
+	}
+	copyJavaDocToDocs.dependsOn javadoc
+	test.dependsOn copyJavaDocToDocs
+	
+    dependencies {
+	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
+ 		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
+    	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
+    	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
+    }
+}
+
+configure(subprojects) { project ->
+	
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
@@ -219,22 +237,7 @@ configure(subprojects) { project ->
 				}
 			}
 	     }
-	}	
-	
-	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
-	task copyJavaDocToDocs(type: Copy) {
-	    from "$buildDir/docs/javadoc"
-	    into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
 	}
-	copyJavaDocToDocs.dependsOn javadoc
-	test.dependsOn copyJavaDocToDocs
-	
-    dependencies {
-	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
- 		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
-    	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
-    	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
-    }
 }
 
 nexusPublishing {
@@ -288,11 +291,10 @@ task codeCoverageReport(type: JacocoReport) {
     }
 }
 
-afterEvaluate {
-	codeCoverageReport.dependsOn {
+codeCoverageReport.dependsOn {
 	    subprojects*.test
-	}
 }
+
 
 sonarqube {
   properties {
