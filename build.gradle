@@ -189,6 +189,8 @@ configure(allprojects) { project ->
 
 configure(subprojects) { project ->
 	
+	apply plugin: 'signing'
+	
 	////////////////////////
 	// Build / Publishing //
 	////////////////////////
@@ -232,6 +234,10 @@ configure(subprojects) { project ->
 				}
 			}
 		}
+	}
+
+	signing { 
+		publishing.publications.mavenJava
 	}
 }
 
