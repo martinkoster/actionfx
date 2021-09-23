@@ -19,12 +19,10 @@ description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with
 // configuration for all subprojects //
 ///////////////////////////////////////
 configure(allprojects) { project ->
- 
+ 	apply plugin: "java-library"
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: 'jacoco'
-    apply plugin: "maven-publish"
-    apply plugin: "java-library"
     apply plugin: "com.github.spotbugs"
 
     sourceCompatibility = "11" 
@@ -199,8 +197,11 @@ nexusPublishing {
 
 configure(subprojects) { project ->
 
+    apply plugin: "maven-publish"
 	apply from: '../publishing.gradle'
-
+	apply plugin: 'signing'
+	
+	
     initializeSonatypeStagingRepository {
         shouldRunAfter(tasks.withType(Sign))
     }	
