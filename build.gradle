@@ -194,26 +194,26 @@ configure(subprojects) { project ->
 	////////////////////////
 	publishing {
 	    publications {
-		mavenJava(MavenPublication) {
-			    from components.java
-
-		afterEvaluate {
-				artifactId = project.name
-           	}
-		pom {
+			mavenJava(MavenPublication) {
+				from components.java
+	
+				afterEvaluate {
+					artifactId = project.name
+	           	}
+				pom {
 					afterEvaluate {
 						name = project.name
 						description = project.description
 					}
 					url = 'https://https://github.com/martinkoster/actionfx'
 					inceptionYear = '2020'
-				
+					
 					scm {
 						url = 'https://https://github.com/martinkoster/actionfx'
 						connection = 'scm:https://github.com/martinkoster/actionfx.git'
 						developerConnection = 'scm:git://github.com/martinkoster/actionfx.git'
 					}
-				
+					
 					licenses {
 						license {
 						    name = 'MIT License'
@@ -221,25 +221,18 @@ configure(subprojects) { project ->
 							distribution = 'repo'
 					    }
 					}
-				
+					
 					developers {
 					    developer {
 							id = 'martinkoster'
 							name = 'Martin Koster'
 							email = 'koster@gmx.de'
-					   }
+						}
 					}
 				}
-		}
-	     }
-	}
-
-	task signJars { 
-		signing { 
-			publishing.publications.mavenJava
+			}
 		}
 	}
-	generatePomFileForMavenJavaPublication.dependsOn signJars
 }
 
 nexusPublishing {
