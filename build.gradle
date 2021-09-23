@@ -199,8 +199,6 @@ configure(subprojects) { project ->
 
     apply plugin: "maven-publish"
 	apply from: '../publishing.gradle'
-	apply plugin: 'signing'
-	
 	
     initializeSonatypeStagingRepository {
         shouldRunAfter(tasks.withType(Sign))

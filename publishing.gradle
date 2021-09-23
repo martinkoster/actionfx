@@ -45,8 +45,9 @@
 	}
 
 signing { 
-    def signingKey = findProperty("signing.key")
-    def signingPassword = findProperty("signing.password")
+	required = true
+    def signingKey = System.getProperty("signing.key")
+    def signingPassword = System.getProperty("signing.password")
     useInMemoryPgpKeys(signingKey, signingPassword)
 	publishing.publications.mavenJava
 }
