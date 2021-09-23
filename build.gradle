@@ -187,15 +187,6 @@ configure(allprojects) { project ->
     }
 }
 
-configure(subprojects) { project ->
-	
-	apply from: '../publishing.gradle'
-
-	tasks.withType(Sign) {
-		mustRunAfter generatePomFileForMavenJavaPublication
-	}
-}
-
 nexusPublishing {
     repositories {
 		sonatype {
@@ -204,6 +195,16 @@ nexusPublishing {
 		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
 		}
     }
+}
+
+configure(subprojects) { project ->
+
+	apply from: '../publishing.gradle'
+
+    initializeSonatypeStagingRepository {
+        shouldRunAfter(tasks.withType(Sign))
+    }	
+
 }
 	    
 gitPublish {
