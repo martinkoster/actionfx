@@ -199,11 +199,6 @@ configure(subprojects) { project ->
 
 		afterEvaluate {
 				artifactId = project.name
-    		        	[].forEach { taskName ->
-				  def task = tasks.findByName(taskName)
-				  if (task != null)
-					artifact task
-				}
            	}
 		pom {
 					afterEvaluate {
