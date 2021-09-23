@@ -194,18 +194,18 @@ configure(subprojects) { project ->
 	////////////////////////
 	publishing {
 	    publications {
-			mavenJava(MavenPublication) {
+		mavenJava(MavenPublication) {
 			    from components.java
 
-	            afterEvaluate {
-					artifactId = project.name
-    		        ["sourcesJar", "javadocJar"].forEach { taskName ->
+		afterEvaluate {
+				artifactId = project.name
+    		        	["sourcesJar", "javadocJar"].forEach { taskName ->
 				  def task = tasks.findByName(taskName)
 				  if (task != null)
 					artifact task
 				}
-	           	}
-				pom {
+           	}
+		pom {
 					afterEvaluate {
 						name = project.name
 						description = project.description
@@ -235,16 +235,16 @@ configure(subprojects) { project ->
 					   }
 					}
 				}
-			}
+		}
 	     }
 	}
 
 	task signJars { 
-		dependsOn( generatePomFileForMavenJavaPublication ) 
 		signing { 
 			publishing.publications.mavenJava
 		}
 	}
+	signJars.mustRunAfter generatePomFileForMavenJavaPublication
 }
 
 nexusPublishing {
