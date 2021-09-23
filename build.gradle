@@ -239,6 +239,10 @@ configure(subprojects) { project ->
 	signing { 
 		publishing.publications.mavenJava
 	}
+	
+	tasks.withType(Sign) {
+		shouldRunAfter generatePomFileForMavenJavaPublication
+	}
 }
 
 nexusPublishing {
