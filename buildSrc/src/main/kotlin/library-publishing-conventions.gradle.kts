@@ -45,11 +45,6 @@ publishing {
 
 signing {
     setRequired { !project.version.toString().endsWith("-SNAPSHOT") && !project.hasProperty("skipSigning") }
-    if (project.hasProperty("signingKey")) {
-        useInMemoryPgpKeys(properties["signingKey"].toString(), properties["signingPassword"].toString())
-    } else {
-        useGpgCmd()
-    }
     sign(publishing.publications["mavenJava"])
 }
 
