@@ -1,5 +1,6 @@
 plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
+    id "library-publishing-conventions"
 }
 
 description = "afx-core: This module contains the core classes of the ActionFX framework."

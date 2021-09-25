@@ -1,5 +1,6 @@
 plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
+    id "library-publishing-conventions"
 }
 
 description = "actionfx-controlsfx: This module contains an integration of the ControlsFX (https://github.com/controlsfx/controlsfx) framework into ActionFX."

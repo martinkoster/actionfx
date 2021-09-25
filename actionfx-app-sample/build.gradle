@@ -1,5 +1,6 @@
 plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
+    id "library-publishing-conventions"
 }
 
 description = "app-sample: This module contains sample applications for the ActionFX framework."

@@ -1,5 +1,6 @@
 plugins {
     id("org.openjfx.javafxplugin") version "0.0.9"
+    id "library-publishing-conventions"
 }
 
 description = "afx-spring-boot: This module contains integration classes for using ActionFX with the Spring Framework."

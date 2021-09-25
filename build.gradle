@@ -4,7 +4,6 @@ plugins {
     id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
     id "org.sonarqube" version "${sonarQubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
-    id 'signing'
 }
 
 wrapper {
@@ -193,17 +192,13 @@ nexusPublishing {
 		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
 		}
     }
-}
+} 
 
 configure(subprojects) { project ->
 
-    apply plugin: "maven-publish"
-	apply from: '../publishing.gradle'
-	
     initializeSonatypeStagingRepository {
         shouldRunAfter(tasks.withType(Sign))
     }	
-
 }
 	    
 gitPublish {
