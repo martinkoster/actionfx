@@ -17,8 +17,8 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             pom {
-                name.set("ActionFX")
-                description.set("ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection")
+                name.set(project.name)
+                description.set(project.description)
                 url.set("https://https://github.com/martinkoster/actionfx")
                 inceptionYear.set("2020")
                 licenses {
