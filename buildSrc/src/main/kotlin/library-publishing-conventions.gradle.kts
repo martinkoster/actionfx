@@ -6,7 +6,8 @@ plugins {
 
 group = "com.github.martinkoster"
 val versionSuffix = if (isOnCIServer()) "ci" else "local"
-version = "0.0.1-$versionSuffix"
+version = project.version
+description = project.description
 
 repositories {
     mavenCentral()
