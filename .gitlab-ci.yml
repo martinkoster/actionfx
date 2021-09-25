@@ -99,6 +99,8 @@ releaseToMavenCentral:
     - gpg2 -v --list-keys
     - echo "pinentry-mode loopback" > ~/.gnupg/gpg2.conf
     - echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
+    - mkdir -p ~/.gnupg/private-keys-v1.d
+    - chmod 700 ~/.gnupg/private-keys-v1.d    
     - gpg2 -v --passphrase $GNUPGP_PASSPHRASE --batch --import $GNUPGP_PRIVATE_KEY_FILE
     - gpg2 -v --passphrase $GNUPGP_PASSPHRASE --export-secret-key --batch -o ~/.gnupg/secring.gpg
 #    - ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test 
