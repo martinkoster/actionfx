@@ -2,9 +2,9 @@ image: adoptopenjdk/openjdk11:jdk-11.0.10_9-ubuntu
     
 stages:
   - build
-  - deploy
   - test
   - quality
+  - deploy
     
 before_script:
 #  - echo `pwd` # debug
@@ -92,7 +92,7 @@ releaseToMavenCentral:
   stage: deploy
   when: manual
   script:
-    - ./gradlew publishAllPublicationsToSonatypeRepository closeSonatypeStagingRepository -x test 
+    - ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test 
   artifacts:
     paths:
       - build/
