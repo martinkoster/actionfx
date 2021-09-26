@@ -256,10 +256,36 @@ sonarqube {
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Tasks for incrementing the version number in gradle.properties and README files
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+task incMajorVersion {
+	doLast {
+	    def versionTokens = project.version.split("\\.")
+	    def newVersion = (Integer.parseInt(versionTokens[0]) + 1) + ".0.0"
+	    setVersion(newVersion)
+	}
+}
+
 task incMinorVersion {
 	doLast {
 	    def versionTokens = project.version.split("\\.")
 	    def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
+	    setVersion(newVersion)
+	}
+}
+
+task incPatchVersion {
+	doLast {
+	    def versionTokens = project.version.split("\\.")
+	    def newVersion = versionTokens[0] + "." + versionTokens[1] + "." + (Integer.parseInt(versionTokens[2]) + 1)
+	    setVersion(newVersion)
+	}
+}
+
+	
+def setVersionTo(version) {
 	    println("Increasing version number from ${project.version} to ${newVersion}")
 	    ant.replaceregexp(match:"version\\s+=\\s+${project.version}", replace:"version							= ${newVersion}", flags:'g', byline:true) {
 	        fileset(dir: '.', includes: 'gradle.properties')	    
@@ -272,5 +298,4 @@ task incMinorVersion {
 	        fileset(dir: './actionfx-spring-boot', includes: 'README.md')	    
 	        fileset(dir: './actionfx-testing', includes: 'README.md')	    
 	    }
-	}
-}
+}	
