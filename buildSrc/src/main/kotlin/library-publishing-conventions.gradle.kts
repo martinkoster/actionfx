@@ -5,7 +5,6 @@ plugins {
 }
 
 group = "com.github.martinkoster"
-val versionSuffix = if (isOnCIServer()) "ci" else "local"
 version = project.version
 description = project.description
 
@@ -18,8 +17,8 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             pom {
-                name.set(project.name)
-                description.set(project.description)
+		        name.set(project.name)
+	            description.set("ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection")
                 url.set("https://https://github.com/martinkoster/actionfx")
                 inceptionYear.set("2020")
                 licenses {
@@ -46,12 +45,6 @@ publishing {
 
 signing {
     setRequired { !project.version.toString().endsWith("-SNAPSHOT") && !project.hasProperty("skipSigning") }
-    if (project.hasProperty("signingKey")) {
-        useInMemoryPgpKeys(properties["signingKey"].toString(), properties["signingPassword"].toString())
-    } else {
-        useGpgCmd()
-    }
+    useInMemoryPgpKeys(properties["signingKey"].toString(), properties["signingPassword"].toString())
     sign(publishing.publications["mavenJava"])
 }
-
-fun isOnCIServer() = System.getenv("CI") == "true"
