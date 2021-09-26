@@ -32,7 +32,7 @@ configure(allprojects) { project ->
 	    all*.exclude module: "slf4j-log4j12"
 	    all*.exclude module: "jsr305"
 	    integrationTestImplementation.extendsFrom testImplementation
-	    integrationTestRuntime.extendsFrom testRuntime
+	    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
     }
 
       
@@ -179,7 +179,7 @@ configure(allprojects) { project ->
     dependencies {
 	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
  		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
-    	testRuntime group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
+    	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
     	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
     }
 }
@@ -254,4 +254,23 @@ sonarqube {
     property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
   }
+}
+
+task incMinorVersion {
+	doLast {
+	    def versionTokens = project.version.split("\\.")
+	    def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
+	    println("Increasing version number from ${project.version} to ${newVersion}")
+	    ant.replaceregexp(match:"version\\s+=\\s+${project.version}", replace:"version							= ${newVersion}", flags:'g', byline:true) {
+	        fileset(dir: '.', includes: 'gradle.properties')	    
+	    }
+	    ant.replaceregexp(match:"${project.version}", replace:"${newVersion}", flags:'g', byline:true) {
+	        fileset(dir: '.', includes: 'README.md')	    
+	        fileset(dir: './actionfx-app-sample', includes: 'README.md')	    
+	        fileset(dir: './actionfx-controlsfx', includes: 'README.md')	    
+	        fileset(dir: './actionfx-core', includes: 'README.md')	    
+	        fileset(dir: './actionfx-spring-boot', includes: 'README.md')	    
+	        fileset(dir: './actionfx-testing', includes: 'README.md')	    
+	    }
+	}
 }
