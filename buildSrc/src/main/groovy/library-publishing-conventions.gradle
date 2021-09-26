@@ -1,0 +1,52 @@
+plugins { 
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+}
+
+group = "com.github.martinkoster"
+version = project.version
+description = project.description
+
+repositories {
+    mavenCentral()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom {
+		        name = project.name
+		        afterEvaluate {
+	            	description = project.description
+	            }
+                url = "https://https://github.com/martinkoster/actionfx"
+                inceptionYear = "2020"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "martinkoster"
+                        name = "Martin Koster"
+                    }
+                }
+                scm {
+                    connection = "scm:https://github.com/martinkoster/actionfx.git"
+                    developerConnection = "scm:git://github.com/martinkoster/actionfx.git"
+                    url = "https://https://github.com/martinkoster/actionfx"
+                }
+            }
+        }
+    }
+}
+
+signing {
+    required = !project.version.toString().endsWith("-SNAPSHOT") && !project.hasProperty("skipSigning") 
+    useInMemoryPgpKeys(findProperty("signingKey"), findProperty("signingPassword"))
+    sign(publishing.publications.mavenJava)
+}
