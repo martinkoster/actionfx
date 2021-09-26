@@ -264,7 +264,7 @@ task incMajorVersion {
 	doLast {
 	    def versionTokens = project.version.split("\\.")
 	    def newVersion = (Integer.parseInt(versionTokens[0]) + 1) + ".0.0"
-	    setVersion(newVersion)
+	    setVersionTo(newVersion)
 	}
 }
 
@@ -272,7 +272,7 @@ task incMinorVersion {
 	doLast {
 	    def versionTokens = project.version.split("\\.")
 	    def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
-	    setVersion(newVersion)
+	    setVersionTo(newVersion)
 	}
 }
 
@@ -280,12 +280,12 @@ task incPatchVersion {
 	doLast {
 	    def versionTokens = project.version.split("\\.")
 	    def newVersion = versionTokens[0] + "." + versionTokens[1] + "." + (Integer.parseInt(versionTokens[2]) + 1)
-	    setVersion(newVersion)
+	    setVersionTo(newVersion)
 	}
 }
 
 	
-def setVersionTo(version) {
+def setVersionTo(newVersion) {
 	    println("Increasing version number from ${project.version} to ${newVersion}")
 	    ant.replaceregexp(match:"version\\s+=\\s+${project.version}", replace:"version							= ${newVersion}", flags:'g', byline:true) {
 	        fileset(dir: '.', includes: 'gradle.properties')	    
