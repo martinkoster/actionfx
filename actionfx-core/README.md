@@ -58,6 +58,8 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXFromFileOpenDialog (Method Argument Annotation)](#annotation-afxfromfileopendialog)
       - [Annotation @AFXFromDirectoryChooserDialog (Method Argument Annotation)](#annotation-afxfromdirectorychooserdialog)
       - [Annotation @AFXFromTextInputDialog (Method Argument Annotation)](#annotation-afxfromtextinputdialog)
+    + [Annotations for a loose coupling of ActionFX controller](#annotations-for-a-loose-coupling-of-actionfx-controller)
+      - [Annotation @AFXSubscribe (Method Annotation)](#annotation-afxsubscribe)      
   * [User Value of Controls](#user-value-of-controls)
   * [Internationalization](#internationalization)
 
@@ -1013,6 +1015,40 @@ Attribute 				| Description
 	public void onButtonClicked(@AFXFromTextInputDialog(title="Enter User Name", header ="User Name for Bookstore", content = "Please enter a user name", defaultValue="someone@somewhere.com") final String username) {
 		// do something with the username here 
 	}
+```
+
+### Annotations for a loose coupling of ActionFX controller
+
+This chapter describes how to use a basic event bus implementation within ActionFX for realizing a loose coupling between ActionFX controller.
+
+#### Annotation @AFXSubscribe
+
+The [@AFXSubscribe](src/main/java/com/github/actionfx/core/annotation/AFXSubscribe.java) annotation is applied on methods that shall invoked, whenever a notification is published via `ActionFX.getInstance().publishNotification(Object event)`. 
+
+The annotation allows a basic publish/subscribe mechanism for implementing a loose coupling between ActionFX controller that should not be aware of each other, but need to exchange information.
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`value`                | The emitted type that the annotated method shall be invoked on.
+`order`                | An optional order that can be specified to define the order of execution of the annotated method, in case more than one method have been subscribed to the given `value`.
+`async`                | Optional flag that determines, whether the annotated method shall be executed in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. In case that UI components need to be updated in the method, the update itself needs to be run with `javafx.application.Platform.runLater(Runnable)`.
+
+**Example:**
+
+```java
+		@AFXSubscribe(value = String.class, order = 1)
+		public void onPublish() {
+		}
+
+		@AFXSubscribe(value = String.class, order = 2)
+		public void onPublish(final String message) {
+		}
+
+		@AFXSubscribe(value = String.class, async = true)
+		public void onAsyncPublish(final String message) {
+		}
 ```
 
 ## User Value of Controls

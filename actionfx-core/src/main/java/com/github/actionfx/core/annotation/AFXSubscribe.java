@@ -63,7 +63,7 @@ public @interface AFXSubscribe {
 	/**
 	 * An optional order that can be specified to define the order of execution of
 	 * the annotated method, in case more than one method have been subscribed to
-	 * the given .
+	 * the given {@link #value()}
 	 *
 	 * @return the order, default is 1
 	 */
