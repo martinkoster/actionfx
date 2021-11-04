@@ -34,6 +34,7 @@ ActionFX provides the following features in a declarative fashion without requir
 - View handling through annotations e.g. injecting nested views into a scene graph or navigate to a certain view
 - Declarative form-binding of custom domain objects either with JavaFX properties or plain Java types
 - Inject control values e.g. selected items from a `javafx.scene.control.TableView` into methods by using annotations on method arguments
+- Loose coupling of controller using a  basic publish/subscribe mechanism for ActionFX controller methods using @AFXSubscribe
 - Declaratively wire the `onActionProperty` of scene graph nodes to methods 
 - Configure complex table views or even tree table views by just using annotations, which avoids a lot of code lines compared to pure JavaFX
 - Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the user supplied input in other controls like text fields or table views

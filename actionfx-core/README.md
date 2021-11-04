@@ -1023,7 +1023,7 @@ This chapter describes how to use a basic event bus implementation within Action
 
 #### Annotation @AFXSubscribe
 
-The [@AFXSubscribe](src/main/java/com/github/actionfx/core/annotation/AFXSubscribe.java) annotation is applied on methods that shall invoked, whenever a notification is published via `ActionFX.getInstance().publishNotification(Object event)`. 
+The [@AFXSubscribe](src/main/java/com/github/actionfx/core/annotation/AFXSubscribe.java) annotation is applied on methods that shall be invoked, whenever a notification is published via `ActionFX.getInstance().publishNotification(Object event)`. 
 
 The annotation allows a basic publish/subscribe mechanism for implementing a loose coupling between ActionFX controller that should not be aware of each other, but need to exchange information.
 
