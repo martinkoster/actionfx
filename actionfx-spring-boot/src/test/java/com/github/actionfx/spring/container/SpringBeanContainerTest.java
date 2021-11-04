@@ -23,10 +23,12 @@
  */
 package com.github.actionfx.spring.container;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -123,6 +125,28 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
+	void addControllerBeanDefinition() {
+		// WHEN
+		container.addControllerBeanDefinition(MainController.class);
+
+		// THEN
+		verify(registry, times(2)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
+		assertThat(beanNameCaptor.getAllValues().get(0), equalTo("mainController"));
+		assertBeanDefinitionFor(beanDefinitionCaptor.getAllValues().get(0), MainController.class, true);
+		assertThat(beanNameCaptor.getAllValues().get(1), equalTo("mainView"));
+	}
+
+	@Test
+	void addControllerBeanDefinition_classIsNotAController() {
+		// WHEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> container.addControllerBeanDefinition(NonController.class));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("is not annotated by @AFXController!"));
+	}
+
+	@Test
 	void getBean_byName() {
 		// GIVEN
 		final MainController controller = new MainController();
@@ -148,5 +172,9 @@ class SpringBeanContainerTest {
 			final boolean singleton) {
 		assertThat(definition.getBeanClassName(), equalTo(beanClass.getCanonicalName()));
 		assertThat(definition.isSingleton(), equalTo(singleton));
+	}
+
+	public static class NonController {
+
 	}
 }

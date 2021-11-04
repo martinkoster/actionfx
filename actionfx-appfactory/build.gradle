@@ -1,0 +1,48 @@
+plugins {
+    id("org.openjfx.javafxplugin") version "0.0.9"
+    id "library-publishing-conventions"
+}
+
+description = "actionfx-appfactory: This module contains command line tools to setup new ActionFX applications quickly."
+
+dependencies {
+	
+        // JAVAFX DEPENDENCIES    
+        javafx {
+            version = "${javafxVersion}"
+            modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
+        }
+
+		implementation project(":actionfx-controlsfx")
+        implementation project(":actionfx-core")
+        implementation project(":actionfx-spring-boot")
+        
+  		implementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "${springBootVersion}"
+		implementation group: "info.picocli", name: "picoli", version: "${picoliVersion}"
+		implementation group: 'org.freemarker', name: 'freemarker', version: "${freemarkerVersion}"
+		
+        
+        testImplementation project(":actionfx-testing")
+
+        testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
+    	testImplementation group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
+    	testImplementation group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
+
+		testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
+		testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
+
+}
+
+test {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+integrationTest {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+sonarqube {
+    skipProject = true
+}

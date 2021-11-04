@@ -63,4 +63,10 @@ public class CustomBeanContainerImpl implements BeanContainerFacade {
 	public ResourceBundle resolveResourceBundle(final Class<?> controllerClass, final Locale locale) {
 		return null;
 	}
+
+	@Override
+	public void addControllerBeanDefinition(final Class<?> controllerClass) {
+		// TODO Auto-generated method stub
+
+	}
 }

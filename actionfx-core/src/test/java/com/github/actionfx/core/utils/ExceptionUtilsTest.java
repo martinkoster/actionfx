@@ -24,6 +24,7 @@
 package com.github.actionfx.core.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
@@ -59,4 +60,29 @@ class ExceptionUtilsTest {
 				Arrays.asList(Integer.valueOf(1), Integer.valueOf(2))), equalTo("[42, [1, 2]]"));
 	}
 
+	@Test
+	void testWrapInRuntimeExceptionIfNecessary_isException() {
+		// GIVEN
+		final Exception ex = new Exception();
+
+		// WHEN
+		final RuntimeException wrapped = ExceptionUtils.wrapInRuntimeExceptionIfNecessary(ex);
+
+		// THEN
+		assertThat(wrapped, instanceOf(RuntimeWithNestedThrowableException.class));
+		final RuntimeWithNestedThrowableException nested = (RuntimeWithNestedThrowableException) wrapped;
+		assertThat(nested.getCause(), equalTo(ex));
+	}
+
+	@Test
+	void testWrapInRuntimeExceptionIfNecessary_isRuntimeException() {
+		// GIVEN
+		final RuntimeException ex = new RuntimeException();
+
+		// WHEN
+		final RuntimeException wrapped = ExceptionUtils.wrapInRuntimeExceptionIfNecessary(ex);
+
+		// THEN
+		assertThat(wrapped, equalTo(ex));
+	}
 }

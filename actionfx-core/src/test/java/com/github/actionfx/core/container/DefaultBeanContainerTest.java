@@ -23,6 +23,7 @@
  */
 package com.github.actionfx.core.container;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
@@ -30,6 +31,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -42,6 +44,7 @@ import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.container.instantiation.MultilingualViewController;
 import com.github.actionfx.core.container.instantiation.SampleViewController;
 import com.github.actionfx.core.test.DerivedFromTestView;
+import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.test.TestView;
 import com.github.actionfx.core.test.app.LazilyInitializedController;
 import com.github.actionfx.core.test.app.MainController;
@@ -266,4 +269,33 @@ class DefaultBeanContainerTest {
 		assertThat(bundle, nullValue());
 	}
 
+	@Test
+	void testAddControllerBeanDefinition() {
+		// GIVEN
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+		container.addControllerBeanDefinition(TestController.class);
+
+		// WHEN
+		final TestController controller = container.getBean("testController");
+
+		// THEN
+		assertThat(controller, notNullValue());
+	}
+
+	@Test
+	void testAddControllerBeanDefinition_classIsNotAController() {
+		// GIVEN
+		final DefaultBeanContainer container = new DefaultBeanContainer();
+
+		// WHEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> container.addControllerBeanDefinition(NonController.class));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("is not annotated by @AFXController!"));
+	}
+
+	public static class NonController {
+
+	}
 }

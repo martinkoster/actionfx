@@ -34,16 +34,21 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXSubscribe;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
+import com.github.actionfx.core.events.PriorityAwareEventBus;
+import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
@@ -264,7 +269,9 @@ public class ActionFX {
 		addActionFXBeans();
 
 		// let's let the bean container implementation do the work
-		beanContainer.runComponentScan(scanPackage);
+		if (StringUtils.isNotEmpty(scanPackage)) {
+			beanContainer.runComponentScan(scanPackage);
+		}
 		actionFXState = ActionFXState.INITIALIZED;// NOSONAR
 	}
 
@@ -284,6 +291,10 @@ public class ActionFX {
 		// make ActionFX class itself available as bean
 		beanContainer.addBeanDefinition(BeanContainerFacade.ACTIONFX_BEANNAME, ActionFX.class, true, false, () -> this);
 
+		// add the event bus to the bean container
+		beanContainer.addBeanDefinition(BeanContainerFacade.EVENT_BUS_BEAN, PriorityAwareEventBus.class, true, true,
+				SimplePriorityAwareEventBus::new);
+
 		// add controller extensions to the bean container
 		beanContainer.addBeanDefinition(BeanContainerFacade.CONTROLLER_EXTENSION_BEANNAME,
 				ControllerExtensionBean.class, true, false, () -> controllerExtensionBean);
@@ -295,6 +306,20 @@ public class ActionFX {
 		// add the conversion service that is listening to the locale
 		beanContainer.addBeanDefinition(BeanContainerFacade.CONVERSION_SERVICE_BEAN, ConversionService.class, true,
 				true, () -> new ConversionService(getObservableLocale()));
+	}
+
+	/**
+	 * Adds a new controller to ActionFX' internal bean container. It is expected
+	 * that the controller class is annotated by {@link AFXControlller}.
+	 * <p>
+	 * Please prefer scanning for controller classes via
+	 * {@link #scanForActionFXComponents()} and a set {@code scanPackage} in the
+	 * internal {@link ActionFXBuilder}.
+	 *
+	 * @param beanClass the controller bean type
+	 */
+	public void addController(final Class<?> controllerClass) {
+		beanContainer.addControllerBeanDefinition(controllerClass);
 	}
 
 	/**
@@ -465,6 +490,15 @@ public class ActionFX {
 	}
 
 	/**
+	 * Retrieves ActionFX' internal event bus singleton.
+	 *
+	 * @return the event bus
+	 */
+	public PriorityAwareEventBus getEventBus() {
+		return getBean(PriorityAwareEventBus.class);
+	}
+
+	/**
 	 * Displays a modal confirmation dialogue with the specified {@code title} and
 	 * {@code message}.
 	 *
@@ -621,6 +655,24 @@ public class ActionFX {
 			final String defaultValue) {
 		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showTextInputDialog(title,
 				headerText, contentText, defaultValue);
+	}
+
+	/**
+	 * Publishes the given {@code event} to all methods that are annotated by
+	 * {@link AFXSubscribe} and which are listening to the type of {@code event}.
+	 * <p>
+	 * In case the annotated method has a method argument that is of the same type
+	 * than {@code event}, then the {@code event} is used as method argument to that
+	 * method.
+	 * <p>
+	 * Please note that methods annotated by {@link AFXSubscribe} can also have
+	 * additional method argument, that are e.g. annotated by
+	 * {@link AFXControlValue}.
+	 *
+	 * @param event the event to publish
+	 */
+	public void publishNotification(final Object event) {
+		getEventBus().publish(event);
 	}
 
 	/**

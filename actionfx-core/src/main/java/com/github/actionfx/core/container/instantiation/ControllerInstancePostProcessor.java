@@ -42,6 +42,7 @@ import com.github.actionfx.core.container.extension.NestedViewControllerExtensio
 import com.github.actionfx.core.container.extension.OnActionMethodControllerExtension;
 import com.github.actionfx.core.container.extension.OnControlValueChangeMethodControllerExtension;
 import com.github.actionfx.core.container.extension.OnLoadControlDataMethodControllerExtension;
+import com.github.actionfx.core.container.extension.SubscribeMethodControllerExtension;
 import com.github.actionfx.core.container.extension.UseFilteredListControllerExtension;
 
 /**
@@ -73,6 +74,7 @@ public class ControllerInstancePostProcessor {
 		controllerExtensions.add(new DisableNodeControllerExtension());
 		controllerExtensions.add(new OnLoadControlDataMethodControllerExtension());
 		controllerExtensions.add(new OnControlValueChangeMethodControllerExtension());
+		controllerExtensions.add(new SubscribeMethodControllerExtension());
 		controllerExtensions.add(new FormBindingControllerExtension());
 
 		// add the custom controller extensions
@@ -99,5 +101,9 @@ public class ControllerInstancePostProcessor {
 	 */
 	private void applyControllerExtensions(final Object instance) {
 		controllerExtensions.forEach(extension -> extension.accept(instance));
+	}
+
+	public List<Consumer<Object>> getControllerExtensions() {
+		return controllerExtensions;
 	}
 }

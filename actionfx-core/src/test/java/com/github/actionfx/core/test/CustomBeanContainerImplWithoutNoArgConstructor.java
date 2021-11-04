@@ -69,4 +69,10 @@ public class CustomBeanContainerImplWithoutNoArgConstructor implements BeanConta
 		return null;
 	}
 
+	@Override
+	public void addControllerBeanDefinition(final Class<?> controllerClass) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

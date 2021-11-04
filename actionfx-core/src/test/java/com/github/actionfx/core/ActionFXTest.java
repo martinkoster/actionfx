@@ -52,9 +52,12 @@ import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
+import com.github.actionfx.core.events.PriorityAwareEventBus;
+import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
+import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.View;
@@ -230,6 +233,19 @@ class ActionFXTest {
 	}
 
 	@Test
+	void testAddController() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		actionFX.addController(TestController.class);
+
+		// THEN
+		assertThat(actionFX.getBean(TestController.class), notNullValue());
+	}
+
+	@Test
 	void testScanComponents_getView_viewIsNotInstanceOfView() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
@@ -254,6 +270,20 @@ class ActionFXTest {
 
 		// THEN
 		assertThat(service, notNullValue());
+	}
+
+	@Test
+	void testGetEventBus() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final PriorityAwareEventBus eventBus = actionFX.getEventBus();
+
+		// THEN
+		assertThat(eventBus, notNullValue());
+		assertThat(eventBus, instanceOf(SimplePriorityAwareEventBus.class));
 	}
 
 	@Test

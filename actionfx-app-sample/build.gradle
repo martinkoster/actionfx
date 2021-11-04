@@ -3,7 +3,7 @@ plugins {
     id "library-publishing-conventions"
 }
 
-description = "app-sample: This module contains sample applications for the ActionFX framework."
+description = "actionfx-app-sample: This module contains sample applications for the ActionFX framework."
 
 dependencies {
 	

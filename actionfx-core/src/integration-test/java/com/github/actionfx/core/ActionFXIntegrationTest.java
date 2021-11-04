@@ -30,18 +30,25 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.testfx.util.WaitForAsyncUtils;
 
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXSubscribe;
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.test.nestedviewapp.ControllerWithNestedviewOnField;
 import com.github.actionfx.core.test.nestedviewapp.NestedTabPaneController;
@@ -229,6 +236,23 @@ class ActionFXIntegrationTest {
 				hasItems(NestedViewController.class, NestedTabPaneController.class));
 	}
 
+	@Test
+	void testPublishNotification() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().build();
+		actionFX.scanForActionFXComponents();
+		actionFX.addController(ControllerWithAFXSubscribe.class);
+		final ControllerWithAFXSubscribe controller = actionFX.getBean(ControllerWithAFXSubscribe.class);
+
+		// WHEN
+		actionFX.publishNotification("Hello World");
+
+		// THEN
+		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+		assertThat(controller.executionOrder, contains(1, 2, 3, 4));
+		assertThat(controller.executionArguments, contains("Hello World", "Hello World", "Hello World"));
+	}
+
 	public static class CustomControllerExtension implements Consumer<Object> {
 
 		private final Set<Class<?>> extendedControllerList = new HashSet<>();
@@ -245,6 +269,43 @@ class ActionFXIntegrationTest {
 	}
 
 	public static class AnotherCustomControllerExtension extends CustomControllerExtension {
+	}
+
+	@AFXController(viewId = "viewId", fxml = "/testfxml/SampleView.fxml")
+	public static class ControllerWithAFXSubscribe {
+
+		List<Integer> executionOrder = new ArrayList<>();
+
+		List<String> executionArguments = new ArrayList<>();
+
+		@AFXSubscribe(value = String.class, order = 2)
+		public void onPublish() {
+			executionOrder.add(2);
+		}
+
+		@AFXSubscribe(value = String.class, order = 1)
+		public void onPublish(final String message) {
+			executionOrder.add(1);
+			executionArguments.add(message);
+		}
+
+		@AFXSubscribe(value = String.class, order = 3)
+		public void anotherOnPublish(final String message) {
+			executionOrder.add(3);
+			executionArguments.add(message);
+		}
+
+		@AFXSubscribe(value = String.class, async = true, order = 4)
+		public void onAsyncPublish(final String message) {
+			executionOrder.add(4);
+			executionArguments.add(message);
+		}
+
+		@AFXSubscribe(value = Integer.class, order = 3)
+		public void nonInvoked(final Integer integer) {
+			executionOrder.add(999);
+			executionArguments.add("NOT EXPECTED");
+		}
 	}
 
 }

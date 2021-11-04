@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
+import com.github.actionfx.core.events.PriorityAwareEventBus;
 
 import javafx.beans.value.ObservableValue;
 
@@ -78,6 +79,11 @@ public interface BeanContainerFacade {
 	public static String CONVERSION_SERVICE_BEAN = "conversionServiceBean";
 
 	/**
+	 * The bean name of the used {@link PriorityAwareEventBus} implementation.
+	 */
+	public static String EVENT_BUS_BEAN = "eventBusBean";
+
+	/**
 	 * Populates the container with view components by scanning the given
 	 * {@code rootPackage} and its subpackages for annotated classes relevant for
 	 * ActionFX.
@@ -113,6 +119,14 @@ public interface BeanContainerFacade {
 	 */
 	void addBeanDefinition(String id, Class<?> beanClass, boolean singleton, boolean lazyInit,
 			Supplier<?> instantiationSupplier);
+
+	/**
+	 * Adds a new controller bean definition to the bean container. It is expected
+	 * that the controller class is annotated by {@link AFXControlller}.
+	 *
+	 * @param beanClass the controller bean type
+	 */
+	void addControllerBeanDefinition(Class<?> controllerClass);
 
 	/**
 	 * Gets a bean from the underlying bean container by ID.

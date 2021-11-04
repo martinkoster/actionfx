@@ -100,9 +100,12 @@ public class ActionFXMethodInvocation {
 
 	/**
 	 * Performs a synchronous method call.
+	 *
+	 * @return the returned value from the called method, {@code null} for
+	 *         {@code void} methods.
 	 */
-	public void call() {
-		controllerMethodInvocationAdapter.invoke();
+	public <T> T call() {
+		return controllerMethodInvocationAdapter.invoke();
 	}
 
 	/**
@@ -278,6 +281,45 @@ public class ActionFXMethodInvocation {
 			final Object instance, final Method method, final Object... arguments) {
 		return actionEvent -> new ActionFXMethodInvocation(instance, method, merge(actionEvent, arguments))
 				.callAsync(consumer);
+	}
+
+	/**
+	 * Creates a subscriber that executes the given {@code method} in the supplied
+	 * {@code instance}, while a published event is passed on to the method
+	 * invocation.
+	 * <p>
+	 * This method can be used to create a subscriber for ActionFX' internal event
+	 * bus (see {@link com.github.actionfx.core.events.PriorityAwareEventBus} and
+	 * {@link com.github.actionfx.core.ActionFX#publishNotification(Object)}).
+	 *
+	 * @param <T>      the event type
+	 * @param instance the instance hosting the supplied method
+	 * @param method   the method to execute
+	 * @return the subscriber that can be handed over to the event bus for
+	 *         performing a subscription
+	 */
+	public static <T> Consumer<T> forSubscriber(final Object instance, final Method method) {
+		return event -> new ActionFXMethodInvocation(instance, method, event).call();
+	}
+
+	/**
+	 * Creates a subscriber that executes the given {@code method} asynchronously in
+	 * the supplied {@code instance}, while a published event is passed on to the
+	 * method invocation.
+	 * <p>
+	 * This method can be used to create a subscriber for ActionFX' internal event
+	 * bus (see {@link com.github.actionfx.core.events.PriorityAwareEventBus} and
+	 * {@link com.github.actionfx.core.ActionFX#publishNotification(Object)}).
+	 *
+	 * @param <T>      the event type
+	 * @param instance the instance hosting the supplied method
+	 * @param method   the method to execute
+	 * @return the subscriber that can be handed over to the event bus for
+	 *         performing a subscription
+	 */
+	public static <T> Consumer<T> forSubscriberWithAsyncCall(final Object instance, final Method method) {
+		return event -> new ActionFXMethodInvocation(instance, method, event).callAsync(retValue -> {
+		});
 	}
 
 	/**

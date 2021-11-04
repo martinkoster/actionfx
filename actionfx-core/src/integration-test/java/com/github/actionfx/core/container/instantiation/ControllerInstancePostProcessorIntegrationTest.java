@@ -60,7 +60,7 @@ import javafx.scene.control.SelectionMode;
  *
  */
 @ExtendWith(FxThreadForEachMonocleExtension.class)
-class ControllerInstancePostProcessorTest {
+class ControllerInstancePostProcessorIntegrationTest {
 
 	private final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor();
 
@@ -377,4 +377,5 @@ class ControllerInstancePostProcessorTest {
 		assertThat(controller.asyncDataLoadedTreeView.getRoot(), notNullValue());
 		assertThat(controller.asyncDataLoadedTreeView.getRoot().getValue(), equalTo("root"));
 	}
+
 }

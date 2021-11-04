@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -96,19 +97,7 @@ public class SpringBeanContainer implements BeanContainerFacade {
 			}
 			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(),
 					getClass().getClassLoader());
-			final AFXController afxController = AnnotationUtils.findAnnotation(beanClass, AFXController.class);
-
-			final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
-					beanClass);
-
-			// add a bean definition for the controller
-			final String controllerBeanId = deriveBeanId(beanClass);
-			registerBeanDefinition(controllerBeanId,
-					createBeanDefinitionForController(beanDefinition, afxController, controllerSupplier));
-
-			// add a bean definition for the view
-			registerBeanDefinition(afxController.viewId(), createBeanDefinitionForView(beanDefinition, afxController,
-					() -> ControllerWrapper.getViewFrom(getBean(controllerBeanId))));
+			addControllerBeanDefinition(beanClass, beanDefinition);
 		}
 	}
 
@@ -121,6 +110,37 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		beanDefinition.setLazyInit(lazyInit);
 		beanDefinition.setInstanceSupplier(instantiationSupplier);
 		registerBeanDefinition(id, beanDefinition);
+	}
+
+	@Override
+	public void addControllerBeanDefinition(final Class<?> controllerClass) {
+		addControllerBeanDefinition(controllerClass, new AnnotatedGenericBeanDefinition(controllerClass));
+	}
+
+	/**
+	 * Creates a new bean definition for the supplied {@code controllerClass} by
+	 * using the supplied {@code beanDefinitionTemplate}.
+	 *
+	 * @param controllerClass        the controller class to register
+	 * @param beanDefinitionTemplate the bean definition template
+	 */
+	protected void addControllerBeanDefinition(final Class<?> controllerClass,
+			final BeanDefinition beanDefinitionTemplate) {
+		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
+
+		final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
+				controllerClass);
+		if (afxController == null) {
+			throw new IllegalArgumentException(controllerClass + " is not annotated by @AFXController!");
+		}
+		// add a bean definition for the controller
+		final String controllerBeanId = deriveBeanId(controllerClass);
+		registerBeanDefinition(controllerBeanId,
+				createBeanDefinitionForController(beanDefinitionTemplate, afxController, controllerSupplier));
+
+		// add a bean definition for the view
+		registerBeanDefinition(afxController.viewId(), createBeanDefinitionForView(beanDefinitionTemplate,
+				afxController, () -> ControllerWrapper.getViewFrom(getBean(controllerBeanId))));
 	}
 
 	private BeanDefinition createBeanDefinitionForController(final BeanDefinition beanDefinition,
@@ -194,4 +214,5 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		final String baseName = afxController.resourcesBasename();
 		return ResourceBundle.getBundle(baseName, locale);
 	}
+
 }

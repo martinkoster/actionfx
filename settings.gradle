@@ -4,6 +4,7 @@ include 'actionfx-core'
 include 'actionfx-testing'
 include 'actionfx-spring-boot'
 include 'actionfx-controlsfx'
+include 'actionfx-appfactory'
 include 'actionfx-app-sample'
 
 rootProject.name = 'actionfx'

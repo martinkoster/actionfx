@@ -24,6 +24,8 @@
 package com.github.actionfx.core.method;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -74,10 +76,24 @@ class ActionFXMethodInvocationTest {
 		final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "voidMethod");
 
 		// WHEN
-		invocation.call();
+		final Object returnValue = invocation.call();
 
 		// THEN
 		verify(holder, times(1)).voidMethod();
+		assertThat(returnValue, nullValue());
+	}
+
+	@Test
+	void testCall_intMethod() {
+		// GIVEN
+		final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "intMethod", 42);
+
+		// WHEN
+		final Object returnValue = invocation.call();
+
+		// THEN
+		verify(holder, times(1)).intMethod(eq(42));
+		assertThat(returnValue, equalTo(43));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -213,6 +229,36 @@ class ActionFXMethodInvocationTest {
 		verify(consumer, times(1)).accept(eq(43));
 	}
 
+	@Test
+	void testForSubscriber() {
+		// GIVEN
+		final Method method = ReflectionUtils.findMethod(holder.getClass(), "onPublish", String.class);
+		final MethodHolder proxy = Mockito.spy(holder);
+		final Consumer<String> subscriber = ActionFXMethodInvocation.forSubscriber(proxy, method);
+
+		// WHEN
+		subscriber.accept("Hello World");
+
+		// THEN
+		verify(proxy, times(1)).onPublish(eq("Hello World"));
+	}
+
+	@Test
+	void testForSubscriberWithAsyncCall() {
+		// GIVEN
+		final Method method = ReflectionUtils.findMethod(holder.getClass(), "onPublish", String.class);
+		final MethodHolder proxy = Mockito.spy(holder);
+		final Consumer<String> subscriberWithAsyncCall = ActionFXMethodInvocation.forSubscriberWithAsyncCall(proxy,
+				method);
+
+		// WHEN
+		subscriberWithAsyncCall.accept("Hello World");
+
+		// THEN
+		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+		verify(proxy, times(1)).onPublish(eq("Hello World"));
+	}
+
 	public class MethodHolder {
 
 		public View _view;
@@ -226,6 +272,10 @@ class ActionFXMethodInvocationTest {
 
 		protected int intMethod(final int arg) {
 			return arg + 1;
+		}
+
+		protected void onPublish(final String message) {
+
 		}
 
 		protected void methodWithArgs(final String arg1, final Integer arg2, final ActionEvent actionEvent) {
