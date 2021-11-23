@@ -319,6 +319,22 @@ class ActionFXTest {
 	}
 
 	@Test
+	void testShowView_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		actionFX.scanForActionFXComponents(customBeanContainer);
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		// WHEN
+		actionFX.showView("viewId");
+
+		// THEN
+		verify(mockView, times(1)).show();
+	}
+
+	@Test
 	@TestInFxThread
 	void testShowView_withStageSupplied() {
 		// GIVEN
@@ -337,6 +353,25 @@ class ActionFXTest {
 	}
 
 	@Test
+	@TestInFxThread
+	void testShowView_withStageSupplied_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		actionFX.scanForActionFXComponents(customBeanContainer);
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		final Stage stage = new Stage();
+
+		// WHEN
+		actionFX.showView("viewId", stage);
+
+		// THEN
+		verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
+	}
+
+	@Test
 	void testShowViewAndWait() {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
@@ -347,6 +382,22 @@ class ActionFXTest {
 
 		// WHEN
 		actionFX.showViewAndWait(controller);
+
+		// THEN
+		verify(mockView, times(1)).showAndWait();
+	}
+
+	@Test
+	void testShowViewAndWait_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+		actionFX.scanForActionFXComponents(customBeanContainer);
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		// WHEN
+		actionFX.showViewAndWait("viewId");
 
 		// THEN
 		verify(mockView, times(1)).showAndWait();

@@ -27,10 +27,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
-import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
+import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
 
 import javafx.beans.value.ObservableValue;
 

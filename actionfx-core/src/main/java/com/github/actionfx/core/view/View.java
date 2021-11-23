@@ -109,6 +109,13 @@ public interface View {
 	void detachView();
 
 	/**
+	 * Reattaches the a previously detached view again. In order for this operation
+	 * to work, the view needs to have been initally attached via
+	 * {@link #attachViewToParent(Parent, NodeAttacher)}.
+	 */
+	void reattachView();
+
+	/**
 	 * Hides the view. This only works, when the view has its own stage.
 	 */
 	void hide();

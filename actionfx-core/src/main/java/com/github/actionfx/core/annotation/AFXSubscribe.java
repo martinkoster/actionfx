@@ -35,7 +35,7 @@ import com.github.actionfx.core.ActionFX;
 /**
  * Allows a simple event mechanism and a loose couple of ActionFX controllers.
  * Annotated methods are invoked, when an event of type {@code #value()} is
- * emitted through {@link ActionFX#publishNotification(Object)}.
+ * emitted through {@link ActionFX#publishEvent(Object)}.
  * <p>
  * In case the annotated method has a method argument that is of the same type
  * than {@link #value()}, then the emitted event is used as method argument to

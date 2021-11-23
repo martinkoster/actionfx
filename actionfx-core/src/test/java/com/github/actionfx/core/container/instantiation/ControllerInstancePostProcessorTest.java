@@ -31,18 +31,18 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.actionfx.core.container.extension.CellValueConfigControllerExtension;
-import com.github.actionfx.core.container.extension.ConverterControllerExtension;
-import com.github.actionfx.core.container.extension.DisableNodeControllerExtension;
-import com.github.actionfx.core.container.extension.EnableMultiSelectionControllerExtension;
-import com.github.actionfx.core.container.extension.EnableNodeControllerExtension;
-import com.github.actionfx.core.container.extension.FormBindingControllerExtension;
-import com.github.actionfx.core.container.extension.NestedViewControllerExtension;
-import com.github.actionfx.core.container.extension.OnActionMethodControllerExtension;
-import com.github.actionfx.core.container.extension.OnControlValueChangeMethodControllerExtension;
-import com.github.actionfx.core.container.extension.OnLoadControlDataMethodControllerExtension;
-import com.github.actionfx.core.container.extension.SubscribeMethodControllerExtension;
-import com.github.actionfx.core.container.extension.UseFilteredListControllerExtension;
+import com.github.actionfx.core.extension.beans.SubscribeMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.CellValueConfigControllerExtension;
+import com.github.actionfx.core.extension.controller.ConverterControllerExtension;
+import com.github.actionfx.core.extension.controller.DisableNodeControllerExtension;
+import com.github.actionfx.core.extension.controller.EnableMultiSelectionControllerExtension;
+import com.github.actionfx.core.extension.controller.EnableNodeControllerExtension;
+import com.github.actionfx.core.extension.controller.FormBindingControllerExtension;
+import com.github.actionfx.core.extension.controller.NestedViewControllerExtension;
+import com.github.actionfx.core.extension.controller.OnActionMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.OnControlValueChangeMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.OnLoadControlDataMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.UseFilteredListControllerExtension;
 
 /**
  * JUnit test for {@link ControllerInstancePostProcessor}.

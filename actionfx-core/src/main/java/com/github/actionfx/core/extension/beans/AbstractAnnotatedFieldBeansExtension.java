@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,26 +21,31 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.autoconfigure;
+package com.github.actionfx.core.extension.beans;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
 
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
-import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
+import com.github.actionfx.core.utils.AnnotationUtils;
 
 /**
- * Spring auto configuration for ActionFX.
+ * Beans extension base class that extends annotated fields.
  *
  * @author koster
  *
+ * @param <A> the annotation
  */
-@Configuration
-public class AFXAutoconfiguration {
+public abstract class AbstractAnnotatedFieldBeansExtension<A extends Annotation>
+		extends AbstractAnnotationBasedBeansExtension<A, Field> {
 
-	@Bean
-	public ControllerBeanPostProcessor controllerBeanPostProcessor(final ControllerExtensionBean bean) {
-		return new ControllerBeanPostProcessor(bean.getCustomControllerExtensions());
+	protected AbstractAnnotatedFieldBeansExtension(final Class<A> annotationType) {
+		super(annotationType);
 	}
 
+	@Override
+	protected Map<Field, List<A>> lookupAnnotatedElements(final Class<?> clazz) {
+		return AnnotationUtils.findAnnotatedFields(clazz, annotationType, true);
+	}
 }

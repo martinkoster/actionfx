@@ -170,7 +170,7 @@ Attribute | Description | Default Value
 After defining the controller and scanning for ActionFX components (see previous chapters on how to setup ActionFX), an instance of the controller is retrieved by:
 
 ```java
-	SomeController someController = ActionFX.getInstance().getController(SomeController.class);
+	SomeController someController = ActionFX.getInstance().getBean(SomeController.class);
 ```
 
 Preferably, you can just annotate a field with `@Inject` (if the controller is called from another controller):
@@ -1023,7 +1023,7 @@ This chapter describes how to use a basic event bus implementation within Action
 
 #### Annotation @AFXSubscribe
 
-The [@AFXSubscribe](src/main/java/com/github/actionfx/core/annotation/AFXSubscribe.java) annotation is applied on methods that shall be invoked, whenever a notification is published via `ActionFX.getInstance().publishNotification(Object event)`. 
+The [@AFXSubscribe](src/main/java/com/github/actionfx/core/annotation/AFXSubscribe.java) annotation is applied on methods that shall be invoked, whenever a notification is published via `ActionFX.getInstance().publishEvent(Object event)`. 
 
 The annotation allows a basic publish/subscribe mechanism for implementing a loose coupling between ActionFX controller that should not be aware of each other, but need to exchange information.
 

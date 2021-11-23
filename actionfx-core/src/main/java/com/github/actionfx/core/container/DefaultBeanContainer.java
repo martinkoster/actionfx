@@ -332,12 +332,12 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 		private final Supplier<?> instantiationSupplier;
 
 		public BeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
-				final boolean lazyInitialisation, final Supplier<?> instantiatiationSupplier) {
+				final boolean lazyInitialisation, final Supplier<?> instantiationSupplier) {
 			this.id = id;
 			this.beanClass = beanClass;
 			this.singleton = singleton;
 			this.lazyInitialisation = lazyInitialisation;
-			instantiationSupplier = instantiatiationSupplier;
+			this.instantiationSupplier = instantiationSupplier;
 		}
 
 		public Class<?> getBeanClass() {

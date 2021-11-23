@@ -3,7 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## 1.5.0 ()
 - Support for a basic publish/subscribe mechanism for ActionFX controller methods using @AFXSubscribe
-
+- Fixed life-cycle bug for ActionFX controller in Spring (lazy initialization was not possible with Spring)
+- Update dependencies:
+ * JavaFX 17.0.1
+ * Spring Boot to 2.6.0
+ * Spring to 5.3.13
+ 
 ## 1.4.0 (12.09.2021)
 - Support for mapping a custom domain object to form controls via @AFXFormBinding and @AFXFormMapping.
 - Added convenience methods for accessing the view from a controller to class "ActionFX" (showView, showViewAndWait, hideView)

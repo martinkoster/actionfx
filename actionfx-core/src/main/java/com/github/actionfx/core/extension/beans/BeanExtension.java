@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,26 +21,30 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.autoconfigure;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
-import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
+package com.github.actionfx.core.extension.beans;
 
 /**
- * Spring auto configuration for ActionFX.
+ * Bean registration callbacks are invoked right after a new bean definition is
+ * added to the used bean container.
+ * <p>
+ * Callback implementations can be used to add new functionality to ActionFX
+ * that are not applied directly to instances during instantiation time like
+ * controller extensions (see {@link com.github.actionfx.core.extension}).
  *
  * @author koster
  *
  */
-@Configuration
-public class AFXAutoconfiguration {
+public interface BeanExtension {
 
-	@Bean
-	public ControllerBeanPostProcessor controllerBeanPostProcessor(final ControllerExtensionBean bean) {
-		return new ControllerBeanPostProcessor(bean.getCustomControllerExtensions());
-	}
-
+	/**
+	 * Callback method executed for beans in the bean container.
+	 *
+	 * @param beanClass the bean class
+	 * @param beanId    the bean id
+	 * @param singleton flag that indicates whether the bean is a singleton
+	 *                  ({@code true}) or a prototype-scoped bean ({@code false})
+	 * @param lazyInit  flag that indicates whether the bean is lazily initialized
+	 *                  ({@code true}) or not ({@code false})
+	 */
+	void extendBean(Class<?> beanClass, String beanId, boolean singleton, boolean lazyInit);
 }

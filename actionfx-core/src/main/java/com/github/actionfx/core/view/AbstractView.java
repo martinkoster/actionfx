@@ -86,6 +86,12 @@ public abstract class AbstractView implements View {
 	protected final Map<Object, BindingModelProxy> boundModelInstancesMap = Collections
 			.synchronizedMap(new IdentityHashMap<>());
 
+	// the parent this node is currently or attached last
+	protected Parent lastParentAttachedTo;
+
+	// the last node attacher used to attach this view to a superior parent
+	protected NodeAttacher lastNodeAttacher;
+
 	@Override
 	public String getId() {
 		return id;
@@ -180,6 +186,8 @@ public abstract class AbstractView implements View {
 	public void attachViewToParent(final Parent parent, final NodeAttacher attacher) {
 		final NodeWrapper wrapper = new NodeWrapper(parent);
 		wrapper.attachNode(getRootNode(), attacher);
+		lastParentAttachedTo = parent;
+		lastNodeAttacher = attacher;
 	}
 
 	@Override
@@ -198,6 +206,16 @@ public abstract class AbstractView implements View {
 			throw new IllegalStateException("Removing view from node type '"
 					+ view.getParent().getClass().getCanonicalName() + "' not possible!");
 		}
+	}
+
+	@Override
+	public void reattachView() {
+		if (lastParentAttachedTo == null) {
+			throw new IllegalStateException(
+					"Can not re-attach view '" + id + "' as it has never been attached to a parent node before!");
+		}
+		final NodeWrapper wrapper = new NodeWrapper(lastParentAttachedTo);
+		wrapper.attachNode(getRootNode(), lastNodeAttacher);
 	}
 
 	@Override

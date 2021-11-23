@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,26 +21,37 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.autoconfigure;
+package com.github.actionfx.core.extension.controller;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.lang.reflect.Field;
 
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
-import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
+import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXNestedView;
+import com.github.actionfx.core.view.graph.ControlWrapper;
+
+import javafx.scene.control.Control;
 
 /**
- * Spring auto configuration for ActionFX.
+ * Extends controllers for functionality for {@link AFXNestedView} annotation.
+ * It enables multi-selection for e.g. for table views, tree table views, list
+ * views, etc.
  *
  * @author koster
  *
  */
-@Configuration
-public class AFXAutoconfiguration {
+public class EnableMultiSelectionControllerExtension
+		extends AbstractAnnotatedFieldControllerExtension<AFXEnableMultiSelection> {
 
-	@Bean
-	public ControllerBeanPostProcessor controllerBeanPostProcessor(final ControllerExtensionBean bean) {
-		return new ControllerBeanPostProcessor(bean.getCustomControllerExtensions());
+	public EnableMultiSelectionControllerExtension() {
+		super(AFXEnableMultiSelection.class);
+	}
+
+	@Override
+	protected void extend(final Object controller, final Field annotatedElement,
+			final AFXEnableMultiSelection annotation) {
+		final ControlWrapper controlWrapper = ControlWrapper
+				.of(getFieldValue(controller, annotatedElement, Control.class));
+		controlWrapper.enableMultiSelection();
 	}
 
 }

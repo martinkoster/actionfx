@@ -44,11 +44,11 @@ import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultBeanContainer;
-import com.github.actionfx.core.container.extension.ControllerExtensionBean;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
 import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
+import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
@@ -61,6 +61,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Parent;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -315,6 +316,11 @@ public class ActionFX {
 	 * Please prefer scanning for controller classes via
 	 * {@link #scanForActionFXComponents()} and a set {@code scanPackage} in the
 	 * internal {@link ActionFXBuilder}.
+	 * <p>
+	 * Additionally, please keep in mind that you need to take care for controller
+	 * dependencies on your own, i.e. if you inject a controller B into controller
+	 * A, you need to add the controller class for B before you add the controller
+	 * class for A.
 	 *
 	 * @param beanClass the controller bean type
 	 */
@@ -346,25 +352,23 @@ public class ActionFX {
 	/**
 	 * Gets the controller defined by the supplied {@code controllerClass}.
 	 *
-	 * @param controllerClass the controller class for that a controller instance
-	 *                        shall be retrieved.
+	 * @param beanClass the bean class for that an instance shall be retrieved.
 	 * @return the retrieved controller instance.If the {@code controllerClass} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public <T> T getBean(final Class<T> controllerClass) {
-		return beanContainer.getBean(controllerClass);
+	public <T> T getBean(final Class<T> beanClass) {
+		return beanContainer.getBean(beanClass);
 	}
 
 	/**
 	 * Gets the controller by the supplied {@code controllerId}.
 	 *
-	 * @param controllerId the controller ID for that a controller instance shall be
-	 *                     retrieved.
+	 * @param beanId the bean ID for that an instance shall be retrieved.
 	 * @return the retrieved controller instance.If the {@code controllerId} does
 	 *         not exists, {@code null} is returned.
 	 */
-	public <T> T getBean(final String controllerId) {
-		return beanContainer.getBean(controllerId);
+	public <T> T getBean(final String beanId) {
+		return beanContainer.getBean(beanId);
 	}
 
 	/**
@@ -461,6 +465,15 @@ public class ActionFX {
 	}
 
 	/**
+	 * Shows the view of identified by the supplied {@code viewId}.
+	 *
+	 * @param viewId that viewId identifying the view to show
+	 */
+	public void showView(final String viewId) {
+		getView(viewId).show();
+	}
+
+	/**
 	 * Shows the view of the supplied {@code controller} inside the given
 	 * {@link Stage}.
 	 *
@@ -472,12 +485,84 @@ public class ActionFX {
 	}
 
 	/**
+	 * Shows the view identified by the supplied {@code viewId} inside the given
+	 * {@link Stage}.
+	 *
+	 * @param viewId that viewId identifying the view to show
+	 * @param stage  the stage where the view shall be displayed inside
+	 */
+	public void showView(final String viewId, final Stage stage) {
+		getView(viewId).show(stage);
+	}
+
+	/**
 	 * Shows the view of the supplied {@code controller} in a modal dialog.
 	 *
 	 * @param controller the controller thats view shall be shown
 	 */
 	public void showViewAndWait(final Object controller) {
 		getView(controller).showAndWait();
+	}
+
+	/**
+	 * Shows the view identified by the supplied {@code viewId} in a modal dialog.
+	 *
+	 * @param viewId that viewId identifying the view to show
+	 */
+	public void showViewAndWait(final String viewId) {
+		getView(viewId).showAndWait();
+	}
+
+	/**
+	 * Performs an dock operation for a nested view injected into a controller via
+	 * {@link com.github.actionfx.core.annotation.AFXNestedView}, in case the nested
+	 * view is undocked.
+	 *
+	 * @param nestedViewId the view ID of the nested view (must be injected into a
+	 *                     view via
+	 *                     {@link com.github.actionfx.core.annotation.AFXNestedView}).
+	 */
+	public void dockNestedView(final String nestedViewId) {
+		if (isNestedViewDocked(nestedViewId)) {
+			return;
+		}
+		final View view = getView(nestedViewId);
+		view.reattachView();
+	}
+
+	/**
+	 * Performs an undock operation for a nested view injected into a controller via
+	 * {@link com.github.actionfx.core.annotation.AFXNestedView}, in case the nested
+	 * view is docked.
+	 *
+	 * @param nestedViewId the view ID of the nested view (must be injected into a
+	 *                     view via
+	 *                     {@link com.github.actionfx.core.annotation.AFXNestedView}).
+	 */
+	public void undockNestedView(final String nestedViewId) {
+		if (!isNestedViewDocked(nestedViewId)) {
+			return;
+		}
+		final View view = getView(nestedViewId);
+		view.detachView();
+		view.show(new Stage());
+	}
+
+	/**
+	 * Determines whether the nested view identfied by {@code nestedViewId} is
+	 * currently docked into a parent scenegraph.
+	 *
+	 * @param nestedViewId the view ID of the nested view (must be injected into a
+	 *                     view via
+	 *                     {@link com.github.actionfx.core.annotation.AFXNestedView}).
+	 * @return {@code true}, if the given nested view is currently docked into the
+	 *         parent scene graph, {@code false}, if the view is displayed undocked
+	 *         in its own stage.
+	 */
+	public boolean isNestedViewDocked(final String nestedViewId) {
+		final View view = getView(nestedViewId);
+		final Parent node = view.getRootNode();
+		return node.getParent() != null;
 	}
 
 	/**
@@ -671,7 +756,7 @@ public class ActionFX {
 	 *
 	 * @param event the event to publish
 	 */
-	public void publishNotification(final Object event) {
+	public void publishEvent(final Object event) {
 		getEventBus().publish(event);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,26 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.autoconfigure;
+package com.github.actionfx.core.extension.controller;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
-import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * Spring auto configuration for ActionFX.
+ * Bean that carries all custom controller extensions added by the user during
+ * ActionFX startup.
  *
  * @author koster
  *
  */
-@Configuration
-public class AFXAutoconfiguration {
+public class ControllerExtensionBean {
 
-	@Bean
-	public ControllerBeanPostProcessor controllerBeanPostProcessor(final ControllerExtensionBean bean) {
-		return new ControllerBeanPostProcessor(bean.getCustomControllerExtensions());
+	private final List<Consumer<Object>> customControllerExtensions = new ArrayList<>();
+
+	public ControllerExtensionBean(final List<Consumer<Object>> customControllerExtensions) {
+		this.customControllerExtensions.addAll(customControllerExtensions);
 	}
 
+	public List<Consumer<Object>> getCustomControllerExtensions() {
+		return customControllerExtensions;
+	}
 }

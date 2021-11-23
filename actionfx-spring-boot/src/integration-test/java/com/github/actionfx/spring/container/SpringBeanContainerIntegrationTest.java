@@ -43,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;

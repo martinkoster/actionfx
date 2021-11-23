@@ -42,6 +42,8 @@ import com.github.actionfx.core.annotation.AFXFormBinding;
 import com.github.actionfx.core.annotation.AFXFormMapping;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
+import com.github.actionfx.core.annotation.AFXShowView;
+import com.github.actionfx.core.annotation.AFXSubscribe;
 import com.github.actionfx.core.view.graph.ControlProperties;
 
 import javafx.beans.property.ObjectProperty;
@@ -90,10 +92,10 @@ public class CheckoutController {
 		return Arrays.asList("Germany", "France", "Spain", "Italy", "Portugal", "UK", "USA");
 	}
 
-	public void startCheckout(final List<Book> books) {
-		// create an order summary as model for our form-binding
-		final OrderSummary model = new OrderSummary();
-		model.getOrder().getOrderedBooks().addAll(books);
+	@AFXSubscribe(value = OrderSummary.class)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
+	public void onCheckoutStart(final OrderSummary model) {
+		// use the order summary as model for our form-binding
 		orderSummary.set(model);
 	}
 

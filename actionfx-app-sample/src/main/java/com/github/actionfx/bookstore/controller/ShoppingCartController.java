@@ -28,7 +28,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.github.actionfx.bookstore.model.Book;
+import com.github.actionfx.bookstore.model.OrderSummary;
 import com.github.actionfx.common.converter.DoubleCurrencyStringConverter;
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXCellValueConfig;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
@@ -36,7 +38,6 @@ import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXRequiresUserConfirmation;
-import com.github.actionfx.core.annotation.AFXShowView;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -67,7 +68,7 @@ public class ShoppingCartController {
 	private TableView<Book> bookTableView;
 
 	@Inject
-	private CheckoutController checkoutController;
+	private ActionFX actionFX;
 
 	@AFXOnAction(nodeId = "removeAllButton")
 	@AFXRequiresUserConfirmation(title = "Confirmation", header = "Empty Shopping Cart", content = "Are you sure you want to empty the shopping cart?")
@@ -82,10 +83,12 @@ public class ShoppingCartController {
 	}
 
 	@AFXOnAction(nodeId = "checkoutButton")
-	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
-		// place the order into the checkout controller
-		checkoutController.startCheckout(bookTableView.getItems());
+		final OrderSummary model = new OrderSummary();
+		model.getOrder().getOrderedBooks().addAll(bookTableView.getItems());
+
+		// publish order summary to start the checkout process
+		actionFX.publishEvent(model);
 	}
 
 	public void addToShoppingCart(final List<Book> books) {

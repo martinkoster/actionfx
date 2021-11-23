@@ -135,30 +135,12 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		}
 		// add a bean definition for the controller
 		final String controllerBeanId = deriveBeanId(controllerClass);
-		registerBeanDefinition(controllerBeanId,
-				createBeanDefinitionForController(beanDefinitionTemplate, afxController, controllerSupplier));
+		addBeanDefinition(controllerBeanId, controllerClass, afxController.singleton(), afxController.lazyInit(),
+				controllerSupplier);
 
 		// add a bean definition for the view
-		registerBeanDefinition(afxController.viewId(), createBeanDefinitionForView(beanDefinitionTemplate,
-				afxController, () -> ControllerWrapper.getViewFrom(getBean(controllerBeanId))));
-	}
-
-	private BeanDefinition createBeanDefinitionForController(final BeanDefinition beanDefinition,
-			final AFXController afxController, final Supplier<?> controllerInstantiationSupplier) {
-		final GenericBeanDefinition result = new GenericBeanDefinition(beanDefinition);
-		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
-		result.setInstanceSupplier(controllerInstantiationSupplier);
-		return result;
-	}
-
-	private BeanDefinition createBeanDefinitionForView(final BeanDefinition beanDefinition,
-			final AFXController afxController, final Supplier<?> viewSupplier) {
-		// views follow the same rules than the controller (scope, dependsOn, etc.)
-		final GenericBeanDefinition result = new GenericBeanDefinition(beanDefinition);
-		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
-		result.setBeanClass(View.class);
-		result.setInstanceSupplier(viewSupplier);
-		return result;
+		addBeanDefinition(afxController.viewId(), View.class, afxController.singleton(), afxController.lazyInit(),
+				() -> ControllerWrapper.getViewFrom(getBean(controllerBeanId)));
 	}
 
 	/**

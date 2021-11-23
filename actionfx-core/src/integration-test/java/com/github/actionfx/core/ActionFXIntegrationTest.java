@@ -49,7 +49,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
-import com.github.actionfx.core.container.extension.ControllerExtensionBean;
+import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
 import com.github.actionfx.core.test.nestedviewapp.ControllerWithNestedviewOnField;
 import com.github.actionfx.core.test.nestedviewapp.NestedTabPaneController;
 import com.github.actionfx.core.test.nestedviewapp.NestedViewApp;
@@ -245,12 +245,47 @@ class ActionFXIntegrationTest {
 		final ControllerWithAFXSubscribe controller = actionFX.getBean(ControllerWithAFXSubscribe.class);
 
 		// WHEN
-		actionFX.publishNotification("Hello World");
+		actionFX.publishEvent("Hello World");
 
 		// THEN
 		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
 		assertThat(controller.executionOrder, contains(1, 2, 3, 4));
 		assertThat(controller.executionArguments, contains("Hello World", "Hello World", "Hello World"));
+	}
+
+	@Test
+	@TestInFxThread
+	void testDocking() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+		final ControllerWithNestedviewOnField controller = actionFX.getBean(ControllerWithNestedviewOnField.class);
+
+		// WHEN
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(true));
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(true));
+		assertThat(controller.mainBorderPane.getTop(), notNullValue());
+		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
+
+		actionFX.undockNestedView("borderPaneTopView");
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(false));
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(true));
+		assertThat(controller.mainBorderPane.getTop(), nullValue());
+		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
+
+		actionFX.undockNestedView("borderPaneCenterView");
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(false));
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(false));
+		assertThat(controller.mainBorderPane.getTop(), nullValue());
+		assertThat(controller.mainBorderPane.getCenter(), nullValue());
+
+		actionFX.dockNestedView("borderPaneTopView");
+		actionFX.dockNestedView("borderPaneCenterView");
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(true));
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(true));
+		assertThat(controller.mainBorderPane.getTop(), notNullValue());
+		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
+
 	}
 
 	public static class CustomControllerExtension implements Consumer<Object> {

@@ -232,11 +232,7 @@ public class AFXUtils {
 	 *                              the Runnable
 	 */
 	public static <T> T runInFxThreadAndWait(final Task<T> task) throws InterruptedException, ExecutionException {
-		if (Platform.isFxApplicationThread()) {
-			task.run();
-		} else {
-			Platform.runLater(task::run);
-		}
+		runInFxThread(task);
 		return task.get();
 	}
 
