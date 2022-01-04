@@ -25,13 +25,16 @@ package com.github.actionfx.core.container.instantiation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import com.github.actionfx.core.extension.beans.SubscribeMethodControllerExtension;
 import com.github.actionfx.core.extension.controller.CellValueConfigControllerExtension;
 import com.github.actionfx.core.extension.controller.ConverterControllerExtension;
 import com.github.actionfx.core.extension.controller.DisableNodeControllerExtension;
@@ -63,7 +66,6 @@ class ControllerInstancePostProcessorTest {
 			DisableNodeControllerExtension.class, //
 			OnLoadControlDataMethodControllerExtension.class, //
 			OnControlValueChangeMethodControllerExtension.class, //
-			SubscribeMethodControllerExtension.class, //
 			FormBindingControllerExtension.class };
 
 	@Test
@@ -72,8 +74,26 @@ class ControllerInstancePostProcessorTest {
 		final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor();
 
 		// WHEN and THEN
-		assertThat(
-				postProcessor.getControllerExtensions().stream().map(Consumer::getClass).collect(Collectors.toList()),
-				contains(EXPECTED_EXTENSION));
+		assertThat(postProcessor.getUnmodifiableControllerExtensions().stream().map(Consumer::getClass)
+				.collect(Collectors.toList()), contains(EXPECTED_EXTENSION));
 	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testPostProcess_customControllerExtensions() {
+		// GIVEN
+		final Object controller = Mockito.mock(Object.class);
+		final Consumer<Object> extension1 = Mockito.mock(Consumer.class);
+		final Consumer<Object> extension2 = Mockito.mock(Consumer.class);
+		final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor(
+				Arrays.asList(extension1, extension2));
+
+		// WHEN
+		postProcessor.postProcess(controller);
+
+		// THEN
+		verify(extension1, times(1)).accept(controller);
+		verify(extension2, times(1)).accept(controller);
+	}
+
 }

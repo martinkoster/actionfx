@@ -43,16 +43,17 @@ import org.slf4j.LoggerFactory;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.container.instantiation.ControllerInstancePostProcessor;
-import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ClassPathScanningUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
-import com.github.actionfx.core.view.View;
 
 /**
  * Default implementation of a bean container using an underlying hash map as
  * bean cache.
+ * <p>
+ * This implementation supports singleton and prototyped-scoped beans as well as
+ * lazy initialization of beans.
  * <p>
  * The bean container respects the @PostConstruct annotation and performs
  * corresponding initialization after bean creation.
@@ -60,7 +61,7 @@ import com.github.actionfx.core.view.View;
  * @author koster
  *
  */
-public class DefaultBeanContainer implements BeanContainerFacade {
+public class DefaultBeanContainer extends AbstractActionFXBeanContainer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanContainer.class);
 
@@ -129,26 +130,6 @@ public class DefaultBeanContainer implements BeanContainerFacade {
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
 			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
 		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, lazyInit, instantiationSupplier));
-	}
-
-	@Override
-	public void addControllerBeanDefinition(final Class<?> controllerClass) {
-		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
-		if (afxController == null) {
-			throw new IllegalArgumentException(controllerClass + " is not annotated by @AFXController!");
-		}
-		final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
-				controllerClass, resolveResourceBundle(controllerClass, getBean(Locale.class)));
-		final String controllerId = deriveBeanId(controllerClass);
-
-		// add a bean definition for the controller
-		addBeanDefinition(controllerId, controllerClass, afxController.singleton(), afxController.lazyInit(),
-				controllerSupplier);
-
-		// and add a bean definition for the view (view itself is injected into the
-		// controller instance)
-		addBeanDefinition(afxController.viewId(), View.class, afxController.singleton(), afxController.lazyInit(),
-				() -> ControllerWrapper.getViewFrom(getBean(controllerId)));
 	}
 
 	@Override

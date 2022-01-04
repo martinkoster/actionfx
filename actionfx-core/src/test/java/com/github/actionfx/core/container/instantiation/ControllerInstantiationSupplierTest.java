@@ -104,7 +104,7 @@ class ControllerInstantiationSupplierTest {
 		// GIVEN
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
 		final ControllerInstantiationSupplier<MultilingualViewController> supplier = new ControllerInstantiationSupplier<>(
-				MultilingualViewController.class, resourceBundle);
+				MultilingualViewController.class, () -> resourceBundle);
 
 		// WHEN
 		final MultilingualViewController controller = supplier.get();
@@ -133,7 +133,7 @@ class ControllerInstantiationSupplierTest {
 		// GIVEN
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
 		final ControllerInstantiationSupplier<ViewController> supplier = new ControllerInstantiationSupplier<>(
-				ViewController.class, resourceBundle);
+				ViewController.class, () -> resourceBundle);
 
 		// WHEN
 		final ViewController controller = supplier.get();

@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.container;
+package com.github.actionfx.spring;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -48,7 +48,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
+import com.github.actionfx.spring.container.AFXApplicationContextInitializer;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
@@ -131,7 +132,7 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		applicationContext.getBean(ViewWithButtonController.class);
 
 		// THEN (custom controller extensions have been applied)
-		final ControllerExtensionBean ceb = applicationContext.getBean(ControllerExtensionBean.class);
+		final ActionFXExtensionsBean ceb = applicationContext.getBean(ActionFXExtensionsBean.class);
 		assertThat(ceb, notNullValue());
 		assertThat(ceb.getCustomControllerExtensions(), hasSize(2));
 		final Consumer<Object> ext1 = ceb.getCustomControllerExtensions().get(0);

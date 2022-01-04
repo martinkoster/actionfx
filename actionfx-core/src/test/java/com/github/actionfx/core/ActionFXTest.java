@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Files;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,7 @@ import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
 import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
+import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
@@ -165,6 +168,39 @@ class ActionFXTest {
 		assertThat(actionFX, notNullValue());
 		assertThat(Thread.getDefaultUncaughtExceptionHandler(), sameInstance(handler));
 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testBuilder_customController_and_customBeanExtensions_instancesArePassed() {
+		// GIVEN
+		final Consumer<Object> customControllerExtension = Mockito.mock(Consumer.class);
+		final BeanExtension customBeanExtension = Mockito.mock(BeanExtension.class);
+
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().controllerExtension(customControllerExtension)
+				.beanExtension(customBeanExtension).build();
+
+		// THEN
+		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
+				contains(customControllerExtension));
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(), contains(customBeanExtension));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testBuilder_customController_and_customBeanExtensions_classesArePassed() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().controllerExtension(CustomControllerExtension.class)
+				.beanExtension(CustomBeanExtension.class).build();
+
+		// THEN
+		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
+				contains(instanceOf(CustomControllerExtension.class)));
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(),
+				contains(instanceOf(CustomBeanExtension.class)));
 	}
 
 	@Test
@@ -636,4 +672,19 @@ class ActionFXTest {
 		public View _view;
 	}
 
+	public static class CustomControllerExtension implements Consumer<Object> {
+
+		@Override
+		public void accept(final Object t) {
+		}
+	}
+
+	public static class CustomBeanExtension implements BeanExtension {
+
+		@Override
+		public void extendBean(final Class<?> beanClass, final String beanId, final boolean singleton,
+				final boolean lazyInit) {
+		}
+
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Martin Koster
+ * Copyright (c) 2021 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,35 +21,38 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.test.app;
+package com.github.actionfx.core.extension;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.core.extension.beans.BeanExtension;
 
 /**
- * Test controller.
+ * Bean that carries all custom controller extensions added by the user during
+ * ActionFX startup.
  *
  * @author koster
  *
  */
-@AFXController(fxml = "/testfxml/SampleView.fxml", viewId = "mainView", lazyInit = false)
-public class MainController extends AbstractController {
+public class ActionFXExtensionsBean {
 
-	// field that is resolved by the Spring container. The field has the same name
-	// as the viewId above, so we
-	// expect exactly this field injected
-	private FxmlView mainView;
+	private final List<Consumer<Object>> customControllerExtensions = new ArrayList<>();
 
-	@Autowired
-	private PrototypeScopedController prototypeScopedController;
+	private final List<BeanExtension> customBeanExtensions = new ArrayList<>();
 
-	public FxmlView getMainView() {
-		return mainView;
+	public ActionFXExtensionsBean(final List<Consumer<Object>> customControllerExtensions,
+			final List<BeanExtension> customBeanExtensions) {
+		this.customControllerExtensions.addAll(customControllerExtensions);
+		this.customBeanExtensions.addAll(customBeanExtensions);
 	}
 
-	public PrototypeScopedController getPrototypeScopedController() {
-		return prototypeScopedController;
+	public List<Consumer<Object>> getCustomControllerExtensions() {
+		return customControllerExtensions;
+	}
+
+	public List<BeanExtension> getCustomBeanExtensions() {
+		return customBeanExtensions;
 	}
 }

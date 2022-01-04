@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
@@ -60,15 +61,16 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 
 	private final Class<T> controllerClass;
 
-	private final ResourceBundle resourceBundle;
+	private final Supplier<ResourceBundle> resourceBundleSupplier;
 
 	public ControllerInstantiationSupplier(final Class<T> controllerClass) {
 		this(controllerClass, null);
 	}
 
-	public ControllerInstantiationSupplier(final Class<T> controllerClass, final ResourceBundle resourceBundle) {
+	public ControllerInstantiationSupplier(final Class<T> controllerClass,
+			final Supplier<ResourceBundle> resourceBundleSupplier) {
 		this.controllerClass = prepareControllerClass(controllerClass);
-		this.resourceBundle = resourceBundle;
+		this.resourceBundleSupplier = resourceBundleSupplier != null ? resourceBundleSupplier : () -> null;
 	}
 
 	/**
@@ -168,10 +170,11 @@ public class ControllerInstantiationSupplier<T> extends AbstractInstantiationSup
 	 */
 	private AbstractView instantiateView(final Object controller, final AFXController afxController) {
 		if (!"".equals(afxController.fxml())) {
-			return new FxmlView(afxController.viewId(), afxController.fxml(), controller, resourceBundle);
+			return new FxmlView(afxController.viewId(), afxController.fxml(), controller, resourceBundleSupplier.get());
 		}
 		if (!Parent.class.equals(afxController.viewClass())) {
-			return new ParentView(afxController.viewId(), afxController.viewClass(), controller, resourceBundle);
+			return new ParentView(afxController.viewId(), afxController.viewClass(), controller,
+					resourceBundleSupplier.get());
 		}
 		throw new IllegalStateException("Controller class '" + controller.getClass()
 				+ "' has @AFXController annotation, which does not specify 'fxml()' or 'viewClass()' attribute!");

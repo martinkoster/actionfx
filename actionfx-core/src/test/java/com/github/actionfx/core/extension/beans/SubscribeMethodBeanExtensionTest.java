@@ -42,14 +42,14 @@ import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForEachMonocleExtension;
 
 /**
- * JUnit test case for {@link SubscribeMethodControllerExtension}.
+ * JUnit test case for {@link SubscribeMethodBeanExtension}.
  *
  * @author koster
  *
  */
 @ExtendWith(FxThreadForEachMonocleExtension.class)
 @TestInFxThread
-class SubscribeMethodControllerExtensionTest {
+class SubscribeMethodBeanExtensionTest {
 
 	private final PriorityAwareEventBus eventBus = Mockito.mock(PriorityAwareEventBus.class);
 
@@ -65,7 +65,7 @@ class SubscribeMethodControllerExtensionTest {
 	@Test
 	void testExtend() {
 		// GIVEN
-		final SubscribeMethodControllerExtension extension = new SubscribeMethodControllerExtension();
+		final SubscribeMethodBeanExtension extension = new SubscribeMethodBeanExtension();
 
 		// WHEN
 		extension.extendBean(ControllerWithAFXSubscribe.class, "controllerWithAFXSubscribe", false, false);

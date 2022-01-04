@@ -105,12 +105,12 @@ class SpringBeanContainerTest {
 		final List<BeanDefinition> beanDefinitions = beanDefinitionCaptor.getAllValues();
 		assertThat(beanNames, contains("mainController", "mainView", "prototypeScopedController", "prototypeView",
 				"viewWithButtonController", "viewWithButton"));
-		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false);
-		assertBeanDefinitionFor(beanDefinitions.get(3), View.class, false);
-		assertBeanDefinitionFor(beanDefinitions.get(4), ViewWithButtonController.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(5), View.class, true);
+		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true, false);
+		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true, false);
+		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false, true);
+		assertBeanDefinitionFor(beanDefinitions.get(3), View.class, false, true);
+		assertBeanDefinitionFor(beanDefinitions.get(4), ViewWithButtonController.class, true, true);
+		assertBeanDefinitionFor(beanDefinitions.get(5), View.class, true, true);
 	}
 
 	@Test
@@ -121,7 +121,7 @@ class SpringBeanContainerTest {
 		// THEN
 		verify(registry, times(1)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
 		assertThat(beanNameCaptor.getValue(), equalTo("mainController"));
-		assertBeanDefinitionFor(beanDefinitionCaptor.getValue(), MainController.class, true);
+		assertBeanDefinitionFor(beanDefinitionCaptor.getValue(), MainController.class, true, true);
 	}
 
 	@Test
@@ -132,7 +132,7 @@ class SpringBeanContainerTest {
 		// THEN
 		verify(registry, times(2)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
 		assertThat(beanNameCaptor.getAllValues().get(0), equalTo("mainController"));
-		assertBeanDefinitionFor(beanDefinitionCaptor.getAllValues().get(0), MainController.class, true);
+		assertBeanDefinitionFor(beanDefinitionCaptor.getAllValues().get(0), MainController.class, true, false);
 		assertThat(beanNameCaptor.getAllValues().get(1), equalTo("mainView"));
 	}
 
@@ -169,9 +169,10 @@ class SpringBeanContainerTest {
 	}
 
 	private void assertBeanDefinitionFor(final BeanDefinition definition, final Class<?> beanClass,
-			final boolean singleton) {
+			final boolean singleton, final boolean lazyInit) {
 		assertThat(definition.getBeanClassName(), equalTo(beanClass.getCanonicalName()));
 		assertThat(definition.isSingleton(), equalTo(singleton));
+		assertThat(definition.isLazyInit(), equalTo(lazyInit));
 	}
 
 	public static class NonController {

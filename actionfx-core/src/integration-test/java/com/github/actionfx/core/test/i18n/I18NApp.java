@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Martin Koster
+ * Copyright (c) 2020 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,28 +21,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.extension.controller;
+package com.github.actionfx.core.test.i18n;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import com.github.actionfx.core.annotation.AFXApplication;
 
 /**
- * Bean that carries all custom controller extensions added by the user during
- * ActionFX startup.
+ * Sample application for testing.
  *
  * @author koster
  *
  */
-public class ControllerExtensionBean {
+@AFXApplication(mainViewId = "i18NView", scanPackage = "com.github.actionfx.core.test.i18n")
+public class I18NApp {
 
-	private final List<Consumer<Object>> customControllerExtensions = new ArrayList<>();
-
-	public ControllerExtensionBean(final List<Consumer<Object>> customControllerExtensions) {
-		this.customControllerExtensions.addAll(customControllerExtensions);
-	}
-
-	public List<Consumer<Object>> getCustomControllerExtensions() {
-		return customControllerExtensions;
-	}
 }

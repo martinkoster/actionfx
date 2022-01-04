@@ -49,7 +49,7 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 import com.github.actionfx.core.test.nestedviewapp.ControllerWithNestedviewOnField;
 import com.github.actionfx.core.test.nestedviewapp.NestedTabPaneController;
 import com.github.actionfx.core.test.nestedviewapp.NestedViewApp;
@@ -222,7 +222,7 @@ class ActionFXIntegrationTest {
 		ActionFX.getInstance().getBean(NestedTabPaneController.class);
 
 		// THEN
-		final ControllerExtensionBean ceb = ActionFX.getInstance().getBean(ControllerExtensionBean.class);
+		final ActionFXExtensionsBean ceb = ActionFX.getInstance().getBean(ActionFXExtensionsBean.class);
 		assertThat(ceb, notNullValue());
 		assertThat(ceb.getCustomControllerExtensions(), hasSize(2));
 		final Consumer<Object> ext1 = ceb.getCustomControllerExtensions().get(0);

@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.container;
+package com.github.actionfx.spring;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -43,7 +43,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.github.actionfx.core.ActionFX;
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
+import com.github.actionfx.spring.container.SpringBeanContainer;
 import com.github.actionfx.spring.test.app.MainController;
 import com.github.actionfx.spring.test.app.PrototypeScopedController;
 import com.github.actionfx.spring.test.app.SampleApp;
@@ -100,8 +101,8 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 	}
 
 	@Bean
-	public ControllerExtensionBean controllerExtensionBean() {
-		return new ControllerExtensionBean(Collections.emptyList());
+	public ActionFXExtensionsBean controllerExtensionBean() {
+		return new ActionFXExtensionsBean(Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Override

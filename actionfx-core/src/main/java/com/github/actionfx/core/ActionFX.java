@@ -48,7 +48,8 @@ import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
 import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
+import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
@@ -165,7 +166,7 @@ public class ActionFX {
 
 	// holds a list of custom controller extensions added by the user during
 	// ActionFX setup
-	protected ControllerExtensionBean controllerExtensionBean;
+	protected ActionFXExtensionsBean actionFXExtensionsBean;
 
 	/**
 	 * Internal constructor. Use {@link #build()} method to create your
@@ -297,8 +298,8 @@ public class ActionFX {
 				SimplePriorityAwareEventBus::new);
 
 		// add controller extensions to the bean container
-		beanContainer.addBeanDefinition(BeanContainerFacade.CONTROLLER_EXTENSION_BEANNAME,
-				ControllerExtensionBean.class, true, false, () -> controllerExtensionBean);
+		beanContainer.addBeanDefinition(BeanContainerFacade.ACTIONFX_EXTENSION_BEANNAME, ActionFXExtensionsBean.class,
+				true, false, () -> actionFXExtensionsBean);
 
 		// add the dialog controller to the bean container
 		beanContainer.addBeanDefinition(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, DialogController.class, true, true,
@@ -884,6 +885,8 @@ public class ActionFX {
 
 		private final List<Consumer<Object>> controllerExtensions = new ArrayList<>();
 
+		private final List<BeanExtension> beanExtensions = new ArrayList<>();
+
 		/**
 		 * Creates the instance of {@link ActionFX} ready to use.
 		 *
@@ -901,7 +904,7 @@ public class ActionFX {
 					: (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
 			actionFX.observableLocale = observableLocale != null ? observableLocale
 					: new SimpleObjectProperty<>(Locale.getDefault());
-			actionFX.controllerExtensionBean = new ControllerExtensionBean(controllerExtensions);
+			actionFX.actionFXExtensionsBean = new ActionFXExtensionsBean(controllerExtensions, beanExtensions);
 			postConstruct(actionFX);
 			return actionFX;
 		}
@@ -1036,7 +1039,7 @@ public class ActionFX {
 		 * after dependency injection, but before methods annotated with
 		 * {@code @PostConstruct} are invoked.
 		 *
-		 * @param controllerExtensions the controller extensions
+		 * @param extensions the controller extensions
 		 * @return this builder
 		 */
 		@SuppressWarnings("unchecked")
@@ -1054,7 +1057,7 @@ public class ActionFX {
 		 * after dependency injection, but before methods annotated with
 		 * {@code @PostConstruct} are invoked.
 		 *
-		 * @param controllerExtensions the controller extension classes
+		 * @param extensionClasses the controller extension classes
 		 * @return this builder
 		 */
 		@SuppressWarnings("unchecked")
@@ -1066,6 +1069,40 @@ public class ActionFX {
 				}
 			}
 			return controllerExtension(extensions);
+		}
+
+		/**
+		 * Registers custom bean extensions instances implemented by the user. Bean
+		 * extensions are applied to the bean definitions after these beans have been
+		 * discovered by ActionFX during the component scan.
+		 *
+		 * @param extensions the bean definition extensions
+		 * @return this builder
+		 */
+		public ActionFXBuilder beanExtension(final BeanExtension... extensions) {
+			if (extensions.length > 0) {
+				beanExtensions.addAll(Arrays.asList(extensions));
+			}
+			return this;
+		}
+
+		/**
+		 * Registers custom bean extensions instances implemented by the user. Bean
+		 * extensions are applied to the bean definitions after these beans have been
+		 * discovered by ActionFX during the component scan.
+		 *
+		 * @param extensions the bean definition extensions
+		 * @return this builder
+		 */
+		@SuppressWarnings("unchecked")
+		public ActionFXBuilder beanExtension(final Class<? extends BeanExtension>... extensionClasses) {
+			final BeanExtension[] extensions = new BeanExtension[extensionClasses.length];
+			if (extensionClasses.length > 0) {
+				for (int i = 0; i < extensionClasses.length; i++) {
+					extensions[i] = ReflectionUtils.instantiateClass(extensionClasses[i]);
+				}
+			}
+			return beanExtension(extensions);
 		}
 
 		/**

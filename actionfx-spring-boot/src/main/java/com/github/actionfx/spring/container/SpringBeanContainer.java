@@ -30,7 +30,6 @@ import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -42,11 +41,9 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.container.AbstractActionFXBeanContainer;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
-import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
-import com.github.actionfx.core.view.View;
 
 /**
  * Implementation of {@link BeanContainerFacade} that leverages Spring as
@@ -60,7 +57,7 @@ import com.github.actionfx.core.view.View;
  * @author koster
  *
  */
-public class SpringBeanContainer implements BeanContainerFacade {
+public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SpringBeanContainer.class);
 
@@ -95,9 +92,9 @@ public class SpringBeanContainer implements BeanContainerFacade {
 			if (beanDefinition == null || beanDefinition.getBeanClassName() == null) {
 				continue;
 			}
-			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(),
+			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), // NORSONAR
 					getClass().getClassLoader());
-			addControllerBeanDefinition(beanClass, beanDefinition);
+			addControllerBeanDefinition(beanClass);
 		}
 	}
 
@@ -110,37 +107,6 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		beanDefinition.setLazyInit(lazyInit);
 		beanDefinition.setInstanceSupplier(instantiationSupplier);
 		registerBeanDefinition(id, beanDefinition);
-	}
-
-	@Override
-	public void addControllerBeanDefinition(final Class<?> controllerClass) {
-		addControllerBeanDefinition(controllerClass, new AnnotatedGenericBeanDefinition(controllerClass));
-	}
-
-	/**
-	 * Creates a new bean definition for the supplied {@code controllerClass} by
-	 * using the supplied {@code beanDefinitionTemplate}.
-	 *
-	 * @param controllerClass        the controller class to register
-	 * @param beanDefinitionTemplate the bean definition template
-	 */
-	protected void addControllerBeanDefinition(final Class<?> controllerClass,
-			final BeanDefinition beanDefinitionTemplate) {
-		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
-
-		final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
-				controllerClass);
-		if (afxController == null) {
-			throw new IllegalArgumentException(controllerClass + " is not annotated by @AFXController!");
-		}
-		// add a bean definition for the controller
-		final String controllerBeanId = deriveBeanId(controllerClass);
-		addBeanDefinition(controllerBeanId, controllerClass, afxController.singleton(), afxController.lazyInit(),
-				controllerSupplier);
-
-		// add a bean definition for the view
-		addBeanDefinition(afxController.viewId(), View.class, afxController.singleton(), afxController.lazyInit(),
-				() -> ControllerWrapper.getViewFrom(getBean(controllerBeanId)));
 	}
 
 	/**

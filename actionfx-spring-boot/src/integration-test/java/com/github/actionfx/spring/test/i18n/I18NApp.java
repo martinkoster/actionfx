@@ -21,35 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.spring.test.app;
+package com.github.actionfx.spring.test.i18n;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.github.actionfx.core.annotation.AFXController;
-import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.core.annotation.AFXApplication;
 
 /**
- * Test controller.
+ * Sample application for testing internationalization in Spring.
  *
  * @author koster
  *
  */
-@AFXController(fxml = "/testfxml/SampleView.fxml", viewId = "mainView", lazyInit = false)
-public class MainController extends AbstractController {
+@Configuration
+@AFXApplication(mainViewId = "i18NView", scanPackage = "com.github.actionfx.spring.test.i18n")
+public class I18NApp {
 
-	// field that is resolved by the Spring container. The field has the same name
-	// as the viewId above, so we
-	// expect exactly this field injected
-	private FxmlView mainView;
-
-	@Autowired
-	private PrototypeScopedController prototypeScopedController;
-
-	public FxmlView getMainView() {
-		return mainView;
-	}
-
-	public PrototypeScopedController getPrototypeScopedController() {
-		return prototypeScopedController;
+	@Bean
+	public ResourceBundleMessageSource messageSource() {
+		final var source = new ResourceBundleMessageSource();
+		source.setBasenames("i18n/I18N");
+		return source;
 	}
 }

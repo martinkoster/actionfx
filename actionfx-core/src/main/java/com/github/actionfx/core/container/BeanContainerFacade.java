@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
-import com.github.actionfx.core.extension.controller.ControllerExtensionBean;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 
 import javafx.beans.value.ObservableValue;
 
@@ -63,10 +63,10 @@ public interface BeanContainerFacade {
 	public static String ACTIONFX_BEANNAME = "actionFX";
 
 	/**
-	 * The bean name of an {@link ControllerExtensionBean} holding all user defined
-	 * controller extensions.
+	 * The bean name of an {@link ActionFXExtensionsBean} holding all user defined
+	 * controller and bean extensions.
 	 */
-	public static String CONTROLLER_EXTENSION_BEANNAME = "controllerExtensionBean";
+	public static String ACTIONFX_EXTENSION_BEANNAME = "actionFXExtensionBean";
 
 	/**
 	 * The bean name of {@link DialogController} for dialog support.

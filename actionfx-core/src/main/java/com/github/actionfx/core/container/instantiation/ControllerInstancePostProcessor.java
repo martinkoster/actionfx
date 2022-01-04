@@ -103,7 +103,7 @@ public class ControllerInstancePostProcessor {
 		}
 	}
 
-	public List<Consumer<Object>> getControllerExtensions() {
-		return controllerExtensions;
+	public List<Consumer<Object>> getUnmodifiableControllerExtensions() {
+		return Collections.unmodifiableList(controllerExtensions);
 	}
 }

@@ -46,9 +46,9 @@ import com.github.actionfx.core.method.ActionFXMethodInvocation;
  * @author koster
  *
  */
-public class SubscribeMethodControllerExtension extends AbstractAnnotatedMethodBeansExtension<AFXSubscribe> {
+public class SubscribeMethodBeanExtension extends AbstractAnnotatedMethodBeansExtension<AFXSubscribe> {
 
-	public SubscribeMethodControllerExtension() {
+	public SubscribeMethodBeanExtension() {
 		super(AFXSubscribe.class);
 	}
 
