@@ -43,6 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 import com.github.actionfx.spring.container.SpringBeanContainer;
 import com.github.actionfx.spring.test.app.MainController;
@@ -60,8 +61,6 @@ import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 @ContextConfiguration(classes = { SampleApp.class, SpringBeanContainerIntegrationTest.class })
 class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 
-	private ApplicationContext applicationContext;
-
 	@BeforeAll
 	static void initializeActionFX() {
 		ActionFX.builder().scanPackage(SampleApp.class.getPackageName()).build();
@@ -75,16 +74,13 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 	@Test
 	void testContainer() {
 		// GIVEN
-		final SpringBeanContainer container = new SpringBeanContainer((BeanDefinitionRegistry) applicationContext,
-				applicationContext);
-
+		final ActionFX actionFX = ActionFX.getInstance();
 		// WHEN
-		ActionFX.getInstance().scanForActionFXComponents(container);
+		actionFX.scanForActionFXComponents();
 
 		// THEN
-		final MainController controller = container.getBean("mainController");
-		final ActionFX actionFX = container.getBean(ActionFX.class);
-		final PrototypeScopedController prototypeScopedController = container.getBean(PrototypeScopedController.class);
+		final MainController controller = actionFX.getBean("mainController");
+		final PrototypeScopedController prototypeScopedController = actionFX.getBean(PrototypeScopedController.class);
 
 		assertThat(controller, notNullValue());
 		// final View view = container.getBean("mainView");
@@ -107,7 +103,13 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+		final ActionFX actionFX = ActionFX.getInstance();
+		final BeanContainerFacade beanContainer = actionFX.getBeanContainer();
+		if (beanContainer instanceof SpringBeanContainer) {
+			final SpringBeanContainer springBeanContainer = (SpringBeanContainer) beanContainer;
+			springBeanContainer.onSpringContextAvailable((BeanDefinitionRegistry) applicationContext,
+					applicationContext);
+		}
 	}
 
 }

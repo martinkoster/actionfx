@@ -61,19 +61,21 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SpringBeanContainer.class);
 
-	private final BeanDefinitionRegistry beanDefinitionRegistry;
+	private BeanDefinitionRegistry beanDefinitionRegistry;
 
-	private final ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
 
 	/**
-	 * Constructor that requires access to the {@link BeanDefinitionRegistry} for
-	 * adding new bean definitions and the {@link ApplicationContext} for requesting
-	 * beans from the context.
+	 * Sets the {@link BeanDefinitionRegistry} for adding new bean definitions and
+	 * the {@link ApplicationContext} for requesting beans from the context.
+	 * <p>
+	 * This method is invoked by {@link AFXApplicationContextInitializer} when the
+	 * Spring context is starting up.
 	 *
 	 * @param beanDefinitionRegistry the bean definition registry
 	 * @param applicationContext     the application context
 	 */
-	public SpringBeanContainer(final BeanDefinitionRegistry beanDefinitionRegistry,
+	public void onSpringContextAvailable(final BeanDefinitionRegistry beanDefinitionRegistry,
 			final ApplicationContext applicationContext) {
 		this.beanDefinitionRegistry = beanDefinitionRegistry;
 		this.applicationContext = applicationContext;
@@ -81,6 +83,7 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 
 	@Override
 	public void runComponentScan(final String rootPackage) {
+		checkSpringContextAvailability();
 
 		// scan for AFXController annotations...
 		final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(
@@ -117,6 +120,7 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 	 * @param beanFactory the bean factory
 	 */
 	protected void registerBeanDefinition(final String beanName, final BeanDefinition definition) {
+		checkSpringContextAvailability();
 		beanDefinitionRegistry.registerBeanDefinition(beanName, definition);
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Registered BeanDefinition of type '{}' with bean name '{}'.", definition.getBeanClassName(),
@@ -127,11 +131,13 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getBean(final String id) {
+		checkSpringContextAvailability();
 		return (T) applicationContext.getBean(id);
 	}
 
 	@Override
 	public <T> T getBean(final Class<T> beanClass) {
+		checkSpringContextAvailability();
 		return applicationContext.getBean(beanClass);
 	}
 
@@ -151,6 +157,7 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 	 */
 	@Override
 	public ResourceBundle resolveResourceBundle(final Class<?> controllerClass, final Locale locale) {
+		checkSpringContextAvailability();
 		final MessageSource messageSource = applicationContext.getBean(MessageSource.class);
 		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 		// in case there is no resourceBasename on the controller, we return Spring
@@ -161,6 +168,18 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 		}
 		final String baseName = afxController.resourcesBasename();
 		return ResourceBundle.getBundle(baseName, locale);
+	}
+
+	/**
+	 * Checks that the Spring context is already available for usage. The container
+	 * itself is instantiated while setting up ActionFX via its builder. Spring
+	 * itself might be available later in the application's lifecycle.
+	 */
+	private void checkSpringContextAvailability() {
+		if (applicationContext == null || beanDefinitionRegistry == null) {
+			throw new IllegalStateException(
+					"Spring context is not available yet! Please perform the desired operation after Spring is properly booted and the ApplicationContext is set via method SpringBeanContainer.onSpringContextAvailable(..)!");
+		}
 	}
 
 }

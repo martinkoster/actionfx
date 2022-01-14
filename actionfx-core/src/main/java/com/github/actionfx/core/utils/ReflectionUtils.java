@@ -43,6 +43,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ClassUtils;
+
 /**
  * Utils for handling reflections.
  *
@@ -560,6 +562,61 @@ public class ReflectionUtils {
 	private static boolean startsWithSeveralUpperCaseLetters(final String propertyName) {
 		final char[] chars = propertyName.toCharArray();
 		return chars.length >= 2 && Character.isUpperCase(chars[0]) && Character.isUpperCase(chars[1]);
+	}
+
+	/**
+	 * Resolves the given {@code className} of type String into a {@link Class}
+	 * instance. In case the class name is not known to the supplied
+	 * {@code classLoader}, {@code null} is returned.
+	 *
+	 * @param className   the class name to resolve
+	 * @param classLoader the optional class loader to use for checking (can be
+	 *                    {@code null})
+	 * @return the resolved class instance, or {@code null}, in case
+	 *         {@code className} can not be resolved.
+	 */
+	public static Class<?> resolveClassName(final String className, final ClassLoader classLoader) {
+		ClassLoader clToUse = classLoader;
+		if (clToUse == null) {
+			clToUse = getDefaultClassLoader();
+		}
+		try {
+			return Class.forName(className, false, clToUse);
+		} catch (final ClassNotFoundException ex) {
+			// we can not resolve the class name, so we return null here
+			return null;
+		}
+	}
+
+	/**
+	 * Return the default ClassLoader to use: typically the thread context
+	 * ClassLoader, if available; the ClassLoader that loaded the ClassUtils class
+	 * will be used as fallback.
+	 *
+	 * @return the default ClassLoader (only {@code null} if even the system
+	 *         ClassLoader isn't accessible)
+	 */
+	public static ClassLoader getDefaultClassLoader() {
+		ClassLoader cl = null;
+		try {
+			cl = Thread.currentThread().getContextClassLoader();
+		} catch (final Throwable ex) { // NOSONAR
+			// Cannot access thread context ClassLoader
+		}
+		if (cl == null) {
+			// No thread context class loader -> use class loader of this class.
+			cl = ClassUtils.class.getClassLoader();
+			if (cl == null) {
+				// getClassLoader() returning null indicates the bootstrap ClassLoader
+				try {
+					cl = ClassLoader.getSystemClassLoader();
+				} catch (final Throwable ex) { // NOSONAR
+					// Cannot access system ClassLoader
+					// null will be returned in that case
+				}
+			}
+		}
+		return cl;
 	}
 
 	/**

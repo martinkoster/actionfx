@@ -43,7 +43,7 @@ import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
@@ -234,31 +234,14 @@ public class ActionFX {
 
 	/**
 	 * Scans for ActionFX components, depending on the configured
-	 * {@link #scanPackage}. In case an alternative bean container shall be used for
-	 * ActionFX, please use {@link #scanForActionFXComponents(BeanContainerFacade)}
-	 * instead of this method.
+	 * {@link #scanPackage}.
+	 * <p>
+	 * This method requires that the JavaFX thread is up-and-running, as certain
+	 * components (e.g. {@link javafx.scene.web.WebView}) can only be instantiated
+	 * within the JavaFX thread.
 	 */
 	public void scanForActionFXComponents() {
 		checkActionFXState(ActionFXState.CONFIGURED);
-		scanForActionFXComponentsInternal();
-	}
-
-	/**
-	 * Scans for ActionFX components, depending on the configured
-	 * {@link #scanPackage}. This routine allows to specify an alternative
-	 * {@link BeanContainerFacade} to use, instead of the internal
-	 * {@link DefaultBeanContainer}. The definition of the
-	 * {@link BeanContainerFacade} type is not part of the ActionFX configuration,
-	 * because the configuration and setup is performed at the soonest possible time
-	 * in the application, preferable in the {@code main()} method of the
-	 * Application. The bean container implementation (e.g. when using Spring as
-	 * bean container) is not yet setup at this point in time!
-	 *
-	 * @param beanContainer the
-	 */
-	public void scanForActionFXComponents(final BeanContainerFacade beanContainer) {
-		checkActionFXState(ActionFXState.CONFIGURED);
-		this.beanContainer = beanContainer;
 		scanForActionFXComponentsInternal();
 	}
 
@@ -778,7 +761,7 @@ public class ActionFX {
 	 *
 	 * @return the underlying bean container implementation
 	 */
-	protected BeanContainerFacade getBeanContainer() {
+	public BeanContainerFacade getBeanContainer() {
 		return beanContainer;
 	}
 
@@ -887,6 +870,10 @@ public class ActionFX {
 
 		private final List<BeanExtension> beanExtensions = new ArrayList<>();
 
+		private BeanContainerFacade beanContainer;
+
+		private boolean enableBeanContainerAutodetection = true;
+
 		/**
 		 * Creates the instance of {@link ActionFX} ready to use.
 		 *
@@ -894,7 +881,7 @@ public class ActionFX {
 		 */
 		public ActionFX build() {
 			final ActionFX actionFX = new ActionFX();
-			actionFX.beanContainer = new DefaultBeanContainer(controllerExtensions);
+			actionFX.beanContainer = new DefaultActionFXBeanContainer(controllerExtensions);
 			actionFX.mainViewId = mainViewId;
 			actionFX.scanPackage = scanPackage;
 			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
@@ -905,6 +892,7 @@ public class ActionFX {
 			actionFX.observableLocale = observableLocale != null ? observableLocale
 					: new SimpleObjectProperty<>(Locale.getDefault());
 			actionFX.actionFXExtensionsBean = new ActionFXExtensionsBean(controllerExtensions, beanExtensions);
+			initializeBeanContainer(actionFX);
 			postConstruct(actionFX);
 			return actionFX;
 		}
@@ -1103,6 +1091,96 @@ public class ActionFX {
 				}
 			}
 			return beanExtension(extensions);
+		}
+
+		/**
+		 * Defines the bean container instance to use for ActionFX. The container
+		 * classes needs to implement the {@link BeanContainerFacade} interface and need
+		 * to provide routines for registering bean definitions are retrieving bean
+		 * instances (singleton, prototypes) from the underlying container.
+		 *
+		 * @param beanContainerClass the bean container class
+		 * @return this builder
+		 */
+		public ActionFXBuilder beanContainer(final BeanContainerFacade beanContainer) {
+			this.beanContainer = beanContainer;
+			return this;
+		}
+
+		/**
+		 * Defines the bean container as class to use for ActionFX. The container class
+		 * needs to implement the {@link BeanContainerFacade} interface and need to
+		 * provide routines for registering bean definitions are retrieving bean
+		 * instances (singleton, prototypes) from the underlying container.
+		 * <p>
+		 * It is expected that the supplied class as a no-argument default constructor.
+		 *
+		 * @param beanContainerClass the bean container class
+		 * @return this builder
+		 */
+		public ActionFXBuilder beanContainerClass(final Class<? extends BeanContainerFacade> beanContainerClass) {
+			final BeanContainerFacade beanContainerInstance = ReflectionUtils.instantiateClass(beanContainerClass);
+			return beanContainer(beanContainerInstance);
+		}
+
+		/**
+		 * Flag that determines whether ActionFX shall try to autodetect the bean
+		 * container implementation to use.
+		 * <p>
+		 * Using autodetection together with directly setting the bean container via
+		 * {@link #beanContainer(BeanContainerFacade)} or
+		 * {@link #beanContainerClass(Class)} is pointless. When using an explicit bean
+		 * container implementation, the autodetection is switched off
+		 * ({@code enableBeanContainerAutodetection(false)}).
+		 * <p>
+		 * The default is {@code true} (i.e. autodetection is enabled).
+		 *
+		 * @param enableAutoDetect flag that indicates whether autodetection shall be
+		 *                         attempted or not. If enabled, it is checked whether a
+		 *                         known bean container implementation is present on the
+		 *                         classpath (e.g. the container implementation for
+		 *                         Spring). If no container implementation is found on
+		 *                         the classpath, ActionFX default bean container
+		 *                         {@link DefaultActionFXBeanContainer} is used.
+		 * @return this builder
+		 */
+		public ActionFXBuilder enableBeanContainerAutodetection(final boolean enableAutoDetect) {
+			enableBeanContainerAutodetection = enableAutoDetect;
+			return this;
+		}
+
+		/**
+		 * Initializes the bean container to use for ActionFX.
+		 *
+		 * @param actionFX the actionFX instance
+		 */
+		private void initializeBeanContainer(final ActionFX actionFX) {
+			if (beanContainer != null) {
+				actionFX.beanContainer = beanContainer;
+			} else if (enableBeanContainerAutodetection) {
+				actionFX.beanContainer = autodetectBeanContainer();
+			} else {
+				actionFX.beanContainer = new DefaultActionFXBeanContainer();
+			}
+		}
+
+		/**
+		 * Performs an autodetection of the bean container to use for ActionFX.
+		 *
+		 * @return the bean container. In case no specialized container is found on the
+		 *         classpath, the default container of ActionFX is returned.
+		 */
+		private BeanContainerFacade autodetectBeanContainer() {
+			final String[] containerCandidates = { "com.github.actionfx.spring.container.SpringBeanContainer" };
+			for (final String containerCandidate : containerCandidates) {
+				final Class<?> containerClass = ReflectionUtils.resolveClassName(containerCandidate, null);
+				if (containerClass != null) {
+					return (BeanContainerFacade) ReflectionUtils.instantiateClass(containerClass);
+				}
+			}
+
+			// no candidate found? we return ActionFX' default
+			return new DefaultActionFXBeanContainer();
 		}
 
 		/**

@@ -91,11 +91,14 @@ class SpringBeanContainerTest {
 
 	@BeforeEach
 	void onSetup() {
-		container = new SpringBeanContainer(registry, appContext);
+		container = new SpringBeanContainer();
 	}
 
 	@Test
 	void testRunComponentScan() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
 		// WHEN
 		container.runComponentScan(SampleApp.class.getPackageName());
 
@@ -114,7 +117,19 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
+	void testRunComponentScan_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.runComponentScan(SampleApp.class.getPackageName()));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+	}
+
+	@Test
 	void addBeanDefinition() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
 		// WHEN
 		container.addBeanDefinition("mainController", MainController.class, true, true, MainController::new);
 
@@ -125,7 +140,19 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
+	void testAddBeanDefinition_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> container
+				.addBeanDefinition("mainController", MainController.class, true, true, MainController::new));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+	}
+
+	@Test
 	void addControllerBeanDefinition() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
 		// WHEN
 		container.addControllerBeanDefinition(MainController.class);
 
@@ -137,7 +164,19 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
+	void testAddControllerBeanDefinition_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.addControllerBeanDefinition(MainController.class));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+	}
+
+	@Test
 	void addControllerBeanDefinition_classIsNotAController() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
 		// WHEN
 		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
 				() -> container.addControllerBeanDefinition(NonController.class));
@@ -149,6 +188,7 @@ class SpringBeanContainerTest {
 	@Test
 	void getBean_byName() {
 		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
 		final MainController controller = new MainController();
 		when(appContext.getBean(ArgumentMatchers.eq("mainController"))).thenReturn(controller);
 
@@ -158,14 +198,33 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
+	void testGetBean_byName_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.getBean("mainController"));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+	}
+
+	@Test
 	void getBean_byClass() {
 		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
 		final MainController controller = new MainController();
 		when(appContext.getBean(ArgumentMatchers.eq(MainController.class))).thenReturn(controller);
 
 		// WHEN and THEN
 		assertThat(container.getBean(MainController.class), sameInstance(controller));
 		verify(appContext, times(1)).getBean(ArgumentMatchers.eq(MainController.class));
+	}
+
+	@Test
+	void testGetBean_byClass_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.getBean(MainController.class));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
 	}
 
 	private void assertBeanDefinitionFor(final BeanDefinition definition, final Class<?> beanClass,

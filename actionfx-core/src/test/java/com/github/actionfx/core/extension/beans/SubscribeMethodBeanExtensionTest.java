@@ -59,7 +59,7 @@ class SubscribeMethodBeanExtensionTest {
 		final ControllerWithAFXSubscribe controller = new ControllerWithAFXSubscribe();
 		when(container.getBean(PriorityAwareEventBus.class)).thenReturn(eventBus);
 		when(container.getBean("controllerWithAFXSubscribe")).thenReturn(controller);
-		ActionFX.builder().build().scanForActionFXComponents(container);
+		ActionFX.builder().beanContainer(container).build().scanForActionFXComponents();
 	}
 
 	@Test

@@ -23,11 +23,14 @@
  */
 package com.github.actionfx.spring.container;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.container.BeanContainerFacade;
 
 /**
  * Implementation of {@link ApplicationContextInitializer} that delegates the
@@ -43,10 +46,20 @@ import com.github.actionfx.core.ActionFX;
  */
 public class AFXApplicationContextInitializer implements ApplicationContextInitializer<GenericApplicationContext> {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AFXApplicationContextInitializer.class);
+
 	@Override
 	public void initialize(final GenericApplicationContext applicationContext) {
-		final SpringBeanContainer springBeanContainer = new SpringBeanContainer(applicationContext, applicationContext);
-		ActionFX.getInstance().scanForActionFXComponents(springBeanContainer);
+		final ActionFX actionFX = ActionFX.getInstance();
+		final BeanContainerFacade beanContainer = actionFX.getBeanContainer();
+		if (beanContainer instanceof SpringBeanContainer) {
+			LOG.info("ActionFX will use the Spring Bean Container for bean management.");
+			final SpringBeanContainer springBeanContainer = (SpringBeanContainer) beanContainer;
+			springBeanContainer.onSpringContextAvailable(applicationContext, applicationContext);
+			ActionFX.getInstance().scanForActionFXComponents();
+		} else {
+			LOG.info("ActionFX will use its own bean container, independent of the Spring container. ");
+		}
 	}
 
 }

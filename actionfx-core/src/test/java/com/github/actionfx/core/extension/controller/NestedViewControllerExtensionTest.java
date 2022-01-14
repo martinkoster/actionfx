@@ -38,7 +38,6 @@ import org.mockito.Mockito;
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXNestedView;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.extension.controller.NestedViewControllerExtension;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.BorderPanePosition;
 import com.github.actionfx.core.view.View;
@@ -68,7 +67,7 @@ class NestedViewControllerExtensionTest {
 		final BeanContainerFacade container = Mockito.mock(BeanContainerFacade.class);
 		when(container.getBean(Mockito.eq("topView"))).thenReturn(topView);
 		when(container.getBean(Mockito.eq("centerView"))).thenReturn(centerView);
-		ActionFX.builder().build().scanForActionFXComponents(container);
+		ActionFX.builder().beanContainer(container).build().scanForActionFXComponents();
 	}
 
 	@AfterEach

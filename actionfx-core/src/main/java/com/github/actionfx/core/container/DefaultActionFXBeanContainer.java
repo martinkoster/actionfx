@@ -61,9 +61,9 @@ import com.github.actionfx.core.utils.ReflectionUtils;
  * @author koster
  *
  */
-public class DefaultBeanContainer extends AbstractActionFXBeanContainer {
+public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanContainer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultActionFXBeanContainer.class);
 
 	// bean definition map with key: id -> value: bean definition
 	private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
@@ -80,7 +80,7 @@ public class DefaultBeanContainer extends AbstractActionFXBeanContainer {
 	/**
 	 * The default constructor (without custom controller extensions).
 	 */
-	public DefaultBeanContainer() {
+	public DefaultActionFXBeanContainer() {
 		this(Collections.emptyList());
 	}
 
@@ -92,7 +92,7 @@ public class DefaultBeanContainer extends AbstractActionFXBeanContainer {
 	 * @param customControllerExtensions a list of custom controller extensions
 	 *                                   implementing the {@link Consumer} interface
 	 */
-	public DefaultBeanContainer(final List<Consumer<Object>> customControllerExtensions) {
+	public DefaultActionFXBeanContainer(final List<Consumer<Object>> customControllerExtensions) {
 
 		controllerInstancePostProcessor = new ControllerInstancePostProcessor(customControllerExtensions);
 

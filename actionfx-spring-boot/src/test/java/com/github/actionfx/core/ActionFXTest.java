@@ -23,47 +23,39 @@
  */
 package com.github.actionfx.core;
 
-import java.util.Locale;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.github.actionfx.core.container.BeanContainerFacade;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
-import com.github.actionfx.core.converter.ConversionService;
+import com.github.actionfx.spring.container.SpringBeanContainer;
 
-import javafx.beans.property.SimpleObjectProperty;
+class ActionFXTest {
 
-/**
- * Mock for tests with ActionFX.
- *
- * @author koster
- *
- */
-public class ActionFXMock extends ActionFX {
-
-	/**
-	 * Constructor for direct usage. No builder required for mocking.
-	 */
-	public ActionFXMock() {
-		instance = this;
-		beanContainer = new DefaultActionFXBeanContainer();
-		observableLocale = new SimpleObjectProperty<>(Locale.US);
-		addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
-		setStateConfigured();
+	@BeforeEach
+	void onSetup() {
+		// reset instance to 'null' in order to force the creation of a
+		// new ActionFX instance for each test
+		ActionFX.instance = null;
 	}
 
-	/**
-	 * Overrides a bean in the underlying bean container.
-	 *
-	 * @param beanName the bean name to override
-	 * @param bean     the bean
-	 */
-	public void addBean(final String beanName, final Object bean) {
-		getBeanContainer().addBeanDefinition(beanName, bean.getClass(), true, true, () -> bean);
+	@Test
+	void testBuilder_enableBeanContainerAutodetection_springContainerIsFound() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(SpringBeanContainer.class));
 	}
 
-	/**
-	 * Sets the state directly to configured.
-	 */
-	public void setStateConfigured() {
-		actionFXState = ActionFXState.CONFIGURED;
+	@Test
+	void testBuilder_disableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 	}
 }

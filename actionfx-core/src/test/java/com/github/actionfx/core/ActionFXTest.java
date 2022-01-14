@@ -51,7 +51,7 @@ import org.mockito.Mockito;
 
 import com.github.actionfx.core.ActionFX.ActionFXBuilder;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
@@ -82,8 +82,8 @@ class ActionFXTest {
 
 	@BeforeEach
 	void onSetup() {
-		// set view manager instance to 'null' in order to force the creation of a
-		// ViewManager instance for each test
+		// reset instance to 'null' in order to force the creation of a
+		// new ActionFX instance for each test
 		ActionFX.instance = null;
 	}
 
@@ -101,7 +101,7 @@ class ActionFXTest {
 		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
@@ -132,7 +132,7 @@ class ActionFXTest {
 		assertThat(actionFX.getEnhancer(), equalTo(enhancer));
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
@@ -204,6 +204,43 @@ class ActionFXTest {
 	}
 
 	@Test
+	void testBuilder_beanContainerClass_byClass() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().beanContainerClass(CustomBeanContainer.class).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(CustomBeanContainer.class));
+	}
+
+	@Test
+	void testBuilder_beanContainer_byInstance() {
+		// WHEN
+		final CustomBeanContainer container = new CustomBeanContainer();
+		final ActionFX actionFX = ActionFX.builder().beanContainer(container).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), sameInstance(container));
+	}
+
+	@Test
+	void testBuilder_enableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+	}
+
+	@Test
+	void testBuilder_disableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+	}
+
+	@Test
 	void testScanComponents_usingDefaultBeanContainer() {
 		// GIVEN
 		assertThat(ActionFX.isConfigured(), equalTo(false));
@@ -229,12 +266,13 @@ class ActionFXTest {
 	@Test
 	void testScanComponents_usingCustomBeanContainer() {
 		// GIVEN
-		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
 		final ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
 
 		// WHEN
-		actionFX.scanForActionFXComponents(customBeanContainer);
+		actionFX.scanForActionFXComponents();
 
 		// THEN (custom container has be asked to populate container with the
 		// rootPackage of SampleApp)
@@ -358,8 +396,9 @@ class ActionFXTest {
 	void testShowView_withViewId() {
 		// GIVEN
 		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
-		actionFX.scanForActionFXComponents(customBeanContainer);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
 		final View mockView = Mockito.mock(View.class);
 		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
 
@@ -393,8 +432,9 @@ class ActionFXTest {
 	void testShowView_withStageSupplied_withViewId() {
 		// GIVEN
 		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
-		actionFX.scanForActionFXComponents(customBeanContainer);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
 		final View mockView = Mockito.mock(View.class);
 		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
 
@@ -427,8 +467,9 @@ class ActionFXTest {
 	void testShowViewAndWait_withViewId() {
 		// GIVEN
 		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
-		actionFX.scanForActionFXComponents(customBeanContainer);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
 		final View mockView = Mockito.mock(View.class);
 		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
 
@@ -685,6 +726,9 @@ class ActionFXTest {
 		public void extendBean(final Class<?> beanClass, final String beanId, final boolean singleton,
 				final boolean lazyInit) {
 		}
+	}
+
+	public static class CustomBeanContainer extends DefaultActionFXBeanContainer {
 
 	}
 }

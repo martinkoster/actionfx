@@ -56,13 +56,13 @@ import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 /**
- * JUnit test case for {@link DefaultBeanContainer}.
+ * JUnit test case for {@link DefaultActionFXBeanContainer}.
  *
  * @author koster
  *
  */
 @ExtendWith(FxThreadForAllMonocleExtension.class)
-class DefaultBeanContainerTest {
+class DefaultActionFXBeanContainerTest {
 
 	@BeforeAll
 	static void beforeAll() {
@@ -72,7 +72,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_singletonById() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN
@@ -90,7 +90,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_singletonByType() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN
@@ -108,7 +108,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_singletonByType_superTypeIsRequested() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", DerivedFromTestView.class, true, true, DerivedFromTestView::new);
 
 		// WHEN (request the super type 'TestView', although 'DerivedFromTestView' is
@@ -128,7 +128,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_byId_idDoesNotExist() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN and THEN
@@ -138,7 +138,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_byType_idDoesNotExist() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
 		// WHEN and THEN
@@ -148,7 +148,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_nonSingletonById() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", TestView.class, false, true, TestView::new);
 
 		// WHEN
@@ -166,7 +166,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_nonSingletonByType() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addBeanDefinition("beanId", TestView.class, false, true, TestView::new);
 
 		// WHEN
@@ -184,7 +184,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testRunComponentScan() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 
 		// WHEN
 		container.runComponentScan(SampleApp.class.getPackageName());
@@ -212,7 +212,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testGetBean_withDependencyInjection() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.runComponentScan(SampleApp.class.getPackageName());
 
 		// WHEN
@@ -235,7 +235,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testResolveResourceBundle() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 
 		// WHEN
 		final ResourceBundle bundle = container.resolveResourceBundle(MultilingualViewController.class, Locale.GERMANY);
@@ -248,7 +248,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testResolveResourceBundle_noResourcesBasenameSpecified() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 
 		// WHEN (controller does not specify a "resourcesBasename")
 		final ResourceBundle bundle = container.resolveResourceBundle(SampleViewController.class, Locale.GERMANY);
@@ -260,7 +260,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testResolveResourceBundle_suppliedNoAnnotatedController() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 
 		// WHEN (supplied class holds no @AFXController annotation)
 		final ResourceBundle bundle = container.resolveResourceBundle(String.class, Locale.GERMANY);
@@ -272,7 +272,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testAddControllerBeanDefinition() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 		container.addControllerBeanDefinition(TestController.class);
 
 		// WHEN
@@ -285,7 +285,7 @@ class DefaultBeanContainerTest {
 	@Test
 	void testAddControllerBeanDefinition_classIsNotAController() {
 		// GIVEN
-		final DefaultBeanContainer container = new DefaultBeanContainer();
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer();
 
 		// WHEN
 		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
