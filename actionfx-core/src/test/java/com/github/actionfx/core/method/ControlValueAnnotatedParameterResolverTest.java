@@ -66,7 +66,7 @@ class ControlValueAnnotatedParameterResolverTest {
 	@BeforeEach
 	void onSetup() {
 		actionFX = new ActionFXMock();
-		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME, new ConversionService());
 	}
 
 	@Test

@@ -31,6 +31,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -241,7 +242,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_usingDefaultBeanContainer() {
+	void testScanForActionFXComponents_usingDefaultBeanContainer() {
 		// GIVEN
 		assertThat(ActionFX.isConfigured(), equalTo(false));
 		assertThat(ActionFX.isInitialized(), equalTo(false));
@@ -264,7 +265,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_usingCustomBeanContainer() {
+	void testScanForActionFXComponents_usingCustomBeanContainer() {
 		// GIVEN
 		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
@@ -281,7 +282,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_scanAlreadyPerformed_illegalState() {
+	void testScanForActionFXComponents_scanAlreadyPerformed_illegalState() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
@@ -293,7 +294,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_getView_viewNotFound() {
+	void testScanForActionFXComponents_getView_viewNotFound() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
@@ -304,6 +305,19 @@ class ActionFXTest {
 
 		// THEN
 		assertThat(ex.getMessage(), containsString("There is no view with ID='fantasyView'"));
+	}
+
+	@Test
+	void testScanForActionFXComponents_assureActionFXBeansAreAdded() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().locale(Locale.US).beanContainer(customBeanContainer).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN
+		verify(customBeanContainer, times(1)).addActionFXBeans(eq(actionFX));
 	}
 
 	@Test
@@ -320,7 +334,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_getView_viewIsNotInstanceOfView() {
+	void testScanForActionFXComponents_getView_viewIsNotInstanceOfView() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
@@ -501,7 +515,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		when(controller.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
 
@@ -518,7 +533,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		// WHEN
 		actionFX.showWarningDialog("Title", "HeaderText", "ContentText");
@@ -533,7 +549,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		// WHEN
 		actionFX.showInformationDialog("Title", "HeaderText", "ContentText");
@@ -548,7 +565,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		// WHEN
 		actionFX.showErrorDialog("Title", "HeaderText", "ContentText");
@@ -563,7 +581,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFolder = Files.createTempDirectory("junit").toFile();
 		final File initialFolder = Files.createTempDirectory("junit").toFile();
@@ -584,7 +603,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -608,7 +628,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -629,7 +650,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -650,7 +672,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -674,7 +697,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn("Text");
@@ -692,7 +716,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn("Text");

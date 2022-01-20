@@ -40,7 +40,7 @@ public class BookstoreAppWithDefaultBeanContainer {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller", enableBeanContainerAutodetection = false)
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}

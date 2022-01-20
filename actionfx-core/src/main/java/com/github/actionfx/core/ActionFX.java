@@ -47,7 +47,6 @@ import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
-import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
 import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
@@ -251,46 +250,13 @@ public class ActionFX {
 	private void scanForActionFXComponentsInternal() {
 		// let's register some ActionFX-specific beans in the container before we do the
 		// component scan
-		addActionFXBeans();
+		beanContainer.addActionFXBeans(this);
 
 		// let's let the bean container implementation do the work
 		if (StringUtils.isNotEmpty(scanPackage)) {
 			beanContainer.runComponentScan(scanPackage);
 		}
 		actionFXState = ActionFXState.INITIALIZED;// NOSONAR
-	}
-
-	/**
-	 * Adds ActionFX beans that are available to the developer independent of the
-	 * used bean container.
-	 */
-	private void addActionFXBeans() {
-		// register the locale as "ObservableValue" (singleton and lazy-initialisation)
-		beanContainer.addBeanDefinition(BeanContainerFacade.LOCALE_PROPERTY_BEANNAME, observableLocale.getClass(), true,
-				true, () -> observableLocale);
-		// register the locale itself (non-singleton - request locale each time it is
-		// needed)
-		beanContainer.addBeanDefinition(BeanContainerFacade.LOCALE_BEANNAME, Locale.class, false, true,
-				() -> observableLocale.getValue());
-
-		// make ActionFX class itself available as bean
-		beanContainer.addBeanDefinition(BeanContainerFacade.ACTIONFX_BEANNAME, ActionFX.class, true, false, () -> this);
-
-		// add the event bus to the bean container
-		beanContainer.addBeanDefinition(BeanContainerFacade.EVENT_BUS_BEAN, PriorityAwareEventBus.class, true, true,
-				SimplePriorityAwareEventBus::new);
-
-		// add controller extensions to the bean container
-		beanContainer.addBeanDefinition(BeanContainerFacade.ACTIONFX_EXTENSION_BEANNAME, ActionFXExtensionsBean.class,
-				true, false, () -> actionFXExtensionsBean);
-
-		// add the dialog controller to the bean container
-		beanContainer.addBeanDefinition(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, DialogController.class, true, true,
-				DialogController::new);
-
-		// add the conversion service that is listening to the locale
-		beanContainer.addBeanDefinition(BeanContainerFacade.CONVERSION_SERVICE_BEAN, ConversionService.class, true,
-				true, () -> new ConversionService(getObservableLocale()));
 	}
 
 	/**
@@ -559,6 +525,16 @@ public class ActionFX {
 	}
 
 	/**
+	 * Gets the custom ActionFX extensions (controller and bean definition
+	 * extensions)
+	 *
+	 * @return the bean holding custom ActionFX extensions
+	 */
+	public ActionFXExtensionsBean getActionFXExtensionsBean() {
+		return actionFXExtensionsBean;
+	}
+
+	/**
 	 * Retrieves ActionFX' internal event bus singleton.
 	 *
 	 * @return the event bus
@@ -578,8 +554,8 @@ public class ActionFX {
 	 *         otherwise.
 	 */
 	public boolean showConfirmationDialog(final String title, final String headerText, final String contentText) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showConfirmationDialog(title,
-				headerText, contentText);
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME))
+				.showConfirmationDialog(title, headerText, contentText);
 	}
 
 	/**
@@ -591,8 +567,8 @@ public class ActionFX {
 	 * @param contentText the content text to be displayed in the dialog
 	 */
 	public void showWarningDialog(final String title, final String headerText, final String contentText) {
-		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showWarningDialog(title, headerText,
-				contentText);
+		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showWarningDialog(title,
+				headerText, contentText);
 	}
 
 	/**
@@ -604,7 +580,7 @@ public class ActionFX {
 	 * @param contentText the content text to be displayed in the dialog
 	 */
 	public void showInformationDialog(final String title, final String headerText, final String contentText) {
-		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showInformationDialog(title,
+		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showInformationDialog(title,
 				headerText, contentText);
 	}
 
@@ -617,7 +593,7 @@ public class ActionFX {
 	 * @param contentText the content text to be displayed in the dialog
 	 */
 	public void showErrorDialog(final String title, final String headerText, final String contentText) {
-		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showErrorDialog(title, headerText,
+		((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showErrorDialog(title, headerText,
 				contentText);
 	}
 
@@ -632,7 +608,7 @@ public class ActionFX {
 	 *         selected
 	 */
 	public File showDirectoryChooserDialog(final String title, final File defaultDirectory, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME))
 				.showDirectoryChooserDialog(title, defaultDirectory, owner);
 	}
 
@@ -648,7 +624,7 @@ public class ActionFX {
 	 */
 	public File showFileOpenDialog(final String title, final File defaultDirectory, final String initialFileName,
 			final ExtensionFilter fileExtensionFilter, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileOpenDialog(title,
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showFileOpenDialog(title,
 				defaultDirectory, initialFileName, fileExtensionFilter, owner);
 	}
 
@@ -661,7 +637,7 @@ public class ActionFX {
 	 * @return the selected file, or {@code null}, if no file has been selected
 	 */
 	public File showFileOpenDialog(final String title, final File defaultDirectory, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileOpenDialog(title,
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showFileOpenDialog(title,
 				defaultDirectory, owner);
 	}
 
@@ -674,7 +650,7 @@ public class ActionFX {
 	 * @return the selected file, or {@code null}, if no file has been selected
 	 */
 	public File showFileSaveDialog(final String title, final File defaultDirectory, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileSaveDialog(title,
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showFileSaveDialog(title,
 				defaultDirectory, owner);
 	}
 
@@ -690,7 +666,7 @@ public class ActionFX {
 	 */
 	public File showFileSaveDialog(final String title, final File defaultDirectory, final String initialFileName,
 			final ExtensionFilter fileExtensionFilter, final Window owner) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showFileSaveDialog(title,
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showFileSaveDialog(title,
 				defaultDirectory, initialFileName, fileExtensionFilter, owner);
 	}
 
@@ -705,7 +681,7 @@ public class ActionFX {
 	 *         entered.
 	 */
 	public String showTextInputDialog(final String title, final String headerText, final String contentText) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showTextInputDialog(title,
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showTextInputDialog(title,
 				headerText, contentText);
 	}
 
@@ -722,7 +698,7 @@ public class ActionFX {
 	 */
 	public String showTextInputDialog(final String title, final String headerText, final String contentText,
 			final String defaultValue) {
-		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN)).showTextInputDialog(title,
+		return ((DialogController) getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).showTextInputDialog(title,
 				headerText, contentText, defaultValue);
 	}
 
@@ -881,7 +857,8 @@ public class ActionFX {
 		 */
 		public ActionFX build() {
 			final ActionFX actionFX = new ActionFX();
-			actionFX.beanContainer = new DefaultActionFXBeanContainer(controllerExtensions);
+			actionFX.actionFXExtensionsBean = new ActionFXExtensionsBean(controllerExtensions, beanExtensions);
+			initializeBeanContainer(actionFX);
 			actionFX.mainViewId = mainViewId;
 			actionFX.scanPackage = scanPackage;
 			actionFX.enhancementStrategy = enhancementStrategy != null ? enhancementStrategy
@@ -891,8 +868,6 @@ public class ActionFX {
 					: (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
 			actionFX.observableLocale = observableLocale != null ? observableLocale
 					: new SimpleObjectProperty<>(Locale.getDefault());
-			actionFX.actionFXExtensionsBean = new ActionFXExtensionsBean(controllerExtensions, beanExtensions);
-			initializeBeanContainer(actionFX);
 			postConstruct(actionFX);
 			return actionFX;
 		}
@@ -921,6 +896,7 @@ public class ActionFX {
 			}
 			mainViewId = afxApplication.mainViewId();
 			scanPackage = afxApplication.scanPackage();
+			enableBeanContainerAutodetection = afxApplication.enableBeanContainerAutodetection();
 			return this;
 		}
 
@@ -1158,19 +1134,20 @@ public class ActionFX {
 			if (beanContainer != null) {
 				actionFX.beanContainer = beanContainer;
 			} else if (enableBeanContainerAutodetection) {
-				actionFX.beanContainer = autodetectBeanContainer();
+				actionFX.beanContainer = autodetectBeanContainer(actionFX);
 			} else {
-				actionFX.beanContainer = new DefaultActionFXBeanContainer();
+				actionFX.beanContainer = new DefaultActionFXBeanContainer(actionFX.actionFXExtensionsBean);
 			}
 		}
 
 		/**
 		 * Performs an autodetection of the bean container to use for ActionFX.
 		 *
+		 * @param actionFX the actionFX instance
 		 * @return the bean container. In case no specialized container is found on the
 		 *         classpath, the default container of ActionFX is returned.
 		 */
-		private BeanContainerFacade autodetectBeanContainer() {
+		private BeanContainerFacade autodetectBeanContainer(final ActionFX actionFX) {
 			final String[] containerCandidates = { "com.github.actionfx.spring.container.SpringBeanContainer" };
 			for (final String containerCandidate : containerCandidates) {
 				final Class<?> containerClass = ReflectionUtils.resolveClassName(containerCandidate, null);

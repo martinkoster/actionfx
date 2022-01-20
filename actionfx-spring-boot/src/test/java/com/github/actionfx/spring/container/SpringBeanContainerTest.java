@@ -29,6 +29,8 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -141,11 +143,14 @@ class SpringBeanContainerTest {
 
 	@Test
 	void testAddBeanDefinition_springNotYetInitialized() {
-		// WHEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> container
-				.addBeanDefinition("mainController", MainController.class, true, true, MainController::new));
+		// WHEN Spring is not yet initionilized
+		container.addBeanDefinition("mainController", MainController.class, true, true, MainController::new);
 
-		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+		// AND WHEN Spring is initialized
+		container.onSpringContextAvailable(registry, appContext);
+
+		// THEN
+		verify(registry, times(1)).registerBeanDefinition(eq("mainController"), any());
 	}
 
 	@Test
@@ -165,11 +170,18 @@ class SpringBeanContainerTest {
 
 	@Test
 	void testAddControllerBeanDefinition_springNotYetInitialized() {
-		// WHEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class,
-				() -> container.addControllerBeanDefinition(MainController.class));
+		// GIVEN
+		final ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
 
-		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+		// WHEN Spring is not yet initialized
+		container.addControllerBeanDefinition(MainController.class);
+
+		// AND WHEN Spring is initialized
+		container.onSpringContextAvailable(registry, appContext);
+
+		// THEN
+		verify(registry, times(2)).registerBeanDefinition(nameCaptor.capture(), any());
+		assertThat(nameCaptor.getAllValues(), contains("mainController", "mainView"));
 	}
 
 	@Test

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.github.actionfx.core.events.PriorityAwareEventBus;
 import com.github.actionfx.core.extension.beans.BeanExtension;
 
 /**
@@ -45,9 +46,10 @@ class BeanDefinitionPostProcessorTest {
 	@Test
 	void testPostProcess() {
 		// GIVEN
+		final PriorityAwareEventBus eventBus = Mockito.mock(PriorityAwareEventBus.class);
 		final BeanExtension extension1 = Mockito.mock(BeanExtension.class);
 		final BeanExtension extension2 = Mockito.mock(BeanExtension.class);
-		final BeanDefinitionPostProcessor processor = new BeanDefinitionPostProcessor(
+		final BeanDefinitionPostProcessor processor = new BeanDefinitionPostProcessor(eventBus,
 				Arrays.asList(extension1, extension2));
 
 		// WHEN

@@ -26,7 +26,7 @@ package com.github.actionfx.spring.autoconfigure;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.github.actionfx.core.extension.ActionFXExtensionsBean;
+import com.github.actionfx.core.container.instantiation.ControllerInstancePostProcessor;
 import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
 
 /**
@@ -38,9 +38,19 @@ import com.github.actionfx.spring.container.ControllerBeanPostProcessor;
 @Configuration
 public class AFXAutoconfiguration {
 
+	/**
+	 * Wraps ActionFX' {@link ControllerInstancePostProcessor} into the
+	 * Spring-specific bean post processor. The Spring bean post processor merely
+	 * delegates the processing call to ActionFX' post processor.
+	 *
+	 * @param controllerInstancePostProcessor ActionFX' controller post processor
+	 *                                        for enhancing ActionFX controller
+	 * @return a Spring bean post processor
+	 */
 	@Bean
-	public ControllerBeanPostProcessor controllerBeanPostProcessor(final ActionFXExtensionsBean bean) {
-		return new ControllerBeanPostProcessor(bean.getCustomControllerExtensions());
+	public ControllerBeanPostProcessor controllerBeanPostProcessor(
+			final ControllerInstancePostProcessor controllerInstancePostProcessor) {
+		return new ControllerBeanPostProcessor(controllerInstancePostProcessor);
 	}
 
 }

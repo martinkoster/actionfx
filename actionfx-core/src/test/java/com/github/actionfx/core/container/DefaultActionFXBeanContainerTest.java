@@ -32,17 +32,30 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 
 import com.github.actionfx.core.ActionFX;
+import com.github.actionfx.core.container.instantiation.BeanDefinitionPostProcessor;
+import com.github.actionfx.core.container.instantiation.ControllerInstancePostProcessor;
 import com.github.actionfx.core.container.instantiation.MultilingualViewController;
 import com.github.actionfx.core.container.instantiation.SampleViewController;
+import com.github.actionfx.core.converter.ConversionService;
+import com.github.actionfx.core.dialogs.DialogController;
+import com.github.actionfx.core.events.PriorityAwareEventBus;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
+import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.test.DerivedFromTestView;
 import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.test.TestView;
@@ -54,6 +67,8 @@ import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.FxmlView;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
+
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * JUnit test case for {@link DefaultActionFXBeanContainer}.
@@ -293,6 +308,48 @@ class DefaultActionFXBeanContainerTest {
 
 		// THEN
 		assertThat(ex.getMessage(), containsString("is not annotated by @AFXController!"));
+	}
+
+	@Test
+	void testPostProcessBeanDefinition() {
+		// GIVEN
+		final BeanExtension beanExtension = Mockito.mock(BeanExtension.class);
+		final ActionFXExtensionsBean extensionsBean = new ActionFXExtensionsBean(Collections.emptyList(),
+				Arrays.asList(beanExtension));
+		final DefaultActionFXBeanContainer container = new DefaultActionFXBeanContainer(extensionsBean);
+
+		// WHEN
+		container.postProcessBeanDefinition(NonController.class, "nonController", true, false);
+
+		// THEN
+		verify(beanExtension, times(1)).extendBean(eq(NonController.class), eq("nonController"), eq(true), eq(false));
+	}
+
+	@Test
+	void testAddActionFXBeans() {
+		// GIVEN
+		final BeanContainerFacade beanContainer = new DefaultActionFXBeanContainer();
+
+		// WHEN
+		beanContainer.addActionFXBeans(ActionFX.getInstance());
+
+		// THEN
+		assertThat(beanContainer.getBean(BeanContainerFacade.ACTIONFX_EXTENSION_BEANNAME),
+				instanceOf(ActionFXExtensionsBean.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.CONTROLLER_INSTANCE_POSTPROCESSOR_BEANNAME),
+				instanceOf(ControllerInstancePostProcessor.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.BEAN_DEFINITION_POSTPROCESSOR_BEANNAME),
+				instanceOf(BeanDefinitionPostProcessor.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.EVENT_BUS_BEANNAME),
+				instanceOf(PriorityAwareEventBus.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.LOCALE_PROPERTY_BEANNAME),
+				instanceOf(SimpleObjectProperty.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.LOCALE_BEANNAME), instanceOf(Locale.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.ACTIONFX_BEANNAME), instanceOf(ActionFX.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME),
+				instanceOf(DialogController.class));
+		assertThat(beanContainer.getBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME),
+				instanceOf(ConversionService.class));
 	}
 
 	public static class NonController {

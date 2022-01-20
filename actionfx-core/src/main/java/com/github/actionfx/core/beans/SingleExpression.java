@@ -58,16 +58,20 @@ public class SingleExpression extends Expression {
 				if (value.length() == 0) {
 					throw new IllegalArgumentException("No Index Value");
 				}
-				int index = 0;
-				try {
-					index = Integer.parseInt(value, 10);
-				} catch (final Exception e) {
-					throw new IllegalArgumentException("Invalid index value '" + value + "'");
-				}
-				return index;
+				return parseIndex(value);
 			}
 		}
 		return -1;
+	}
+
+	private int parseIndex(final String value) {
+		int index = 0;
+		try {
+			index = Integer.parseInt(value, 10);
+		} catch (final Exception e) {
+			throw new IllegalArgumentException("Invalid index value '" + value + "'");
+		}
+		return index;
 	}
 
 	/**

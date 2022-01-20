@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.actionfx.core.events.PriorityAwareEventBus;
 import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.extension.beans.SubscribeMethodBeanExtension;
 
@@ -41,12 +42,13 @@ public class BeanDefinitionPostProcessor {
 
 	private final List<BeanExtension> beanExtensions = new ArrayList<>();
 
-	public BeanDefinitionPostProcessor() {
-		this(Collections.emptyList());
+	public BeanDefinitionPostProcessor(final PriorityAwareEventBus eventBus) {
+		this(eventBus, Collections.emptyList());
 	}
 
-	public BeanDefinitionPostProcessor(final List<BeanExtension> customBeanExtensions) {
-		beanExtensions.add(new SubscribeMethodBeanExtension());
+	public BeanDefinitionPostProcessor(final PriorityAwareEventBus eventBus,
+			final List<BeanExtension> customBeanExtensions) {
+		beanExtensions.add(new SubscribeMethodBeanExtension(eventBus));
 
 		// add the custom controller extensions
 		beanExtensions.addAll(customBeanExtensions);

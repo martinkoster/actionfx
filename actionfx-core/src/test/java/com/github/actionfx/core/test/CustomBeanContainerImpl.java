@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.container.BeanContainerFacade;
 
 /**
@@ -66,6 +67,12 @@ public class CustomBeanContainerImpl implements BeanContainerFacade {
 
 	@Override
 	public void addControllerBeanDefinition(final Class<?> controllerClass) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addActionFXBeans(final ActionFX actionFX) {
 		// TODO Auto-generated method stub
 
 	}

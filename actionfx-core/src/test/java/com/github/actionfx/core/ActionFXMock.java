@@ -46,7 +46,7 @@ public class ActionFXMock extends ActionFX {
 		instance = this;
 		beanContainer = new DefaultActionFXBeanContainer();
 		observableLocale = new SimpleObjectProperty<>(Locale.US);
-		addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+		addBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME, new ConversionService());
 		setStateConfigured();
 	}
 

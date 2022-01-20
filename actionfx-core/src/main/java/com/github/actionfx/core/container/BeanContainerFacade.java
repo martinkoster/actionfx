@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
@@ -42,6 +43,18 @@ import javafx.beans.value.ObservableValue;
  *
  */
 public interface BeanContainerFacade {
+
+	/**
+	 * The bean name of the controller instance post processor adding features to
+	 * ActionFX controllers.
+	 */
+	public static String CONTROLLER_INSTANCE_POSTPROCESSOR_BEANNAME = "controllerInstancePostProcessorBean";
+
+	/**
+	 * The bean name of the bean definition post processor adding features to
+	 * ActionFX bean definitions.
+	 */
+	public static String BEAN_DEFINITION_POSTPROCESSOR_BEANNAME = "beanDefinitionPostProcessorBean";
 
 	/**
 	 * The bean name of an {@link ObservableValue} holding the application locale.
@@ -71,17 +84,31 @@ public interface BeanContainerFacade {
 	/**
 	 * The bean name of {@link DialogController} for dialog support.
 	 */
-	public static String DIALOG_CONTROLLER_BEAN = "dialogControllerBean";
+	public static String DIALOG_CONTROLLER_BEANNAME = "dialogControllerBean";
 
 	/**
 	 * The bean name of {@link ConversionService} for converting data types.
 	 */
-	public static String CONVERSION_SERVICE_BEAN = "conversionServiceBean";
+	public static String CONVERSION_SERVICE_BEANNAME = "conversionServiceBean";
 
 	/**
 	 * The bean name of the used {@link PriorityAwareEventBus} implementation.
 	 */
-	public static String EVENT_BUS_BEAN = "eventBusBean";
+	public static String EVENT_BUS_BEANNAME = "eventBusBean";
+
+	/**
+	 * Adds ActionFX-specific beans to the implementing bean container, such as:
+	 *
+	 * <ul>
+	 * <li>The configured ActionFX locale</li>
+	 * <li>Configured custom ActionFX extensions defined in
+	 * {@link ActionFXExtensionsBean}.
+	 * <li>The ActionFX instance itself</li>
+	 * </ul>
+	 *
+	 * @param actionFX
+	 */
+	public void addActionFXBeans(final ActionFX actionFX);
 
 	/**
 	 * Populates the container with view components by scanning the given

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.spring.container.SpringBeanContainer;
 
-class ActionFXTest {
+class ActionFXWithSpringTest {
 
 	@BeforeEach
 	void onSetup() {

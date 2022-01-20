@@ -25,13 +25,11 @@ package com.github.actionfx.core.container;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -42,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
-import com.github.actionfx.core.container.instantiation.ControllerInstancePostProcessor;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ClassPathScanningUtils;
@@ -74,27 +72,22 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
 	// strategies to resolve an ID or type to a bean
 	private final List<BeanResolutionFunction> beanResolverFunctions = new ArrayList<>();
 
-	// post-processor that wires JavaFX components to annotated methods
-	private final ControllerInstancePostProcessor controllerInstancePostProcessor;
-
 	/**
-	 * The default constructor (without custom controller extensions).
+	 * Default constructor for instantiating the container without custom
+	 * extensions.
 	 */
 	public DefaultActionFXBeanContainer() {
-		this(Collections.emptyList());
+		this(null);
 	}
 
 	/**
-	 * Constructor that accepts custom controller extensions that are applied to a
-	 * newly created controller instance after dependency injection, but before
-	 * methods annotated with {@code @PostConstruct} are executed.
+	 * Constructor that accepts custom ActionFX extensions (controller and beans
+	 * extensions).
 	 *
-	 * @param customControllerExtensions a list of custom controller extensions
-	 *                                   implementing the {@link Consumer} interface
+	 * @param extensionsBean the bean holding the extensions.
 	 */
-	public DefaultActionFXBeanContainer(final List<Consumer<Object>> customControllerExtensions) {
-
-		controllerInstancePostProcessor = new ControllerInstancePostProcessor(customControllerExtensions);
+	public DefaultActionFXBeanContainer(final ActionFXExtensionsBean extensionsBean) {
+		super(extensionsBean);
 
 		// bean resolution strategies
 		// the first strategy is to resolve by bean name / ID
@@ -113,6 +106,7 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
 				return null;
 			}
 		});
+
 	}
 
 	@Override
@@ -130,6 +124,7 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
 			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
 		beanDefinitionMap.put(id, new BeanDefinition(id, beanClass, singleton, lazyInit, instantiationSupplier));
+		postProcessBeanDefinition(beanClass, id, singleton, lazyInit);
 	}
 
 	@Override
@@ -205,15 +200,20 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
 		// inject potential dependencies
 		injectDependencies(instance);
 
+		// and perform multiple levels of post-processing
+		postProcessBeanInstance(instance);
+
+		return instance;
+	}
+
+	private <T> void postProcessBeanInstance(final T instance) {
 		// wire JavaFX components to annotated methods
 		if (AnnotationUtils.findAnnotation(instance.getClass(), AFXController.class) != null) {
-			controllerInstancePostProcessor.postProcess(instance);
+			getControllerInstancePostProcessor().postProcess(instance);
 		}
 
 		// invoke methods annotated with @PostConstruct
 		AnnotationUtils.invokeMethodWithAnnotation(instance.getClass(), instance, PostConstruct.class);
-
-		return instance;
 	}
 
 	/**

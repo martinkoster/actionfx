@@ -88,8 +88,8 @@ class FromFileSaveDialogParameterResolverTest {
 		resolver = new FromFileSaveDialogParameterResolver();
 		actionFX = new ActionFXMock();
 		dialogController = Mockito.mock(DialogController.class);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
-		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME, new ConversionService());
 		owner = Mockito.mock(Window.class);
 	}
 

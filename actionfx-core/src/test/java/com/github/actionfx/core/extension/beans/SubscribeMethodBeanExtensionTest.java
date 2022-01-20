@@ -65,7 +65,7 @@ class SubscribeMethodBeanExtensionTest {
 	@Test
 	void testExtend() {
 		// GIVEN
-		final SubscribeMethodBeanExtension extension = new SubscribeMethodBeanExtension();
+		final SubscribeMethodBeanExtension extension = new SubscribeMethodBeanExtension(eventBus);
 
 		// WHEN
 		extension.extendBean(ControllerWithAFXSubscribe.class, "controllerWithAFXSubscribe", false, false);

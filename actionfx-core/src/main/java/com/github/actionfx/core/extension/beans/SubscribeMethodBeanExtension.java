@@ -48,15 +48,17 @@ import com.github.actionfx.core.method.ActionFXMethodInvocation;
  */
 public class SubscribeMethodBeanExtension extends AbstractAnnotatedMethodBeansExtension<AFXSubscribe> {
 
-	public SubscribeMethodBeanExtension() {
+	private final PriorityAwareEventBus eventBus;
+
+	public SubscribeMethodBeanExtension(final PriorityAwareEventBus eventBus) {
 		super(AFXSubscribe.class);
+		this.eventBus = eventBus;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected void extend(final Class<?> beanClass, final String beanId, final boolean singleton,
 			final boolean lazyInit, final Method annotatedElement, final AFXSubscribe annotation) {
-		final PriorityAwareEventBus eventBus = ActionFX.getInstance().getEventBus();
 		final Consumer subscriber = createSubscriber(annotation.async(), beanId, annotatedElement);
 		eventBus.subscribe(annotation.value(), subscriber, annotation.order());
 	}
