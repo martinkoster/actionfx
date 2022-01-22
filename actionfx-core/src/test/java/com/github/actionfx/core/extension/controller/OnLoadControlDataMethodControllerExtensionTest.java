@@ -40,7 +40,6 @@ import org.mockito.Mockito;
 import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXLoadControlData;
-import com.github.actionfx.core.extension.controller.OnLoadControlDataMethodControllerExtension;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;

@@ -37,7 +37,6 @@ import org.mockito.Mockito;
 import com.github.actionfx.core.annotation.AFXArgHint;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
 import com.github.actionfx.core.annotation.ArgumentHint;
-import com.github.actionfx.core.extension.controller.OnControlValueChangeMethodControllerExtension;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;

@@ -82,7 +82,7 @@ public class SubscribeMethodBeanExtension extends AbstractAnnotatedMethodBeansEx
 			final Consumer methodInvocationConsumer = async
 					? ActionFXMethodInvocation.forSubscriberWithAsyncCall(bean, annotatedElement)
 					: ActionFXMethodInvocation.forSubscriber(bean, annotatedElement);
-			methodInvocationConsumer.accept(bean);
+			methodInvocationConsumer.accept(event);
 		};
 	}
 

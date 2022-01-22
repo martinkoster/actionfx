@@ -151,7 +151,7 @@ class ActionFXIntegrationTest {
 	@Test
 	void testGetControllerResourceBundle_byControllerId() {
 		// GIVEN
-		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).build();
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
 		actionFX.scanForActionFXComponents();
 
 		// WHEN
@@ -159,7 +159,7 @@ class ActionFXIntegrationTest {
 
 		// THEN
 		assertThat(bundle, notNullValue());
-		assertThat(bundle.getString("label.text"), equalTo("Hello Default World"));
+		assertThat(bundle.getString("label.text"), equalTo("Hello World"));
 	}
 
 	@Test
@@ -178,7 +178,7 @@ class ActionFXIntegrationTest {
 	@Test
 	void testGetControllerResourceBundle_byControllerClass() {
 		// GIVEN
-		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).build();
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
 		actionFX.scanForActionFXComponents();
 
 		// WHEN
@@ -186,7 +186,7 @@ class ActionFXIntegrationTest {
 
 		// THEN
 		assertThat(bundle, notNullValue());
-		assertThat(bundle.getString("label.text"), equalTo("Hello Default World"));
+		assertThat(bundle.getString("label.text"), equalTo("Hello World"));
 	}
 
 	@Test

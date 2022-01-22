@@ -45,8 +45,8 @@ public class ConstructorBasedInstantiationSupplier<T> extends AbstractInstantiat
 
 	/**
 	 * Accepts the class to instantiate together with {@code constructorArguments}.
-	 * Leave the {@code constructorArguments} empty to invoke the default no-arg
-	 * constructor.
+	 * Leave the {@code constructorArguments} empty to invoke the default
+	 * no-argument constructor.
 	 *
 	 * @param clazz                the class to instantiate
 	 * @param constructorArguments the constructor arguments

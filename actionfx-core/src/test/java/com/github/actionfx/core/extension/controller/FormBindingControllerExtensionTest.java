@@ -38,7 +38,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXFormBinding;
 import com.github.actionfx.core.annotation.AFXFormMapping;
-import com.github.actionfx.core.extension.controller.FormBindingControllerExtension;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlProperties;

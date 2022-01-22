@@ -35,7 +35,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.actionfx.core.annotation.AFXDisableNode;
 import com.github.actionfx.core.annotation.BooleanOp;
-import com.github.actionfx.core.extension.controller.DisableNodeControllerExtension;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;

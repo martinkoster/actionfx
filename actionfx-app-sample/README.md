@@ -386,7 +386,7 @@ The action for emptying the shopping cart is quite simple and straight-forward b
 
 As you can see here, this method is also annotated with `@AFXRequiresUserConfirmation`. That means that this method is only executed, after the user confirms a confirmation dialog with the given title, header and content text. In case the user cancels this confirmation dialog, the method is not executed and by that, the shopping cart is not emptied.
 
-For starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`.For that, we use ActionFX' internal eventing to publish the oder summery model to the `CheckoutController` via the `actionFX.publishEvent(..)` method. 
+For starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we use ActionFX' internal eventing to publish the oder summary model to the `CheckoutController` via the `actionFX.publishEvent(..)` method. 
 
 ```java
 	@AFXOnAction(nodeId = "checkoutButton")
@@ -526,7 +526,7 @@ In the mapping declaration above, we can also see that it is possible to use dif
 
 What happens here is that the list of ordered books is bound to the `itemsProperty` of the used `javafx.scene.control.TableView` via `targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST` and in the second step, the list of ordered books is then bound to the **selected items list** of the table view. Means: First we fill the table view with the books from the model, and then we select all books inside the table view.
 
-The form binding with the actual data itself occurs in method `onCheckoutStart` that is invoked, when a `OrderSummary` instance is published via `ActionFX.publishEvent(..)` (see implementation of the `ShoppingCartController` for further details).
+The form binding with the actual data itself occurs in method `onCheckoutStart` that is invoked, when an `OrderSummary` instance is published via `ActionFX.publishEvent(..)` (see implementation of the `ShoppingCartController` for further details).
 
 ```java
 	@AFXSubscribe(value = OrderSummary.class)

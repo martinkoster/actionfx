@@ -44,6 +44,7 @@ import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
+import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
 import com.github.actionfx.core.events.PriorityAwareEventBus;
@@ -1147,17 +1148,35 @@ public class ActionFX {
 		 * @return the bean container. In case no specialized container is found on the
 		 *         classpath, the default container of ActionFX is returned.
 		 */
+		@SuppressWarnings("unchecked")
 		private BeanContainerFacade autodetectBeanContainer(final ActionFX actionFX) {
 			final String[] containerCandidates = { "com.github.actionfx.spring.container.SpringBeanContainer" };
 			for (final String containerCandidate : containerCandidates) {
 				final Class<?> containerClass = ReflectionUtils.resolveClassName(containerCandidate, null);
-				if (containerClass != null) {
-					return (BeanContainerFacade) ReflectionUtils.instantiateClass(containerClass);
+				if (containerClass != null && BeanContainerFacade.class.isAssignableFrom(containerClass)) {
+					return instantiateContainerClass((Class<? extends BeanContainerFacade>) containerClass,
+							actionFX.actionFXExtensionsBean);
 				}
 			}
 
 			// no candidate found? we return ActionFX' default
-			return new DefaultActionFXBeanContainer();
+			return new DefaultActionFXBeanContainer(actionFX.actionFXExtensionsBean);
+		}
+
+		/**
+		 * Instantiates the bean container. The method checks for the availability of a
+		 * constructor accepting the {@link ActionFXExtensionsBean}. If this constructor
+		 * is not available, the default no-argument constructor is invoked.
+		 *
+		 * @param containerClass         the container class
+		 * @param actionFXExtensionsBean custom extensions to ActionFX
+		 * @return the created instance
+		 */
+		private BeanContainerFacade instantiateContainerClass(final Class<? extends BeanContainerFacade> containerClass,
+				final ActionFXExtensionsBean actionFXExtensionsBean) {
+			final ConstructorBasedInstantiationSupplier<? extends BeanContainerFacade> instantiationSupplier = new ConstructorBasedInstantiationSupplier<>(
+					containerClass, actionFXExtensionsBean);
+			return instantiationSupplier.get();
 		}
 
 		/**

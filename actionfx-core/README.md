@@ -90,7 +90,7 @@ public class MainApp {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.core.app")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.core.app", enabledBeanContainerAutodetection = true)
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}

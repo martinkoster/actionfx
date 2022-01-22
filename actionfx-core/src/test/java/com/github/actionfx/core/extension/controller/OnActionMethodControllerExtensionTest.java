@@ -39,7 +39,6 @@ import org.mockito.Mockito;
 import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.core.annotation.AFXOnAction;
-import com.github.actionfx.core.extension.controller.OnActionMethodControllerExtension;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.testing.annotation.TestInFxThread;
