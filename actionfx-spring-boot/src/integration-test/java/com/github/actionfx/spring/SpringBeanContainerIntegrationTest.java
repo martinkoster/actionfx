@@ -44,6 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.container.BeanContainerFacade;
+import com.github.actionfx.core.container.instantiation.ControllerInstancePostProcessor;
 import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 import com.github.actionfx.spring.container.SpringBeanContainer;
 import com.github.actionfx.spring.test.app.MainController;
@@ -99,6 +100,12 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 	@Bean
 	public ActionFXExtensionsBean controllerExtensionBean() {
 		return new ActionFXExtensionsBean(Collections.emptyList(), Collections.emptyList());
+	}
+
+	@Bean
+	public ControllerInstancePostProcessor controllerInstancePostProcessor(
+			final ActionFXExtensionsBean actionFXExtensionsBean) {
+		return new ControllerInstancePostProcessor(actionFXExtensionsBean.getCustomControllerExtensions());
 	}
 
 	@Override
