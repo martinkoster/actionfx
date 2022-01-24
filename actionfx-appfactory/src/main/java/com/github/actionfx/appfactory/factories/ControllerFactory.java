@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +53,7 @@ public class ControllerFactory {
 		FileUtils.createDirectories(factoryConfig.getAbsoluteControllerDirectory());
 		final Path controllerPath = Path.of(factoryConfig.getAbsoluteControllerDirectory(),
 				controllerModel.getControllerName() + ".java");
-		try (final FileWriter fileWriter = new FileWriter(controllerPath.toFile())) {
+		try (final FileWriter fileWriter = new FileWriter(controllerPath.toFile(), StandardCharsets.UTF_8)) {
 			FreemarkerConfiguration.getInstance().writeTemplate("classes/controller.ftl", controllerModel, fileWriter);
 		} catch (final IOException e) {
 			throw new IllegalStateException("Cannot write file " + controllerPath.toAbsolutePath().toString() + "!", e);

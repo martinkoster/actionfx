@@ -51,7 +51,7 @@ class ActionFXWithSpringTest {
 	}
 
 	@Test
-	void testBuilder_disableBeanContainerAutodetection() {
+	void testBuilder_disableBeanContainerAutodetection_defaultContainerIsUsed() {
 		// WHEN
 		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
 
