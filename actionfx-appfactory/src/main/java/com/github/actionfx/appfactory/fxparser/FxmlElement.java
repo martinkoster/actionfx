@@ -25,6 +25,9 @@ package com.github.actionfx.appfactory.fxparser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+
+import com.github.actionfx.core.utils.ReflectionUtils;
 
 /**
  * Represents a single XML element inside a FXML document, while this element
@@ -91,5 +94,26 @@ public class FxmlElement {
 
 	public String getImportStatement() {
 		return importStatement;
+	}
+
+	/**
+	 * Returns the FXML elements of this node as a stream.
+	 *
+	 * @return the stream to the FXML elements
+	 */
+	public Stream<FxmlElement> getFxmlElementsAsStream() {
+		return Stream.concat(Stream.of(this), getChildren().stream().flatMap(FxmlElement::getFxmlElementsAsStream));
+	}
+
+	/**
+	 * Tries to resolve the given FXML element to a Java class. In case resolution
+	 * is not possible (e.g. due to the fact the class might not be on the
+	 * classpath), {@code null} is returned.
+	 *
+	 * @return the resolved class (or {@code null}, in case resolution is not
+	 *         possible.
+	 */
+	public Class<?> asResolvedClass() {
+		return importStatement != null ? ReflectionUtils.resolveClassName(importStatement, null) : null;
 	}
 }

@@ -64,8 +64,8 @@ public @interface AFXNestedView {
 	 * The parent node ID where the nested view shall be attached to. Please note
 	 * that this ID is a real node ID in the JavaFX scenegraph.
 	 * <p>
-	 * This field is mandatory, if this annotation is used inside a
-	 * {@link AFXController} annotation.
+	 * This field is mandatory, if this annotation is used on class-level together
+	 * with a {@link AFXController} annotation.
 	 * <p>
 	 * If used on a field annotated by {@code @FXML}, this value is irrelevant.
 	 *

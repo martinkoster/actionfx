@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <Accordion BorderPane.alignment="CENTER">
+        <panes>
+          <TitledPane animated="false" text="Create a new ActionFX project using Gradle">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <bottom>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <items>
+                            <Button fx:id="createNewProjectButton" mnemonicParsing="false" text="Create new Project" />
+                          </items>
+                        </ToolBar>
+                     </bottom>
+                     <center>
+                        <AnchorPane BorderPane.alignment="CENTER">
+                           <children>
+                              <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="170.0" text="Project Root Directory: " />
+                                          <TextField fx:id="rootDirectoryTextField" prefWidth="370.0" />
+                                          <Button fx:id="rootProjectDirectoryButton" mnemonicParsing="false">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/document-open-folder.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic></Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="170.0" text="Project Name:" />
+                                          <TextField fx:id="projectNameTextField" prefWidth="400.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="170.0" text="Group ID:" />
+                                          <TextField fx:id="groupIdTextField" prefWidth="400.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="170.0" text="Root Package Name:" />
+                                          <TextField fx:id="rootPackageNameTextField" prefWidth="400.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                       <children>
+                                          <CheckBox fx:id="useSpringCheckBox" mnemonicParsing="false" text="Use Spring Boot as ActionFX bean container" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                       <children>
+                                          <CheckBox fx:id="includeIconsCheckBox" mnemonicParsing="false" text="Include KDE Oxygen icons (LGPL license, see https://github.com/KDE/oxygen-icons)" />
+                                       </children>
+                                    </HBox>
+                                    <Separator prefWidth="200.0" />
+                                    <Label text="Main View:">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <VBox>
+                                       <children>
+                                          <RadioButton fx:id="emptyViewRadioButton" mnemonicParsing="false" prefHeight="40.0" selected="true" text="Create empty main view with ActionFX controller">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="mainViewToggleGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                             <children>
+                                                <RadioButton fx:id="existingFxmlRadioButton" mnemonicParsing="false" prefWidth="400.0" text="Use existing FXML (Define FXML in next step)" toggleGroup="$mainViewToggleGroup" />
+                                             </children>
+                                          </HBox>
+                                          <AnchorPane fx:id="newProjectControllerFactoryAnchorPane" prefHeight="200.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox>
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                                         <children>
+                                                            <Label prefWidth="170.0" text="Existing FXML file:" />
+                                                            <TextField fx:id="projectFxmlTextField" prefWidth="370.0" />
+                                                            <Button fx:id="loadProjectFxmlButton" mnemonicParsing="false">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../images/document-open.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                                         <children>
+                                                            <Label prefWidth="170.0" text="Controller Package Name:" />
+                                                            <TextField fx:id="projectControllerPackageNameTextField" prefWidth="400.0" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </center>
+                  </BorderPane>
+               </content>
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </TitledPane>
+          <TitledPane animated="false" text="Create ActionFX controller based on existing FXML">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <AnchorPane fx:id="controllerFactoryAnchorPane" BorderPane.alignment="CENTER">
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                                       <children>
+                                          <Label prefWidth="170.0" text="Existing FXML file:" />
+                                          <TextField fx:id="fxmlTextField" prefWidth="370.0" />
+                                          <Button fx:id="loadFxmlButton" mnemonicParsing="false">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/document-open.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="250.0" text="Java Sources Root Directory:" />
+                                          <TextField fx:id="javaSourcesRootTextField" prefWidth="350.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="250.0" text="Classpath Resources Root Directory:" />
+                                          <TextField fx:id="classpathResourceRootTextField" prefWidth="350.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="250.0" text="Controller Package Name:" />
+                                          <TextField fx:id="controllerPackageNameTextField" prefWidth="350.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </center>
+                     <bottom>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <items>
+                            <Button fx:id="createSourcesButton" mnemonicParsing="false" text="Create Controller Class" />
+                          </items>
+                        </ToolBar>
+                     </bottom>
+                  </BorderPane>
+               </content>
+            </TitledPane>
+        </panes>
+      </Accordion>
+   </center>
+</BorderPane>

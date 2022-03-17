@@ -34,8 +34,10 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -56,12 +58,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -110,6 +115,15 @@ class NodeWrapperTest {
 		assertThat(wrapperWithAnchorPane(labels).getChildren(), contains(labels));
 		assertThat(wrapperWithVBox(labels).getChildren(), contains(labels));
 		assertThat(wrapperWithSplitPane(labels).getChildren(), contains(labels));
+	}
+
+	@Test
+	void testGetChildren_accordion() {
+		// GIVEN
+		final TitledPane titledPane = new TitledPane();
+
+		// WHEN and THEN
+		assertThat(wrapperWithAccordion(titledPane).getChildren(), contains(titledPane));
 	}
 
 	@Test
@@ -391,15 +405,20 @@ class NodeWrapperTest {
 	void testApplyNodeVisitorByDFS() {
 		// GIVEN
 		final List<String> ids = new ArrayList<>();
-		final NodeVisitor visitor = (parent, child) -> ids.add(child.getId()); // collect IDs in order of appearance
+		final NodeVisitor visitor = (parent, child) -> {
+			if (child.getId() != null) {
+				ids.add(child.getId());
+			}
+			return true;
+		}; // collect IDs in order of appearance
 		final NodeWrapper nodeWrapper = wrapperWithHierarchy();
 
 		// WHEN
 		nodeWrapper.applyNodeVisitorByDFS(visitor);
 
 		// THEN (check expected visited order of depth-first search)
-		assertThat(ids, contains("borderPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo", "canvas",
-				"vbox", "anchorPane", "gridPane"));
+		assertThat(ids, contains("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne",
+				"tabTwo", "canvas", "vbox", "anchorPane", "gridPane"));
 	}
 
 	@Test
@@ -407,7 +426,9 @@ class NodeWrapperTest {
 		// GIVEN
 		final List<String> ids = new ArrayList<>();
 		final NodeVisitor visitor = (parent, child) -> {
-			ids.add(child.getId());
+			if (child.getId() != null) {
+				ids.add(child.getId());
+			}
 			// stop at "tabTwo"
 			return !"tabTwo".equals(child.getId());
 		};
@@ -418,22 +439,28 @@ class NodeWrapperTest {
 
 		// THEN (check expected visited order of depth-first search, stopped at
 		// "tabTwo")
-		assertThat(ids, contains("borderPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo"));
+		assertThat(ids, contains("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne",
+				"tabTwo"));
 	}
 
 	@Test
 	void testApplyNodeVisitorByBFS() {
 		// GIVEN
 		final List<String> ids = new ArrayList<>();
-		final NodeVisitor visitor = (parent, child) -> ids.add(child.getId()); // collect IDs in order of appearance
+		final NodeVisitor visitor = (parent, child) -> {
+			if (child.getId() != null) {
+				ids.add(child.getId());
+			}
+			return true;
+		}; // collect IDs in order of appearance
 		final NodeWrapper nodeWrapper = wrapperWithHierarchy();
 
 		// WHEN
 		nodeWrapper.applyNodeVisitorByBFS(visitor);
 
 		// THEN (check expected visited order of breadth-first search)
-		assertThat(ids, contains("borderPane", "scrollPane", "tabPane", "vbox", "listView", "tabOne", "tabTwo",
-				"anchorPane", "gridPane", "canvas"));
+		assertThat(ids, contains("borderPane", "accordion", "scrollPane", "tabPane", "vbox", "titledPane", "listView",
+				"tabOne", "tabTwo", "anchorPane", "gridPane", "canvas"));
 	}
 
 	@Test
@@ -452,7 +479,8 @@ class NodeWrapperTest {
 
 		// THEN (check expected visited order of breadth-first search, stopped at
 		// "tabTwo")
-		assertThat(ids, contains("borderPane", "scrollPane", "tabPane", "vbox", "listView", "tabOne", "tabTwo"));
+		assertThat(ids, contains("borderPane", "accordion", "scrollPane", "tabPane", "vbox", "titledPane", "listView",
+				"tabOne", "tabTwo"));
 	}
 
 	@Test
@@ -461,16 +489,18 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = wrapperWithHierarchy();
 
 		// WHEN
-		final List<String> ids = nodeWrapper.getNodesAsStream().map(NodeWrapper::getId).collect(Collectors.toList());
+		final List<String> ids = nodeWrapper.getNodesAsStream().map(NodeWrapper::getId).filter(Objects::nonNull)
+				.collect(Collectors.toList());
 
 		// THEN (check expected visited order of depth-first search)
-		assertThat(ids, contains("borderPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo", "canvas",
-				"vbox", "anchorPane", "gridPane"));
+		assertThat(ids, contains("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne",
+				"tabTwo", "canvas", "vbox", "anchorPane", "gridPane"));
 	}
 
 	@Test
 	void testLookup_nodesExist() {
 		assertThat(wrapperWithHierarchy().lookup("borderPane").getWrapped(), instanceOf(BorderPane.class));
+		assertThat(wrapperWithHierarchy().lookup("accordion").getWrapped(), instanceOf(Accordion.class));
 		assertThat(wrapperWithHierarchy().lookup("scrollPane").getWrapped(), instanceOf(ScrollPane.class));
 		assertThat(wrapperWithHierarchy().lookup("tabPane").getWrapped(), instanceOf(TabPane.class));
 		assertThat(wrapperWithHierarchy().lookup("vbox").getWrapped(), instanceOf(VBox.class));
@@ -545,6 +575,28 @@ class NodeWrapperTest {
 		// THEN
 		assertThat(ex.getMessage(), containsString(
 				"OnAction property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!"));
+	}
+
+	@Test
+	void testGetOnActionPropertyField() {
+		// WHEN
+		final Field onActionProperty = NodeWrapper.getOnActionPropertyField(Button.class);
+
+		// THEN
+		assertThat(onActionProperty, notNullValue());
+	}
+
+	@Test
+	void testGetOnActionPropertyField_fieldUnavailable() {
+		// WHEN
+		final Field onActionProperty = NodeWrapper.getOnActionPropertyField(BorderPane.class);
+
+		// THEN
+		assertThat(onActionProperty, nullValue());
+	}
+
+	private static NodeWrapper wrapperWithAccordion(final TitledPane titledPane) {
+		return new NodeWrapper(new Accordion(titledPane));
 	}
 
 	private static NodeWrapper wrapperWithAnchorPane(final Node... children) {
@@ -625,6 +677,13 @@ class NodeWrapperTest {
 		final BorderPane borderPane = new BorderPane();
 		borderPane.setId("borderPane");
 
+		final Accordion accordion = new Accordion();
+		accordion.setId("accordion");
+
+		final TitledPane titledPane = new TitledPane();
+		titledPane.setId("titledPane");
+		accordion.getPanes().add(titledPane);
+
 		final ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setId("scrollPane");
 
@@ -652,6 +711,7 @@ class NodeWrapperTest {
 		final GridPane gridPane = new GridPane();
 		gridPane.setId("gridPane");
 
+		borderPane.setTop(accordion);
 		borderPane.setLeft(scrollPane);
 		borderPane.setCenter(tabPane);
 		borderPane.setRight(vbox);

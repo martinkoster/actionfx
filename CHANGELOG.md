@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## 1.5.0 ()
 - Support for a basic publish/subscribe mechanism for ActionFX controller methods using @AFXSubscribe
+- Introduced new module "actionfx-appfactory" with JavaFX app to generate new ActionFX projects and generate code for ActionFX controller based on existing FXML
+- Refactored usage of ActionFX' bean container - Method "ActionFX.scanForActionFXComponents()" no longer accepts a bean container instance.
+- Added autodetection for bean container to use - in case the "actionfx-spring-boot" module is on the classpath, ActionFX' "SpringBeanContainer" is automatically used (except autodetection is disabled via configuration or the "AFXApplication" annotation).
 - Fixed life-cycle bug for ActionFX controller in Spring (lazy initialization was not possible with Spring)
+- Fixed children lookup bug for Accordion (which does not have the "javafx.beans.DefaultProperty" annotation for some reason)
 - Update dependencies:
  * JavaFX 17.0.1
  * Spring Boot to 2.6.0

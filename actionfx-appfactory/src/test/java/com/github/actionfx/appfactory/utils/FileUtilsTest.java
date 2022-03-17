@@ -23,9 +23,17 @@
  */
 package com.github.actionfx.appfactory.utils;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +61,125 @@ class FileUtilsTest {
 		Files.delete(Path.of(folder));
 		Files.delete(Path.of(tmpPath.toAbsolutePath().toString() + "/hello"));
 		Files.delete(tmpPath);
+	}
+
+	@Test
+	void testCopyClasspathFile() throws IOException {
+		// GIVEN
+		final Path tmpPath = Files.createTempDirectory("temp");
+
+		// WHEN
+		FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toAbsolutePath().toString());
+
+		// THEN
+		TestUtils.assertFileExists(tmpPath.toAbsolutePath().toString() + "/hello.txt");
+		Files.delete(Path.of(tmpPath.toAbsolutePath().toString() + "/hello.txt"));
+		Files.delete(tmpPath);
+	}
+
+	@Test
+	void testCopyClasspathFile_fileDoesNotExist() throws IOException {
+		// GIVEN
+		final Path tmpPath = Files.createTempDirectory("temp");
+		final String absoluteFolderPath = tmpPath.toAbsolutePath().toString();
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> FileUtils.copyClasspathFile("/fantasyfile", absoluteFolderPath));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Unable to create input stream from location"));
+		Files.delete(tmpPath);
+	}
+
+	@Test
+	void testReadFromFile() throws IOException {
+		// GIVEN
+		final Path tmpPath = Files.createTempDirectory("temp");
+		FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toAbsolutePath().toString());
+
+		// WHEN
+		final String content = FileUtils.readFromFile(tmpPath.toAbsolutePath().toString() + "/hello.txt",
+				StandardCharsets.UTF_8);
+
+		// THEN
+		assertThat(content, equalTo("Hello World!"));
+		Files.delete(Path.of(tmpPath.toAbsolutePath().toString() + "/hello.txt"));
+		Files.delete(tmpPath);
+	}
+
+	@Test
+	void testReadFromFile_fileDoesNotExist() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> FileUtils.readFromFile("/fantasyfile", StandardCharsets.UTF_8));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Unable to read file content from location"));
+	}
+
+	@Test
+	void testReadFromClasspath() {
+		// WHEN
+		final String content = FileUtils.readFromClasspath("/files/hello.txt", StandardCharsets.UTF_8);
+
+		// THEN
+		assertThat(content, equalTo("Hello World!"));
+	}
+
+	@Test
+	void testReadFromClasspath_fileDoesNotExist() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> FileUtils.readFromClasspath("/fantasyfile", StandardCharsets.UTF_8));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Unable to create input stream from location"));
+	}
+
+	@Test
+	void testReadFromInputStream() {
+		// GIVEN
+		final InputStream inputStream = FileUtilsTest.class.getResourceAsStream("/files/hello.txt");
+
+		// WHEN
+		final String content = FileUtils.readFromInputStream(inputStream, StandardCharsets.UTF_8);
+
+		// THEN
+		assertThat(content, equalTo("Hello World!"));
 
 	}
 
+	@Test
+	void testUnzip_fromClasspath() throws IOException {
+		// GIVEN
+		final Path tmpPath = Files.createTempDirectory("temp");
+
+		// WHEN
+		FileUtils.unzip("/zip/testproject.zip", tmpPath.toFile());
+
+		// THEN
+		TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "folder1").toString());
+		TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "folder2").toString());
+		TestUtils.assertFileExists(
+				Paths.get(Paths.get(tmpPath.toString(), "folder1").toString(), "text.txt").toString());
+		TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "README.txt").toString());
+	}
+
+	@Test
+	void testUnzip_fromInputStream() throws IOException {
+		// GIVEN
+		final Path tmpPath = Files.createTempDirectory("temp");
+		final InputStream inputStream = FileUtilsTest.class.getResourceAsStream("/zip/testproject.zip");
+
+		// WHEN
+		FileUtils.unzip(inputStream, tmpPath.toFile());
+
+		// THEN
+		TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "folder1").toString());
+		TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "folder2").toString());
+		TestUtils.assertFileExists(
+				Paths.get(Paths.get(tmpPath.toString(), "folder1").toString(), "text.txt").toString());
+		TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "README.txt").toString());
+	}
 }

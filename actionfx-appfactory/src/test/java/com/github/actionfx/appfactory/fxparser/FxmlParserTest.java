@@ -53,6 +53,7 @@ class FxmlParserTest {
 		assertThat(document, notNullValue());
 		assertThat(document.getRootElement(), notNullValue());
 		assertThat(document.getRootElement().getName(), equalTo("BorderPane"));
+		assertThat(document.getRootElement().getImportStatement(), equalTo("javafx.scene.layout.BorderPane"));
 		assertThat(document.getIdNodesMap().keySet(), containsInAnyOrder("tableView", "okButton"));
 		assertThat(document.getImportsAsFullyQualifiedStatements(),
 				containsInAnyOrder("javafx.scene.control.Button", "javafx.scene.control.Menu",

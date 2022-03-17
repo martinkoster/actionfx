@@ -31,7 +31,7 @@ import java.nio.file.Path;
  * @author koster
  *
  */
-public class FactoryConfig {
+public class ControllerFactoryConfig {
 
 	private String absoluteProjectRootDirectory;
 

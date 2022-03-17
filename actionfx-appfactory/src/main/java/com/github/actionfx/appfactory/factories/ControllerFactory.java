@@ -30,20 +30,31 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.actionfx.appfactory.config.FactoryConfig;
+import org.apache.commons.lang3.StringUtils;
+
+import com.github.actionfx.appfactory.config.ControllerFactoryConfig;
 import com.github.actionfx.appfactory.fxparser.FxmlDocument;
+import com.github.actionfx.appfactory.fxparser.FxmlElement;
 import com.github.actionfx.appfactory.fxparser.FxmlParser;
 import com.github.actionfx.appfactory.utils.FileUtils;
+import com.github.actionfx.core.annotation.AFXOnAction;
+import com.github.actionfx.core.utils.ReflectionUtils;
+import com.github.actionfx.core.view.graph.NodeWrapper;
 
+/**
+ * Factory implementation for producing ActionFX controller.
+ *
+ * @author koster
+ *
+ */
 public class ControllerFactory {
 
-	private final FactoryConfig factoryConfig;
+	private final ControllerFactoryConfig factoryConfig;
 
-	public ControllerFactory(final FactoryConfig factoryConfig) {
+	public ControllerFactory(final ControllerFactoryConfig factoryConfig) {
 		this.factoryConfig = factoryConfig;
 	}
 
@@ -79,7 +90,69 @@ public class ControllerFactory {
 	}
 
 	private List<ActionMethod> createActionMethods(final FxmlDocument fxmlDocument) {
-		return Collections.emptyList();
+		final List<ActionMethod> actionMethods = new ArrayList<>();
+
+		// Methods that have an "onAction" property set
+		actionMethods.addAll(
+				fxmlDocument.getFxmlElementsAsStream().filter(elem -> !StringUtils.isBlank(elem.getOnActionProperty()))
+						.map(elem -> mapToActionMethod(elem, false)).collect(Collectors.toList()));
+
+		// Methods that have no "onAction" property set, but have the property itself +
+		// ID
+		actionMethods.addAll(fxmlDocument.getFxmlElementsAsStream()
+				.filter(elem -> !StringUtils.isBlank(elem.getId()) && StringUtils.isBlank(elem.getOnActionProperty())
+						&& supportsOnAction(elem))
+				.map(elem -> mapToActionMethod(elem, true)).collect(Collectors.toList()));
+
+		return actionMethods;
+	}
+
+	/**
+	 * Maps the given {@code fxmlElement} to the {@link ActionMethod}
+	 *
+	 * @param fxmlElement              the FXML element
+	 * @param useAFXOnActionAnnotation flag that indicates whether to use the
+	 *                                 {@link AFXOnAction} annotation or not
+	 * @return the mapped action method
+	 */
+	private ActionMethod mapToActionMethod(final FxmlElement fxmlElement, final boolean useAFXOnActionAnnotation) {
+		final String nodeId = fxmlElement.getId();
+		final String methodName = useAFXOnActionAnnotation ? createOnActionMethodName(nodeId)
+				: stripHash(fxmlElement.getOnActionProperty());
+		return new ActionMethod(nodeId, methodName, useAFXOnActionAnnotation);
+	}
+
+	/**
+	 * Strips away a potential "#" at the beginning of the onAction name from FXML.
+	 *
+	 * @param onActionName the "onAction" name, potentially starting with a "#"
+	 * @return the stripped "onAction" name.
+	 */
+	private String stripHash(final String onActionName) {
+		return onActionName != null && onActionName.startsWith("#") ? onActionName.substring(1) : onActionName;
+	}
+
+	/**
+	 * Creates an "onAction" method name for a given JavaFX node with
+	 * {@code nodeId}.
+	 *
+	 * @param nodeId the node ID
+	 * @return the suggested "onAction" method name.
+	 */
+	private String createOnActionMethodName(final String nodeId) {
+		return ReflectionUtils.decapitalizeBeanProperty(nodeId) + "Action";
+	}
+
+	/**
+	 * Checks, whether the given {@code fxmlElement} has an "onAction" property.
+	 *
+	 * @param node the node type to check
+	 * @return {@code true}, if the node type supports the "onAction" property,
+	 *         {@code false} otherwise.
+	 */
+	private boolean supportsOnAction(final FxmlElement fxmlElement) {
+		final Class<?> node = fxmlElement.asResolvedClass();
+		return node != null && NodeWrapper.getOnActionPropertyField(node) != null;
 	}
 
 	private FxmlDocument readFxmlDocument(final String fxmlFile) {
@@ -256,14 +329,29 @@ public class ControllerFactory {
 	 */
 	public static class ActionMethod {
 
+		private final String nodeId;
+
 		private final String name;
 
-		public ActionMethod(final String name) {
+		private final boolean useAFXOnActionAnnotation;
+
+		public ActionMethod(final String nodeId, final String name, final boolean useAFXOnActionAnnotation) {
+			this.nodeId = nodeId;
 			this.name = name;
+			this.useAFXOnActionAnnotation = useAFXOnActionAnnotation;
 		}
 
 		public String getName() {
 			return name;
 		}
+
+		public boolean isUseAFXOnActionAnnotation() {
+			return useAFXOnActionAnnotation;
+		}
+
+		public String getNodeId() {
+			return nodeId;
+		}
 	}
+
 }

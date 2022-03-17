@@ -29,7 +29,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.actionfx.appfactory.config.FactoryConfig;
+import com.github.actionfx.appfactory.config.ControllerFactoryConfig;
 import com.github.actionfx.appfactory.text.TestUtils;
 
 /**
@@ -43,7 +43,7 @@ class ControllerFactoryTest {
 	@Test
 	void testProduce() throws IOException {
 		// GIVEN
-		final FactoryConfig cfg = new FactoryConfig();
+		final ControllerFactoryConfig cfg = new ControllerFactoryConfig();
 		final Path tmpFolder = Files.createTempDirectory("project");
 		cfg.setAbsoluteProjectRootDirectory(tmpFolder.toAbsolutePath().toString());
 		cfg.setRelativeSourceRootDirectory("src/main/java/");
@@ -56,7 +56,29 @@ class ControllerFactoryTest {
 		controllerFactory.produce(Path.of(tmpFolder.toString(), "MainView.fxml").toAbsolutePath().toString());
 
 		// THEN
-		TestUtils.assertFileExists(cfg.getAbsoluteControllerDirectory() + "/MainController.java");
+		TestUtils.assertFileContentIdentical(cfg.getAbsoluteControllerDirectory() + "/MainController.java",
+				"/com/github/actionfx/appfactory/controller/MainController.java.produced");
+	}
+
+	@Test
+	void testProduce2() throws IOException {
+		// GIVEN
+		final ControllerFactoryConfig cfg = new ControllerFactoryConfig();
+		final Path tmpFolder = Files.createTempDirectory("project");
+		cfg.setAbsoluteProjectRootDirectory(tmpFolder.toAbsolutePath().toString());
+		cfg.setRelativeSourceRootDirectory("src/main/java/");
+		cfg.setRelativeResourcesRootDirectory("src/main/resources/");
+		cfg.setControllerPackageName("com.github.actionfx.appfactory.controller");
+		TestUtils.copyClasspathFile("/fxml/ControllerFactoryView.fxml", tmpFolder);
+		final ControllerFactory controllerFactory = new ControllerFactory(cfg);
+
+		// WHEN
+		controllerFactory
+				.produce(Path.of(tmpFolder.toString(), "ControllerFactoryView.fxml").toAbsolutePath().toString());
+
+		// THEN
+		TestUtils.assertFileContentIdentical(cfg.getAbsoluteControllerDirectory() + "/ControllerFactoryController.java",
+				"/com/github/actionfx/appfactory/controller/MainController.java.produced");
 	}
 
 }

@@ -28,8 +28,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.github.actionfx.appfactory.utils.FileUtils;
 
 /**
  * Utils for unit testing.
@@ -58,8 +61,10 @@ public class TestUtils {
 		assertThat(Files.exists(path), equalTo(true));
 	}
 
-	public static void assertFileIdentical(final String absoluteFilePathExpected, final String absoluteFilePathActual) {
-
+	public static void assertFileContentIdentical(final String actualFileAbsolutePath,
+			final String expectedFileClasspath) {
+		assertFileExists(actualFileAbsolutePath);
+		assertThat(FileUtils.readFromFile(actualFileAbsolutePath, StandardCharsets.UTF_8),
+				equalTo(FileUtils.readFromClasspath(expectedFileClasspath, StandardCharsets.UTF_8)));
 	}
-
 }

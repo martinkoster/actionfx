@@ -75,6 +75,11 @@ public class NodeWrapper {
 	private static final Map<Class<?>, Boolean> SUPPORTS_MULTIPLE_CHILDREN = Collections
 			.synchronizedMap(new HashMap<>());
 
+	// candidates to lookup the children values in case the node does not offer a
+	// "DefaultProperty" annotation (more specific candidate names go first, generic
+	// ones like "children" go last)
+	private static final String[] CHILDREN_FIELD_CANDIDATES = new String[] { "panes", "content", "items", "children" };
+
 	private static final Map<Class<?>, Boolean> SUPPORTS_SINGLE_CHILD = Collections.synchronizedMap(new HashMap<>());
 
 	// the field name of the "onAction" property inside controls that do support it
@@ -365,7 +370,7 @@ public class NodeWrapper {
 	 */
 	@SuppressWarnings("unchecked")
 	public ObjectProperty<EventHandler<ActionEvent>> getOnActionProperty() {
-		final Field field = ReflectionUtils.findField(getWrappedType(), ON_ACTION_FIELD_NAME);
+		final Field field = getOnActionPropertyField(getWrappedType());
 		if (field == null) {
 			return null;
 		}
@@ -573,6 +578,17 @@ public class NodeWrapper {
 	}
 
 	/**
+	 * Retrieves the "onAction" property field, if available. In case the class does
+	 * not possess an "onAction" property field, {@code null} is returned.
+	 *
+	 * @param type the type to check for the "onAction" property
+	 * @return the "onAction" property field, or {@code null}, if unavailable.
+	 */
+	public static Field getOnActionPropertyField(final Class<?> type) {
+		return ReflectionUtils.findField(type, ON_ACTION_FIELD_NAME);
+	}
+
+	/**
 	 * Generates a {@link DefaultAttacher} for attaching a node to this wrapper. A
 	 * default attacher simply adds a node to the children list (in case of multiple
 	 * children) or to the child property (in case of a single child).
@@ -698,19 +714,34 @@ public class NodeWrapper {
 	 *                               property
 	 */
 	private Field lookupChildrenField(final Class<?> nodeClass) {
-		Field propertyField = CHILDREN_FIELD_CACHE.get(nodeClass);
-		if (propertyField == null) {
-			// check, if the node class holds a DefaultProperty
-			final DefaultProperty defaultProperty = AnnotationUtils.findAnnotation(nodeClass, DefaultProperty.class);
-			final String propertyName = defaultProperty != null ? defaultProperty.value() : "children";
-			propertyField = ReflectionUtils.findField(nodeClass, propertyName);
-			if (propertyField == null) {
-				// no child field
-				return null;
+		return CHILDREN_FIELD_CACHE.computeIfAbsent(nodeClass, this::lookupChildrenPropertyFieldInternal);
+	}
+
+	private Field lookupChildrenPropertyFieldInternal(final Class<?> nodeClass) {
+		// check, if the node class holds a DefaultProperty
+		final DefaultProperty defaultProperty = AnnotationUtils.findAnnotation(nodeClass, DefaultProperty.class);
+
+		return lookupChildrenPropertyCandidates(nodeClass,
+				defaultProperty != null ? new String[] { defaultProperty.value() } : CHILDREN_FIELD_CANDIDATES);
+	}
+
+	/**
+	 * Tries to lookup the node's children by probing the supplied list of
+	 * {@code candidates}.
+	 *
+	 * @param nodeClass  the node class to check
+	 * @param candidates the candidates
+	 * @return the found field that contains the node's children, or {@code null},
+	 *         if the children field can not be found.
+	 */
+	private Field lookupChildrenPropertyCandidates(final Class<?> nodeClass, final String... candidates) {
+		for (final String candidate : candidates) {
+			final Field propertyField = ReflectionUtils.findField(nodeClass, candidate);
+			if (propertyField != null) {
+				return propertyField;
 			}
-			CHILDREN_FIELD_CACHE.put(nodeClass, propertyField);
 		}
-		return propertyField;
+		return null;
 	}
 
 	/**

@@ -33,18 +33,18 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 /**
- * JUnit test case for {@link FactoryConfig}.
+ * JUnit test case for {@link ControllerFactoryConfig}.
  *
  * @author koster
  *
  */
-class FactoryConfigTest {
+class ControllerFactoryConfigTest {
 
 	@Test
 	void testFactoryConfig() throws IOException {
 
 		// GIVEN
-		final FactoryConfig cfg = new FactoryConfig();
+		final ControllerFactoryConfig cfg = new ControllerFactoryConfig();
 		final Path tmpFolder = Files.createTempDirectory("projectRoot");
 		cfg.setAbsoluteProjectRootDirectory(tmpFolder.toString());
 		cfg.setRelativeSourceRootDirectory("src/main/java");

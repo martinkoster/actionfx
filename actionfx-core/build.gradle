@@ -35,7 +35,7 @@ dependencies {
 
 test {    
 		forkEvery = 1
-    	maxParallelForks = 1       
+    	maxParallelForks = 5       
 }
 
 integrationTest {    

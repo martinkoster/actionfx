@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Represents a parsed FXML document containing the single XML elements as
@@ -78,10 +79,21 @@ public class FxmlDocument {
 	 * @return import statements for nodes to be injected into a controller
 	 */
 	public List<String> getImportStatementsForIdNodes() {
-		return idNodesMap.values().stream().map(imports::get).collect(Collectors.toList());
+		return idNodesMap.values().stream().map(imports::get).distinct().collect(Collectors.toList());
 	}
 
 	public Map<String, String> getIdNodesMap() {
 		return idNodesMap;
+	}
+
+//
+
+	/**
+	 * Returns the FXML elements of this document as a stream.
+	 *
+	 * @return the FXML elements as a stream
+	 */
+	public Stream<FxmlElement> getFxmlElementsAsStream() {
+		return rootElement.getFxmlElementsAsStream();
 	}
 }
