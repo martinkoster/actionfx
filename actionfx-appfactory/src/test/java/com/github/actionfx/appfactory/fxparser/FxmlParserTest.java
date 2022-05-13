@@ -40,26 +40,27 @@ import org.junit.jupiter.api.Test;
  */
 class FxmlParserTest {
 
-	@Test
-	void testParseFxml() {
-		// GIVEN
-		final FxmlParser parser = new FxmlParser();
-		final InputStream inputStream = FxmlParserTest.class.getResourceAsStream("/fxml/MainView.fxml");
+    @Test
+    void testParseFxml() {
+        // GIVEN
+        final FxmlParser parser = new FxmlParser();
+        final InputStream inputStream = FxmlParserTest.class.getResourceAsStream("/fxml/MainView.fxml");
 
-		// WHEN
-		final FxmlDocument document = parser.parseFxml(inputStream);
+        // WHEN
+        final FxmlDocument document = parser.parseFxml(inputStream);
 
-		// THEN
-		assertThat(document, notNullValue());
-		assertThat(document.getRootElement(), notNullValue());
-		assertThat(document.getRootElement().getName(), equalTo("BorderPane"));
-		assertThat(document.getRootElement().getImportStatement(), equalTo("javafx.scene.layout.BorderPane"));
-		assertThat(document.getIdNodesMap().keySet(), containsInAnyOrder("tableView", "okButton"));
-		assertThat(document.getImportsAsFullyQualifiedStatements(),
-				containsInAnyOrder("javafx.scene.control.Button", "javafx.scene.control.Menu",
-						"javafx.scene.control.MenuBar", "javafx.scene.control.MenuItem",
-						"javafx.scene.control.TableColumn", "javafx.scene.control.TableView",
-						"javafx.scene.layout.BorderPane", "javafx.scene.layout.HBox"));
-	}
+        // THEN
+        assertThat(document, notNullValue());
+        assertThat(document.getRootElement(), notNullValue());
+        assertThat(document.getRootElement().getName(), equalTo("BorderPane"));
+        assertThat(document.getRootElement().getImportStatement(), equalTo("javafx.scene.layout.BorderPane"));
+        assertThat(document.getIdNodesMap().keySet(),
+                containsInAnyOrder("tableView", "okButton", "closeMenuItem", "deleteMenuItem", "helpMenuItem"));
+        assertThat(document.getImportsAsFullyQualifiedStatements(),
+                containsInAnyOrder("javafx.scene.control.Button", "javafx.scene.control.Menu",
+                        "javafx.scene.control.MenuBar", "javafx.scene.control.MenuItem",
+                        "javafx.scene.control.TableColumn", "javafx.scene.control.TableView",
+                        "javafx.scene.layout.BorderPane", "javafx.scene.layout.HBox"));
+    }
 
 }

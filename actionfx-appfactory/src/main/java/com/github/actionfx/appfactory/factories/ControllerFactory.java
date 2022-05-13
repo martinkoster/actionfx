@@ -238,7 +238,7 @@ public class ControllerFactory {
         String classpathLocation;
         int idx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
         if (idx >= 0) {
-            classpathLocation = fxmlFile.substring(idx, factoryConfig.getRelativeFXMLResourcesDirectory().length());
+            classpathLocation = fxmlFile.substring(idx + factoryConfig.getRelativeFXMLResourcesDirectory().length());
         } else if (fxmlFile.contains(factoryConfig.getRelativeFXMLResourcesDirectory())) {
             idx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
             classpathLocation = fxmlFile.substring(idx, factoryConfig.getRelativeFXMLResourcesDirectory().length());

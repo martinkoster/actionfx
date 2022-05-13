@@ -58,18 +58,19 @@ public class ControllerFactoryConfig {
     }
 
     public String getAbsoluteJavaSourceDirectory() {
-        return Path.of(getAbsoluteProjectRootDirectory(), relativeJavaSourceDirectory.split("\\/\\\\")).toAbsolutePath()
-                .toString();
+        return replaceBackslash(Path.of(getAbsoluteProjectRootDirectory(), relativeJavaSourceDirectory.split("\\/\\\\"))
+                .toAbsolutePath().toString());
     }
 
     public String getAbsoluteFXMLResourcesDirectory() {
-        return Path.of(getAbsoluteProjectRootDirectory(), relativeFXMLResourcesDirectory.split("\\/\\\\"))
-                .toAbsolutePath().toString();
+        return replaceBackslash(
+                Path.of(getAbsoluteProjectRootDirectory(), relativeFXMLResourcesDirectory.split("\\/\\\\"))
+                        .toAbsolutePath().toString());
     }
 
     public String getAbsoluteControllerDirectory() {
-        return Path.of(getAbsoluteJavaSourceDirectory(), controllerPackageName.split("\\.")).toAbsolutePath()
-                .toString();
+        return replaceBackslash(Path.of(getAbsoluteJavaSourceDirectory(), controllerPackageName.split("\\."))
+                .toAbsolutePath().toString());
     }
 
     public String getAbsoluteProjectRootDirectory() {
@@ -77,7 +78,7 @@ public class ControllerFactoryConfig {
     }
 
     public void setAbsoluteProjectRootDirectory(final String absoluteProjectRootDirectory) {
-        this.absoluteProjectRootDirectory = absoluteProjectRootDirectory;
+        this.absoluteProjectRootDirectory = replaceBackslash(absoluteProjectRootDirectory);
     }
 
     public String getAbsoluteFxmlFilePath() {
@@ -85,7 +86,7 @@ public class ControllerFactoryConfig {
     }
 
     public void setAbsoluteFxmlFilePath(final String absoluteFxmlFilePath) {
-        this.absoluteFxmlFilePath = absoluteFxmlFilePath;
+        this.absoluteFxmlFilePath = replaceBackslash(absoluteFxmlFilePath);
     }
 
     public String getRelativeJavaSourceDirectory() {
@@ -93,7 +94,7 @@ public class ControllerFactoryConfig {
     }
 
     public void setRelativeJavaSourceDirectory(final String relativeJavaSourceDirectory) {
-        this.relativeJavaSourceDirectory = relativeJavaSourceDirectory;
+        this.relativeJavaSourceDirectory = replaceBackslash(relativeJavaSourceDirectory);
     }
 
     public String getRelativeFXMLResourcesDirectory() {
@@ -101,6 +102,10 @@ public class ControllerFactoryConfig {
     }
 
     public void setRelativeFXMLResourcesDirectory(final String relativeFXMLResourcesDirectory) {
-        this.relativeFXMLResourcesDirectory = relativeFXMLResourcesDirectory;
+        this.relativeFXMLResourcesDirectory = replaceBackslash(relativeFXMLResourcesDirectory);
+    }
+
+    private static String replaceBackslash(final String value) {
+        return value.replace('\\', '/');
     }
 }
