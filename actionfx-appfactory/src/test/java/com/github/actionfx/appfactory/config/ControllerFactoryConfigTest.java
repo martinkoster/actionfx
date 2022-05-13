@@ -40,25 +40,25 @@ import org.junit.jupiter.api.Test;
  */
 class ControllerFactoryConfigTest {
 
-	@Test
-	void testFactoryConfig() throws IOException {
+    @Test
+    void testFactoryConfig() throws IOException {
 
-		// GIVEN
-		final ControllerFactoryConfig cfg = new ControllerFactoryConfig();
-		final Path tmpFolder = Files.createTempDirectory("projectRoot");
-		cfg.setAbsoluteProjectRootDirectory(tmpFolder.toString());
-		cfg.setRelativeSourceRootDirectory("src/main/java");
-		cfg.setRelativeResourcesRootDirectory("src/main/resources");
-		cfg.setControllerPackageName("com.github.actionfx.appfactory.controller");
+        // GIVEN
+        final ControllerFactoryConfig cfg = new ControllerFactoryConfig();
+        final Path tmpFolder = Files.createTempDirectory("projectRoot");
+        cfg.setAbsoluteProjectRootDirectory(tmpFolder.toString());
+        cfg.setRelativeJavaSourceDirectory("src/main/java");
+        cfg.setRelativeFXMLResourcesDirectory("src/main/resources");
+        cfg.setControllerPackageName("com.github.actionfx.appfactory.controller");
 
-		// WHEN and THEN
-		assertThat(cfg.getAbsoluteSourceRootDirectory().replaceAll("\\\\", "/"),
-				equalTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/java"));
-		assertThat(cfg.getAbsoluteResourcesRootDirectory().replaceAll("\\\\", "/"),
-				equalTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/resources"));
-		assertThat(cfg.getAbsoluteControllerDirectory().replaceAll("\\\\", "/"),
-				equalTo(tmpFolder.toString().replaceAll("\\\\", "/")
-						+ "/src/main/java/com/github/actionfx/appfactory/controller"));
-	}
+        // WHEN and THEN
+        assertThat(cfg.getAbsoluteJavaSourceDirectory().replaceAll("\\\\", "/"),
+                equalTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/java"));
+        assertThat(cfg.getAbsoluteFXMLResourcesDirectory().replaceAll("\\\\", "/"),
+                equalTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/resources"));
+        assertThat(cfg.getAbsoluteControllerDirectory().replaceAll("\\\\", "/"),
+                equalTo(tmpFolder.toString().replaceAll("\\\\", "/")
+                        + "/src/main/java/com/github/actionfx/appfactory/controller"));
+    }
 
 }

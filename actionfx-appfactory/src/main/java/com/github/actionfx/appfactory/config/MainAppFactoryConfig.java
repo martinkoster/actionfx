@@ -33,68 +33,77 @@ import java.nio.file.Path;
  */
 public class MainAppFactoryConfig {
 
-	private String absoluteProjectRootDirectory;
+    private String absoluteProjectRootDirectory;
 
-	private String groupId;
+    private String groupId;
 
-	private String name;
+    private String name;
 
-	private String rootPackageName;
+    private String rootPackageName;
 
-	private boolean useSpring;
+    private boolean useSpring;
 
-	private boolean includeOxygenIcons;
+    private boolean createEmptyMainView;
 
-	public String getAbsoluteProjectRootDirectory() {
-		return absoluteProjectRootDirectory;
-	}
+    private boolean useExistingFxmlFile;
 
-	public void setAbsoluteProjectRootDirectory(final String absoluteProjectRootDirectory) {
-		this.absoluteProjectRootDirectory = absoluteProjectRootDirectory;
-	}
+    public String getAbsoluteProjectRootDirectory() {
+        return absoluteProjectRootDirectory;
+    }
 
-	public String getAbsoluteSourceRootDirectory() {
-		return Path.of(getAbsoluteProjectRootDirectory(), "src", "main", "java").toAbsolutePath().toString();
-	}
+    public void setAbsoluteProjectRootDirectory(final String absoluteProjectRootDirectory) {
+        this.absoluteProjectRootDirectory = absoluteProjectRootDirectory;
+    }
 
-	public String getGroupId() {
-		return groupId;
-	}
+    public String getAbsoluteSourceRootDirectory() {
+        return Path.of(getAbsoluteProjectRootDirectory(), "src", "main", "java").toAbsolutePath().toString();
+    }
 
-	public void setGroupId(final String groupId) {
-		this.groupId = groupId;
-	}
+    public String getGroupId() {
+        return groupId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setGroupId(final String groupId) {
+        this.groupId = groupId;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getRootPackageName() {
-		return rootPackageName;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setRootPackageName(final String rootPackageName) {
-		this.rootPackageName = rootPackageName;
-	}
+    public String getRootPackageName() {
+        return rootPackageName;
+    }
 
-	public boolean isUseSpring() {
-		return useSpring;
-	}
+    public void setRootPackageName(final String rootPackageName) {
+        this.rootPackageName = rootPackageName;
+    }
 
-	public void setUseSpring(final boolean useSpring) {
-		this.useSpring = useSpring;
-	}
+    public boolean isUseSpring() {
+        return useSpring;
+    }
 
-	public boolean isIncludeOxygenIcons() {
-		return includeOxygenIcons;
-	}
+    public void setUseSpring(final boolean useSpring) {
+        this.useSpring = useSpring;
+    }
 
-	public void setIncludeOxygenIcons(final boolean includeOxygenIcons) {
-		this.includeOxygenIcons = includeOxygenIcons;
-	}
+    public boolean isCreateEmptyMainView() {
+        return createEmptyMainView;
+    }
 
+    public void setCreateEmptyMainView(final boolean createEmptyMainView) {
+        this.createEmptyMainView = createEmptyMainView;
+    }
+
+    public boolean isUseExistingFxmlFile() {
+        return useExistingFxmlFile;
+    }
+
+    public void setUseExistingFxmlFile(final boolean useExistingFxmlFile) {
+        this.useExistingFxmlFile = useExistingFxmlFile;
+    }
 }

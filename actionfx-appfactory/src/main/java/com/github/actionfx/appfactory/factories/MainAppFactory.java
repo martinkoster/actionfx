@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.appfactory.factories;
 
+import java.util.function.Consumer;
+
 import com.github.actionfx.appfactory.config.MainAppFactoryConfig;
 
 /**
@@ -33,10 +35,17 @@ import com.github.actionfx.appfactory.config.MainAppFactoryConfig;
  */
 public class MainAppFactory {
 
-	private final MainAppFactoryConfig factoryConfig;
+    private final MainAppFactoryConfig factoryConfig;
 
-	public MainAppFactory(final MainAppFactoryConfig factoryConfig) {
-		this.factoryConfig = factoryConfig;
-	}
+    private Consumer<String> logConsumer;
+
+    public MainAppFactory(final MainAppFactoryConfig factoryConfig, final Consumer<String> logConsumer) {
+        this.factoryConfig = factoryConfig;
+        this.logConsumer = logConsumer;
+    }
+
+    public void produce() {
+
+    }
 
 }

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -18,9 +20,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <Accordion BorderPane.alignment="CENTER">
+      <Accordion fx:id="mainAppAccordion" BorderPane.alignment="CENTER">
         <panes>
           <TitledPane animated="false" text="Create a new ActionFX project using Gradle">
                <content>
@@ -28,7 +30,10 @@
                      <bottom>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <items>
-                            <Button fx:id="createNewProjectButton" mnemonicParsing="false" text="Create new Project" />
+                            <Button fx:id="createNewProjectButton" mnemonicParsing="false" text="Create new Project">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></Button>
                           </items>
                         </ToolBar>
                      </bottom>
@@ -74,11 +79,7 @@
                                           <CheckBox fx:id="useSpringCheckBox" mnemonicParsing="false" text="Use Spring Boot as ActionFX bean container" />
                                        </children>
                                     </HBox>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0">
-                                       <children>
-                                          <CheckBox fx:id="includeIconsCheckBox" mnemonicParsing="false" text="Include KDE Oxygen icons (LGPL license, see https://github.com/KDE/oxygen-icons)" />
-                                       </children>
-                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" />
                                     <Separator prefWidth="200.0" />
                                     <Label text="Main View:">
                                        <font>
@@ -97,7 +98,7 @@
                                                 <RadioButton fx:id="existingFxmlRadioButton" mnemonicParsing="false" prefWidth="400.0" text="Use existing FXML (Define FXML in next step)" toggleGroup="$mainViewToggleGroup" />
                                              </children>
                                           </HBox>
-                                          <AnchorPane fx:id="newProjectControllerFactoryAnchorPane" prefHeight="200.0" prefWidth="200.0">
+                                          <AnchorPane fx:id="newProjectControllerFactoryAnchorPane">
                                              <children>
                                                 <VBox>
                                                    <children>
@@ -150,10 +151,15 @@
                            <children>
                               <VBox>
                                  <children>
+                                    <Label text="Source FXML:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0">
                                        <children>
                                           <Label prefWidth="170.0" text="Existing FXML file:" />
-                                          <TextField fx:id="fxmlTextField" prefWidth="370.0" />
+                                          <TextField fx:id="controllerFxmlTextField" prefWidth="370.0" />
                                           <Button fx:id="loadFxmlButton" mnemonicParsing="false">
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -165,15 +171,40 @@
                                           </Button>
                                        </children>
                                     </HBox>
+                                    <Separator prefWidth="200.0">
+                                       <padding>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </padding>
+                                    </Separator>
+                                    <Label text="Target Project:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
                                        <children>
-                                          <Label prefWidth="250.0" text="Java Sources Root Directory:" />
+                                          <Label prefWidth="170.0" text="Project Root Directory: " />
+                                          <TextField fx:id="rootDirectoryControllerTextField" prefWidth="370.0" />
+                                          <Button fx:id="rootProjectDirectoryControllerButton" mnemonicParsing="false">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/document-open-folder.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                       <children>
+                                          <Label prefWidth="250.0" text="Relative Java Sources Directory:" />
                                           <TextField fx:id="javaSourcesRootTextField" prefWidth="350.0" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
                                        <children>
-                                          <Label prefWidth="250.0" text="Classpath Resources Root Directory:" />
+                                          <Label prefWidth="250.0" text="Relative FXML Resources Directory:" />
                                           <TextField fx:id="classpathResourceRootTextField" prefWidth="350.0" />
                                        </children>
                                     </HBox>
@@ -191,7 +222,11 @@
                      <bottom>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <items>
-                            <Button fx:id="createSourcesButton" mnemonicParsing="false" text="Create Controller Class" />
+                            <Button fx:id="createSourcesButton" mnemonicParsing="false" text="Create Controller Class">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                            </Button>
                           </items>
                         </ToolBar>
                      </bottom>
@@ -201,4 +236,7 @@
         </panes>
       </Accordion>
    </center>
+   <bottom>
+      <TextArea fx:id="logTextArea" editable="false" prefHeight="200.0" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>

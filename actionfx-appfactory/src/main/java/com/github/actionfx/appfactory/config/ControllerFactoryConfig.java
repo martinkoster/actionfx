@@ -33,58 +33,74 @@ import java.nio.file.Path;
  */
 public class ControllerFactoryConfig {
 
-	private String absoluteProjectRootDirectory;
+    private String absoluteProjectRootDirectory;
 
-	private String relativeSourceRootDirectory;
+    private String absoluteFxmlFilePath;
 
-	private String relativeResourcesRootDirectory;
+    private String relativeJavaSourceDirectory;
 
-	private String controllerPackageName;
+    private String relativeFXMLResourcesDirectory;
 
-	public String getControllerPackageName() {
-		return controllerPackageName;
-	}
+    private String controllerPackageName;
 
-	public void setControllerPackageName(final String controllerPackageName) {
-		this.controllerPackageName = controllerPackageName;
-	}
+    public ControllerFactoryConfig() {
+        // set defaults
+        relativeJavaSourceDirectory = "src/main/java";
+        relativeFXMLResourcesDirectory = "src/main/resources/fxml";
+    }
 
-	public String getAbsoluteSourceRootDirectory() {
-		return Path.of(getAbsoluteProjectRootDirectory(), relativeSourceRootDirectory.split("\\/\\\\")).toAbsolutePath()
-				.toString();
-	}
+    public String getControllerPackageName() {
+        return controllerPackageName;
+    }
 
-	public String getAbsoluteResourcesRootDirectory() {
-		return Path.of(getAbsoluteProjectRootDirectory(), relativeResourcesRootDirectory.split("\\/\\\\"))
-				.toAbsolutePath().toString();
-	}
+    public void setControllerPackageName(final String controllerPackageName) {
+        this.controllerPackageName = controllerPackageName;
+    }
 
-	public String getAbsoluteControllerDirectory() {
-		return Path.of(getAbsoluteSourceRootDirectory(), controllerPackageName.split("\\.")).toAbsolutePath()
-				.toString();
-	}
+    public String getAbsoluteJavaSourceDirectory() {
+        return Path.of(getAbsoluteProjectRootDirectory(), relativeJavaSourceDirectory.split("\\/\\\\")).toAbsolutePath()
+                .toString();
+    }
 
-	public String getAbsoluteProjectRootDirectory() {
-		return absoluteProjectRootDirectory;
-	}
+    public String getAbsoluteFXMLResourcesDirectory() {
+        return Path.of(getAbsoluteProjectRootDirectory(), relativeFXMLResourcesDirectory.split("\\/\\\\"))
+                .toAbsolutePath().toString();
+    }
 
-	public void setAbsoluteProjectRootDirectory(final String absoluteProjectRootDirectory) {
-		this.absoluteProjectRootDirectory = absoluteProjectRootDirectory;
-	}
+    public String getAbsoluteControllerDirectory() {
+        return Path.of(getAbsoluteJavaSourceDirectory(), controllerPackageName.split("\\.")).toAbsolutePath()
+                .toString();
+    }
 
-	public String getRelativeSourceRootDirectory() {
-		return relativeSourceRootDirectory;
-	}
+    public String getAbsoluteProjectRootDirectory() {
+        return absoluteProjectRootDirectory;
+    }
 
-	public void setRelativeSourceRootDirectory(final String relativeSourceRootDirectory) {
-		this.relativeSourceRootDirectory = relativeSourceRootDirectory;
-	}
+    public void setAbsoluteProjectRootDirectory(final String absoluteProjectRootDirectory) {
+        this.absoluteProjectRootDirectory = absoluteProjectRootDirectory;
+    }
 
-	public String getRelativeResourcesRootDirectory() {
-		return relativeResourcesRootDirectory;
-	}
+    public String getAbsoluteFxmlFilePath() {
+        return absoluteFxmlFilePath;
+    }
 
-	public void setRelativeResourcesRootDirectory(final String relativeResourcesRootDirectory) {
-		this.relativeResourcesRootDirectory = relativeResourcesRootDirectory;
-	}
+    public void setAbsoluteFxmlFilePath(final String absoluteFxmlFilePath) {
+        this.absoluteFxmlFilePath = absoluteFxmlFilePath;
+    }
+
+    public String getRelativeJavaSourceDirectory() {
+        return relativeJavaSourceDirectory;
+    }
+
+    public void setRelativeJavaSourceDirectory(final String relativeJavaSourceDirectory) {
+        this.relativeJavaSourceDirectory = relativeJavaSourceDirectory;
+    }
+
+    public String getRelativeFXMLResourcesDirectory() {
+        return relativeFXMLResourcesDirectory;
+    }
+
+    public void setRelativeFXMLResourcesDirectory(final String relativeFXMLResourcesDirectory) {
+        this.relativeFXMLResourcesDirectory = relativeFXMLResourcesDirectory;
+    }
 }
