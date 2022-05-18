@@ -5,13 +5,6 @@ plugins {
 
 description = "actionfx-appfactory: This module contains command line tools to setup new ActionFX applications quickly."
 
-// replace placeholders in property files
-processResources {
-    filesMatching('**/gradle.properties.ftl') {
-        expand(project.properties)
-    }
-}
-	
 dependencies {
 	
         // JAVAFX DEPENDENCIES    
