@@ -107,7 +107,7 @@ class ActionFXMethodInvocationTest {
         invocation.callAsync(consumer);
 
         // THEN
-        WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         verify(holder, times(1)).intMethod(eq(42));
         verify(consumer, times(1)).accept(eq(Integer.valueOf(43)));
     }
@@ -189,7 +189,7 @@ class ActionFXMethodInvocationTest {
         handler.handle(actionEvent);
 
         // THEN
-        WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         verify(holder, times(1)).intMethod(eq(42));
         verify(consumer, times(1)).accept(eq(43));
     }
@@ -224,6 +224,7 @@ class ActionFXMethodInvocationTest {
         handler.handle(actionEvent);
 
         // THEN
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         verify(holder, times(1)).intMethod(eq(42));
         verify(consumer, times(1)).accept(eq(43));
     }
@@ -254,7 +255,7 @@ class ActionFXMethodInvocationTest {
         subscriberWithAsyncCall.accept("Hello World");
 
         // THEN
-        WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
         verify(proxy, times(1)).onPublish(eq("Hello World"));
     }
 

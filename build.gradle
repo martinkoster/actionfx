@@ -290,10 +290,19 @@ def setVersionTo(newVersion) {
 	    }
 	    ant.replaceregexp(match:"${project.version}", replace:"${newVersion}", flags:'g', byline:true) {
 	        fileset(dir: '.', includes: 'README.md')	    
+	        fileset(dir: './actionfx-appfactory', includes: 'README.md')
 	        fileset(dir: './actionfx-app-sample', includes: 'README.md')	    
 	        fileset(dir: './actionfx-controlsfx', includes: 'README.md')	    
 	        fileset(dir: './actionfx-core', includes: 'README.md')	    
 	        fileset(dir: './actionfx-spring-boot', includes: 'README.md')	    
 	        fileset(dir: './actionfx-testing', includes: 'README.md')	    
+	    }
+	    
+	    // specialty for appfactory: Previous and current ActionFX artifact version is defined as constant in a Java file
+	    ant.replaceregexp(match:"CURRENT_ACTIONFX_VERSION = \".*\";", replace:"CURRENT_ACTIONFX_VERSION = \"${newVersion}\";", flags:'g', byline:true) {
+	        fileset(dir: './actionfx-appfactory/src/main/java/com/github/actionfx/appfactory/config', includes: 'MainAppFactoryConfig.java')	    
+	    }
+	    ant.replaceregexp(match:"PREVIOUS_ACTIONFX_VERSION = \".*\";", replace:"PREVOIUS_ACTIONFX_VERSION = \"${project.version}\";", flags:'g', byline:true) {
+	        fileset(dir: './actionfx-appfactory/src/main/java/com/github/actionfx/appfactory/config', includes: 'MainAppFactoryConfig.java')	    
 	    }
 }	

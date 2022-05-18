@@ -134,7 +134,8 @@ public class AppFactoryController {
 
     @AFXLoadControlData(controlId = "actionFXVersionComboBox")
     public List<String> availableActionFXVersions() {
-        return Arrays.asList(MainAppFactoryConfig.CURRENT_ACTIONFX_VERSION);
+        return Arrays.asList(MainAppFactoryConfig.CURRENT_ACTIONFX_VERSION,
+                MainAppFactoryConfig.PREVIOUS_ACTIONFX_VERSION);
     }
 
     @AFXOnControlValueChange(controlId = "existingFxmlRadioButton")

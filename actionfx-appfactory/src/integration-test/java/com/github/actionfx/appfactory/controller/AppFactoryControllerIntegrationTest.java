@@ -31,6 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.util.WaitForAsyncUtils;
 
 import com.github.actionfx.appfactory.ActionFXAppFactory.ActionFXAppFactoryApplication;
+import com.github.actionfx.appfactory.config.MainAppFactoryConfig;
 import com.github.actionfx.appfactory.text.TestUtils;
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
@@ -57,7 +58,7 @@ class AppFactoryControllerIntegrationTest {
         final Path tmpFolder = Files.createTempDirectory("project");
         controller.rootDirectoryTextField.setText(tmpFolder.toString());
         // compile against the previous version, as new version is not yet necessarily published to Maven Central.
-        controller.actionFXVersionComboBox.setValue("1.4.0");
+        controller.actionFXVersionComboBox.setValue(MainAppFactoryConfig.PREVIOUS_ACTIONFX_VERSION);
 
         // WHEN
         controller.createNewProjectButtonAction();
@@ -76,7 +77,7 @@ class AppFactoryControllerIntegrationTest {
         final Path tmpFolder = Files.createTempDirectory("project");
         controller.rootDirectoryTextField.setText(tmpFolder.toString());
         // compile against the previous version, as new version is not yet necessarily published to Maven Central.
-        controller.actionFXVersionComboBox.setValue("1.4.0");
+        controller.actionFXVersionComboBox.setValue(MainAppFactoryConfig.PREVIOUS_ACTIONFX_VERSION);
 
         // activate Spring
         controller.useSpringCheckBox.setSelected(true);
@@ -98,7 +99,7 @@ class AppFactoryControllerIntegrationTest {
         final Path tmpFolder = Files.createTempDirectory("project");
         controller.rootDirectoryTextField.setText(tmpFolder.toString());
         // compile against the previous version, as new version is not yet necessarily published to Maven Central.
-        controller.actionFXVersionComboBox.setValue("1.4.0");
+        controller.actionFXVersionComboBox.setValue(MainAppFactoryConfig.PREVIOUS_ACTIONFX_VERSION);
 
         // use existing view
         TestUtils.copyClasspathFile("/fxml/ExistingFxmlView.fxml", tmpFolder);
@@ -122,7 +123,7 @@ class AppFactoryControllerIntegrationTest {
         final Path tmpFolder = Files.createTempDirectory("project");
         controller.rootDirectoryTextField.setText(tmpFolder.toString());
         // compile against the previous version, as new version is not yet necessarily published to Maven Central.
-        controller.actionFXVersionComboBox.setValue("1.4.0");
+        controller.actionFXVersionComboBox.setValue(MainAppFactoryConfig.PREVIOUS_ACTIONFX_VERSION);
 
         // activate Spring
         controller.useSpringCheckBox.setSelected(true);

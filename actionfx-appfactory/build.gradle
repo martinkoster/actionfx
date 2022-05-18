@@ -4,7 +4,7 @@ plugins {
 }
 
 description = "actionfx-appfactory: This module contains command line tools to setup new ActionFX applications quickly."
-
+	
 dependencies {
 	
         // JAVAFX DEPENDENCIES    

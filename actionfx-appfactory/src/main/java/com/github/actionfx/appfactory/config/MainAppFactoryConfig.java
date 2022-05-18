@@ -35,6 +35,8 @@ public class MainAppFactoryConfig {
 
     public static final String CURRENT_ACTIONFX_VERSION = "1.5.0";
 
+    public static final String PREVIOUS_ACTIONFX_VERSION = "1.4.0";
+
     public static final String DEFAULT_JAVA_SOURCE_DIR = "src/main/java";
 
     public static final String DEFAULT_RESOURCES_DIR = "src/main/resources";
