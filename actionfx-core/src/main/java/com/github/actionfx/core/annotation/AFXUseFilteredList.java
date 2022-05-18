@@ -30,17 +30,14 @@ import java.lang.annotation.Target;
 
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 
 /**
- * Annotation that can be applied at field level on a {@link Control}, so that
- * ActionFX instructs the control to use a {@link FilteredList} as items. Please
- * note that the control must support multiple values in form of an
- * {@link ObservableList}.
+ * Annotation that can be applied at field level on a {@link javafx.scene.control.Control}, so that ActionFX instructs
+ * the control to use a {@link javafx.collections.transformation.FilteredList} as items. Please note that the control
+ * must support multiple values in form of an {@link ObservableList}.
  * <p>
- * This annotation can be e.g. applied to a {@link TableView} field, so that
- * table view items can be filtered.
+ * This annotation can be e.g. applied to a {@link javafx.scene.control.TableView} field, so that table view items can
+ * be filtered.
  *
  * @author koster
  *
@@ -49,22 +46,22 @@ import javafx.collections.transformation.SortedList;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXUseFilteredList {
 
-	/**
-	 * Optionally the {@link FilteredList} can be additionally wrapped inside a
-	 * {@link SortedList}. Default is however {@code false}.
-	 *
-	 * @return flag that indicates whether a {@link FilteredList} shall be wrapped
-	 *         inside a {@link SortedList}.
-	 */
-	public boolean wrapInSortedList() default false;
+    /**
+     * Optionally the {@link javafx.collections.transformation.FilteredList} can be additionally wrapped inside a
+     * {@link javafx.collections.transformation.SortedList}. Default is however {@code false}.
+     *
+     * @return flag that indicates whether a {@link javafx.collections.transformation.FilteredList} shall be wrapped
+     *         inside a {@link javafx.collections.transformation.SortedList}.
+     */
+    public boolean wrapInSortedList() default false;
 
-	/**
-	 * Optional expression that is resolved to an {@link ObservableValue} holding a
-	 * filter {@link Predicate}, that is set as filter predicate in the
-	 * {@link FilteredList} and is observed for changes.
-	 *
-	 * @return an expression that points to a field of type {@link ObservableValue}
-	 *         and holds a {@link Predicate}.
-	 */
-	public String filterPredicateProperty() default "";
+    /**
+     * Optional expression that is resolved to an {@link ObservableValue} holding a filter
+     * {@link java.util.function.Predicate}, that is set as filter predicate in the
+     * {@link javafx.collections.transformation.FilteredList} and is observed for changes.
+     *
+     * @return an expression that points to a field of type {@link ObservableValue} and holds a
+     *         {@link java.util.function.Predicate}.
+     */
+    public String filterPredicateProperty() default "";
 }

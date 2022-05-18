@@ -29,8 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Field annotation that can be applied to a {@link Node} for defining, when
- * this node shall be disabled (and when enabled).
+ * Field annotation that can be applied to a {@link javafx.scene.Node} for defining, when this node shall be disabled
+ * (and when enabled).
  *
  * @author koster
  *
@@ -39,53 +39,46 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXDisableNode {
 
-	/**
-	 * Annotated node is disabled, if all controls specified in this attribute have
-	 * a user value (i.e. a text in a {@link javafx.scene.control.TextField} or
-	 * <b>selected values</b> in a {@link javafx.scene.control.TableView}).
-	 *
-	 * @return the list of controls
-	 */
-	public String[] whenAllContolsHaveUserValues() default {};
+    /**
+     * Annotated node is disabled, if all controls specified in this attribute have a user value (i.e. a text in a
+     * {@link javafx.scene.control.TextField} or <b>selected values</b> in a {@link javafx.scene.control.TableView}).
+     *
+     * @return the list of controls
+     */
+    public String[] whenAllContolsHaveUserValues() default {};
 
-	/**
-	 * Annotated node is disabled, if at least one of the controls specified in this
-	 * attribute has a user value (i.e. a text in a
-	 * {@link javafx.scene.control.TextField} or <b>selected values</b> in a
-	 * {@link javafx.scene.control.TableView}).
-	 *
-	 * @return the list of controls
-	 */
-	public String[] whenAtLeastOneContolHasUserValue() default {};
+    /**
+     * Annotated node is disabled, if at least one of the controls specified in this attribute has a user value (i.e. a
+     * text in a {@link javafx.scene.control.TextField} or <b>selected values</b> in a
+     * {@link javafx.scene.control.TableView}).
+     *
+     * @return the list of controls
+     */
+    public String[] whenAtLeastOneContolHasUserValue() default {};
 
-	/**
-	 * Annotated node is disabled, if all controls specified in this attribute have
-	 * a value (i.e. a text in a {@link javafx.scene.control.TextField} or items set
-	 * in a {@link javafx.scene.control.TableView}).
-	 *
-	 * @return the list of controls
-	 */
-	public String[] whenAllControlsHaveValues() default {};
+    /**
+     * Annotated node is disabled, if all controls specified in this attribute have a value (i.e. a text in a
+     * {@link javafx.scene.control.TextField} or items set in a {@link javafx.scene.control.TableView}).
+     *
+     * @return the list of controls
+     */
+    public String[] whenAllControlsHaveValues() default {};
 
-	/**
-	 * Annotated node is disabled, if at least one control specified in this
-	 * attribute has a value (i.e. a text in a
-	 * {@link javafx.scene.control.TextField} or items set in a
-	 * {@link javafx.scene.control.TableView}).
-	 *
-	 * @return the list of controls
-	 */
-	public String[] whenAtLeastOneControlHasValues() default {};
+    /**
+     * Annotated node is disabled, if at least one control specified in this attribute has a value (i.e. a text in a
+     * {@link javafx.scene.control.TextField} or items set in a {@link javafx.scene.control.TableView}).
+     *
+     * @return the list of controls
+     */
+    public String[] whenAtLeastOneControlHasValues() default {};
 
-	/**
-	 * In case more than one attribute is specified as part of this annotation, this
-	 * boolean operation describes how the different attributes shall be logically
-	 * linked with each other. Possible values are {@link BooleanOp#AND} and
-	 * {@link BooleanOp#OR}. Default is {@link BooleanOp#AND}.
-	 *
-	 * @return the logical operation how attributes are linked with each other.
-	 *         Default is {@link BooleanOp#AND}.
-	 */
-	public BooleanOp logicalOp() default BooleanOp.AND;
+    /**
+     * In case more than one attribute is specified as part of this annotation, this boolean operation describes how the
+     * different attributes shall be logically linked with each other. Possible values are {@link BooleanOp#AND} and
+     * {@link BooleanOp#OR}. Default is {@link BooleanOp#AND}.
+     *
+     * @return the logical operation how attributes are linked with each other. Default is {@link BooleanOp#AND}.
+     */
+    public BooleanOp logicalOp() default BooleanOp.AND;
 
 }

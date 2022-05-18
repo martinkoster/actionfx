@@ -24,6 +24,7 @@
 package com.github.actionfx.appfactory.factories;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.times;
@@ -119,5 +120,18 @@ class ControllerFactoryTest {
         assertThat(captor.getAllValues(), contains(//
                 containsString("Created ActionFX controller directory"), //
                 containsString("Created ActionFX controller with name")));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void testGetViewId() {
+        // GIVEN
+        final Consumer<String> logConsumer = Mockito.mock(Consumer.class);
+        final ControllerFactoryConfig cfg = new ControllerFactoryConfig();
+        cfg.setAbsoluteFxmlFilePath("/some/folder/MainView.fxml");
+        final ControllerFactory controllerFactory = new ControllerFactory(cfg, logConsumer);
+
+        // WHEN and THEN
+        assertThat(controllerFactory.getViewId(), equalTo("MainView"));
     }
 }

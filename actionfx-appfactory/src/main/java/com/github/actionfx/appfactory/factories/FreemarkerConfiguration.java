@@ -23,8 +23,11 @@
  */
 package com.github.actionfx.appfactory.factories;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -39,84 +42,106 @@ import freemarker.template.TemplateExceptionHandler;
  */
 public class FreemarkerConfiguration {
 
-	private static FreemarkerConfiguration instance = null;
+    private static FreemarkerConfiguration instance = null;
 
-	private final Configuration configuration;
+    private final Configuration configuration;
 
-	/**
-	 * Please use {@link #getInstance()}.
-	 */
-	private FreemarkerConfiguration() {
-		configuration = prepareFreemarkerConfiguration();
-	}
+    /**
+     * Please use {@link #getInstance()}.
+     */
+    private FreemarkerConfiguration() {
+        configuration = prepareFreemarkerConfiguration();
+    }
 
-	/**
-	 * Gets an instance of {@link FreemarkerConfiguration}.
-	 *
-	 * @return the freemarker configuration instance
-	 */
-	public static FreemarkerConfiguration getInstance() {
-		if (instance == null) {
-			instance = new FreemarkerConfiguration();
-		}
-		return instance;
-	}
+    /**
+     * Gets an instance of {@link FreemarkerConfiguration}.
+     *
+     * @return the freemarker configuration instance
+     */
+    public static FreemarkerConfiguration getInstance() {
+        if (instance == null) {
+            instance = new FreemarkerConfiguration();
+        }
+        return instance;
+    }
 
-	/**
-	 * Writes the populate template identified with {@code templateName} to the
-	 * supplied {@code writer}, using the data from the given {@code model}.
-	 *
-	 * @param templateName the name of the template
-	 * @param model        the data model
-	 * @param writer       the writer to write to
-	 */
-	public void writeTemplate(final String templateName, final Object model, final Writer writer) {
-		final Template template = getTemplate(templateName);
-		try {
-			template.process(model, writer);
-		} catch (TemplateException | IOException e) {
-			throw new IllegalStateException(
-					"Unable to write data model '" + model + "' to template '" + templateName + "'!", e);
-		}
-	}
+    /**
+     * Writes the populate template identified with {@code templateName} to the file identified with the absolute path
+     * under {@code targetFile}, using the data from the given {@code model}.
+     *
+     * @param templateName
+     *            the name of the template
+     * @param model
+     *            the data model
+     * @param targetFile
+     *            the absolute path to the target file
+     */
+    public void writeTemplate(final String templateName, final Object model, final File targetFile) {
+        try (final FileWriter fileWriter = new FileWriter(targetFile, StandardCharsets.UTF_8)) {
+            writeTemplate(templateName, model, fileWriter);
+        } catch (final IOException e) {
+            throw new IllegalStateException("Cannot write file " + targetFile.getAbsolutePath() + "!", e);
+        }
+    }
 
-	/**
-	 * Gets a Freemarker template that is identified by {@code name}. The name must
-	 * be relative to the root template path {@code templates} and must not start
-	 * with a slash "/".
-	 *
-	 * @param name the template name
-	 * @return the loaded template
-	 */
-	protected Template getTemplate(final String name) {
-		try {
-			return configuration.getTemplate(name);
-		} catch (final IOException e) {
-			throw new IllegalArgumentException("Unable to load Freemarker template from '" + name + "'!", e);
-		}
-	}
+    /**
+     * Writes the populate template identified with {@code templateName} to the supplied {@code writer}, using the data
+     * from the given {@code model}.
+     *
+     * @param templateName
+     *            the name of the template
+     * @param model
+     *            the data model
+     * @param writer
+     *            the writer to write to
+     */
+    public void writeTemplate(final String templateName, final Object model, final Writer writer) {
+        final Template template = getTemplate(templateName);
+        try {
+            template.process(model, writer);
+        } catch (TemplateException | IOException e) {
+            throw new IllegalStateException(
+                    "Unable to write data model '" + model + "' to template '" + templateName + "'!", e);
+        }
+    }
 
-	/**
-	 * Sets up Freemarker for use.
-	 *
-	 * @return the Freemarker configuration
-	 */
-	private Configuration prepareFreemarkerConfiguration() {
-		final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-		cfg.setClassForTemplateLoading(FreemarkerConfiguration.class, "/templates");
-		cfg.setDefaultEncoding("UTF-8");
-		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    /**
+     * Gets a Freemarker template that is identified by {@code name}. The name must be relative to the root template
+     * path {@code templates} and must not start with a slash "/".
+     *
+     * @param name
+     *            the template name
+     * @return the loaded template
+     */
+    protected Template getTemplate(final String name) {
+        try {
+            return configuration.getTemplate(name);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Unable to load Freemarker template from '" + name + "'!", e);
+        }
+    }
 
-		// Don't log exceptions inside FreeMarker that it will thrown at you anyway:
-		cfg.setLogTemplateExceptions(false);
+    /**
+     * Sets up Freemarker for use.
+     *
+     * @return the Freemarker configuration
+     */
+    private Configuration prepareFreemarkerConfiguration() {
+        final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+        cfg.setClassForTemplateLoading(FreemarkerConfiguration.class, "/templates");
+        cfg.setDefaultEncoding("UTF-8");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
-		// Wrap unchecked exceptions thrown during template processing into
-		// TemplateException-s:
-		cfg.setWrapUncheckedExceptions(true);
+        // Don't log exceptions inside FreeMarker that it will thrown at you anyway:
+        cfg.setLogTemplateExceptions(false);
 
-		// Do not fall back to higher scopes when reading a null loop variable:
-		cfg.setFallbackOnNullLoopVariable(false);
+        // Wrap unchecked exceptions thrown during template processing into
+        // TemplateException-s:
+        cfg.setWrapUncheckedExceptions(true);
 
-		return cfg;
-	}
+        // Do not fall back to higher scopes when reading a null loop variable:
+        cfg.setFallbackOnNullLoopVariable(false);
+
+        return cfg;
+    }
 }

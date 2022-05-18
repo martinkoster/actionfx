@@ -7,9 +7,9 @@ plugins {
 }
 
 wrapper {
-    gradleVersion = "6.7.0"
+    gradleVersion = "7.4.2"
     distributionType = Wrapper.DistributionType.ALL
-    distributionUrl = "https://services.gradle.org/distributions/gradle-6.7-bin.zip"
+    distributionUrl = "https://services.gradle.org/distributions/gradle-7.4.2-bin.zip"
 }
 
 description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection"
@@ -111,14 +111,12 @@ configure(allprojects) { project ->
 	////////////////////
     idea {
 	    module {
-	        scopes.TEST.plus += [ configurations.integrationTestCompile ]
 	    }
 	}
 
 	eclipse {
 	    classpath {
 	        downloadSources = true
-	        plusConfigurations += [ configurations.integrationTestCompile ]
 	    }
 	}
 

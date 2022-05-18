@@ -16,19 +16,19 @@ import javafx.stage.Stage;
  *
  */
 @SpringBootApplication
-public class ${mainClassName} {
+public class ${mainAppClassName} {
 
 	public static void main(final String[] argv) {
-		ActionFX.builder().configurationClass(${mainClassName}Application.class).build();
-		Application.launch(${mainClassName}Application.class);
+		ActionFX.builder().configurationClass(${mainAppClassName}Application.class).build();
+		Application.launch(${mainAppClassName}Application.class);
 	}
 
-	@AFXApplication(mainViewId = "${mainViewId}", scanPackage = "${packageName}", enableBeanContainerAutodetection = true)
-	public static class ${mainClassName}Application extends Application {
+	@AFXApplication(mainViewId = "${mainViewId}", scanPackage = "${packageName}")
+	public static class ${mainAppClassName}Application extends Application {
 
 		@Override
 		public void init() throws Exception {
-			SpringApplication.run(BookstoreAppWithSpringBeanContainer.class);
+			SpringApplication.run(${mainAppClassName}.class);
 		}
 
 		@Override

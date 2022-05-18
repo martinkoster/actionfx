@@ -1,10 +1,17 @@
 plugins {
-    id("org.openjfx.javafxplugin") version "0.0.9"
+    id("org.openjfx.javafxplugin") version "${javafxPluginVersion}"
     id "library-publishing-conventions"
 }
 
 description = "actionfx-appfactory: This module contains command line tools to setup new ActionFX applications quickly."
 
+// replace placeholders in property files
+processResources {
+    filesMatching('**/gradle.properties.ftl') {
+        expand(project.properties)
+    }
+}
+	
 dependencies {
 	
         // JAVAFX DEPENDENCIES    
@@ -17,7 +24,7 @@ dependencies {
         implementation project(":actionfx-core")
         implementation project(":actionfx-spring-boot")
         
-  		implementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "${springBootVersion}"
+  		implementation group: "org.springframework.boot", name: "spring-boot-starter", version: "${springBootVersion}"
 		implementation group: 'org.freemarker', name: 'freemarker', version: "${freemarkerVersion}"
 		
         

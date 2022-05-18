@@ -33,6 +33,12 @@ import java.nio.file.Path;
  */
 public class MainAppFactoryConfig {
 
+    public static final String CURRENT_ACTIONFX_VERSION = "1.5.0";
+
+    public static final String DEFAULT_JAVA_SOURCE_DIR = "src/main/java";
+
+    public static final String DEFAULT_RESOURCES_DIR = "src/main/resources";
+
     private String absoluteProjectRootDirectory;
 
     private String groupId;
@@ -41,11 +47,26 @@ public class MainAppFactoryConfig {
 
     private String rootPackageName;
 
+    private String mainAppClassName;
+
     private boolean useSpring;
 
     private boolean createEmptyMainView;
 
     private boolean useExistingFxmlFile;
+
+    private String actionFXVersion;
+
+    public MainAppFactoryConfig() {
+        // set defaults
+        groupId = "com.github";
+        name = "sample-project";
+        rootPackageName = "com.github.sampleproject";
+        mainAppClassName = "SampleApp";
+        actionFXVersion = CURRENT_ACTIONFX_VERSION;
+        useSpring = false;
+        createEmptyMainView = true;
+    }
 
     public String getAbsoluteProjectRootDirectory() {
         return absoluteProjectRootDirectory;
@@ -56,7 +77,23 @@ public class MainAppFactoryConfig {
     }
 
     public String getAbsoluteSourceRootDirectory() {
-        return Path.of(getAbsoluteProjectRootDirectory(), "src", "main", "java").toAbsolutePath().toString();
+        return Path.of(getAbsoluteProjectRootDirectory(), "src", "main", "java").toString();
+    }
+
+    public String getAbsoluteResourceRootDirectory() {
+        return Path.of(getAbsoluteProjectRootDirectory(), "src", "main", "resources").toString();
+    }
+
+    public String getAbsoluteFxmlRootDirectory() {
+        return Path.of(getAbsoluteResourceRootDirectory(), "fxml").toString();
+    }
+
+    public String getAbsoluteMainAppDirectory() {
+        return Path.of(getAbsoluteSourceRootDirectory(), getRootPackageName().split("\\.")).toString();
+    }
+
+    public String getAbsoluteMainControllerDirectory() {
+        return Path.of(getAbsoluteSourceRootDirectory(), getControllerPackageName().split("\\.")).toString();
     }
 
     public String getGroupId() {
@@ -77,6 +114,10 @@ public class MainAppFactoryConfig {
 
     public String getRootPackageName() {
         return rootPackageName;
+    }
+
+    public String getControllerPackageName() {
+        return getRootPackageName() + ".controller";
     }
 
     public void setRootPackageName(final String rootPackageName) {
@@ -105,5 +146,21 @@ public class MainAppFactoryConfig {
 
     public void setUseExistingFxmlFile(final boolean useExistingFxmlFile) {
         this.useExistingFxmlFile = useExistingFxmlFile;
+    }
+
+    public void setMainAppClassName(final String mainAppClassName) {
+        this.mainAppClassName = mainAppClassName;
+    }
+
+    public String getMainAppClassName() {
+        return mainAppClassName;
+    }
+
+    public String getActionFXVersion() {
+        return actionFXVersion;
+    }
+
+    public void setActionFXVersion(final String actionFXVersion) {
+        this.actionFXVersion = actionFXVersion;
     }
 }

@@ -11,14 +11,14 @@ import javafx.application.Application;
  * @author actionfx-appfactory
  *
  */
-public class ${mainClassName} {
+public class ${mainAppClassName} {
 
 	public static void main(final String[] argv) {
-		Application.launch(${mainClassName}Application.class);
+		Application.launch(${mainAppClassName}Application.class);
 	}
 
-	@AFXApplication(mainViewId = "${mainViewId}", scanPackage = "${packageName}", enableBeanContainerAutodetection = false)
-	public static class ${mainClassName}Application extends AbstractAFXApplication {
+	@AFXApplication(mainViewId = "${mainViewId}", scanPackage = "${packageName}")
+	public static class ${mainAppClassName}Application extends AbstractAFXApplication {
 
 	}
 }

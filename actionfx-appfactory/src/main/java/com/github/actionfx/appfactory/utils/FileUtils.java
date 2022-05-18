@@ -117,6 +117,18 @@ public class FileUtils {
     }
 
     /**
+     * Makes an external file executable (i.e. it is setting the "executable" flag in the filesystem, if supported)
+     *
+     * @param absoluteFilePath
+     *            the absolute path to the file
+     * @return {@code true}, if the flag has been successfully set, {@code false} otherwise.
+     */
+    public static boolean makeExecutable(final String absoluteFilePath) {
+        final File file = new File(absoluteFilePath);
+        return file.setExecutable(true);
+    }
+
+    /**
      * Reads the contents of a file from the given {@code absoluteFilePath}.
      *
      * @param absoluteFilePath

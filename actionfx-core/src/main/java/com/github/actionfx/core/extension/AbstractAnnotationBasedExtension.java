@@ -29,32 +29,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base class for extensions that apply a logic to fields and methods that are
- * marked with annotations.
+ * Base class for extensions that apply a logic to fields and methods that are marked with annotations.
  *
- * @param <T> the type of annotated element, e.g. a field or method.
+ * @param <A>
+ *            the annotation
+ * @param <E>
+ *            the type of annotated element, e.g. a field or method.
  *
  * @author koster
  *
  */
 public abstract class AbstractAnnotationBasedExtension<A extends Annotation, E extends AnnotatedElement> {
 
-	protected final Class<A> annotationType;
+    protected final Class<A> annotationType;
 
-	protected AbstractAnnotationBasedExtension(final Class<A> annotationType) {
-		this.annotationType = annotationType;
-	}
+    protected AbstractAnnotationBasedExtension(final Class<A> annotationType) {
+        this.annotationType = annotationType;
+    }
 
-	/**
-	 * Overriding methods need to return a map, where the key is the annotated
-	 * element (e.g. field, method) and the value is a list of (potentially
-	 * repeatable) annotations. In case the annotation is not repeatable, than e
-	 * list with size 1 is returned, containing the single annotation.
-	 *
-	 * @param clazz the class to lookup annotations for
-	 * @return the map of annotated elements and their corresponding annotations
-	 *         (potentially repeatable)
-	 */
-	protected abstract Map<E, List<A>> lookupAnnotatedElements(Class<?> clazz);
+    /**
+     * Overriding methods need to return a map, where the key is the annotated element (e.g. field, method) and the
+     * value is a list of (potentially repeatable) annotations. In case the annotation is not repeatable, than e list
+     * with size 1 is returned, containing the single annotation.
+     *
+     * @param clazz
+     *            the class to lookup annotations for
+     * @return the map of annotated elements and their corresponding annotations (potentially repeatable)
+     */
+    protected abstract Map<E, List<A>> lookupAnnotatedElements(Class<?> clazz);
 
 }

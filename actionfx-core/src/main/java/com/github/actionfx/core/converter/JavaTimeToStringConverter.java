@@ -28,30 +28,32 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 /**
- * Converts a {@link java.time.*} to a {@link String}.
+ * Converts a {@code java.time.*} to a {@link String}.
  *
  * @author koster
  *
  */
 public class JavaTimeToStringConverter extends AbstractJavaTimeConverter<TemporalAccessor, String> {
 
-	private final JavaTimeToJavaTimeConverter<TemporalAccessor, ZonedDateTime> javaTimeConverter;
+    private final JavaTimeToJavaTimeConverter<TemporalAccessor, ZonedDateTime> javaTimeConverter;
 
-	/**
-	 * Accepts a format pattern like "dd.MM.yyyy hh:mm" and a locale.
-	 *
-	 * @param formatPattern the format pattern
-	 * @param locale        the locale
-	 */
-	public JavaTimeToStringConverter(final String formatPattern, final Locale locale) {
-		super(formatPattern, locale);
-		javaTimeConverter = new JavaTimeToJavaTimeConverter<>(ZonedDateTime.class);
-	}
+    /**
+     * Accepts a format pattern like "dd.MM.yyyy hh:mm" and a locale.
+     *
+     * @param formatPattern
+     *            the format pattern
+     * @param locale
+     *            the locale
+     */
+    public JavaTimeToStringConverter(final String formatPattern, final Locale locale) {
+        super(formatPattern, locale);
+        javaTimeConverter = new JavaTimeToJavaTimeConverter<>(ZonedDateTime.class);
+    }
 
-	@Override
-	public String convert(final TemporalAccessor source) {
-		// level up to zoned-date-time as we need a timezone for converting to a string
-		return getDateTimeFormatter().format(javaTimeConverter.convert(source));
-	}
+    @Override
+    public String convert(final TemporalAccessor source) {
+        // level up to zoned-date-time as we need a timezone for converting to a string
+        return getDateTimeFormatter().format(javaTimeConverter.convert(source));
+    }
 
 }

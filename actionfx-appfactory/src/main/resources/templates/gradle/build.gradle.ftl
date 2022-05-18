@@ -1,17 +1,17 @@
 plugins {
-    id "com.github.spotbugs" version "${spotbugsVersion}"
+    id "com.github.spotbugs" version "${r"${spotbugsVersion}"}"
     id "java-library"
-    id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
-    id "org.sonarqube" version "${sonarQubePlugin}"
-    id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
-    id("org.openjfx.javafxplugin") version "0.0.9"
-    
+    id("org.openjfx.javafxplugin") version "${r"${javafxPluginVersion}"}"
+<#if useSpring>
+    id 'org.springframework.boot' version "${r"${springBootVersion}"}"
+    id 'io.spring.dependency-management' version "${r"${springDepManagementVersion}"}"
+</#if>    
 }
 
 wrapper {
-    gradleVersion = "6.7.0"
+    gradleVersion = "7.4.2"
     distributionType = Wrapper.DistributionType.ALL
-    distributionUrl = "https://services.gradle.org/distributions/gradle-6.7-bin.zip"
+    distributionUrl = "https://services.gradle.org/distributions/gradle-7.4.2-bin.zip"
 }
 
 description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection"
@@ -19,8 +19,12 @@ description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with
 apply plugin: "java-library"
 apply plugin: "eclipse"
 apply plugin: "idea"
-apply plugin: 'jacoco'
+apply plugin: "jacoco"
 apply plugin: "com.github.spotbugs"
+<#if useSpring>
+apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+</#if>
 
 sourceCompatibility = "11" 
 targetCompatibility = "11"
@@ -62,7 +66,7 @@ test {
 	useJUnitPlatform()
 	reports {
 		html.enabled = true
-		html.destination = file("${reporting.baseDir}/${name}")
+		html.destination = file("${r"${reporting.baseDir}/${name}"}")
 	}
 	testLogging {
     	exceptionFormat = "full"
@@ -72,7 +76,7 @@ test {
 tasks.withType(Test) {
 	systemProperties = System.properties
     systemProperties["user.dir"] = workingDir
-    reports.html.destination = file("${reporting.baseDir}/${name}")
+    reports.html.destination = file("${r"${reporting.baseDir}/${name}"}")
     testLogging {
     	events "passed", "skipped", "failed"
     }
@@ -93,7 +97,7 @@ task integrationTest(type: Test) {
     	exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
    	}
     afterTest { test, result ->
-    	println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
+    	println "Executing test ${r"${test.name}"} [${r"${test.className}"}] with result: ${r"${result.resultType}"}"
    	}
 }
 
@@ -102,14 +106,12 @@ task integrationTest(type: Test) {
 ////////////////////
 idea {
 	module {
-		scopes.TEST.plus += [ configurations.integrationTestCompile ]
 	}
 }
 
 eclipse {
 	classpath {
 	    downloadSources = true
-		plusConfigurations += [ configurations.integrationTestCompile ]
 	}
 }
 
@@ -162,22 +164,50 @@ javadoc {
 // Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
 task copyJavaDocToDocs(type: Copy) {
     from "$buildDir/docs/javadoc"
-    into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
+    into "${r"${rootProject.projectDir}/build/docs/${version}/${project.name}"}"
 }
 copyJavaDocToDocs.dependsOn javadoc
 test.dependsOn copyJavaDocToDocs
 
+<#if useSpring>
+bootJar {
+	enabled = true
+	mainClass = '${packageName}.${mainAppClassName}'
+}
+<#else>
+jar {
+    manifest {
+        attributes 'Main-Class': '${packageName}.${mainAppClassName}'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        duplicatesStrategy = 'include'
+    }
+}
+</#if>
 	
 dependencies {
 
     // JAVAFX DEPENDENCIES    
 	javafx {
-    	version = "${javafxVersion}"
+    	version = "${r"${javafxVersion}"}"
         modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
    	}
+   	
+   	// ACTIONFX DEPENDENCIES
+	implementation group: "com.github.martinkoster", name: "actionfx-core", version: "${r"${actionFXVersion}"}"
+	implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "${r"${actionFXVersion}"}"
+<#if useSpring>
+	implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", version: "${r"${actionFXVersion}"}"
 
-    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
-	testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
-   	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
-   	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
+	// SPRING DEPENDENCIES
+	implementation group: "org.springframework.boot", name: "spring-boot-starter"
+</#if>
+
+	testImplementation group: "com.github.martinkoster", name: "actionfx-testing", version: "${r"${actionFXVersion}"}"
+
+    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${r"${spotbugsAnnotationVersion}"}"
+	testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${r"${junitJupiterVersion}"}"
+   	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${r"${junitJupiterVersion}"}"
+   	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${r"${hamcrestVersion}"}"
 }

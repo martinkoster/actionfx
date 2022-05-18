@@ -10,8 +10,10 @@ All notable changes to this project will be documented in this file.
 - Fixed children lookup bug for Accordion (which does not have the "javafx.beans.DefaultProperty" annotation for some reason)
 - Update dependencies:
  * JavaFX 17.0.1
- * Spring Boot to 2.6.6
- * Spring to 5.3.18
+ * Spring Boot to 2.6.7
+ * Spring to 5.3.20
+- Upgraded build system to Gradle 7.4.2
+- Added Gitpod development support via own Dockerfile
  
 ## 1.4.0 (12.09.2021)
 - Support for mapping a custom domain object to form controls via @AFXFormBinding and @AFXFormMapping.

@@ -28,30 +28,30 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
- * Base class for converters that convert a {@link Date}.
+ * Base class for converters that convert a {@link java.util.Date}.
  *
  * @author koster
  *
  */
 public abstract class AbstractDateConverter<S, T> implements Converter<S, T> {
 
-	protected String formatPattern;
+    protected String formatPattern;
 
-	protected Locale locale;
+    protected Locale locale;
 
-	protected AbstractDateConverter(final String formatPattern, final Locale locale) {
-		this.formatPattern = formatPattern;
-		this.locale = locale;
-	}
+    protected AbstractDateConverter(final String formatPattern, final Locale locale) {
+        this.formatPattern = formatPattern;
+        this.locale = locale;
+    }
 
-	public DateFormat getDateFormat() {
-		// since SimpleDateFormat is not thread-safe, we create a new instance for every
-		// conversion
-		return new SimpleDateFormat(formatPattern, locale);
-	}
+    public DateFormat getDateFormat() {
+        // since SimpleDateFormat is not thread-safe, we create a new instance for every
+        // conversion
+        return new SimpleDateFormat(formatPattern, locale);
+    }
 
-	public String getFormatPattern() {
-		return formatPattern;
-	}
+    public String getFormatPattern() {
+        return formatPattern;
+    }
 
 }

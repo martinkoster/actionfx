@@ -58,19 +58,18 @@ public class ControllerFactoryConfig {
     }
 
     public String getAbsoluteJavaSourceDirectory() {
-        return replaceBackslash(Path.of(getAbsoluteProjectRootDirectory(), relativeJavaSourceDirectory.split("\\/\\\\"))
-                .toAbsolutePath().toString());
+        return replaceBackslash(
+                Path.of(getAbsoluteProjectRootDirectory(), relativeJavaSourceDirectory.split("\\/\\\\")).toString());
     }
 
     public String getAbsoluteFXMLResourcesDirectory() {
         return replaceBackslash(
-                Path.of(getAbsoluteProjectRootDirectory(), relativeFXMLResourcesDirectory.split("\\/\\\\"))
-                        .toAbsolutePath().toString());
+                Path.of(getAbsoluteProjectRootDirectory(), relativeFXMLResourcesDirectory.split("\\/\\\\")).toString());
     }
 
     public String getAbsoluteControllerDirectory() {
-        return replaceBackslash(Path.of(getAbsoluteJavaSourceDirectory(), controllerPackageName.split("\\."))
-                .toAbsolutePath().toString());
+        return replaceBackslash(
+                Path.of(getAbsoluteJavaSourceDirectory(), controllerPackageName.split("\\.")).toString());
     }
 
     public String getAbsoluteProjectRootDirectory() {
@@ -108,4 +107,5 @@ public class ControllerFactoryConfig {
     private static String replaceBackslash(final String value) {
         return value.replace('\\', '/');
     }
+
 }

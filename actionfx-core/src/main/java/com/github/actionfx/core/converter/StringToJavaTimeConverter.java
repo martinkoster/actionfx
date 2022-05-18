@@ -27,29 +27,31 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 /**
- * Converts a {@link String} to a {@link java.time.*} type.
+ * Converts a {@link String} to a {@code java.time.*} type.
  *
  * @author koster
  *
  */
 public class StringToJavaTimeConverter<T extends TemporalAccessor> extends AbstractJavaTimeConverter<String, T> {
 
-	private final JavaTimeToJavaTimeConverter<TemporalAccessor, T> javaTimeConverter;
+    private final JavaTimeToJavaTimeConverter<TemporalAccessor, T> javaTimeConverter;
 
-	/**
-	 * Accepts a format pattern like "dd.MM.yyyy hh:mm" and a locale.
-	 *
-	 * @param formatPattern the format pattern
-	 * @param locale        the locale
-	 */
-	public StringToJavaTimeConverter(final Class<T> targetType, final String formatPattern, final Locale locale) {
-		super(formatPattern, locale);
-		this.javaTimeConverter = new JavaTimeToJavaTimeConverter<>(targetType);
-	}
+    /**
+     * Accepts a format pattern like "dd.MM.yyyy hh:mm" and a locale.
+     *
+     * @param formatPattern
+     *            the format pattern
+     * @param locale
+     *            the locale
+     */
+    public StringToJavaTimeConverter(final Class<T> targetType, final String formatPattern, final Locale locale) {
+        super(formatPattern, locale);
+        this.javaTimeConverter = new JavaTimeToJavaTimeConverter<>(targetType);
+    }
 
-	@Override
-	public T convert(final String source) {
-		return getDateTimeFormatter().parse(source, javaTimeConverter::convert);
-	}
+    @Override
+    public T convert(final String source) {
+        return getDateTimeFormatter().parse(source, javaTimeConverter::convert);
+    }
 
 }

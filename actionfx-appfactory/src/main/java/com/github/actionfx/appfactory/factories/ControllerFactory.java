@@ -25,9 +25,7 @@ package com.github.actionfx.appfactory.factories;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +35,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.actionfx.appfactory.config.ControllerFactoryConfig;
+import com.github.actionfx.appfactory.config.MainAppFactoryConfig;
 import com.github.actionfx.appfactory.fxparser.FxmlDocument;
 import com.github.actionfx.appfactory.fxparser.FxmlElement;
 import com.github.actionfx.appfactory.fxparser.FxmlParser;
@@ -74,17 +73,11 @@ public class ControllerFactory {
         }
         final Path controllerPath = Path.of(factoryConfig.getAbsoluteControllerDirectory(),
                 controllerModel.getControllerName() + ".java");
-        try (final FileWriter fileWriter = new FileWriter(controllerPath.toFile(), StandardCharsets.UTF_8)) {
-            createController(controllerModel, fileWriter);
-        } catch (final IOException e) {
-            throw new IllegalStateException("Cannot write file " + controllerPath.toAbsolutePath().toString() + "!", e);
-        }
+        createController(controllerModel, controllerPath.toFile());
     }
 
-    private void createController(final ControllerModel controllerModel, final FileWriter fileWriter) {
-        FreemarkerConfiguration.getInstance().writeTemplate("classes/controller.ftl", controllerModel, fileWriter);
-        logConsumer.accept("Created ActionFX controller with name '" + controllerModel.getControllerName()
-                + "' in folder '" + factoryConfig.getAbsoluteControllerDirectory() + "'");
+    public String getViewId() {
+        return deriveViewId(factoryConfig.getAbsoluteFxmlFilePath());
     }
 
     private void createControllerDirectory() {
@@ -93,15 +86,21 @@ public class ControllerFactory {
                 "Created ActionFX controller directory '" + factoryConfig.getAbsoluteControllerDirectory() + "'");
     }
 
-    private void copyFxmlFileToResourcesDirectory(final String fxmlFile) {
-        FileUtils.copyFile(fxmlFile, factoryConfig.getAbsoluteFXMLResourcesDirectory());
-        logConsumer.accept("Copied FXML file from '" + fxmlFile + "' to '"
-                + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
+    private void createController(final ControllerModel controllerModel, final File targetFile) {
+        FreemarkerConfiguration.getInstance().writeTemplate("classes/controller.ftl", controllerModel, targetFile);
+        logConsumer.accept("Created ActionFX controller with name '" + controllerModel.getControllerName()
+                + "' in folder '" + factoryConfig.getAbsoluteControllerDirectory() + "'");
     }
 
     private void createFxmlResourcesDirectory() {
         FileUtils.createDirectories(factoryConfig.getAbsoluteFXMLResourcesDirectory());
         logConsumer.accept("Created resources folder for FXML file in '"
+                + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
+    }
+
+    private void copyFxmlFileToResourcesDirectory(final String fxmlFile) {
+        FileUtils.copyFile(fxmlFile, factoryConfig.getAbsoluteFXMLResourcesDirectory());
+        logConsumer.accept("Copied FXML file from '" + fxmlFile + "' to '"
                 + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
     }
 
@@ -111,7 +110,7 @@ public class ControllerFactory {
         controllerModel.setPackageName(factoryConfig.getControllerPackageName());
         controllerModel.getImportStatements().addAll(fxmlDocument.getImportStatementsForIdNodes());
         controllerModel.setFxmlFile(deriveFxmlClasspathLocation(fxmlFile));
-        controllerModel.setViewId(deriveViewId(fxmlFile));
+        controllerModel.setViewId(getViewId());
         controllerModel.setTitle(deriveViewId(fxmlFile));
         controllerModel.getNodes().addAll(createFxmlNodes(fxmlDocument));
         controllerModel.getActionMethods().addAll(createActionMethods(fxmlDocument));
@@ -236,12 +235,13 @@ public class ControllerFactory {
      */
     private String deriveFxmlClasspathLocation(final String fxmlFile) {
         String classpathLocation;
-        int idx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
-        if (idx >= 0) {
-            classpathLocation = fxmlFile.substring(idx + factoryConfig.getRelativeFXMLResourcesDirectory().length());
-        } else if (fxmlFile.contains(factoryConfig.getRelativeFXMLResourcesDirectory())) {
-            idx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
-            classpathLocation = fxmlFile.substring(idx, factoryConfig.getRelativeFXMLResourcesDirectory().length());
+        final int resourceIdx = fxmlFile.indexOf(MainAppFactoryConfig.DEFAULT_RESOURCES_DIR);
+        final int relativeFxmlIdx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
+        if (resourceIdx >= 0) {
+            classpathLocation = fxmlFile.substring(resourceIdx + MainAppFactoryConfig.DEFAULT_RESOURCES_DIR.length());
+        } else if (relativeFxmlIdx >= 0) {
+            classpathLocation = fxmlFile
+                    .substring(relativeFxmlIdx + factoryConfig.getRelativeFXMLResourcesDirectory().length());
         } else {
             classpathLocation = Path.of(fxmlFile).getFileName().toString();
         }

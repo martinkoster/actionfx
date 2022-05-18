@@ -32,8 +32,7 @@ import java.lang.annotation.Target;
 import javafx.scene.Parent;
 
 /**
- * Annotation for ActionFX controllers to associate and manage a view together
- * with it.
+ * Annotation for ActionFX controllers to associate and manage a view together with it.
  *
  * @author MartinKoster
  *
@@ -43,136 +42,122 @@ import javafx.scene.Parent;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXController {
 
-	/**
-	 * The ID of the view. Must be unique among all views of this application.
-	 *
-	 * @return the view ID
-	 */
-	public String viewId();
+    /**
+     * The ID of the view. Must be unique among all views of this application.
+     *
+     * @return the view ID
+     */
+    public String viewId();
 
-	/**
-	 * Path to the FXML file to load for this view. Path is relative to the
-	 * application's classpath. In case you have your view not in an FXML file, but
-	 * implemented in an individual class, please refer to attribute
-	 * {@link #viewClass()}.
-	 *
-	 * @return the path to the FXML file
-	 */
-	public String fxml() default "";
+    /**
+     * Path to the FXML file to load for this view. Path is relative to the application's classpath. In case you have
+     * your view not in an FXML file, but implemented in an individual class, please refer to attribute
+     * {@link #viewClass()}.
+     *
+     * @return the path to the FXML file
+     */
+    public String fxml() default "";
 
-	/**
-	 * Alternatively to the {@link #fxml()} attribute for defining a view's scene
-	 * graph, it is also possible to load a view from a specified class. A view
-	 * class specified under this location must be derived from {@link Parent}.
-	 *
-	 * @return the class holding the view
-	 */
-	public Class<? extends Parent> viewClass() default Parent.class;
+    /**
+     * Alternatively to the {@link #fxml()} attribute for defining a view's scene graph, it is also possible to load a
+     * view from a specified class. A view class specified under this location must be derived from {@link Parent}.
+     *
+     * @return the class holding the view
+     */
+    public Class<? extends Parent> viewClass() default Parent.class;
 
-	/**
-	 * Specifies whether this view is a modal dialog or a regular window. Default is
-	 * <tt>false</tt>.
-	 *
-	 * @return <tt>true</tt>, if this view is a modal dialogue, <tt>false</tt>
-	 *         otherwise.
-	 */
-	public boolean modal() default false;
+    /**
+     * Specifies whether this view is a modal dialog or a regular window. Default is <tt>false</tt>.
+     *
+     * @return <tt>true</tt>, if this view is a modal dialogue, <tt>false</tt> otherwise.
+     */
+    public boolean modal() default false;
 
-	/**
-	 * Specifies whether this view shall be displayed maxized or not. Default is
-	 * <tt>false</tt>.
-	 *
-	 * @return <tt>true</tt>, whether the view shall be maximized, <tt>false</tt>
-	 *         otherwise.
-	 */
-	public boolean maximized() default false;
+    /**
+     * Specifies whether this view shall be displayed maxized or not. Default is <tt>false</tt>.
+     *
+     * @return <tt>true</tt>, whether the view shall be maximized, <tt>false</tt> otherwise.
+     */
+    public boolean maximized() default false;
 
-	/**
-	 * The width of the view (however <tt>maximized</tt> has a higher priority).
-	 *
-	 * @return the width of the view
-	 */
-	public int width() default 200;
+    /**
+     * The width of the view (however <tt>maximized</tt> has a higher priority).
+     *
+     * @return the width of the view
+     */
+    public int width() default 200;
 
-	/**
-	 * The height of the window (however <tt>maximized</tt> has a higher priority).
-	 *
-	 * @return the height of the view
-	 */
-	public int height() default 100;
+    /**
+     * The height of the window (however <tt>maximized</tt> has a higher priority).
+     *
+     * @return the height of the view
+     */
+    public int height() default 100;
 
-	/**
-	 * The title to be displayed for the given view/window.
-	 *
-	 * @return the title of the window
-	 */
-	public String title() default "";
+    /**
+     * The title to be displayed for the given view/window.
+     *
+     * @return the title of the window
+     */
+    public String title() default "";
 
-	/**
-	 * The X position of the window on the screen.
-	 *
-	 * @return the X position
-	 */
-	public int posX() default 0;
+    /**
+     * The X position of the window on the screen.
+     *
+     * @return the X position
+     */
+    public int posX() default 0;
 
-	/**
-	 * The Y position of the window on the screen.
-	 *
-	 * @return the Y position
-	 */
-	public int posY() default 0;
+    /**
+     * The Y position of the window on the screen.
+     *
+     * @return the Y position
+     */
+    public int posY() default 0;
 
-	/**
-	 * The icon to be displayed in case the view is displayed in its own stage.
-	 *
-	 * @return the location of the icon
-	 */
-	public String icon() default "";
+    /**
+     * The icon to be displayed in case the view is displayed in its own stage.
+     *
+     * @return the location of the icon
+     */
+    public String icon() default "";
 
-	/**
-	 * Determines whether the view is managed as singleton or not. If the view is
-	 * not a singleton, the view is newly created whenever it is requested.
-	 *
-	 * @return {@code true}, if the view is managed as singleton, {@code false}, if
-	 *         there is a new view created every time the view is requested.
-	 */
-	public boolean singleton() default true;
+    /**
+     * Determines whether the view is managed as singleton or not. If the view is not a singleton, the view is newly
+     * created whenever it is requested.
+     *
+     * @return {@code true}, if the view is managed as singleton, {@code false}, if there is a new view created every
+     *         time the view is requested.
+     */
+    public boolean singleton() default true;
 
-	/**
-	 * Flag that controls the initialization of the view and controller. If set to
-	 * {@code true}, view components are lazily initialized at the point the view is
-	 * really required and requested to be used vie the view manager. If set to
-	 * {@link false}, the view components are initialized at the startup of the
-	 * ActionFX application, when the view manager is initialized. Although lazy
-	 * loading should be preferred, disabling of lazy loading makes sense, when you
-	 * want to have a fail-early fail-fast pattern and exceptions during view
-	 * initializations should/must be thrown at application startup (and not later,
-	 * when you already work with the application).
-	 *
-	 * @return {@code true} (default), when view components should be lazily
-	 *         initialized, {@code false} otherwise
-	 */
-	public boolean lazyInit() default true;
+    /**
+     * Flag that controls the initialization of the view and controller. If set to {@code true}, view components are
+     * lazily initialized at the point the view is really required and requested to be used vie the view manager. If set
+     * to {@code false}, the view components are initialized at the startup of the ActionFX application, when the view
+     * manager is initialized. Although lazy loading should be preferred, disabling of lazy loading makes sense, when
+     * you want to have a fail-early fail-fast pattern and exceptions during view initializations should/must be thrown
+     * at application startup (and not later, when you already work with the application).
+     *
+     * @return {@code true} (default), when view components should be lazily initialized, {@code false} otherwise
+     */
+    public boolean lazyInit() default true;
 
-	/**
-	 * Which stylesheets shall be applied to the scene? This array contains a list
-	 * of classpath locations to CSS files.
-	 *
-	 * @return a list of CSS classpath locations. Default is an empty array.
-	 */
-	public String[] stylesheets() default {};
+    /**
+     * Which stylesheets shall be applied to the scene? This array contains a list of classpath locations to CSS files.
+     *
+     * @return a list of CSS classpath locations. Default is an empty array.
+     */
+    public String[] stylesheets() default {};
 
-	/**
-	 * Defines the location of {@link java.util.ResourceBundle} files in case the
-	 * loaded view for the annotated controller relies on the presence of the
-	 * resource bundles for internationalization. Important to note for resource
-	 * properties is that you need to use the dot-notation to specify the location.
-	 * So for example the properties file reside in classpath location
-	 * <tt>/i18n/SomeResource_en_UK.properties</tt>, the appropriate
-	 * {@code #resourcesBasename()} would be <tt>i18n.SomeResource</tt>.
-	 *
-	 * @return the resource bundle base name using the dot-notation (package-based,
-	 *         not folder-based)
-	 */
-	public String resourcesBasename() default "";
+    /**
+     * Defines the location of {@link java.util.ResourceBundle} files in case the loaded view for the annotated
+     * controller relies on the presence of the resource bundles for internationalization. Important to note for
+     * resource properties is that you need to use the dot-notation to specify the location. So for example the
+     * properties file reside in classpath location <tt>/i18n/SomeResource_en_UK.properties</tt>, the appropriate
+     * {@code #resourcesBasename()} would be <tt>i18n.SomeResource</tt>.
+     *
+     * @return the resource bundle base name using the dot-notation (package-based, not folder-based)
+     */
+    public String resourcesBasename() default "";
 }

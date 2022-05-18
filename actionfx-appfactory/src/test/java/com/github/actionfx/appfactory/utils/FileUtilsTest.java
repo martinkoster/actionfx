@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +52,7 @@ class FileUtilsTest {
     void testCreateDirectories() throws IOException {
         // GIVEN
         final Path tmpPath = Files.createTempDirectory("temp");
-        final String folder = tmpPath.toAbsolutePath().toString() + "/hello/world";
+        final String folder = tmpPath.toString() + "/hello/world";
 
         // WHEN
         FileUtils.createDirectories(folder);
@@ -59,7 +60,7 @@ class FileUtilsTest {
         // THEN
         TestUtils.assertFileExists(folder);
         Files.delete(Path.of(folder));
-        Files.delete(Path.of(tmpPath.toAbsolutePath().toString() + "/hello"));
+        Files.delete(Path.of(tmpPath.toString() + "/hello"));
         Files.delete(tmpPath);
     }
 
@@ -69,11 +70,11 @@ class FileUtilsTest {
         final Path tmpPath = Files.createTempDirectory("temp");
 
         // WHEN
-        FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toAbsolutePath().toString());
+        FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toString());
 
         // THEN
-        TestUtils.assertFileExists(tmpPath.toAbsolutePath().toString() + "/hello.txt");
-        Files.delete(Path.of(tmpPath.toAbsolutePath().toString() + "/hello.txt"));
+        TestUtils.assertFileExists(tmpPath.toString() + "/hello.txt");
+        Files.delete(Path.of(tmpPath.toString() + "/hello.txt"));
         Files.delete(tmpPath);
     }
 
@@ -100,7 +101,7 @@ class FileUtilsTest {
     void testCopyClasspathFile_fileDoesNotExist() throws IOException {
         // GIVEN
         final Path tmpPath = Files.createTempDirectory("temp");
-        final String absoluteFolderPath = tmpPath.toAbsolutePath().toString();
+        final String absoluteFolderPath = tmpPath.toString();
 
         // WHEN
         final IllegalStateException ex = assertThrows(IllegalStateException.class,
@@ -115,15 +116,14 @@ class FileUtilsTest {
     void testReadFromFile() throws IOException {
         // GIVEN
         final Path tmpPath = Files.createTempDirectory("temp");
-        FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toAbsolutePath().toString());
+        FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toString());
 
         // WHEN
-        final String content = FileUtils.readFromFile(tmpPath.toAbsolutePath().toString() + "/hello.txt",
-                StandardCharsets.UTF_8);
+        final String content = FileUtils.readFromFile(tmpPath.toString() + "/hello.txt", StandardCharsets.UTF_8);
 
         // THEN
         assertThat(content, equalTo("Hello World!"));
-        Files.delete(Path.of(tmpPath.toAbsolutePath().toString() + "/hello.txt"));
+        Files.delete(Path.of(tmpPath.toString() + "/hello.txt"));
         Files.delete(tmpPath);
     }
 
@@ -200,5 +200,17 @@ class FileUtilsTest {
         TestUtils.assertFileExists(
                 Paths.get(Paths.get(tmpPath.toString(), "folder1").toString(), "text.txt").toString());
         TestUtils.assertFileExists(Paths.get(tmpPath.toString(), "README.txt").toString());
+    }
+
+    @Test
+    void testMakeExecutable() throws IOException {
+        // GIVEN
+        final Path tmpPath = Files.createTempDirectory("temp");
+        FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toString());
+        final File file = new File(Path.of(tmpPath.toString(), "hello.txt").toString());
+
+        // WHEN and THEN
+        assertThat(FileUtils.makeExecutable(file.getAbsolutePath()), equalTo(true));
+        assertThat(file.canExecute(), equalTo(true));
     }
 }
