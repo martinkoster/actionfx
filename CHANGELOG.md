@@ -2,18 +2,25 @@
 All notable changes to this project will be documented in this file.
 
 ## 1.5.0 ()
-- Support for a basic publish/subscribe mechanism for ActionFX controller methods using @AFXSubscribe
+
+### New Features
 - Introduced new module "actionfx-appfactory" with JavaFX app to generate new ActionFX projects and generate code for ActionFX controller based on existing FXML
+- Support for a basic publish/subscribe mechanism for ActionFX controller methods using @AFXSubscribe
 - Refactored usage of ActionFX' bean container - Method "ActionFX.scanForActionFXComponents()" no longer accepts a bean container instance.
 - Added autodetection for bean container to use - in case the "actionfx-spring-boot" module is on the classpath, ActionFX' "SpringBeanContainer" is automatically used (except autodetection is disabled via configuration or the "AFXApplication" annotation).
+
+### Bugfixes 
 - Fixed life-cycle bug for ActionFX controller in Spring (lazy initialization was not possible with Spring)
 - Fixed children lookup bug for Accordion (which does not have the "javafx.beans.DefaultProperty" annotation for some reason)
+- Fixed file extension filter issue in open file / save file dialogue: Extensions were not displayed.
+
+### Technical Upgrades
+- Upgraded build system to Gradle 7.4.2
+- Added Gitpod development support via own Dockerfile
 - Update dependencies:
  * JavaFX 17.0.1
  * Spring Boot to 2.6.7
  * Spring to 5.3.20
-- Upgraded build system to Gradle 7.4.2
-- Added Gitpod development support via own Dockerfile
  
 ## 1.4.0 (12.09.2021)
 - Support for mapping a custom domain object to form controls via @AFXFormBinding and @AFXFormMapping.

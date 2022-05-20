@@ -54,98 +54,101 @@ import javafx.scene.control.TableView;
 @AFXController(viewId = "bookCatalogueView", fxml = "/fxml/BookCatalogueView.fxml")
 public class BookCatalogueController {
 
-	@FXML
-	private CheckListView<String> categoriesCheckListView;
+    @FXML
+    private CheckListView<String> categoriesCheckListView;
 
-	// enable button, when user selects a book
-	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
-	@FXML
-	private Button addToShoppingCartButton;
+    // enable button, when user selects a book
+    @AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+    @FXML
+    private Button addToShoppingCartButton;
 
-	@AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
-	@AFXEnableMultiSelection
-	@AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
-	@AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
-	@AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
-	@FXML
-	private TableView<Book> bookTableView;
+    @AFXUseFilteredList(filterPredicateProperty = "catalogueFilterPredicateProperty")
+    @AFXEnableMultiSelection
+    @AFXCellValueConfig(colId = "titleColumn", propertyValue = "title")
+    @AFXCellValueConfig(colId = "categoryColumn", propertyValue = "category")
+    @AFXCellValueConfig(colId = "priceColumn", propertyValue = "price", stringConverter = DoubleCurrencyStringConverter.class)
+    @FXML
+    private TableView<Book> bookTableView;
 
-	// both, ActionFX' BeanContainer and Spring bean container know how to interpret
-	// this annotation
-	@Inject
-	private ShoppingCartController shoppingCartController;
+    // both, ActionFX' BeanContainer and Spring bean container know how to interpret
+    // this annotation
+    @Inject
+    private ShoppingCartController shoppingCartController;
 
-	// holds the predicate that filters our book table
-	private final ObjectProperty<Predicate<Book>> catalogueFilterPredicateProperty = new SimpleObjectProperty<>(
-			b -> true);
+    // holds the predicate that filters our book table
+    private final ObjectProperty<Predicate<Book>> catalogueFilterPredicateProperty = new SimpleObjectProperty<>(
+            b -> true);
 
-	@PostConstruct
-	public void initialize() {
-		categoriesCheckListView.getCheckModel().checkAll();
-	}
+    @PostConstruct
+    public void initialize() {
+        categoriesCheckListView.getCheckModel().checkAll();
+    }
 
-	@AFXLoadControlData(controlId = "categoriesCheckListView")
-	public List<String> loadCategories() {
-		return Arrays.asList("Thriller", "Science Fiction", "Fantasy", "Drama");
-	}
+    @AFXLoadControlData(controlId = "categoriesCheckListView")
+    public List<String> loadCategories() {
+        return Arrays.asList("Thriller", "Science Fiction", "Fantasy", "Drama");
+    }
 
-	@AFXLoadControlData(controlId = "bookTableView", async = true)
-	public List<Book> loadBooks() {
-		final List<Book> books = new ArrayList<>();
-		books.add(new Book("Sci-Fi Stories 3", "Science Fiction", 8.99));
-		books.add(new Book("Thrilling 2", "Thriller", 9.99));
-		books.add(new Book("Fantastic World", "Fantasy", 7.99));
-		books.add(new Book("Drama Queen", "Drama", 2.99));
-		return books;
-	}
+    @AFXLoadControlData(controlId = "bookTableView", async = true)
+    public List<Book> loadBooks() {
+        final List<Book> books = new ArrayList<>();
+        books.add(new Book("Sci-Fi Stories 3", "Science Fiction", 8.99));
+        books.add(new Book("Thrilling 2", "Thriller", 9.99));
+        books.add(new Book("Fantastic World", "Fantasy", 7.99));
+        books.add(new Book("Drama Queen", "Drama", 2.99));
+        return books;
+    }
 
-	/**
-	 * Immediately fired after the user changes the selection in the
-	 * "categoryCheckListView".
-	 *
-	 * @param selectedCategories the selected categories
-	 * @param filterText         the entered filter text (from the control
-	 *                           "filterTextField")
-	 */
-	@AFXOnControlValueChange(controlId = "categoriesCheckListView")
-	public void onCategoryChange(final List<String> selectedCategories,
-			@AFXControlValue("filterTextField") final String filterText) {
-		applyPredicate(filterText, selectedCategories);
-	}
+    /**
+     * Immediately fired after the user changes the selection in the "categoryCheckListView".
+     *
+     * @param selectedCategories
+     *            the selected categories
+     * @param filterText
+     *            the entered filter text (from the control "filterTextField")
+     */
+    @AFXOnControlValueChange(controlId = "categoriesCheckListView")
+    public void onCategoryChange(final List<String> selectedCategories,
+            @AFXControlValue("filterTextField") final String filterText) {
+        applyPredicate(filterText, selectedCategories);
+    }
 
-	/**
-	 * Triggered 400ms after the user typed something in the filter text field.
-	 *
-	 * @param filterText         the entered filter text
-	 * @param selectedCategories the selected categories (from control
-	 *                           "categoriesCheckListView")
-	 */
-	@AFXOnControlValueChange(controlId = "filterTextField", timeoutMs = 400)
-	public void onFilterChange(final String filterText,
-			@AFXControlValue("categoriesCheckListView") final List<String> selectedCategories) {
-		applyPredicate(filterText, selectedCategories);
-	}
+    /**
+     * Triggered 400ms after the user typed something in the filter text field.
+     *
+     * @param filterText
+     *            the entered filter text
+     * @param selectedCategories
+     *            the selected categories (from control "categoriesCheckListView")
+     */
+    @AFXOnControlValueChange(controlId = "filterTextField", timeoutMs = 400)
+    public void onFilterChange(final String filterText,
+            @AFXControlValue("categoriesCheckListView") final List<String> selectedCategories) {
+        applyPredicate(filterText, selectedCategories);
+    }
 
-	/**
-	 * Fired when the user clicks on button "Add to Shopping Cart". The selected
-	 * books are retrieved from control "bookTableView".
-	 *
-	 * @param selectedBooks the selected books from control "bookTableView"
-	 */
-	@AFXOnAction(nodeId = "addToShoppingCartButton")
-	public void addToShoppingCart(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
-		shoppingCartController.addToShoppingCart(selectedBooks);
-	}
+    /**
+     * Fired when the user clicks on button "Add to Shopping Cart". The selected books are retrieved from control
+     * "bookTableView".
+     *
+     * @param selectedBooks
+     *            the selected books from control "bookTableView"
+     */
+    @AFXOnAction(nodeId = "addToShoppingCartButton")
+    public void addToShoppingCart(@AFXControlValue("bookTableView") final List<Book> selectedBooks) {
+        shoppingCartController.addToShoppingCart(selectedBooks);
+    }
 
-	/**
-	 * Constructs and applies a predicate for filtering books.
-	 *
-	 * @param filterText         the filter text to be applied on the title
-	 * @param selectedCategories the categories
-	 * @return
-	 */
-	public void applyPredicate(final String filterText, final List<String> selectedCategories) {
-		final Predicate<Book> p = b -> selectedCategories.contains(b.getCategory());
-		catalogueFilterPredicateProperty.set(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
-	}
+    /**
+     * Constructs and applies a predicate for filtering books.
+     *
+     * @param filterText
+     *            the filter text to be applied on the title
+     * @param selectedCategories
+     *            the categories
+     */
+    public void applyPredicate(final String filterText, final List<String> selectedCategories) {
+        final Predicate<Book> p = b -> selectedCategories.contains(b.getCategory());
+        catalogueFilterPredicateProperty.set(p.and(b -> b.getTitle().toLowerCase().contains(filterText.toLowerCase())));
+    }
 }

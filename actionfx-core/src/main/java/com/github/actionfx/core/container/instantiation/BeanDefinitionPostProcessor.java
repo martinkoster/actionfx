@@ -32,45 +32,46 @@ import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.extension.beans.SubscribeMethodBeanExtension;
 
 /**
- * Post-processor for bean definitions after these are added to the bean
- * container.
+ * Post-processor for bean definitions after these are added to the bean container.
  *
  * @author koster
  *
  */
 public class BeanDefinitionPostProcessor {
 
-	private final List<BeanExtension> beanExtensions = new ArrayList<>();
+    private final List<BeanExtension> beanExtensions = new ArrayList<>();
 
-	public BeanDefinitionPostProcessor(final PriorityAwareEventBus eventBus) {
-		this(eventBus, Collections.emptyList());
-	}
+    public BeanDefinitionPostProcessor(final PriorityAwareEventBus eventBus) {
+        this(eventBus, Collections.emptyList());
+    }
 
-	public BeanDefinitionPostProcessor(final PriorityAwareEventBus eventBus,
-			final List<BeanExtension> customBeanExtensions) {
-		beanExtensions.add(new SubscribeMethodBeanExtension(eventBus));
+    public BeanDefinitionPostProcessor(final PriorityAwareEventBus eventBus,
+            final List<BeanExtension> customBeanExtensions) {
+        beanExtensions.add(new SubscribeMethodBeanExtension(eventBus));
 
-		// add the custom controller extensions
-		beanExtensions.addAll(customBeanExtensions);
-	}
+        // add the custom controller extensions
+        beanExtensions.addAll(customBeanExtensions);
+    }
 
-	/**
-	 * Performs a post-processing on the supplied bean definition for
-	 * {@code beanClass}
-	 *
-	 * @param beanClass the bean class / type
-	 * @param beanId    the bean Id / name
-	 * @param flag      that indicates whether the given bean is a singleton or not
-	 * @param flag      that indicates whether the given bean is lazily initialized
-	 *                  or not
-	 *
-	 */
-	public void postProcess(final Class<?> beanClass, final String beanId, final boolean singleton,
-			final boolean lazyInit) {
-		beanExtensions.forEach(extension -> extension.extendBean(beanClass, beanId, singleton, lazyInit));
-	}
+    /**
+     * Performs a post-processing on the supplied bean definition for {@code beanClass}
+     *
+     * @param beanClass
+     *            the bean class / type
+     * @param beanId
+     *            the bean Id / name
+     * @param singleton
+     *            flag that indicates whether the given bean is a singleton or not
+     * @param lazyInit
+     *            flag that indicates whether the given bean is lazily initialized or not
+     *
+     */
+    public void postProcess(final Class<?> beanClass, final String beanId, final boolean singleton,
+            final boolean lazyInit) {
+        beanExtensions.forEach(extension -> extension.extendBean(beanClass, beanId, singleton, lazyInit));
+    }
 
-	public List<BeanExtension> getUnmodifiableBeanExtensions() {
-		return Collections.unmodifiableList(beanExtensions);
-	}
+    public List<BeanExtension> getUnmodifiableBeanExtensions() {
+        return Collections.unmodifiableList(beanExtensions);
+    }
 }

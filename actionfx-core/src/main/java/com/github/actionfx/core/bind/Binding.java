@@ -28,34 +28,31 @@ package com.github.actionfx.core.bind;
  *
  * @author koster
  *
- * @param <S> the binding source type
- * @param <T> the binding target type
  */
 public interface Binding {
 
-	/**
-	 * Performs a binding.
-	 */
-	void bind();
+    /**
+     * Performs a binding.
+     */
+    void bind();
 
-	/**
-	 * Performs an unbinding.
-	 */
-	void unbind();
+    /**
+     * Performs an unbinding.
+     */
+    void unbind();
 
-	/**
-	 * Returns the binding type.
-	 *
-	 * @return the binding type.
-	 */
-	BindingType getBindingType();
+    /**
+     * Returns the binding type.
+     *
+     * @return the binding type.
+     */
+    BindingType getBindingType();
 
-	/**
-	 * Returns the binding state of this {@link Binding}.
-	 *
-	 * @return {@code true}, if the binding is currently established, {@code false},
-	 *         if there is no binding established.
-	 */
-	boolean isBound();
+    /**
+     * Returns the binding state of this {@link Binding}.
+     *
+     * @return {@code true}, if the binding is currently established, {@code false}, if there is no binding established.
+     */
+    boolean isBound();
 
 }

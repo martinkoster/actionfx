@@ -31,9 +31,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.actionfx.appfactory.config.ControllerFactoryConfig;
 import com.github.actionfx.appfactory.config.MainAppFactoryConfig;
 import com.github.actionfx.appfactory.factories.ControllerFactory;
@@ -70,8 +67,6 @@ import javafx.scene.control.TextField;
 @AFXController(viewId = "appFactoryView", fxml = "/fxml/AppFactoryView.fxml", title = "ActionFX AppFactory", width = 600, height = 640)
 public class AppFactoryController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AppFactoryController.class);
-
     @FXML
     private Accordion mainAppAccordion;
 
@@ -93,9 +88,6 @@ public class AppFactoryController {
 
     @FXML
     protected Button loadProjectFxmlButton;
-
-    @FXML
-    protected TextField projectControllerPackageNameTextField;
 
     @FXML
     protected TextField projectFxmlTextField;
@@ -137,7 +129,6 @@ public class AppFactoryController {
     @AFXFormBinding
     @AFXFormMapping(controlId = "rootDirectoryTextField", propertyName = "absoluteProjectRootDirectory")
     @AFXFormMapping(controlId = "projectFxmlTextField", propertyName = "absoluteFxmlFilePath")
-    @AFXFormMapping(controlId = "controllerPackageNameTextField", propertyName = "controllerPackageName")
     private ObjectProperty<ControllerFactoryConfig> mainAppControllerFactoryConfigProperty = new SimpleObjectProperty<>(
             new ControllerFactoryConfig());
 
@@ -165,7 +156,6 @@ public class AppFactoryController {
     public void onExistingFxmlRadioButtonChange(final boolean value) {
         loadProjectFxmlButton.setDisable(!value);
         projectFxmlTextField.setDisable(!value);
-        projectControllerPackageNameTextField.setDisable(!value);
     }
 
     @AFXOnAction(nodeId = "createNewProjectButton", async = true)
@@ -182,7 +172,6 @@ public class AppFactoryController {
                                     + "' in folder '" + mainAppFactoryConfig.getAbsoluteProjectRootDirectory() + "'!",
                             ""));
         } catch (final Exception e) {
-            LOG.error("Error generating project", e);
             AFXUtils.runInFxThread(() -> actionFX.showErrorDialog("Error",
                     "Error generating project, error message: " + e.getMessage(), ""));
         }
@@ -198,7 +187,6 @@ public class AppFactoryController {
                     () -> actionFX.showInformationDialog("Success", "Successfully created controller in directory '"
                             + standaloneControllerConfig.getAbsoluteControllerDirectory() + "'!", ""));
         } catch (final Exception e) {
-            LOG.error("Error generating controller", e);
             AFXUtils.runInFxThread(() -> actionFX.showErrorDialog("Error",
                     "Error generating controller, error message: " + e.getMessage(), ""));
         }

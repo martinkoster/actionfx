@@ -277,7 +277,7 @@ class DialogControllerTest {
 		verify(wrapper).setTitle(eq("Title"));
 		verify(wrapper).setInitialDirectory(eq(folder));
 		verify(wrapper).setInitialFileName(eq("initial.txt"));
-		verify(wrapper).setSelectedExtensionFilter(eq(filter));
+		verify(wrapper).addSelectedExtensionFilter(eq(filter));
 		verify(wrapper).showOpenDialog(eq(owner));
 	}
 
@@ -312,7 +312,7 @@ class DialogControllerTest {
 		verify(wrapper).setTitle(eq("Title"));
 		verify(wrapper).setInitialDirectory(eq(folder));
 		verify(wrapper).setInitialFileName(eq("initial.txt"));
-		verify(wrapper).setSelectedExtensionFilter(eq(filter));
+		verify(wrapper).addSelectedExtensionFilter(eq(filter));
 		verify(wrapper).showSaveDialog(eq(owner));
 	}
 

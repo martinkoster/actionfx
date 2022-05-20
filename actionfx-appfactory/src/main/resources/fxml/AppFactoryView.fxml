@@ -161,12 +161,6 @@
                                                             </Button>
                                                          </children>
                                                       </HBox>
-                                                      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
-                                                         <children>
-                                                            <Label prefWidth="170.0" text="Controller Package Name:" />
-                                                            <TextField fx:id="projectControllerPackageNameTextField" disable="true" prefWidth="400.0" />
-                                                         </children>
-                                                      </HBox>
                                                    </children>
                                                 </VBox>
                                              </children>
