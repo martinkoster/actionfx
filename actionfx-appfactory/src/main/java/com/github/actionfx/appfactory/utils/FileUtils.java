@@ -208,7 +208,7 @@ public class FileUtils {
         final byte[] buffer = new byte[1024];
         final ZipInputStream zis = new ZipInputStream(inputStream);
         try {
-            ZipEntry zipEntry = zis.getNextEntry();
+            ZipEntry zipEntry = zis.getNextEntry(); // NOSONAR zip-file source is trusted. no "big-file" injection possible.
             while (zipEntry != null) {
                 final File newFile = newFile(destDir, zipEntry);
                 if (zipEntry.isDirectory()) {
@@ -216,7 +216,7 @@ public class FileUtils {
                 } else {
                     unzipFile(zis, newFile, buffer);
                 }
-                zipEntry = zis.getNextEntry();
+                zipEntry = zis.getNextEntry(); // NOSONAR zip-file source is trusted. no "big-file" injection possible.
 
             }
             zis.closeEntry();
