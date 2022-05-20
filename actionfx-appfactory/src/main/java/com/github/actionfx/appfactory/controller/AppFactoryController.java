@@ -68,7 +68,7 @@ import javafx.scene.control.TextField;
 public class AppFactoryController {
 
     @FXML
-    private Accordion mainAppAccordion;
+    protected Accordion mainAppAccordion;
 
     @AFXEnableNode(whenAllContolsHaveUserValues = { "groupIdTextField", "projectNameTextField",
             "rootDirectoryTextField", "mainAppClassNameTextField", "rootPackageNameTextField" })

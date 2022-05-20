@@ -5,6 +5,7 @@ plugins {
 description = "actionfx-appfactory: This module contains a scaffolding tool to setup new ActionFX applications quickly."
 
 jar {
+	dependsOn(':actionfx-core:jar')
     manifest {
         attributes 'Main-Class': 'com.github.actionfx.appfactory.ActionFXAppFactory'
     }
@@ -15,7 +16,7 @@ jar {
         }
     }
 }
-	
+ 	
 dependencies {
 	
         // JAVAFX DEPENDENCIES    
