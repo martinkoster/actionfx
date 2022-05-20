@@ -1,9 +1,20 @@
 plugins {
     id("org.openjfx.javafxplugin") version "${javafxPluginVersion}"
-    id "library-publishing-conventions"
 }
 
-description = "actionfx-appfactory: This module contains command line tools to setup new ActionFX applications quickly."
+description = "actionfx-appfactory: This module contains a scaffolding tool to setup new ActionFX applications quickly."
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.github.actionfx.appfactory.ActionFXAppFactory'
+    }
+    from {
+        configurations.runtimeClasspath.collect {
+            duplicatesStrategy = 'exclude'
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
 	
 dependencies {
 	
@@ -42,6 +53,3 @@ integrationTest {
     	maxParallelForks = 1       
 }
 
-sonarqube {
-    skipProject = true
-}

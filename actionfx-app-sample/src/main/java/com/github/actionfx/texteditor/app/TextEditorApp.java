@@ -36,13 +36,13 @@ import javafx.application.Application;
  */
 public class TextEditorApp {
 
-	public static void main(final String[] argv) {
-		Application.launch(SampleActionFXApplication.class);
-	}
+    public static void main(final String[] argv) {
+        Application.launch(SampleActionFXApplication.class);
+    }
 
-	@AFXApplication(mainViewId = "textEditorDemoView", scanPackage = "com.github.actionfx.texteditor.controller")
-	public static class SampleActionFXApplication extends AbstractAFXApplication {
+    @AFXApplication(mainViewId = "textEditorDemoView", scanPackage = "com.github.actionfx.texteditor.controller", enableBeanContainerAutodetection = false)
+    public static class SampleActionFXApplication extends AbstractAFXApplication {
 
-	}
+    }
 
 }

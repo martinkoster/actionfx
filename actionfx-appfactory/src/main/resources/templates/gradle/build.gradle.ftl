@@ -180,8 +180,10 @@ jar {
         attributes 'Main-Class': '${packageName}.${mainAppClassName}'
     }
     from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-        duplicatesStrategy = 'include'
+        configurations.runtimeClasspath.collect {
+            duplicatesStrategy = 'exclude'
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
 }
 </#if>
