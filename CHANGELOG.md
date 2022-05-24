@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 ### Technical Upgrades
 - Upgraded build system to Gradle 7.4.2
 - Added Gitpod development support via own Dockerfile
-- Update dependencies:
+- Updated dependencies:
   * JavaFX 17.0.1
   * Spring Boot to 2.6.7
   * Spring to 5.3.20
