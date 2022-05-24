@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 1.5.0 ()
+## 1.5.0 (24.05.2022)
 
 ### New Features
 - Introduced new module "actionfx-appfactory" with JavaFX app to generate new ActionFX projects and generate code for ActionFX controller based on existing FXML
