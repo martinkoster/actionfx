@@ -18,7 +18,7 @@ Under the accordion tab "Create a new ActionFX project using Gradle", you can en
 
 For the new project, you can decide if a an empty main view shall be generated (which just consists out of an basic FXML file you can adjust afterwards), or if you want to use an already existing FXML file as main view. In the latter case, the existing FXML file will be copied into the new project, as it must be accessible through the classpath of the application.
 
-##ä Create a new ActionFX Controller based on an existing FXML
+### Create a new ActionFX Controller based on an existing FXML
 
 Under the accordion tab "Create ActionFX Controller based on existing FXML", you can create a controller from an existing FXML file, where all JavaFX nodes containing an ID are already injected into the created controller via `@FXML`. Additionally, controls having an `onAction` property will be referenced from the controller and methods for the actions are also created.
  
