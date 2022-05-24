@@ -209,10 +209,6 @@ gitPublish {
 		from("${rootProject.projectDir}/build/docs/${version}") {
 			into "docs/${version}"
 		}
-		from("${rootProject.projectDir}/actionfx-appfactory/build/libs/actionfx-appfactory-${version}.jar") {
-			into "binaries/${version}"
-		}
-		
 	}
 		
 	// what to keep in the existing branch (include=keep)
