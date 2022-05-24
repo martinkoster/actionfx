@@ -23,10 +23,14 @@
  */
 package com.github.actionfx.spring.container;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,11 +93,14 @@ class SpringBeanContainerTest {
 
 	@BeforeEach
 	void onSetup() {
-		container = new SpringBeanContainer(registry, appContext);
+		container = new SpringBeanContainer();
 	}
 
 	@Test
 	void testRunComponentScan() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
 		// WHEN
 		container.runComponentScan(SampleApp.class.getPackageName());
 
@@ -103,28 +110,97 @@ class SpringBeanContainerTest {
 		final List<BeanDefinition> beanDefinitions = beanDefinitionCaptor.getAllValues();
 		assertThat(beanNames, contains("mainController", "mainView", "prototypeScopedController", "prototypeView",
 				"viewWithButtonController", "viewWithButton"));
-		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false);
-		assertBeanDefinitionFor(beanDefinitions.get(3), View.class, false);
-		assertBeanDefinitionFor(beanDefinitions.get(4), ViewWithButtonController.class, true);
-		assertBeanDefinitionFor(beanDefinitions.get(5), View.class, true);
+		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true, false);
+		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true, false);
+		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false, true);
+		assertBeanDefinitionFor(beanDefinitions.get(3), View.class, false, true);
+		assertBeanDefinitionFor(beanDefinitions.get(4), ViewWithButtonController.class, true, true);
+		assertBeanDefinitionFor(beanDefinitions.get(5), View.class, true, true);
+	}
+
+	@Test
+	void testRunComponentScan_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.runComponentScan(SampleApp.class.getPackageName()));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
 	}
 
 	@Test
 	void addBeanDefinition() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
 		// WHEN
 		container.addBeanDefinition("mainController", MainController.class, true, true, MainController::new);
 
 		// THEN
 		verify(registry, times(1)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
 		assertThat(beanNameCaptor.getValue(), equalTo("mainController"));
-		assertBeanDefinitionFor(beanDefinitionCaptor.getValue(), MainController.class, true);
+		assertBeanDefinitionFor(beanDefinitionCaptor.getValue(), MainController.class, true, true);
+	}
+
+	@Test
+	void testAddBeanDefinition_springNotYetInitialized() {
+		// WHEN Spring is not yet initionilized
+		container.addBeanDefinition("mainController", MainController.class, true, true, MainController::new);
+
+		// AND WHEN Spring is initialized
+		container.onSpringContextAvailable(registry, appContext);
+
+		// THEN
+		verify(registry, times(1)).registerBeanDefinition(eq("mainController"), any());
+	}
+
+	@Test
+	void addControllerBeanDefinition() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
+		// WHEN
+		container.addControllerBeanDefinition(MainController.class);
+
+		// THEN
+		verify(registry, times(2)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
+		assertThat(beanNameCaptor.getAllValues().get(0), equalTo("mainController"));
+		assertBeanDefinitionFor(beanDefinitionCaptor.getAllValues().get(0), MainController.class, true, false);
+		assertThat(beanNameCaptor.getAllValues().get(1), equalTo("mainView"));
+	}
+
+	@Test
+	void testAddControllerBeanDefinition_springNotYetInitialized() {
+		// GIVEN
+		final ArgumentCaptor<String> nameCaptor = ArgumentCaptor.forClass(String.class);
+
+		// WHEN Spring is not yet initialized
+		container.addControllerBeanDefinition(MainController.class);
+
+		// AND WHEN Spring is initialized
+		container.onSpringContextAvailable(registry, appContext);
+
+		// THEN
+		verify(registry, times(2)).registerBeanDefinition(nameCaptor.capture(), any());
+		assertThat(nameCaptor.getAllValues(), contains("mainController", "mainView"));
+	}
+
+	@Test
+	void addControllerBeanDefinition_classIsNotAController() {
+		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
+
+		// WHEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> container.addControllerBeanDefinition(NonController.class));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("is not annotated by @AFXController!"));
 	}
 
 	@Test
 	void getBean_byName() {
 		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
 		final MainController controller = new MainController();
 		when(appContext.getBean(ArgumentMatchers.eq("mainController"))).thenReturn(controller);
 
@@ -134,8 +210,18 @@ class SpringBeanContainerTest {
 	}
 
 	@Test
+	void testGetBean_byName_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.getBean("mainController"));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+	}
+
+	@Test
 	void getBean_byClass() {
 		// GIVEN
+		container.onSpringContextAvailable(registry, appContext);
 		final MainController controller = new MainController();
 		when(appContext.getBean(ArgumentMatchers.eq(MainController.class))).thenReturn(controller);
 
@@ -144,9 +230,23 @@ class SpringBeanContainerTest {
 		verify(appContext, times(1)).getBean(ArgumentMatchers.eq(MainController.class));
 	}
 
+	@Test
+	void testGetBean_byClass_springNotYetInitialized() {
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> container.getBean(MainController.class));
+
+		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+	}
+
 	private void assertBeanDefinitionFor(final BeanDefinition definition, final Class<?> beanClass,
-			final boolean singleton) {
+			final boolean singleton, final boolean lazyInit) {
 		assertThat(definition.getBeanClassName(), equalTo(beanClass.getCanonicalName()));
 		assertThat(definition.isSingleton(), equalTo(singleton));
+		assertThat(definition.isLazyInit(), equalTo(lazyInit));
+	}
+
+	public static class NonController {
+
 	}
 }

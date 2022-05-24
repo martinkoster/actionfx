@@ -32,17 +32,17 @@ import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXNestedView.AFXNestedViews;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXOnControlValueChange;
-import com.github.actionfx.core.container.extension.CellValueConfigControllerExtension;
-import com.github.actionfx.core.container.extension.ConverterControllerExtension;
-import com.github.actionfx.core.container.extension.DisableNodeControllerExtension;
-import com.github.actionfx.core.container.extension.EnableMultiSelectionControllerExtension;
-import com.github.actionfx.core.container.extension.EnableNodeControllerExtension;
-import com.github.actionfx.core.container.extension.FormBindingControllerExtension;
-import com.github.actionfx.core.container.extension.NestedViewControllerExtension;
-import com.github.actionfx.core.container.extension.OnActionMethodControllerExtension;
-import com.github.actionfx.core.container.extension.OnControlValueChangeMethodControllerExtension;
-import com.github.actionfx.core.container.extension.OnLoadControlDataMethodControllerExtension;
-import com.github.actionfx.core.container.extension.UseFilteredListControllerExtension;
+import com.github.actionfx.core.extension.controller.CellValueConfigControllerExtension;
+import com.github.actionfx.core.extension.controller.ConverterControllerExtension;
+import com.github.actionfx.core.extension.controller.DisableNodeControllerExtension;
+import com.github.actionfx.core.extension.controller.EnableMultiSelectionControllerExtension;
+import com.github.actionfx.core.extension.controller.EnableNodeControllerExtension;
+import com.github.actionfx.core.extension.controller.FormBindingControllerExtension;
+import com.github.actionfx.core.extension.controller.NestedViewControllerExtension;
+import com.github.actionfx.core.extension.controller.OnActionMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.OnControlValueChangeMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.OnLoadControlDataMethodControllerExtension;
+import com.github.actionfx.core.extension.controller.UseFilteredListControllerExtension;
 
 /**
  * Post-processor for controller instances that is invoked after view creation
@@ -98,6 +98,12 @@ public class ControllerInstancePostProcessor {
 	 * @param view     the view that belongs to the controller
 	 */
 	private void applyControllerExtensions(final Object instance) {
-		controllerExtensions.forEach(extension -> extension.accept(instance));
+		for (final Consumer<Object> extension : controllerExtensions) {
+			extension.accept(instance);
+		}
+	}
+
+	public List<Consumer<Object>> getUnmodifiableControllerExtensions() {
+		return Collections.unmodifiableList(controllerExtensions);
 	}
 }

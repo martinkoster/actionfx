@@ -55,4 +55,16 @@ public @interface AFXApplication {
 	 * @return the ID of the main view.
 	 */
 	public String mainViewId();
+
+	/**
+	 * Flag that determines whether the best bean container implementation shall be
+	 * determined automatically. Autodetection is enabled by default. If the flag is
+	 * disabled, ActionFX default bean container will be internally used. In case
+	 * autodetection is enabled and the module {@code afx-spring-boot} is on the
+	 * classpath, the Spring container is used as ActionFX's bean container.
+	 *
+	 * @return flag that determines whether the bean container implementation shall
+	 *         be autodetected or not. Default is {@code true}.
+	 */
+	public boolean enableBeanContainerAutodetection() default true;
 }

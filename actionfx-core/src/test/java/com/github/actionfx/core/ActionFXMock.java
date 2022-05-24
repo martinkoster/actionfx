@@ -26,7 +26,7 @@ package com.github.actionfx.core;
 import java.util.Locale;
 
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -44,9 +44,9 @@ public class ActionFXMock extends ActionFX {
 	 */
 	public ActionFXMock() {
 		instance = this;
-		beanContainer = new DefaultBeanContainer();
+		beanContainer = new DefaultActionFXBeanContainer();
 		observableLocale = new SimpleObjectProperty<>(Locale.US);
-		addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+		addBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME, new ConversionService());
 		setStateConfigured();
 	}
 

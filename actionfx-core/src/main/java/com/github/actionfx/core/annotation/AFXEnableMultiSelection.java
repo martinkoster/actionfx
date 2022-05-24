@@ -29,11 +29,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that can be applied at field level on a {@link Control}, in order
- * to enable a multi-selection on that annotated control.
+ * Annotation that can be applied at field level on a {@link javafx.scene.control.Control}, in order to enable a
+ * multi-selection on that annotated control.
  * <p>
- * This annotation can be e.g. applied to a {@link TableView} field, so that the
- * user can select multiple entries in that table view.
+ * This annotation can be e.g. applied to a {@link javafx.scene.control.TableView} field, so that the user can select
+ * multiple entries in that table view.
  *
  * @author koster
  *

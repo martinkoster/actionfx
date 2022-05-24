@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
@@ -400,6 +401,65 @@ class ReflectionUtilsTest {
 	void testDecapitalizeBeanProperty() {
 		assertThat(ReflectionUtils.decapitalizeBeanProperty("JavaBeanProperty"), equalTo("javaBeanProperty"));
 		assertThat(ReflectionUtils.decapitalizeBeanProperty("JProperty"), equalTo("JProperty"));
+	}
+
+	@Test
+	void testResolveClassName_classExists_noClassLoaderProvided_useThreadContextClassLoader() {
+		// WHEN
+		final Class<?> clazz = ReflectionUtils.resolveClassName("com.github.actionfx.core.utils.ReflectionUtils", null);
+
+		// THEN
+		assertThat(clazz, notNullValue());
+		assertThat(clazz, equalTo(ReflectionUtils.class));
+	}
+
+	@Test
+	void testResolveClassName_classExists_classLoaderProvided() {
+		// WHEN
+		final Class<?> clazz = ReflectionUtils.resolveClassName("com.github.actionfx.core.utils.ReflectionUtils",
+				ReflectionUtilsTest.class.getClassLoader());
+
+		// THEN
+		assertThat(clazz, notNullValue());
+		assertThat(clazz, equalTo(ReflectionUtils.class));
+	}
+
+	@Test
+	void testResolveClassName_classDoesNotExist() {
+		// WHEN
+		final Class<?> clazz = ReflectionUtils.resolveClassName("com.fantasy.NonExistingClass", null);
+
+		// THEN
+		assertThat(clazz, nullValue());
+	}
+
+	@Test
+	void testResolveClassName_internalClassExists() {
+		// WHEN
+		final Class<?> clazz = ReflectionUtils
+				.resolveClassName("com.github.actionfx.core.utils.ReflectionUtilsTest$ClassWithField", null);
+
+		// THEN
+		assertThat(clazz, notNullValue());
+		assertThat(clazz, equalTo(ClassWithField.class));
+	}
+
+	@Test
+	void testGetDefaultClassLoader_contextClassLoader() {
+		assertThat(ReflectionUtils.getDefaultClassLoader(), equalTo(Thread.currentThread().getContextClassLoader()));
+	}
+
+	@Test
+	void testGetDefaultClassLoader_currentClassLoader() {
+		// GIVEN
+		final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(null);
+
+		// WHEN and THEN
+		assertThat(ReflectionUtils.getDefaultClassLoader(), equalTo(ReflectionUtilsTest.class.getClassLoader()));
+
+		// set the context loader back to the current thread
+		Thread.currentThread().setContextClassLoader(cl);
 	}
 
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {

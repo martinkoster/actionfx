@@ -1,0 +1,52 @@
+plugins {
+    id("org.openjfx.javafxplugin") version "${javafxPluginVersion}"
+}
+
+description = "actionfx-appfactory: This module contains a scaffolding tool to setup new ActionFX applications quickly."
+
+jar {
+	dependsOn(':actionfx-core:jar')
+    manifest {
+        attributes 'Main-Class': 'com.github.actionfx.appfactory.ActionFXAppFactory'
+    }
+    from {
+        configurations.runtimeClasspath.collect {
+            duplicatesStrategy = 'exclude'
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+ 	
+dependencies {
+	
+        // JAVAFX DEPENDENCIES    
+        javafx {
+            version = "${javafxVersion}"
+            modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
+        }
+
+        implementation project(":actionfx-core")
+        
+		implementation group: 'org.freemarker', name: 'freemarker', version: "${freemarkerVersion}"
+        
+        testImplementation project(":actionfx-testing")
+
+        testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
+    	testImplementation group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
+    	testImplementation group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
+
+		testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
+		testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
+
+}
+
+test {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+
+integrationTest {    
+		forkEvery = 1
+    	maxParallelForks = 1       
+}
+

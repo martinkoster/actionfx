@@ -25,6 +25,7 @@ package com.github.actionfx.core.view;
 
 import static com.github.actionfx.core.test.utils.TestUtils.assertControlHasUserValue;
 import static com.github.actionfx.core.test.utils.TestUtils.enterValue;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -32,6 +33,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -187,6 +189,35 @@ class FxmlViewTest {
 
 		// THEN
 		assertThat(parent.getChildren(), hasSize(0));
+	}
+
+	@Test
+	void testReattachView() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+		final AnchorPane parent = new AnchorPane();
+		view.attachViewToParent(parent, NodeWrapper.anchorPaneFillingAttacher());
+		view.detachView();
+		assertThat(parent.getChildren(), hasSize(0));
+
+		// WHEN
+		view.reattachView();
+
+		// THEN
+		assertThat(parent.getChildren(), hasSize(1));
+		assertThat(parent.getChildren().get(0), sameInstance(view.getRootNode()));
+	}
+
+	@Test
+	void testReattachView_viewHasNotBeenAttachedBefore() {
+		// GIVEN
+		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
+
+		// WHEN
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> view.reattachView());
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Can not re-attach view"));
 	}
 
 	@Test

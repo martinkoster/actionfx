@@ -34,7 +34,7 @@ import com.github.actionfx.core.view.FxmlView;
  * @author koster
  *
  */
-@AFXController(fxml = "/testfxml/SampleView.fxml", viewId = "mainView")
+@AFXController(fxml = "/testfxml/SampleView.fxml", viewId = "mainView", lazyInit = false)
 public class MainController extends AbstractController {
 
 	// field that is resolved by the Spring container. The field has the same name

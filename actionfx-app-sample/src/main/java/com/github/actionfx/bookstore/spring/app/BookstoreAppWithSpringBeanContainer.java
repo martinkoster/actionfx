@@ -46,7 +46,7 @@ public class BookstoreAppWithSpringBeanContainer {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller", enableBeanContainerAutodetection = true)
 	public static class SampleActionFXApplication extends Application {
 
 		@Override

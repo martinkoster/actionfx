@@ -31,9 +31,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Annotated methods are invoked when the node or control specified with fires
- * {@link ActionEvent}. This is e.g. when the user clicks on
- * {@link javafx.scene.control.Button}.
+ * Annotated methods are invoked when the node or control specified with fires {@link javafx.event.ActionEvent}. This is
+ * e.g. when the user clicks on {@link javafx.scene.control.Button}.
  * <p>
  * Annotated methods can be of the following signature:
  * <ul>
@@ -44,8 +43,7 @@ import java.lang.annotation.Target;
  * <ul>
  * <li><tt>void methodName(@AFXControlValue("usernameTextField") String username)</tt></li>
  * </ul>
- * In this case, the user value entered in text field with ID
- * 'usernameTextField' will be injected as method argument.
+ * In this case, the user value entered in text field with ID 'usernameTextField' will be injected as method argument.
  *
  * @author koster
  *
@@ -55,26 +53,22 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface AFXOnAction {
 
-	/**
-	 * ID of the node whose action property shall be set to execute the annotated
-	 * method.
-	 *
-	 * @return the node ID, whose action property will invoke the annotated method.
-	 */
-	public String nodeId();
+    /**
+     * ID of the node whose action property shall be set to execute the annotated method.
+     *
+     * @return the node ID, whose action property will invoke the annotated method.
+     */
+    public String nodeId();
 
-	/**
-	 * Optional flag that determines, whether the annotated method shall be executed
-	 * in an asynchronous fashion. When set to {@code true}, the annotated method is
-	 * not executed inside the JavaFX-thread, but in its own thread in order not to
-	 * block the JavaFX thread. In case that UI components need to be updated in the
-	 * method, the update itself needs to be run with
-	 * {@link javafx.application.Platform#runLater(Runnable)}.
-	 *
-	 * @return {@code true},if method execution shall be performed from a new
-	 *         thread, {@code false}, if the method shall be executed synchronously
-	 *         inside the JavaFX thread. Default is {@code false}.
-	 */
-	public boolean async() default false;
+    /**
+     * Optional flag that determines, whether the annotated method shall be executed in an asynchronous fashion. When
+     * set to {@code true}, the annotated method is not executed inside the JavaFX-thread, but in its own thread in
+     * order not to block the JavaFX thread. In case that UI components need to be updated in the method, the update
+     * itself needs to be run with {@link javafx.application.Platform#runLater(Runnable)}.
+     *
+     * @return {@code true},if method execution shall be performed from a new thread, {@code false}, if the method shall
+     *         be executed synchronously inside the JavaFX thread. Default is {@code false}.
+     */
+    public boolean async() default false;
 
 }

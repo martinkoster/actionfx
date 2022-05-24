@@ -23,17 +23,13 @@
  */
 package com.github.actionfx.core.view.graph;
 
-import javafx.scene.control.Tab;
-
 /**
- * Functional handler for applying some logic during scene graph traversal. This
- * interface uses {@link NodeWrapper} for describing elements in the scene graph
- * and not directly {@link Node}s, because not all elements in the JavaFX scene
- * graph do inherit from {@link Node} (e.g. {@link Tab}s).
+ * Functional handler for applying some logic during scene graph traversal. This interface uses {@link NodeWrapper} for
+ * describing elements in the scene graph and not directly {@link javafx.scene.Node}s, because not all elements in the
+ * JavaFX scene graph do inherit from {@link javafx.scene.Node} (e.g. {@link javafx.scene.control.Tab}s).
  * <p>
  * Implementations of {@link NodeVisitor} can be applied to the scene graph via
- * {@link NodeWrapper#applyNodeVisitorByBFS(NodeVisitor)} or
- * {@link NodeWrapper#applyNodeVisitorByDFS(NodeVisitor)}.
+ * {@link NodeWrapper#applyNodeVisitorByBFS(NodeVisitor)} or {@link NodeWrapper#applyNodeVisitorByDFS(NodeVisitor)}.
  *
  * @author koster
  *
@@ -41,14 +37,16 @@ import javafx.scene.control.Tab;
 @FunctionalInterface
 public interface NodeVisitor {
 
-	/**
-	 * Method is applied to the given {@code child} during scene graph traversal.
-	 *
-	 * @param parent the parent
-	 * @param child  the child
-	 * @return {@code true}, if the scene graph traversal shall be continued,
-	 *         {@code false}, if the scene graph traversal shall be stopped.
-	 */
-	boolean visit(NodeWrapper parent, NodeWrapper child);
+    /**
+     * Method is applied to the given {@code child} during scene graph traversal.
+     *
+     * @param parent
+     *            the parent
+     * @param child
+     *            the child
+     * @return {@code true}, if the scene graph traversal shall be continued, {@code false}, if the scene graph
+     *         traversal shall be stopped.
+     */
+    boolean visit(NodeWrapper parent, NodeWrapper child);
 
 }

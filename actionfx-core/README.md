@@ -4,12 +4,12 @@ The "actionfx-core" module consists of the core functionality of ActionFX.
 
 Module | Description | API Documentation 
 ------ | ----------- | ----------------- 
-[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/1.4.0/actionfx-core/index.html) 
+[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/1.5.0/actionfx-core/index.html) 
 
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.4.0"
+implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.5.0"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-core</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
@@ -58,6 +58,8 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXFromFileOpenDialog (Method Argument Annotation)](#annotation-afxfromfileopendialog)
       - [Annotation @AFXFromDirectoryChooserDialog (Method Argument Annotation)](#annotation-afxfromdirectorychooserdialog)
       - [Annotation @AFXFromTextInputDialog (Method Argument Annotation)](#annotation-afxfromtextinputdialog)
+    + [Annotations for a loose coupling of ActionFX controller](#annotations-for-a-loose-coupling-of-actionfx-controller)
+      - [Annotation @AFXSubscribe (Method Annotation)](#annotation-afxsubscribe)      
   * [User Value of Controls](#user-value-of-controls)
   * [Internationalization](#internationalization)
 
@@ -88,7 +90,7 @@ public class MainApp {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.core.app")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.sampleapp.core.app", enabledBeanContainerAutodetection = true)
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}
@@ -124,6 +126,11 @@ Builder Method | Description
 `observableLocale(final ObservableValue<Locale> observableLocale)` | Configures an `javafx.beans.value.ObservableValue` that holds a proper `java.util.Locale` for internationalization.
 `controllerExtension(final Consumer<Object>... extensions)`  | Registers custom controller extensions instances implemented by the user. Controller extensions are applied to the controller after instantiation, after dependency injection, but before methods annotated with `@PostConstruct` are invoked. As mandated by the design philosophy, this builder method accepts a generic `Consumer` instance, where it is up to the developer to decide what to do with the controller instance. In case you are interested in doing something with a field, you can derive your implementation from [AbstractAnnotatedFieldControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedFieldControllerExtension.java). For extending methods, you can derive your implementation from [AbstractAnnotatedMethodControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedMethodControllerExtension.java).
 `controllerExtension(final Class<? extends Consumer<Object>>... extensionClasses)` | Same as `controllerExtension(final Consumer<Object>... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.
+`beanExtension(final BeanExtension... extensions)`  | Registers custom bean extensions instances implemented by the user. Bean extensions are invoked right after a new bean definition is added to the used bean container. Callback implementations can be used to add new functionality to ActionFX that are not applied directly to instances during instantiation time like controller extensions.
+`beanExtension(final Class<? extends BeanExtension>... extensionClasses)` | Same as `beanExtension(final BeanExtension... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.
+`beanContainer(final BeanContainerFacade beanContainer)` | Defines the bean container instance to use for ActionFX. The container class needs to implement the [BeanContainerFacade](src/main/java/com/github/actionfx/core/container.BeanContainerFacade.java) interface and need to provide routines for registering bean definitions and retrieving bean instances (singleton, prototypes) from the underlying container.
+`beanContainerClass(final Class<? extends BeanContainerFacade> beanContainerClass)` |  Defines the bean container instance to use for ActionFX. The container class needs to implement the [BeanContainerFacade](src/main/java/com/github/actionfx/core/container.BeanContainerFacade.java) interface and need to provide routines for registering bean definitions and retrieving bean instances (singleton, prototypes) from the underlying container. It is expected that the supplied class as a no-argument default constructor.
+`enableBeanContainerAutodetection(final boolean enableAutoDetect) ` | Flag that determines whether ActionFX shall try to autodetect the bean container implementation to use. Using autodetection together with directly setting the bean container via `beanContainer(BeanContainerFacade)` or `beanContainerClass(Class)` is pointless. When using an explicit bean container implementation, the autodetection is switched off (`enableBeanContainerAutodetection(false)`). If the autodetection is enabled, it is checked whether a known bean container implementation is present on the classpath (e.g. the container implementation for Spring). If no container implementation is found on the classpath, ActionFX default bean container for ActionFX is used (see [here](src/main/java/com/github/actionfx/core/container/DefaultActionFXBeanContainer.java)). The default is that autodetection is enabled.			
 
 Once the ActionFX instance is setup with all configuration parameters, it is required to scan for components / controllers with
 
@@ -168,7 +175,7 @@ Attribute | Description | Default Value
 After defining the controller and scanning for ActionFX components (see previous chapters on how to setup ActionFX), an instance of the controller is retrieved by:
 
 ```java
-	SomeController someController = ActionFX.getInstance().getController(SomeController.class);
+	SomeController someController = ActionFX.getInstance().getBean(SomeController.class);
 ```
 
 Preferably, you can just annotate a field with `@Inject` (if the controller is called from another controller):
@@ -1013,6 +1020,40 @@ Attribute 				| Description
 	public void onButtonClicked(@AFXFromTextInputDialog(title="Enter User Name", header ="User Name for Bookstore", content = "Please enter a user name", defaultValue="someone@somewhere.com") final String username) {
 		// do something with the username here 
 	}
+```
+
+### Annotations for a loose coupling of ActionFX controller
+
+This chapter describes how to use a basic event bus implementation within ActionFX for realizing a loose coupling between ActionFX controller.
+
+#### Annotation @AFXSubscribe
+
+The [@AFXSubscribe](src/main/java/com/github/actionfx/core/annotation/AFXSubscribe.java) annotation is applied on methods that shall be invoked, whenever a notification is published via `ActionFX.getInstance().publishEvent(Object event)`. 
+
+The annotation allows a basic publish/subscribe mechanism for implementing a loose coupling between ActionFX controller that should not be aware of each other, but need to exchange information.
+
+The following attributes are available inside the annotation:
+
+Attribute 				| Description 
+----------------------- | -------------------------------------------------
+`value`                | The emitted type that the annotated method shall be invoked on.
+`order`                | An optional order that can be specified to define the order of execution of the annotated method, in case more than one method have been subscribed to the given `value`.
+`async`                | Optional flag that determines, whether the annotated method shall be executed in an asynchronous fashion. When set to `true`, the annotated method is not executed inside the JavaFX-thread, but in its own thread in order not to block the JavaFX thread. In case that UI components need to be updated in the method, the update itself needs to be run with `javafx.application.Platform.runLater(Runnable)`.
+
+**Example:**
+
+```java
+		@AFXSubscribe(value = String.class, order = 1)
+		public void onPublish() {
+		}
+
+		@AFXSubscribe(value = String.class, order = 2)
+		public void onPublish(final String message) {
+		}
+
+		@AFXSubscribe(value = String.class, async = true)
+		public void onAsyncPublish(final String message) {
+		}
 ```
 
 ## User Value of Controls

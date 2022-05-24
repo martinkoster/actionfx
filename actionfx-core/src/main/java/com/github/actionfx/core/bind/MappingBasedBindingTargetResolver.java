@@ -36,147 +36,139 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import javafx.scene.control.Control;
 
 /**
- * Implementation of a {@link BindingTargetResolver} that uses an internal
- * mapping for field names (also nested fields are supported) to control IDs for
- * resolving to a control.
+ * Implementation of a {@link BindingTargetResolver} that uses an internal mapping for field names (also nested fields
+ * are supported) to control IDs for resolving to a control.
  * <p>
- * In case there is no explicit mapping specified, the control can be looked up
- * by matching the field name.
+ * In case there is no explicit mapping specified, the control can be looked up by matching the field name.
  *
  * @author koster
  *
  */
 public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetResolver {
 
-	private final boolean disableNameBasedMapping;
+    private final boolean disableNameBasedMapping;
 
-	private final Map<String, List<PropertyMapping>> controlToPropertyListMap = new HashMap<>();
+    private final Map<String, List<PropertyMapping>> controlToPropertyListMap = new HashMap<>();
 
-	/**
-	 * Constructor allowing to disable/enable the name-based mapping as fallback.
-	 * <p>
-	 * Please note that you need to call
-	 * {@link #registerMapping(String, String, ControlProperties)} after instance
-	 * creation for registering new mappings in this instance.
-	 *
-	 * @param disableNameBasedMapping If set to {@code true}, all mappings are
-	 *                                solely taken from {@code fieldToControlMap}.
-	 *                                If set to {@code false}, name-based resolution
-	 *                                is applied as fallback.
-	 */
-	public MappingBasedBindingTargetResolver(final boolean disableNameBasedMapping) {
-		this(disableNameBasedMapping, "", "");
-	}
+    /**
+     * Constructor allowing to disable/enable the name-based mapping as fallback.
+     * <p>
+     * Please note that you need to call {@link #registerMapping(String, ControlProperties, String)} after instance
+     * creation for registering new mappings in this instance.
+     *
+     * @param disableNameBasedMapping
+     *            If set to {@code true}, all mappings are solely taken from {@code fieldToControlMap}. If set to
+     *            {@code false}, name-based resolution is applied as fallback.
+     */
+    public MappingBasedBindingTargetResolver(final boolean disableNameBasedMapping) {
+        this(disableNameBasedMapping, "", "");
+    }
 
-	/**
-	 * Constructor allowing to disable/enable the name-based mapping as fallback,
-	 * plus a control prefix or suffix for resolution.
-	 * <p>
-	 * Please note that you need to call
-	 * {@link #registerMapping(String, String, ControlProperties)} after instance
-	 * creation for registering new mappings in this instance.
-	 *
-	 * @param controlToFieldMap       map containing the control ID to field
-	 *                                mappings (key is the control ID, value the
-	 *                                field name or a nested path to a field)
-	 * @param disableNameBasedMapping If set to {@code true}, all mappings are
-	 *                                solely taken from {@code fieldToControlMap}.
-	 *                                If set to {@code false}, name-based resolution
-	 *                                is applied as fallback.
-	 * @param controlPrefix           a control prefix
-	 * @param controlSuffix           a control suffix
-	 */
-	public MappingBasedBindingTargetResolver(final boolean disableNameBasedMapping, final String controlPrefix,
-			final String controlSuffix) {
-		super(controlPrefix, controlSuffix);
-		this.disableNameBasedMapping = disableNameBasedMapping;
-	}
+    /**
+     * Constructor allowing to disable/enable the name-based mapping as fallback, plus a control prefix or suffix for
+     * resolution.
+     * <p>
+     * Please note that you need to call {@link #registerMapping(String, ControlProperties, String)} after instance
+     * creation for registering new mappings in this instance.
+     *
+     * @param disableNameBasedMapping
+     *            If set to {@code true}, all mappings are solely taken from {@code fieldToControlMap}. If set to
+     *            {@code false}, name-based resolution is applied as fallback.
+     * @param controlPrefix
+     *            a control prefix
+     * @param controlSuffix
+     *            a control suffix
+     */
+    public MappingBasedBindingTargetResolver(final boolean disableNameBasedMapping, final String controlPrefix,
+            final String controlSuffix) {
+        super(controlPrefix, controlSuffix);
+        this.disableNameBasedMapping = disableNameBasedMapping;
+    }
 
-	/**
-	 * Registers a new mapping for a given control identified by {@code controlId},
-	 * where the {@code controlProperty} of the control shall be bound to the given
-	 * {@code propertyName} inside a Java bean.
-	 *
-	 * @param controlId      the ID of the control
-	 * @param targetProperty the property of the control that shall be bound
-	 * @param propertyName   the name of the property inside the Java bean, which
-	 *                       can be a nested path using the "." operator
-	 */
-	public void registerMapping(final String controlId, final ControlProperties targetProperty,
-			final String propertyName) {
-		final List<PropertyMapping> propertyMappings = controlToPropertyListMap.computeIfAbsent(controlId,
-				id -> new ArrayList<>());
-		propertyMappings.add(new PropertyMapping(propertyName, targetProperty, ""));
-	}
+    /**
+     * Registers a new mapping for a given control identified by {@code controlId}, where the {@code controlProperty} of
+     * the control shall be bound to the given {@code propertyName} inside a Java bean.
+     *
+     * @param controlId
+     *            the ID of the control
+     * @param targetProperty
+     *            the property of the control that shall be bound
+     * @param propertyName
+     *            the name of the property inside the Java bean, which can be a nested path using the "." operator
+     */
+    public void registerMapping(final String controlId, final ControlProperties targetProperty,
+            final String propertyName) {
+        final List<PropertyMapping> propertyMappings = controlToPropertyListMap.computeIfAbsent(controlId,
+                id -> new ArrayList<>());
+        propertyMappings.add(new PropertyMapping(propertyName, targetProperty, ""));
+    }
 
-	/**
-	 * Registers a new mapping for a given control identified by {@code controlId},
-	 * where the {@code controlProperty} of the control shall be bound to the given
-	 * {@code propertyName} inside a Java bean. A converter class can be supplied
-	 * for type conversion. between the control's property and the property to bind.
-	 *
-	 * @param controlId      the ID of the control
-	 * @param targetProperty the property of the control that shall be bound
-	 * @param propertyName   the name of the property inside the Java bean, which
-	 *                       can be a nested path using the "." operator
-	 * @param converter      an optional string converter in case the
-	 *                       {@link #targetProperty()} and the property resolved
-	 *                       from {@link propertyName} have different data types
-	 * @param formatPattern  on optional format pattern that is used as constructor
-	 *                       argument for a potentially supplied {@code converter}.
-	 */
-	public void registerMapping(final String controlId, final ControlProperties targetProperty,
-			final String propertyName, final String formatPattern) {
-		final List<PropertyMapping> propertyMappings = controlToPropertyListMap.computeIfAbsent(controlId,
-				id -> new ArrayList<>());
-		propertyMappings.add(new PropertyMapping(propertyName, targetProperty, formatPattern));
-	}
+    /**
+     * Registers a new mapping for a given control identified by {@code controlId}, where the {@code controlProperty} of
+     * the control shall be bound to the given {@code propertyName} inside a Java bean. A converter class can be
+     * supplied for type conversion. between the control's property and the property to bind.
+     *
+     * @param controlId
+     *            the ID of the control
+     * @param targetProperty
+     *            the property of the control that shall be bound
+     * @param propertyName
+     *            the name of the property inside the Java bean, which can be a nested path using the "." operator
+     * @param formatPattern
+     *            on optional format pattern that is used as constructor argument for a potentially supplied
+     *            {@code converter}.
+     */
+    public void registerMapping(final String controlId, final ControlProperties targetProperty,
+            final String propertyName, final String formatPattern) {
+        final List<PropertyMapping> propertyMappings = controlToPropertyListMap.computeIfAbsent(controlId,
+                id -> new ArrayList<>());
+        propertyMappings.add(new PropertyMapping(propertyName, targetProperty, formatPattern));
+    }
 
-	@Override
-	public List<BindingTarget> resolveInternal(final Control control, final Object bean, final View view) {
-		final List<PropertyMapping> propertyMappings = controlToPropertyListMap.get(control.getId());
-		if (propertyMappings == null || propertyMappings.isEmpty()) {
-			// mapping did not bring a resolution, shall we try the name based mapping?
-			return disableNameBasedMapping ? Collections.emptyList() : super.resolveInternal(control, bean, view);
-		}
-		return propertyMappings.stream().map(mapping -> new BindingTarget(control, mapping.getTargetProperty(),
-				bean.getClass(), mapping.getPropertyName(), mapping.getFormatPattern())).collect(Collectors.toList());
-	}
+    @Override
+    public List<BindingTarget> resolveInternal(final Control control, final Object bean, final View view) {
+        final List<PropertyMapping> propertyMappings = controlToPropertyListMap.get(control.getId());
+        if (propertyMappings == null || propertyMappings.isEmpty()) {
+            // mapping did not bring a resolution, shall we try the name based mapping?
+            return disableNameBasedMapping ? Collections.emptyList() : super.resolveInternal(control, bean, view);
+        }
+        return propertyMappings.stream().map(mapping -> new BindingTarget(control, mapping.getTargetProperty(),
+                bean.getClass(), mapping.getPropertyName(), mapping.getFormatPattern())).collect(Collectors.toList());
+    }
 
-	/**
-	 * Internal class describing a mapping between a control's property and a Java
-	 * bean property.
-	 *
-	 * @author koster
-	 *
-	 */
-	private static class PropertyMapping {
+    /**
+     * Internal class describing a mapping between a control's property and a Java bean property.
+     *
+     * @author koster
+     *
+     */
+    private static class PropertyMapping {
 
-		private final String propertyName;
+        private final String propertyName;
 
-		private final ControlProperties targetProperty;
+        private final ControlProperties targetProperty;
 
-		private final String formatPattern;
+        private final String formatPattern;
 
-		public PropertyMapping(final String propertyName, final ControlProperties targetProperty,
-				final String formatPattern) {
-			this.propertyName = propertyName;
-			this.targetProperty = targetProperty;
-			this.formatPattern = formatPattern;
-		}
+        public PropertyMapping(final String propertyName, final ControlProperties targetProperty,
+                final String formatPattern) {
+            this.propertyName = propertyName;
+            this.targetProperty = targetProperty;
+            this.formatPattern = formatPattern;
+        }
 
-		public String getPropertyName() {
-			return propertyName;
-		}
+        public String getPropertyName() {
+            return propertyName;
+        }
 
-		public ControlProperties getTargetProperty() {
-			return targetProperty;
-		}
+        public ControlProperties getTargetProperty() {
+            return targetProperty;
+        }
 
-		public String getFormatPattern() {
-			return formatPattern;
-		}
+        public String getFormatPattern() {
+            return formatPattern;
+        }
 
-	}
+    }
 
 }

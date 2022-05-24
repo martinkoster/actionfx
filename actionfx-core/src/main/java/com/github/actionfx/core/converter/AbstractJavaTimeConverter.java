@@ -27,23 +27,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
- * Base class for converters that convert a {@link java.time.*} type.
+ * Base class for converters that convert a {@code java.time.*} type.
  *
  * @author koster
  *
  */
 public abstract class AbstractJavaTimeConverter<S, T> implements Converter<S, T> {
 
-	protected Locale locale;
+    protected Locale locale;
 
-	protected DateTimeFormatter dateTimeFormatter;
+    protected DateTimeFormatter dateTimeFormatter;
 
-	protected AbstractJavaTimeConverter(final String formatPattern, final Locale locale) {
-		this.locale = locale;
-		this.dateTimeFormatter = DateTimeFormatter.ofPattern(formatPattern, locale);
-	}
+    protected AbstractJavaTimeConverter(final String formatPattern, final Locale locale) {
+        this.locale = locale;
+        this.dateTimeFormatter = DateTimeFormatter.ofPattern(formatPattern, locale);
+    }
 
-	public DateTimeFormatter getDateTimeFormatter() {
-		return dateTimeFormatter;
-	}
+    public DateTimeFormatter getDateTimeFormatter() {
+        return dateTimeFormatter;
+    }
 }

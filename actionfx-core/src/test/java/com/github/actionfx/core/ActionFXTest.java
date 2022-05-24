@@ -29,7 +29,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +41,7 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.file.Files;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,12 +52,16 @@ import org.mockito.Mockito;
 
 import com.github.actionfx.core.ActionFX.ActionFXBuilder;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.container.DefaultBeanContainer;
+import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
 import com.github.actionfx.core.dialogs.DialogController;
+import com.github.actionfx.core.events.PriorityAwareEventBus;
+import com.github.actionfx.core.events.SimplePriorityAwareEventBus;
+import com.github.actionfx.core.extension.beans.BeanExtension;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.ActionFXEnhancer.EnhancementStrategy;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
+import com.github.actionfx.core.test.TestController;
 import com.github.actionfx.core.test.app.MainController;
 import com.github.actionfx.core.test.app.SampleApp;
 import com.github.actionfx.core.view.View;
@@ -76,8 +83,8 @@ class ActionFXTest {
 
 	@BeforeEach
 	void onSetup() {
-		// set view manager instance to 'null' in order to force the creation of a
-		// ViewManager instance for each test
+		// reset instance to 'null' in order to force the creation of a
+		// new ActionFX instance for each test
 		ActionFX.instance = null;
 	}
 
@@ -95,7 +102,7 @@ class ActionFXTest {
 		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
@@ -126,7 +133,7 @@ class ActionFXTest {
 		assertThat(actionFX.getEnhancer(), equalTo(enhancer));
 		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultBeanContainer.class));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
@@ -164,8 +171,78 @@ class ActionFXTest {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
-	void testScanComponents_usingDefaultBeanContainer() {
+	void testBuilder_customController_and_customBeanExtensions_instancesArePassed() {
+		// GIVEN
+		final Consumer<Object> customControllerExtension = Mockito.mock(Consumer.class);
+		final BeanExtension customBeanExtension = Mockito.mock(BeanExtension.class);
+
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().controllerExtension(customControllerExtension)
+				.beanExtension(customBeanExtension).build();
+
+		// THEN
+		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
+				contains(customControllerExtension));
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(), contains(customBeanExtension));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testBuilder_customController_and_customBeanExtensions_classesArePassed() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().controllerExtension(CustomControllerExtension.class)
+				.beanExtension(CustomBeanExtension.class).build();
+
+		// THEN
+		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
+				contains(instanceOf(CustomControllerExtension.class)));
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(),
+				contains(instanceOf(CustomBeanExtension.class)));
+	}
+
+	@Test
+	void testBuilder_beanContainerClass_byClass() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().beanContainerClass(CustomBeanContainer.class).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(CustomBeanContainer.class));
+	}
+
+	@Test
+	void testBuilder_beanContainer_byInstance() {
+		// WHEN
+		final CustomBeanContainer container = new CustomBeanContainer();
+		final ActionFX actionFX = ActionFX.builder().beanContainer(container).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), sameInstance(container));
+	}
+
+	@Test
+	void testBuilder_enableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+	}
+
+	@Test
+	void testBuilder_disableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+	}
+
+	@Test
+	void testScanForActionFXComponents_usingDefaultBeanContainer() {
 		// GIVEN
 		assertThat(ActionFX.isConfigured(), equalTo(false));
 		assertThat(ActionFX.isInitialized(), equalTo(false));
@@ -188,14 +265,15 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_usingCustomBeanContainer() {
+	void testScanForActionFXComponents_usingCustomBeanContainer() {
 		// GIVEN
-		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
 		final ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
 
 		// WHEN
-		actionFX.scanForActionFXComponents(customBeanContainer);
+		actionFX.scanForActionFXComponents();
 
 		// THEN (custom container has be asked to populate container with the
 		// rootPackage of SampleApp)
@@ -204,7 +282,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_scanAlreadyPerformed_illegalState() {
+	void testScanForActionFXComponents_scanAlreadyPerformed_illegalState() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
@@ -216,7 +294,7 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_getView_viewNotFound() {
+	void testScanForActionFXComponents_getView_viewNotFound() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
@@ -230,7 +308,33 @@ class ActionFXTest {
 	}
 
 	@Test
-	void testScanComponents_getView_viewIsNotInstanceOfView() {
+	void testScanForActionFXComponents_assureActionFXBeansAreAdded() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().locale(Locale.US).beanContainer(customBeanContainer).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN
+		verify(customBeanContainer, times(1)).addActionFXBeans(eq(actionFX));
+	}
+
+	@Test
+	void testAddController() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		actionFX.addController(TestController.class);
+
+		// THEN
+		assertThat(actionFX.getBean(TestController.class), notNullValue());
+	}
+
+	@Test
+	void testScanForActionFXComponents_getView_viewIsNotInstanceOfView() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
@@ -254,6 +358,20 @@ class ActionFXTest {
 
 		// THEN
 		assertThat(service, notNullValue());
+	}
+
+	@Test
+	void testGetEventBus() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final PriorityAwareEventBus eventBus = actionFX.getEventBus();
+
+		// THEN
+		assertThat(eventBus, notNullValue());
+		assertThat(eventBus, instanceOf(SimplePriorityAwareEventBus.class));
 	}
 
 	@Test
@@ -289,6 +407,23 @@ class ActionFXTest {
 	}
 
 	@Test
+	void testShowView_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		// WHEN
+		actionFX.showView("viewId");
+
+		// THEN
+		verify(mockView, times(1)).show();
+	}
+
+	@Test
 	@TestInFxThread
 	void testShowView_withStageSupplied() {
 		// GIVEN
@@ -307,6 +442,26 @@ class ActionFXTest {
 	}
 
 	@Test
+	@TestInFxThread
+	void testShowView_withStageSupplied_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		final Stage stage = new Stage();
+
+		// WHEN
+		actionFX.showView("viewId", stage);
+
+		// THEN
+		verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
+	}
+
+	@Test
 	void testShowViewAndWait() {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
@@ -317,6 +472,23 @@ class ActionFXTest {
 
 		// WHEN
 		actionFX.showViewAndWait(controller);
+
+		// THEN
+		verify(mockView, times(1)).showAndWait();
+	}
+
+	@Test
+	void testShowViewAndWait_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		// WHEN
+		actionFX.showViewAndWait("viewId");
 
 		// THEN
 		verify(mockView, times(1)).showAndWait();
@@ -343,7 +515,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		when(controller.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
 
@@ -360,7 +533,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		// WHEN
 		actionFX.showWarningDialog("Title", "HeaderText", "ContentText");
@@ -375,7 +549,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		// WHEN
 		actionFX.showInformationDialog("Title", "HeaderText", "ContentText");
@@ -390,7 +565,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		// WHEN
 		actionFX.showErrorDialog("Title", "HeaderText", "ContentText");
@@ -405,7 +581,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFolder = Files.createTempDirectory("junit").toFile();
 		final File initialFolder = Files.createTempDirectory("junit").toFile();
@@ -426,7 +603,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -450,7 +628,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -471,7 +650,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -492,7 +672,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 		final Window owner = Mockito.mock(Window.class);
 		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
 		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
@@ -516,7 +697,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn("Text");
@@ -534,7 +716,8 @@ class ActionFXTest {
 		// GIVEN
 		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
 		final DialogController controller = Mockito.mock(DialogController.class);
-		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEAN))).thenReturn(controller);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
 
 		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn("Text");
@@ -555,4 +738,22 @@ class ActionFXTest {
 		public View _view;
 	}
 
+	public static class CustomControllerExtension implements Consumer<Object> {
+
+		@Override
+		public void accept(final Object t) {
+		}
+	}
+
+	public static class CustomBeanExtension implements BeanExtension {
+
+		@Override
+		public void extendBean(final Class<?> beanClass, final String beanId, final boolean singleton,
+				final boolean lazyInit) {
+		}
+	}
+
+	public static class CustomBeanContainer extends DefaultActionFXBeanContainer {
+
+	}
 }

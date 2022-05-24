@@ -69,4 +69,22 @@ public class ExceptionUtils {
 		return "[" + String.join(", ", stringValues) + "]";
 	}
 
+	/**
+	 * Wraps the given {@code throwable} into an instance of
+	 * {@link RuntimeException}, in case the exception itself is not a
+	 * {@link RuntimeException} already.
+	 *
+	 * @param throwable the throwable to wrap
+	 * @return the wrapped throwable inside a {@link RuntimeException}, or the
+	 *         {@link RuntimeException} itself, if {@code throwable} was a
+	 *         {@link RuntimeException} already
+	 */
+	public static RuntimeException wrapInRuntimeExceptionIfNecessary(final Throwable throwable) {
+		if (throwable instanceof RuntimeException) {
+			return (RuntimeException) throwable;
+		} else {
+			return new RuntimeWithNestedThrowableException(throwable);
+		}
+	}
+
 }

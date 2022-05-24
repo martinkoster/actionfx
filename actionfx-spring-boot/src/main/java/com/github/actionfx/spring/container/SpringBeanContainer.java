@@ -23,6 +23,8 @@
  */
 package com.github.actionfx.spring.container;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -41,11 +43,10 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.ClassUtils;
 
 import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.container.AbstractActionFXBeanContainer;
 import com.github.actionfx.core.container.BeanContainerFacade;
-import com.github.actionfx.core.container.instantiation.ControllerInstantiationSupplier;
-import com.github.actionfx.core.instrumentation.ControllerWrapper;
+import com.github.actionfx.core.extension.ActionFXExtensionsBean;
 import com.github.actionfx.core.utils.AnnotationUtils;
-import com.github.actionfx.core.view.View;
 
 /**
  * Implementation of {@link BeanContainerFacade} that leverages Spring as
@@ -55,34 +56,79 @@ import com.github.actionfx.core.view.View;
  * the {@link BeanDefinitionRegistry}, on top of the actual
  * {@link ApplicationContext} instance for retrieving beans from the Spring
  * context.
+ * <p>
+ * This container can be instantiated before the actual Spring context is
+ * already available. That might be required as the bean container is setup
+ * during the setup of ActionFX, while Spring might get started after that. It
+ * is important, that the Spring application context is set into this bean
+ * container via method
+ * {@link #onSpringContextAvailable(BeanDefinitionRegistry, ApplicationContext)}
+ * as soon as the Spring context is available.
+ * <p>
+ * Although the Spring context is not avaiable right from the beginning, it is
+ * already possible to add bean definitions to this container. In this case, the
+ * bean definitions are cached and executed against the "real" Spring
+ * application context as soon as it is supplied.
  *
  * @author koster
  *
  */
-public class SpringBeanContainer implements BeanContainerFacade {
+public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SpringBeanContainer.class);
 
-	private final BeanDefinitionRegistry beanDefinitionRegistry;
+	private BeanDefinitionRegistry beanDefinitionRegistry;
 
-	private final ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
+
+	// in case beans shall be added to this container before the Spring context is
+	// available, bean definitions are cached here in the list
+	private final List<AddBeanDefinitionCallback> addBeanDefinitionCallbacks = new ArrayList<>();
 
 	/**
-	 * Constructor that requires access to the {@link BeanDefinitionRegistry} for
-	 * adding new bean definitions and the {@link ApplicationContext} for requesting
-	 * beans from the context.
+	 * Default constructor for instantiating the container without custom
+	 * extensions.
+	 */
+	public SpringBeanContainer() {
+		this(null);
+	}
+
+	/**
+	 * Constructor that accepts custom ActionFX extensions (controller and beans
+	 * extensions).
+	 *
+	 * @param extensionsBean the bean holding the extensions.
+	 */
+	public SpringBeanContainer(final ActionFXExtensionsBean extensionsBean) {
+		super(extensionsBean);
+	}
+
+	/**
+	 * Sets the {@link BeanDefinitionRegistry} for adding new bean definitions and
+	 * the {@link ApplicationContext} for requesting beans from the context.
+	 * <p>
+	 * This method is invoked by {@link AFXApplicationContextInitializer} when the
+	 * Spring context is starting up.
 	 *
 	 * @param beanDefinitionRegistry the bean definition registry
 	 * @param applicationContext     the application context
 	 */
-	public SpringBeanContainer(final BeanDefinitionRegistry beanDefinitionRegistry,
+	public void onSpringContextAvailable(final BeanDefinitionRegistry beanDefinitionRegistry,
 			final ApplicationContext applicationContext) {
 		this.beanDefinitionRegistry = beanDefinitionRegistry;
 		this.applicationContext = applicationContext;
+
+		// register beans that could not yet have been added to the "real" Spring
+		// application context
+		if (!addBeanDefinitionCallbacks.isEmpty()) {
+			addBeanDefinitionCallbacks.forEach(AddBeanDefinitionCallback::addBeanDefinition);
+			addBeanDefinitionCallbacks.clear();
+		}
 	}
 
 	@Override
 	public void runComponentScan(final String rootPackage) {
+		checkSpringContextAvailability();
 
 		// scan for AFXController annotations...
 		final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(
@@ -94,26 +140,24 @@ public class SpringBeanContainer implements BeanContainerFacade {
 			if (beanDefinition == null || beanDefinition.getBeanClassName() == null) {
 				continue;
 			}
-			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(),
+			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), // NORSONAR
 					getClass().getClassLoader());
-			final AFXController afxController = AnnotationUtils.findAnnotation(beanClass, AFXController.class);
-
-			final ControllerInstantiationSupplier<?> controllerSupplier = new ControllerInstantiationSupplier<>(
-					beanClass);
-
-			// add a bean definition for the controller
-			final String controllerBeanId = deriveBeanId(beanClass);
-			registerBeanDefinition(controllerBeanId,
-					createBeanDefinitionForController(beanDefinition, afxController, controllerSupplier));
-
-			// add a bean definition for the view
-			registerBeanDefinition(afxController.viewId(), createBeanDefinitionForView(beanDefinition, afxController,
-					() -> ControllerWrapper.getViewFrom(getBean(controllerBeanId))));
+			addControllerBeanDefinition(beanClass);
 		}
 	}
 
 	@Override
 	public void addBeanDefinition(final String id, final Class<?> beanClass, final boolean singleton,
+			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
+		if (isSpringContextAvailable()) {
+			addBeanDefinitionInternal(id, beanClass, singleton, lazyInit, instantiationSupplier);
+		} else {
+			addBeanDefinitionCallbacks
+					.add(new AddBeanDefinitionCallback(id, beanClass, singleton, lazyInit, instantiationSupplier));
+		}
+	}
+
+	private void addBeanDefinitionInternal(final String id, final Class<?> beanClass, final boolean singleton,
 			final boolean lazyInit, final Supplier<?> instantiationSupplier) {
 		final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
 		beanDefinition.setBeanClass(beanClass);
@@ -121,24 +165,7 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		beanDefinition.setLazyInit(lazyInit);
 		beanDefinition.setInstanceSupplier(instantiationSupplier);
 		registerBeanDefinition(id, beanDefinition);
-	}
-
-	private BeanDefinition createBeanDefinitionForController(final BeanDefinition beanDefinition,
-			final AFXController afxController, final Supplier<?> controllerInstantiationSupplier) {
-		final GenericBeanDefinition result = new GenericBeanDefinition(beanDefinition);
-		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
-		result.setInstanceSupplier(controllerInstantiationSupplier);
-		return result;
-	}
-
-	private BeanDefinition createBeanDefinitionForView(final BeanDefinition beanDefinition,
-			final AFXController afxController, final Supplier<?> viewSupplier) {
-		// views follow the same rules than the controller (scope, dependsOn, etc.)
-		final GenericBeanDefinition result = new GenericBeanDefinition(beanDefinition);
-		result.setScope(afxController.singleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
-		result.setBeanClass(View.class);
-		result.setInstanceSupplier(viewSupplier);
-		return result;
+		postProcessBeanDefinition(beanClass, id, singleton, lazyInit);
 	}
 
 	/**
@@ -149,21 +176,25 @@ public class SpringBeanContainer implements BeanContainerFacade {
 	 * @param beanFactory the bean factory
 	 */
 	protected void registerBeanDefinition(final String beanName, final BeanDefinition definition) {
+		checkSpringContextAvailability();
 		beanDefinitionRegistry.registerBeanDefinition(beanName, definition);
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Registered BeanDefinition of type '{}' with bean name '{}'.", definition.getBeanClassName(),
 					beanName);
 		}
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getBean(final String id) {
+		checkSpringContextAvailability();
 		return (T) applicationContext.getBean(id);
 	}
 
 	@Override
 	public <T> T getBean(final Class<T> beanClass) {
+		checkSpringContextAvailability();
 		return applicationContext.getBean(beanClass);
 	}
 
@@ -183,6 +214,7 @@ public class SpringBeanContainer implements BeanContainerFacade {
 	 */
 	@Override
 	public ResourceBundle resolveResourceBundle(final Class<?> controllerClass, final Locale locale) {
+		checkSpringContextAvailability();
 		final MessageSource messageSource = applicationContext.getBean(MessageSource.class);
 		final AFXController afxController = AnnotationUtils.findAnnotation(controllerClass, AFXController.class);
 		// in case there is no resourceBasename on the controller, we return Spring
@@ -194,4 +226,63 @@ public class SpringBeanContainer implements BeanContainerFacade {
 		final String baseName = afxController.resourcesBasename();
 		return ResourceBundle.getBundle(baseName, locale);
 	}
+
+	/**
+	 * Checks that the Spring context is already available for usage. The container
+	 * itself is instantiated while setting up ActionFX via its builder. Spring
+	 * itself might be available later in the application's lifecycle.
+	 *
+	 * @throws IllegalStateException in case the Spring container is not available
+	 */
+	protected void checkSpringContextAvailability() {
+		if (!isSpringContextAvailable()) {
+			throw new IllegalStateException(
+					"Spring context is not available yet! Please perform the desired operation after Spring is properly booted and the ApplicationContext is set via method SpringBeanContainer.onSpringContextAvailable(..)!");
+		}
+	}
+
+	/**
+	 * Checks whether the Spring context is already available for usage. The
+	 * container itself is instantiated while setting up ActionFX via its builder.
+	 * Spring itself might be available later in the application's lifecycle.
+	 *
+	 * @return {@code true}, if and only if the Spring context is available.
+	 */
+	protected boolean isSpringContextAvailable() {
+		return applicationContext != null && beanDefinitionRegistry != null;
+	}
+
+	/**
+	 * Callback for adding a bean definition to the Spring application callback as
+	 * soon it is available.
+	 *
+	 * @author koster
+	 *
+	 */
+	private class AddBeanDefinitionCallback {
+
+		private final String id;
+
+		private final Class<?> beanClass;
+
+		private final boolean singleton;
+
+		private final boolean lazyInit;
+
+		private final Supplier<?> instantiationSupplier;
+
+		public AddBeanDefinitionCallback(final String id, final Class<?> beanClass, final boolean singleton,
+				final boolean lazyInit, final Supplier<?> instantiationSupplier) {
+			this.id = id;
+			this.beanClass = beanClass;
+			this.singleton = singleton;
+			this.lazyInit = lazyInit;
+			this.instantiationSupplier = instantiationSupplier;
+		}
+
+		public void addBeanDefinition() {
+			SpringBeanContainer.this.addBeanDefinition(id, beanClass, singleton, lazyInit, instantiationSupplier);
+		}
+	}
+
 }

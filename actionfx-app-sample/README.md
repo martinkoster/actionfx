@@ -4,7 +4,7 @@ This module contains application sample with and without Spring as bean containe
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
-[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/actionfx-app-sample/index.html) 
+[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.5.0/actionfx-app-sample/index.html) 
 
 This module contains the following demo applications:
 
@@ -39,7 +39,7 @@ public class BookstoreAppWithDefaultBeanContainer {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller", enableBeanContainerAutodetection = false)
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}
@@ -61,7 +61,7 @@ public class BookstoreAppWithSpringBeanContainer {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller")
+	@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.bookstore.controller", enableBeanContainerAutodetection = true)
 	public static class SampleActionFXApplication extends Application {
 
 		@Override
@@ -327,10 +327,12 @@ public class ShoppingCartController {
 	}
 
 	@AFXOnAction(nodeId = "checkoutButton")
-	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
-		// no to-do here as of the moment. Displaying of the view is achieved by
-		// annotation "AFXShowView"
+		final OrderSummary model = new OrderSummary();
+		model.getOrder().getOrderedBooks().addAll(bookTableView.getItems());
+
+		// publish order summary to start the checkout process
+		actionFX.publishEvent(model);
 	}
 
 	public void addToShoppingCart(final List<Book> books) {
@@ -384,16 +386,30 @@ The action for emptying the shopping cart is quite simple and straight-forward b
 
 As you can see here, this method is also annotated with `@AFXRequiresUserConfirmation`. That means that this method is only executed, after the user confirms a confirmation dialog with the given title, header and content text. In case the user cancels this confirmation dialog, the method is not executed and by that, the shopping cart is not emptied.
 
-For starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we combine the `AFXOnAction` annotation with the `AFXShowView` annotation that opens the defined view with name `checkoutView` is a new window (`showInNewWindow=true`).
+For starting the check-out procedure, we display the check-out dialogue in a new, modal window having its own `javafx.stage.Stage`. For that, we use ActionFX' internal eventing to publish the oder summary model to the `CheckoutController` via the `actionFX.publishEvent(..)` method. 
 
 ```java
 	@AFXOnAction(nodeId = "checkoutButton")
-	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
 	public void checkout() {
-		// no to-do here as of the moment. Displaying of the view is achieved by
-		// annotation "AFXShowView"
+		final OrderSummary model = new OrderSummary();
+		model.getOrder().getOrderedBooks().addAll(bookTableView.getItems());
+
+		// publish order summary to start the checkout process
+		actionFX.publishEvent(model);
 	}
 ```
+
+As a reference, here is the receiving method in the `CheckoutController`:
+
+```java 
+	@AFXSubscribe(value = OrderSummary.class)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
+	public void onCheckoutStart(final OrderSummary model) {
+		...
+	}
+```
+
+Of course, the `CheckoutController` can be also injected into the `ShoppingCartController` via `@Inject` and the method `onCheckoutStart` for starting the checkout can be directly invoked. However, it might be desirable in some cases that there is a more loose coupling between the controllers, not aware of each other. Additionally, in some cases, the caller is simply not interested in which controller receives the event.
 
 Source Code can be found here: [ShoppingCartController](src/main/java/com/github/actionfx/bookstore/controller/ShoppingCartController.java)
 
@@ -442,10 +458,10 @@ public class CheckoutController {
 		return Arrays.asList("Germany", "France", "Spain", "Italy", "Portugal", "UK", "USA");
 	}
 
-	public void startCheckout(final List<Book> books) {
-		// create an order summary as model for our form-binding
-		final OrderSummary model = new OrderSummary();
-		model.getOrder().getOrderedBooks().addAll(books);
+	@AFXSubscribe(value = OrderSummary.class)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
+	public void onCheckoutStart(final OrderSummary model) {
+		// use the order summary as model for our form-binding
 		orderSummary.set(model);
 	}
 
@@ -509,6 +525,17 @@ In the mapping declaration above, we can also see that it is possible to use dif
 ```
 
 What happens here is that the list of ordered books is bound to the `itemsProperty` of the used `javafx.scene.control.TableView` via `targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST` and in the second step, the list of ordered books is then bound to the **selected items list** of the table view. Means: First we fill the table view with the books from the model, and then we select all books inside the table view.
+
+The form binding with the actual data itself occurs in method `onCheckoutStart` that is invoked, when an `OrderSummary` instance is published via `ActionFX.publishEvent(..)` (see implementation of the `ShoppingCartController` for further details).
+
+```java
+	@AFXSubscribe(value = OrderSummary.class)
+	@AFXShowView(viewId = "checkoutView", showInNewWindow = true)
+	public void onCheckoutStart(final OrderSummary model) {
+		// use the order summary as model for our form-binding
+		orderSummary.set(model);
+	}
+```
 
 As another feature, we are using the `@AFXEnableNode` annotation to activate the "Complete Order" button only, when the user has provided a value in all controls of the form.
 

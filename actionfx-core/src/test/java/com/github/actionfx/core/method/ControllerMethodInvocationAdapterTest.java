@@ -93,7 +93,7 @@ class ControllerMethodInvocationAdapterTest {
 	@BeforeEach
 	void onSetup() {
 		actionFX = new ActionFXMock();
-		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEAN, new ConversionService());
+		actionFX.addBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME, new ConversionService());
 	}
 
 	@Test
@@ -328,7 +328,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
 
 		// WHEN
@@ -349,7 +349,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.FALSE);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
 
 		// WHEN
@@ -370,7 +370,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter(
 				"requiresUserConfirmationWithResourceBundle");
 
@@ -392,7 +392,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter(
 				"requiresUserConfirmationWithResourceBundleButKeysDoNotExist");
 
@@ -414,7 +414,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
 		final StringProperty result = new SimpleStringProperty(null);
 
@@ -437,7 +437,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
 				ArgumentMatchers.anyString())).thenReturn(Boolean.FALSE);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("requiresUserConfirmation");
 		final StringProperty result = new SimpleStringProperty(null);
 
@@ -461,7 +461,7 @@ class ControllerMethodInvocationAdapterTest {
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 		when(dialogController.showFileOpenDialog(ArgumentMatchers.anyString(), isNull(), isNull(), isNull(), isNull()))
 				.thenReturn(file);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("openFile");
 
 		// WHEN
@@ -480,7 +480,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showFileOpenDialog(ArgumentMatchers.anyString(), isNull(), isNull(), isNull(), isNull()))
 				.thenReturn(null);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("openFile");
 
 		// WHEN
@@ -500,7 +500,7 @@ class ControllerMethodInvocationAdapterTest {
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 		when(dialogController.showFileSaveDialog(ArgumentMatchers.anyString(), isNull(), isNull(), isNull(), isNull()))
 				.thenReturn(file);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("saveFile");
 
 		// WHEN
@@ -520,7 +520,7 @@ class ControllerMethodInvocationAdapterTest {
 		final File file = Files.createTempFile("junit", "-tmp").toFile();
 		when(dialogController.showDirectoryChooserDialog(ArgumentMatchers.anyString(), isNull(), isNull()))
 				.thenReturn(file);
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("openDirectory");
 
 		// WHEN
@@ -539,7 +539,7 @@ class ControllerMethodInvocationAdapterTest {
 		final DialogController dialogController = Mockito.mock(DialogController.class);
 		when(dialogController.showTextInputDialog(anyString(), anyString(), anyString(), anyString()))
 				.thenReturn("Hello World");
-		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEAN, dialogController);
+		actionFX.addBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME, dialogController);
 		final ControllerMethodInvocationAdapter adapter = methodInvocationAdapter("textInput");
 
 		// WHEN

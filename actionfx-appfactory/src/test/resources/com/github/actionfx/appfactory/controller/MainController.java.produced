@@ -1,0 +1,56 @@
+package com.github.actionfx.appfactory.controller;
+
+import com.github.actionfx.core.annotation.AFXController;
+import com.github.actionfx.core.annotation.AFXOnAction;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
+
+/**
+ * ActionFX controller for FXML view "/MainView.fxml"
+ *
+ * @author actionfx-appfactory
+ *
+ */
+@AFXController(viewId = "MainView", fxml = "/MainView.fxml", title = "MainView")
+public class MainController {
+
+	@FXML
+	protected MenuItem closeMenuItem;
+	
+	@FXML
+	protected MenuItem deleteMenuItem;
+	
+	@FXML
+	protected MenuItem helpMenuItem;
+	
+	@FXML
+	protected Button okButton;
+	
+	@FXML
+	protected TableView tableView;
+	
+
+	public void okAction(ActionEvent event) {
+		// TODO: implement action method
+	}
+	
+	@AFXOnAction(nodeId = "closeMenuItem", async = false)
+	public void closeMenuItemAction(ActionEvent event) {
+		// TODO: implement action method
+	}
+	
+	@AFXOnAction(nodeId = "deleteMenuItem", async = false)
+	public void deleteMenuItemAction(ActionEvent event) {
+		// TODO: implement action method
+	}
+	
+	@AFXOnAction(nodeId = "helpMenuItem", async = false)
+	public void helpMenuItemAction(ActionEvent event) {
+		// TODO: implement action method
+	}
+	
+
+}
