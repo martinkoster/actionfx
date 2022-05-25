@@ -21,7 +21,7 @@ publishing {
 		        afterEvaluate {
 	            	description = project.description
 	            }
-                url = "https://https://github.com/martinkoster/actionfx"
+                url = "https://github.com/martinkoster/actionfx"
                 inceptionYear = "2020"
                 licenses {
                     license {
@@ -38,7 +38,7 @@ publishing {
                 scm {
                     connection = "scm:https://github.com/martinkoster/actionfx.git"
                     developerConnection = "scm:git://github.com/martinkoster/actionfx.git"
-                    url = "https://https://github.com/martinkoster/actionfx"
+                    url = "https://github.com/martinkoster/actionfx"
                 }
             }
         }
