@@ -298,7 +298,7 @@ def setVersionTo(newVersion) {
 	    ant.replaceregexp(match:"CURRENT_ACTIONFX_VERSION = \".*\";", replace:"CURRENT_ACTIONFX_VERSION = \"${newVersion}\";", flags:'g', byline:true) {
 	        fileset(dir: './actionfx-appfactory/src/main/java/com/github/actionfx/appfactory/config', includes: 'MainAppFactoryConfig.java')	    
 	    }
-	    ant.replaceregexp(match:"PREVIOUS_ACTIONFX_VERSION = \".*\";", replace:"PREVOIUS_ACTIONFX_VERSION = \"${project.version}\";", flags:'g', byline:true) {
+	    ant.replaceregexp(match:"PREVIOUS_ACTIONFX_VERSION = \".*\";", replace:"PREVIOUS_ACTIONFX_VERSION = \"${project.version}\";", flags:'g', byline:true) {
 	        fileset(dir: './actionfx-appfactory/src/main/java/com/github/actionfx/appfactory/config', includes: 'MainAppFactoryConfig.java')	    
 	    }
 }	
