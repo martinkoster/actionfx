@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.github.actionfx.appfactory"},{"l":"com.github.actionfx.appfactory.config"},{"l":"com.github.actionfx.appfactory.controller"},{"l":"com.github.actionfx.appfactory.factories"},{"l":"com.github.actionfx.appfactory.fxparser"},{"l":"com.github.actionfx.appfactory.utils"}]
