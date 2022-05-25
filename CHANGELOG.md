@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.5.1 (25.05.2022) 
+
+This release is only a minor technical upgrade.
+
+### Technical Upgrades
+- Updated dependencies:
+  * JavaFX to 18.0.1
+  * Classgraph to 4.8.146
+  * Logback to 1.2.11
+  * ControlsFX to 11.1.1
+  * JavaFX Gradle Plugin to 0.0.13
+  * Mockito to 4.5.1
+
 ## 1.5.0 (24.05.2022)
 
 ### New Features
