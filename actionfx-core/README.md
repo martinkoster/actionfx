@@ -36,7 +36,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXShowView (Method Annotation)](#annotation-afxshowview)
     + [Annotations for working with JavaFX controls and their values](#annotations-for-working-with-javafx-controls-and-their-values)      
-      - [Annotation @AFXLoadControlValue (Method Annotation)](#annotation-afxloadcontrolvalue)
+      - [Annotation @AFXLoadControlData (Method Annotation)](#annotation-AFXLoadControlData)
       - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation-afxoncontrolvaluechange)
       - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation-afxarghint)
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)
@@ -314,9 +314,9 @@ Please note that only *one* attribute starting with `show*` must be used at the 
 
 Working with controls that receive user values is a central part of JavaFX and, of course, of ActionFX. Setting and accessing these values is a central part of ActionFX. The following annotations are provided by ActionFX.
 
-#### Annotation @AFXLoadControlValue
+#### Annotation @AFXLoadControlData
 
-The [@AFXLoadControlValue](src/main/java/com/github/actionfx/core/annotation/AFXLoadControlValue.java) annotation can  be applied to methods that return a value that is usable as value inside a referenced control (e.g. load all entities to be displayed inside a TableView or load a text to be displayed in a text area)
+The [@AFXLoadControlData](src/main/java/com/github/actionfx/core/annotation/AFXLoadControlData.java) annotation can  be applied to methods that return a value that is usable as value inside a referenced control (e.g. load all entities to be displayed inside a TableView or load a text to be displayed in a text area)
 
 It is possible perform the loading of data in an asynchronous fashion in a separate thread outside the JavaFX thread by using the attribute `async` (see below). 
 
