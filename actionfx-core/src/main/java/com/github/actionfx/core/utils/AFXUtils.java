@@ -398,7 +398,7 @@ public class AFXUtils {
      * @param expectedValue
      *            the expected value, when the button shall be enabled
      */
-    public static <T> void enableNodeWhenPropertyHasExpectValue(final Node node, final ObservableValue<T> property,
+    public static <T> void enableNodeWhenPropertyHasExpectedValue(final Node node, final ObservableValue<T> property,
             final T expectedValue) {
         final BooleanBinding expectedValueIsNotMet = Bindings
                 .createBooleanBinding(() -> expectedValue == null && property.getValue() != null

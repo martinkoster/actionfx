@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.5.2 () 
+
+This release is only a minor enhancement release.
+
+### API Clean-Ups
+- Spelling error: Changed method name "AFXUtils.enableNodeWhenPropertyHasExpectValue" to "AFXUtils.enableNodeWhenPropertyHasExpectedValue"
+
+### Technical Upgrades
+- Updated dependencies:
+  * Spring Boot to 2.6.8
+  
 ## 1.5.1 (25.05.2022) 
 
 This release is only a minor technical upgrade.

@@ -1,6 +1,6 @@
 # Module "actionfx-appfactory"
 
-This module contains command-line tools for quickly setting up new ActionFX applications.
+This module contains scaffolding tools for quickly setting up new ActionFX applications.
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
