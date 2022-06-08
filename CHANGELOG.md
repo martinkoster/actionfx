@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 1.5.2 () 
+## 1.5.2 (08.06.2022) 
 
 This release is only a minor enhancement release.
 
@@ -10,7 +10,8 @@ This release is only a minor enhancement release.
 
 ### Technical Upgrades
 - Updated dependencies:
-  * Spring Boot to 2.6.8
+  * Spring Boot to 2.7.0
+  * Classgraph to 4.8.147
   
 ## 1.5.1 (25.05.2022) 
 
