@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.5.2 (08.06.2022) 
+
+This release is only a minor enhancement release.
+
+### API Clean-Ups
+- Spelling error: Changed method name "AFXUtils.enableNodeWhenPropertyHasExpectValue" to "AFXUtils.enableNodeWhenPropertyHasExpectedValue"
+
+### Technical Upgrades
+- Updated dependencies:
+  * Spring Boot to 2.7.0
+  * Classgraph to 4.8.147
+  
 ## 1.5.1 (25.05.2022) 
 
 This release is only a minor technical upgrade.
