@@ -18,7 +18,7 @@ controlsfxVersion				= 11.1.1
 
 <#if useSpring>
 springVersion					= 5.3.20
-springBootVersion				= 2.6.7
+springBootVersion				= 2.7.0
 springDepManagementVersion 		= 1.0.11.RELEASE
 </#if>
 
