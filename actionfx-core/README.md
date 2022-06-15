@@ -256,7 +256,7 @@ The following attributes are available inside the annotation:
 Attribute 							| Description 
 ----------------------------------- | -------------------------------------------------
 `refViewId` 						| The referenced view ID that shall nested in the view.
-`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used inside a `@AFXController` annotation. If used on a field annotated by `@FXML`, this value is irrelevant.
+`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used on top of a `@AFXController` annotation at class-level. If used on a field annotated by `@FXML`, this value is irrelevant.
 `attachToIndex`					| Optional index referring to the target node's children list, where the view shall be attached to.
 `attachToColumn`					| Optional column index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInRow`.
 `attachToRow`						| Optional row index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInColum`.
@@ -516,7 +516,7 @@ Attribute 					| Description
 ```
 ### Annotations for declarative Form-Binding
 
-Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control and finding the desired JavaFX property (does the control have a `valueProperty`, do you need to navigate over a `SelectionModel`? What was the value again of a `CheckBox`?). Then, the developer need to decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
+Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control and finding the desired JavaFX property (does the control have a `valueProperty`, do you need to navigate over a `SelectionModel`? What was the value again of a `CheckBox`?). Then, the developers need to decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
 
 Also the structure of the domain object itself influences the binding code, as the domain object can either have also JavaFX properties (for bidirectional binding) or just plain Java type properties like `java.lang.String`. Having just plain Java types on the other hand is often sufficient for simple forms and even reduces the code inside the Java domain object. 
 
@@ -1136,7 +1136,7 @@ In this case, FXML views can contain "%" prefixed placeholder that are replaced 
 **Example of an internationalized FXML:**
 
 ```xml
-<BorderPane fx:controller="bundledemo.MyController" xmlns:fx="http://javafx.com/fxml">
+<BorderPane xmlns:fx="http://javafx.com/fxml">
     <center>
         <!-- This label's text will be taken from the bundle automatically -->
         <Label text="%messageKey"/>

@@ -42,6 +42,7 @@ import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
+import com.github.actionfx.core.annotation.ValidationMode;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
@@ -159,6 +160,11 @@ public class ActionFX {
     // holds a list of custom controller extensions added by the user during
     // ActionFX setup
     protected ActionFXExtensionsBean actionFXExtensionsBean;
+
+    // the global validation mode to be applied to controls, in case these
+    // carry validation-related annotations. in that case, annotation do not need
+    // to mention a validation mode
+    protected ValidationMode globalValidationMode;
 
     /**
      * Internal constructor. Use {@link #build()} method to create your application-specific instance of
@@ -741,6 +747,26 @@ public class ActionFX {
     }
 
     /**
+     * Performs a validation on controls inside the given {@code controller}. Controls need to be annotated by one or
+     * many of the following annotations:
+     * <p>
+     * <ul>
+     * <li>{@link com.github.actionfx.core.annotation.AFXValidateRequired}
+     * <li>{@link com.github.actionfx.core.annotation.AFXValidateRegExp}</li>
+     * <li></li>
+     * <li></li>
+     * </ul>
+     *
+     * @param controller
+     *            the controller referencing the JavaFX controls to validate
+     * @return {@code true}, if all validations passed successfully, {@code false}, if there are validation errors found
+     *         in the annotated controls.
+     */
+    public boolean validate(final Object controller) {
+        return true;
+    }
+
+    /**
      * The package name with dot-notation "." that shall be scanned for ActionFX components.
      *
      * @return this builder
@@ -794,6 +820,18 @@ public class ActionFX {
      */
     public ObservableValue<Locale> getObservableLocale() {
         return observableLocale;
+    }
+
+    /**
+     * Gets the global validation mode, if specified. When specifying a global validation mode as part of the setup
+     * phase of ActionFX, this global validation mode makes the specification of a particular validation mode inside a
+     * validation-related annotation like {@link com.github.actionfx.core.annotation.AFXValidateRequired} obsolete,
+     * reducing the number of attributes to be specified in these type of annotations.
+     *
+     * @return the global validation mode configured for ActionFX.
+     */
+    public ValidationMode getGlobalValidationMode() {
+        return globalValidationMode;
     }
 
     /**
@@ -867,6 +905,8 @@ public class ActionFX {
 
         private boolean enableBeanContainerAutodetection = true;
 
+        private ValidationMode globalValidationMode = null;
+
         /**
          * Creates the instance of {@link ActionFX} ready to use.
          *
@@ -885,6 +925,8 @@ public class ActionFX {
                     : (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
             actionFX.observableLocale = observableLocale != null ? observableLocale
                     : new SimpleObjectProperty<>(Locale.getDefault());
+            actionFX.globalValidationMode = globalValidationMode != null ? globalValidationMode
+                    : ValidationMode.GLOBAL_VALIDATION_MDOE_UNSPECIFIED;
             postConstruct(actionFX);
             return actionFX;
         }
@@ -912,6 +954,7 @@ public class ActionFX {
             mainViewId = afxApplication.mainViewId();
             scanPackage = afxApplication.scanPackage();
             enableBeanContainerAutodetection = afxApplication.enableBeanContainerAutodetection();
+            globalValidationMode = afxApplication.globalValidationMode();
             return this;
         }
 
@@ -1132,6 +1175,22 @@ public class ActionFX {
          */
         public ActionFXBuilder enableBeanContainerAutodetection(final boolean enableAutoDetect) {
             enableBeanContainerAutodetection = enableAutoDetect;
+            return this;
+        }
+
+        /**
+         * Specifies the global validation mode that shall be applied on JavaFX controls that carry an
+         * validation-related annotation like {@link com.github.actionfx.core.annotation.AFXValidateRequired}. In case a
+         * global validation mode is set via this builder, the annotations do not need to specify a validation mode
+         * anymore. This is helpful for reducing the number of attributes in validation-related annotations and ActionFX
+         * controllers.
+         *
+         * @param globalValidationMode
+         *            the global validation mode
+         * @return this builder
+         */
+        public ActionFXBuilder globalValidationMode(final ValidationMode globalValidationMode) {
+            this.globalValidationMode = globalValidationMode;
             return this;
         }
 

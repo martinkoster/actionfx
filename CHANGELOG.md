@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.6.0 ()
+
+### New Features
+
+### Technical Upgrades
+
 ## 1.5.2 (08.06.2022) 
 
 This release is only a minor enhancement release.
