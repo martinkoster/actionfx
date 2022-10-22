@@ -72,8 +72,8 @@ public @interface AFXApplication {
      * is set via this builder, the annotations do not need to specify a validation mode anymore. This is helpful for
      * reducing the number of attributes in validation-related annotations and ActionFX controllers.
      *
-     * @return the global validation mode. Default value is {@link ValidationMode#GLOBAL_VALIDATION_MDOE_UNSPECIFIED},
+     * @return the global validation mode. Default value is {@link ValidationMode#GLOBAL_VALIDATION_MODE_UNSPECIFIED},
      *         means, the specification of a validation mode is in responsibility of any validation-related annotation.s
      */
-    public ValidationMode globalValidationMode() default ValidationMode.GLOBAL_VALIDATION_MDOE_UNSPECIFIED;
+    public ValidationMode globalValidationMode() default ValidationMode.GLOBAL_VALIDATION_MODE_UNSPECIFIED;
 }

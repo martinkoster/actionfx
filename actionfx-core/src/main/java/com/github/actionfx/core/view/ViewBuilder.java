@@ -68,47 +68,47 @@ public class ViewBuilder<T extends AbstractView> {
 	}
 
 	public ViewBuilder<T> id(final String id) {
-		view.id = id;
+		view.data.id = id;
 		return this;
 	}
 
 	public ViewBuilder<T> width(final int width) {
-		view.width = width;
+		view.data.width = width;
 		return this;
 	}
 
 	public ViewBuilder<T> height(final int height) {
-		view.height = height;
+		view.data.height = height;
 		return this;
 	}
 
 	public ViewBuilder<T> windowTitle(final String title) {
-		view.windowTitle = title;
+		view.data.windowTitle = title;
 		return this;
 	}
 
 	public ViewBuilder<T> modalDialogue(final boolean modalDialogue) {
-		view.modalDialogue = modalDialogue;
+		view.data.modalDialogue = modalDialogue;
 		return this;
 	}
 
 	public ViewBuilder<T> maximized(final boolean maximized) {
-		view.maximized = maximized;
+		view.data.maximized = maximized;
 		return this;
 	}
 
 	public ViewBuilder<T> posX(final int posX) {
-		view.posX = posX;
+		view.data.posX = posX;
 		return this;
 	}
 
 	public ViewBuilder<T> posY(final int posY) {
-		view.posY = posY;
+		view.data.posY = posY;
 		return this;
 	}
 
 	public ViewBuilder<T> icon(final String icon) {
-		view.icon = icon;
+		view.data.icon = icon;
 		return this;
 	}
 
@@ -116,7 +116,7 @@ public class ViewBuilder<T extends AbstractView> {
 		if (stylesheets == null) {
 			return this;
 		}
-		view.stylesheets.addAll(Arrays.asList(stylesheets));
+		view.data.stylesheets.addAll(Arrays.asList(stylesheets));
 		view.applyStylesheets();
 		return this;
 	}

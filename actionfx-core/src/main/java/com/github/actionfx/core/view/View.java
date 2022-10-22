@@ -26,12 +26,19 @@ package com.github.actionfx.core.view;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import com.github.actionfx.core.annotation.ValidationMode;
 import com.github.actionfx.core.bind.BindingTargetResolver;
+import com.github.actionfx.core.validation.ValidationOptions;
+import com.github.actionfx.core.validation.ValidationResult;
+import com.github.actionfx.core.validation.ValidationStatus;
+import com.github.actionfx.core.validation.Validator;
+import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.control.TabPane;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -72,7 +79,7 @@ public interface View {
     void show(Stage stage);
 
     /**
-     * Shows the view in the supplied {@link Stage}.
+     * Shows the view in the supplied {@link Popup}.
      *
      * @param popup
      *            the popup to show the view inside
@@ -193,4 +200,64 @@ public interface View {
      * Removes all bindings that have been established via former calls to {@link #bind(Object, BindingTargetResolver)}.
      */
     void unbindAll();
+
+    /**
+     * Performs validations by applying validators added by calling {@link #registerValidator(Control, Validator)}.
+     *
+     * @param applyValidationDecoration
+     *            {@code true}, if validation decorations shall be applied to controls, {@code false} otherwise. In case
+     *            no validation decorations shall be applied, it is up to the developer how to signal validation
+     *            failures to the user of the UI.
+     * @return the result of the validation, including potential validation messages. If the validation was successful
+     *         the result of {@link ValidationResult#getStatus()} will be {@link ValidationStatus#OK}.
+     */
+    ValidationResult validate(final boolean applyValidationDecoration);
+
+    /**
+     * Performs validations by applying validators added by calling {@link #registerValidator(Control, Validator)}.
+     *
+     * @return the result of the validation, including potential validation messages. If the validation was successful
+     *         the result of {@link ValidationResult#getStatus()} will be {@link ValidationStatus#OK}.
+     */
+    default ValidationResult validate() {
+        return validate(true);
+    }
+
+    /**
+     * Adds a {@code validator} to the specified {@code control}.
+     *
+     * @param control
+     *            the control to validate
+     * @param controlProperty
+     *            the property of the given {@code control} whose value shall be validated
+     * @param validator
+     *            the validator to apply to the control
+     * @param options
+     *            defines several options, how the {@code validator} shall be applied to the given {@code control} (e.g.
+     *            the validation mode of the given control e.g. {@link ValidationMode#ONCHANGE}, when the value of the
+     *            control is changed, or {@link ValidationMode#MANUAL}, if the validation has to be manually triggered
+     *            via {@link #validate()})
+     */
+    void registerValidator(Control control, ControlProperties controlProperty, Validator validator,
+            ValidationOptions options);
+
+    /**
+     * Adds a {@code validator} to the control that will be looked up for the given {@code nodeId}.
+     *
+     * @param nodeId
+     *            the nodeId that shall be resolved to a {@link javafx.scene.control.Control}.
+     * @param controlProperty
+     *            the property of the given {@code control} whose value shall be validated
+     * @param validator
+     *            the validator to apply to the control
+     * @param options
+     *            defines several options, how the {@code validator} shall be applied to the given {@code control} (e.g.
+     *            the validation mode of the given control e.g. {@link ValidationMode#ONCHANGE}, when the value of the
+     *            control is changed, or {@link ValidationMode#MANUAL}, if the validation has to be manually triggered
+     *            via {@link #validate()})
+     */
+    void registerValidator(final String nodeId, ControlProperties controlProperty,
+            final Validator validator,
+            ValidationOptions options);
+
 }

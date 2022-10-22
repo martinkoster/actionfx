@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Martin Koster
+ * Copyright (c) 2022 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,23 +21,24 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.utils;
+package com.github.actionfx.core.validation;
+
+import javafx.event.Event;
+import javafx.event.EventType;
 
 /**
- * Wrapper class for transporting a {@link Throwable} as
- * {@link RuntimeException}.
+ * Event occurring when a validation shall be performed.
  *
- * @author koster
- *
+ * @author MartinKoster
  */
-public class RuntimeWithNestedThrowableException extends RuntimeException {
+public class ValidationEvent extends Event {
 
-	/**
-	 * Generated serialVerionUID.
-	 */
-	private static final long serialVersionUID = -6211050178038291015L;
+    private static final long serialVersionUID = -4176960768114849106L;
 
-	public RuntimeWithNestedThrowableException(final Throwable throwable) {
-		super(throwable);
-	}
+    public static final EventType<Event> EVENT_TYPE = new EventType<>("VALIDATE_EVENT");
+
+    public ValidationEvent() {
+        super(EVENT_TYPE);
+    }
+
 }

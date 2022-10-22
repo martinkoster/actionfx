@@ -224,7 +224,7 @@ class FxmlViewTest {
 	void testLookupNode_nodeIsCached() {
 		// GIVEN
 		final FxmlView view = new FxmlView("testId", "/testfxml/SampleViewWithNodeId.fxml", new TestController());
-		assertThat(view.lookupCache.entrySet(), hasSize(0));
+		assertThat(view.data.lookupCache.entrySet(), hasSize(0));
 
 		// WHEN
 		final NodeWrapper textFieldWrapper = view.lookupNode("textField");
@@ -233,7 +233,7 @@ class FxmlViewTest {
 		assertThat(textFieldWrapper, notNullValue());
 		assertThat(textFieldWrapper.getWrapped(), instanceOf(TextField.class));
 		// check that the node is now cached!
-		assertThat(view.lookupCache.get("textField"), equalTo(textFieldWrapper));
+		assertThat(view.data.lookupCache.get("textField"), equalTo(textFieldWrapper));
 	}
 
 	@Test

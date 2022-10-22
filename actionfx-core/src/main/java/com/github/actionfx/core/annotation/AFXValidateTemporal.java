@@ -24,10 +24,12 @@
 package com.github.actionfx.core.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.github.actionfx.core.annotation.AFXValidateTemporal.AFXValidateTemporals;
 import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
@@ -38,6 +40,7 @@ import com.github.actionfx.core.view.graph.ControlProperties;
  * @author koster
  *
  */
+@Repeatable(AFXValidateTemporals.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXValidateTemporal {
@@ -133,4 +136,16 @@ public @interface AFXValidateTemporal {
      */
     public ValidationMode validationMode() default ValidationMode.ONCHANGE;
 
+    /**
+     * Annotation to make {@link AFXValidateTemporal} repeatable.
+     *
+     * @author koster
+     *
+     */
+    @Target({ ElementType.FIELD })
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface AFXValidateTemporals {
+
+        AFXValidateTemporal[] value();
+    }
 }

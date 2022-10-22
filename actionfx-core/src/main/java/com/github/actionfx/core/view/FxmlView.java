@@ -35,22 +35,23 @@ import com.github.actionfx.core.utils.AFXUtils;
  */
 public class FxmlView extends AbstractView {
 
-	private final Object controller;
+    private final Object controller;
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller) {
-		this(id, fxmlLocation, controller, null);
-	}
+    public FxmlView(final String id, final String fxmlLocation, final Object controller) {
+        this(id, fxmlLocation, controller, null);
+    }
 
-	public FxmlView(final String id, final String fxmlLocation, final Object controller,
-			final ResourceBundle resourceBundle) {
-		this.id = id;
-		rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
-		this.controller = controller;
-		this.resourceBundle = resourceBundle;
-	}
+    public FxmlView(final String id, final String fxmlLocation, final Object controller,
+            final ResourceBundle resourceBundle) {
+        super();
+        this.id = id;
+        rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
+        this.controller = controller;
+        this.resourceBundle = resourceBundle;
+    }
 
-	@Override
-	public Object getController() {
-		return controller;
-	}
+    @Override
+    public Object getController() {
+        return controller;
+    }
 }

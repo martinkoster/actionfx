@@ -54,5 +54,5 @@ public enum ValidationMode {
      * {@link com.github.actionfx.core.annotation.AFXApplication#globalValidationMode()} as "unspecified" (means
      * validation mode must be specified as part of any validation-related annotations).
      */
-    GLOBAL_VALIDATION_MDOE_UNSPECIFIED
+    GLOBAL_VALIDATION_MODE_UNSPECIFIED
 }

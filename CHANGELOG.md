@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### New Features
 
 ### Technical Upgrades
+- Upgraded Gradle to 7.5.1
 
 ## 1.5.2 (08.06.2022) 
 

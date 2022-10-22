@@ -69,8 +69,8 @@ class ExceptionUtilsTest {
 		final RuntimeException wrapped = ExceptionUtils.wrapInRuntimeExceptionIfNecessary(ex);
 
 		// THEN
-		assertThat(wrapped, instanceOf(RuntimeWithNestedThrowableException.class));
-		final RuntimeWithNestedThrowableException nested = (RuntimeWithNestedThrowableException) wrapped;
+		assertThat(wrapped, instanceOf(NestedThrowableException.class));
+		final NestedThrowableException nested = (NestedThrowableException) wrapped;
 		assertThat(nested.getCause(), equalTo(ex));
 	}
 

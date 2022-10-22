@@ -24,10 +24,12 @@
 package com.github.actionfx.core.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.github.actionfx.core.annotation.AFXValidateMinMax.AFXValidateMinMaxs;
 import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
@@ -37,6 +39,7 @@ import com.github.actionfx.core.view.graph.ControlProperties;
  * @author koster
  *
  */
+@Repeatable(AFXValidateMinMaxs.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXValidateMinMax {
@@ -116,4 +119,16 @@ public @interface AFXValidateMinMax {
      */
     public ValidationMode validationMode() default ValidationMode.ONCHANGE;
 
+    /**
+     * Annotation to make {@link AFXValidateMinMax} repeatable.
+     *
+     * @author koster
+     *
+     */
+    @Target({ ElementType.FIELD })
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface AFXValidateMinMaxs {
+
+        AFXValidateMinMax[] value();
+    }
 }

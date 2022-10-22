@@ -34,7 +34,7 @@ public class TestView extends AbstractView {
 	private boolean initializeInvoked = false;
 
 	public TestView() {
-		rootNode = new AnchorPane();
+		data.rootNode = new AnchorPane();
 	}
 
 	@PostConstruct

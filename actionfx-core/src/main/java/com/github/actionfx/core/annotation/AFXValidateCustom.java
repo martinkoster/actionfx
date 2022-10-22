@@ -24,10 +24,12 @@
 package com.github.actionfx.core.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.github.actionfx.core.annotation.AFXValidateCustom.AFXValidateCustoms;
 import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
@@ -38,6 +40,7 @@ import com.github.actionfx.core.view.graph.ControlProperties;
  * @author koster
  *
  */
+@Repeatable(AFXValidateCustoms.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AFXValidateCustom {
@@ -64,6 +67,15 @@ public @interface AFXValidateCustom {
      * <li><tt>boolean methodName(ObservableList&lt;TYPE&gt; selectedValue)</tt></li>
      * <li><tt>boolean methodName(ObservableList&lt;TYPE&gt; selectedValue, List&lt;TYPE&gt; addedList, List&lt;TYPE&gt; removedList, javafx.collections.ListChangeListener.Change change)</tt></li>
      * </ul>
+     * Alternatively to the method signatures above that return a {@code boolean}, it is also possible to return a
+     * single {@code ValidationMessage} or a list of {@code ValidationMessage}s. In that case, the attributes
+     * {@link #message()} and {@link #messageKey()} are ignored, if specified:
+     * <p>
+     * <ul>
+     * <li>ValidationMessage methodName()</li>
+     * <li>List&lt;ValidationMessage&gt; methodName()</li>
+     * </ul>
+     *
      * The above signatures are supported without requiring the use of the {@link AFXArgHint} annotation. In case you
      * need to change the order of the arguments, you will need to specify hints for defining, which argument is e.g.
      * the "new" value (use @{@link AFXArgHint} with {@link ArgumentHint#NEW_VALUE}) and which argument is the "old"
@@ -133,4 +145,16 @@ public @interface AFXValidateCustom {
      */
     public ValidationMode validationMode() default ValidationMode.ONCHANGE;
 
+    /**
+     * Annotation to make {@link AFXValidateCustom} repeatable.
+     *
+     * @author koster
+     *
+     */
+    @Target({ ElementType.FIELD })
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface AFXValidateCustoms {
+
+        AFXValidateCustom[] value();
+    }
 }

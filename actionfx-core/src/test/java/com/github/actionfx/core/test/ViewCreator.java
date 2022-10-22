@@ -53,10 +53,10 @@ public class ViewCreator {
 	public static class StaticView extends AbstractView {
 
 		public StaticView(final String viewId, final Node... node) {
-			id = viewId;
+			data.id = viewId;
 			final AnchorPane pane = new AnchorPane();
 			pane.getChildren().addAll(node);
-			rootNode = pane;
+			data.rootNode = pane;
 		}
 
 		@Override
@@ -71,7 +71,7 @@ public class ViewCreator {
 		}
 
 		public StaticView resourceBundle(final ResourceBundle resourceBundle) {
-			this.resourceBundle = resourceBundle;
+			this.data.resourceBundle = resourceBundle;
 			return this;
 		}
 	}

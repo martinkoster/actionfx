@@ -24,6 +24,7 @@
 package com.github.actionfx.core.view.graph;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -35,6 +36,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.actionfx.core.annotation.AFXNestedView;
+import com.github.actionfx.core.decoration.Decoration;
+import com.github.actionfx.core.decoration.DecorationUtils;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.BorderPanePosition;
@@ -236,6 +239,28 @@ public class NodeWrapper {
      */
     public boolean isOfType(final Class<?> clazz) {
         return clazz.isAssignableFrom(getWrappedType());
+    }
+
+    /**
+     * Returns the child or children of the wrapped node as an immutable read-only list.
+     * <p>
+     * In case the wrapped node supports just a single child (in this case {@link #supportsSingleChild()} is
+     * {@code true}), the returned list is a list with only one element.
+     * <p>
+     * The returned list is not an {@code ObservableList} - thus, changes to the real children of the wrapped node are
+     * not reflected in the returned list.
+     *
+     * @return the children list (never {@code null})
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getChildrenReadOnly() {
+        if (supportsMultipleChildren()) {
+            return Collections.unmodifiableList(getChildren());
+        } else if (supportsSingleChild()) {
+            return Collections.unmodifiableList(Arrays.asList((T) getSingleChildProperty().getValue()));
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -691,6 +716,58 @@ public class NodeWrapper {
      */
     public static NodeAttacher anchorPaneFillingAttacher() {
         return new AnchorPaneAttacher(0.0, 0.0, 0.0, 0.0);
+    }
+
+    /**
+     * Decorates the wrapped node by applying the supplied {@link Decoration}.
+     *
+     * @param decoration
+     *            the decoration to apply to the wrapped node
+     */
+    public void decorate(final Decoration decoration) {
+        assertWrappedIsOfTypeNode();
+        DecorationUtils.addDecoration(getWrapped(), decoration);
+    }
+
+    /**
+     * Removes the given {@link Decoration} from the wrapped node. In case the decoration has not been previously
+     * applied, this method call has no effect then.
+     *
+     * @param decoration
+     *            the decoration to remove
+     */
+    public void undecorate(final Decoration decoration) {
+        assertWrappedIsOfTypeNode();
+        DecorationUtils.removeDecoration(getWrapped(), decoration);
+    }
+
+    /**
+     * Removes all decorations from the wrapped node.
+     */
+    public void undecorateAll() {
+        assertWrappedIsOfTypeNode();
+        DecorationUtils.removeAllDecorations(getWrapped());
+    }
+
+    /**
+     * Gets all decorations from the underlying wrapped node.
+     *
+     * @return the list of decorations as observable list.
+     */
+    public ObservableList<Decoration> getDecorations() {
+        assertWrappedIsOfTypeNode();
+        return DecorationUtils.getDecorations(getWrapped());
+    }
+
+    /**
+     * Assures that the wrapped node is of type {@link Node}. If this is not the case, an {@link IllegalStateException}
+     * will be thrown.
+     */
+    private void assertWrappedIsOfTypeNode() {
+        if (!Node.class.isAssignableFrom(getWrappedType())) {
+            throw new IllegalStateException(
+                    "The wrapped object of type '" + getWrappedType() + "' is not of expected type javafx.scene.Node!");
+        }
     }
 
     /**

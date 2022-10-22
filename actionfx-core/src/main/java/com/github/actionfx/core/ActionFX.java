@@ -926,7 +926,7 @@ public class ActionFX {
             actionFX.observableLocale = observableLocale != null ? observableLocale
                     : new SimpleObjectProperty<>(Locale.getDefault());
             actionFX.globalValidationMode = globalValidationMode != null ? globalValidationMode
-                    : ValidationMode.GLOBAL_VALIDATION_MDOE_UNSPECIFIED;
+                    : ValidationMode.GLOBAL_VALIDATION_MODE_UNSPECIFIED;
             postConstruct(actionFX);
             return actionFX;
         }

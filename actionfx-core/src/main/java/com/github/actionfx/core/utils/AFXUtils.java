@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.actionfx.core.view.graph.ControlWrapper;
+import com.github.actionfx.core.view.graph.NodeWrapper;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -60,6 +61,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Control;
@@ -70,6 +72,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
@@ -440,7 +443,7 @@ public class AFXUtils {
     }
 
     /**
-     * Useful method for linking things together when before a property is necessarily set.
+     * Useful method for linking things together before a property is necessarily set.
      */
     public static <T> void executeOnceWhenPropertyIsNonNull(final ObservableValue<T> p, final Consumer<T> consumer) {
         if (p == null) {
@@ -572,5 +575,36 @@ public class AFXUtils {
 
         throw new IllegalArgumentException(
                 "Unable to determine the observable value type from '" + observableValue.getClass() + "'!");
+    }
+
+    /**
+     * Injects the given {@code injectedParent} into the given {@code scene} as new root, making the existing scene root
+     * as child of {@code injectedParent}.
+     *
+     * @param scene
+     *            the scene
+     * @param injectedParent
+     *            the parent to be injected as scene root
+     */
+    public static void injectAsRootPane(final Scene scene, final Parent injectedParent) {
+        final Parent originalParent = scene.getRoot();
+        scene.setRoot(injectedParent);
+        if (injectedParent instanceof Region) {
+            final Region region = (Region) originalParent;
+            region.setMaxWidth(Double.MAX_VALUE);
+            region.setMaxHeight(Double.MAX_VALUE);
+        }
+        if (originalParent != null) {
+            final NodeWrapper wrapper = NodeWrapper.of(injectedParent);
+            if (wrapper.supportsMultipleChildren()) {
+                wrapper.getChildren().add(0, originalParent);
+            } else if (wrapper.supportsSingleChild()) {
+                wrapper.getSingleChildProperty().setValue(originalParent);
+            } else {
+                throw new IllegalStateException("Node of type '" + originalParent.getClass()
+                        + "' currently st in the scene does not support any children!");
+            }
+            injectedParent.getProperties().putAll(originalParent.getProperties());
+        }
     }
 }

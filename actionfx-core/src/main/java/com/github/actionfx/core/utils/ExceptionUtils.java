@@ -83,7 +83,7 @@ public class ExceptionUtils {
 		if (throwable instanceof RuntimeException) {
 			return (RuntimeException) throwable;
 		} else {
-			return new RuntimeWithNestedThrowableException(throwable);
+			return new NestedThrowableException(throwable);
 		}
 	}
 
