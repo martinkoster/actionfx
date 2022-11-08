@@ -33,10 +33,10 @@ import javafx.scene.Node;
 /**
  * StyleClassDecoration is a {@link Decoration} designed to add a CSS style class to a node (for example, to show a
  * warning style when the field is incorrectly set). StyleClassDecoration is applied as part of the ControlsFX
- * {@link Decorator} API - refer to the {@link Decorator} javadoc for more details.
+ * {@link DecorationUtils} API - refer to the {@link DecorationUtils} javadoc for more details.
  *
  * @see Decoration
- * @see Decorator
+ * @see DecorationUtils
  */
 public class StyleClassDecoration extends Decoration {
 

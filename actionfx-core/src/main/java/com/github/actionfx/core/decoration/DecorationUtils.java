@@ -159,22 +159,22 @@ public class DecorationUtils {
                     return;
                 }
 
-                DecorationPane _pane = getDecorationPaneInParentHierarchy(target);
-                if (_pane == null) {
+                DecorationPane decorationPane = getDecorationPaneInParentHierarchy(target);
+                if (decorationPane == null) {
                     currentlyInstallingScenes.add(scene);
-                    _pane = new DecorationPane();
+                    decorationPane = new DecorationPane();
                     final Parent oldRoot = scene.getRoot();
-                    _pane.getStylesheets().addAll(oldRoot.getStylesheets());
-                    AFXUtils.injectAsRootPane(scene, _pane);
-                    _pane.setRoot(oldRoot);
+                    decorationPane.getStylesheets().addAll(oldRoot.getStylesheets());
+                    AFXUtils.injectAsRootPane(scene, decorationPane);
+                    decorationPane.setRoot(oldRoot);
                     currentlyInstallingScenes.remove(scene);
                 }
 
-                task.accept(_pane);
+                task.accept(decorationPane);
                 final List<Consumer<DecorationPane>> pendingTasks = pendingTasksByScene.remove(scene);
                 if (pendingTasks != null) {
                     for (final Consumer<DecorationPane> pendingTask : pendingTasks) {
-                        pendingTask.accept(_pane);
+                        pendingTask.accept(decorationPane);
                     }
                 }
             };

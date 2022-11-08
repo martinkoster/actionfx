@@ -41,7 +41,7 @@ import javafx.scene.image.ImageView;
 /**
  * GraphicDecoration is a {@link Decoration} designed to show a graphic (be it an image loaded via an {@link ImageView}
  * or an arbitrarily complex scenegraph in its own right) on top of a given node. GraphicDecoration is applied as part
- * of the ControlsFX {@link Decorator} API - refer to the {@link Decorator} javadoc for more details.
+ * of the ControlsFX {@link DecorationUtils} API - refer to the {@link DecorationUtils} javadoc for more details.
  *
  */
 public class GraphicDecoration extends Decoration {

@@ -80,31 +80,8 @@ public class GraphicValidationDecoration extends AbstractValidationDecoration {
     private static final String INFO_TOOLTIP_EFFECT = POPUP_SHADOW_EFFECT + TOOLTIP_COMMON_EFFECTS
             + "-fx-background-color: c4d0ef; -fx-text-fill: FFFFFF; -fx-border-color: a8c8ff;"; //$NON-NLS-1$
 
-    /**
-     * Creates default instance
-     */
-    public GraphicValidationDecoration() {
-
-    }
-
-    /**
-     * @deprecated See {@link #getGraphicBySeverity(ValidationStatus)} method
-     */
-    @Deprecated
-    protected Node createErrorNode() {
-        return new ImageView(ERROR_IMAGE);
-    }
-
-    /**
-     * @deprecated See {@link #getGraphicBySeverity(ValidationStatus)} method
-     */
-    @Deprecated
-    protected Node createWarningNode() {
-        return new ImageView(WARNING_IMAGE);
-    }
-
     protected Node createDecorationNode(final ValidationMessage message) {
-        final Node graphic = getGraphicBySeverity(message.getSeverity());
+        final Node graphic = getGraphicBySeverity(message.getStatus());
         graphic.setStyle(SHADOW_EFFECT);
         final Label label = new Label();
         label.setGraphic(graphic);
@@ -116,9 +93,9 @@ public class GraphicValidationDecoration extends AbstractValidationDecoration {
     protected Node getGraphicBySeverity(final com.github.actionfx.core.validation.ValidationStatus severity) {
         switch (severity) {
         case ERROR:
-            return createErrorNode();
+            return new ImageView(ERROR_IMAGE);
         case WARNING:
-            return createWarningNode();
+            return new ImageView(WARNING_IMAGE);
         default:
             return new ImageView(INFO_IMAGE);
         }
@@ -128,7 +105,7 @@ public class GraphicValidationDecoration extends AbstractValidationDecoration {
         final Tooltip tooltip = new Tooltip(message.getText());
         tooltip.setOpacity(.9);
         tooltip.setAutoFix(true);
-        tooltip.setStyle(getStyleBySeverity(message.getSeverity()));
+        tooltip.setStyle(getStyleBySeverity(message.getStatus()));
         return tooltip;
     }
 

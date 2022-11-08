@@ -43,7 +43,7 @@ import javafx.scene.Parent;
  * @author koster
  *
  */
-public class ParentView extends AbstractView {
+public class ParentView extends AbstractBindingView {
 
     private final Object controller;
 

@@ -203,6 +203,8 @@ public interface View {
 
     /**
      * Performs validations by applying validators added by calling {@link #registerValidator(Control, Validator)}.
+     * <p>
+     * Validation is guaranteed to be executed within the JavaFX application thread.
      *
      * @param applyValidationDecoration
      *            {@code true}, if validation decorations shall be applied to controls, {@code false} otherwise. In case
@@ -215,6 +217,8 @@ public interface View {
 
     /**
      * Performs validations by applying validators added by calling {@link #registerValidator(Control, Validator)}.
+     * <p>
+     * Validation is guaranteed to be executed within the JavaFX application thread.
      *
      * @return the result of the validation, including potential validation messages. If the validation was successful
      *         the result of {@link ValidationResult#getStatus()} will be {@link ValidationStatus#OK}.

@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.github.actionfx.core.validation.ValidationMessage;
+import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.scene.control.Control;
 
@@ -97,7 +98,7 @@ public abstract class AbstractValidationDecoration implements ValidationDecorati
      */
     @Override
     public void applyRequiredDecoration(final Control target) {
-        if (ControllerViewValidation.isRequired(target)) {
+        if (ControlWrapper.of(target).isRequired()) {
             createRequiredDecorations(target).stream().forEach(d -> decorate(target, d));
         }
     }

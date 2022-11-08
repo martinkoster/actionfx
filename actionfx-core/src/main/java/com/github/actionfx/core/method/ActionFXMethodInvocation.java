@@ -67,14 +67,21 @@ public class ActionFXMethodInvocation {
      *            the instance holding the method
      * @param methodName
      *            the method name itself
+     * @param allowLessOrNoMethodArguments
+     *            in case there is no method that supports the full set of {@code arguments}, this flag determines
+     *            whether it is OK to "downgrade" to a method that only accepts a subset of arguments, or even no
+     *            arguments at all.
      * @param arguments
      *            the arguments that shall be passed to the method. Please note that there is an internal type-matching
      *            based on assigning the supplied arguments to the parameters of the method. The actual method can have
      *            additional parameter that are e.g. annotated by {@link AFXControlValue} that is internally looked up
      *            and of course, does not need to be provided as part of {@code arguments}.
      */
-    public ActionFXMethodInvocation(final Object instance, final String methodName, final Object... arguments) {
-        this(instance, identifyBestMatchingMethod(instance.getClass(), methodName, arguments), arguments);
+    public ActionFXMethodInvocation(final Object instance, final String methodName,
+            final boolean allowLessOrNoMethodArguments, final Object... arguments) {
+        this(instance,
+                identifyBestMatchingMethod(instance.getClass(), methodName, allowLessOrNoMethodArguments, arguments),
+                arguments);
     }
 
     /**
@@ -125,6 +132,10 @@ public class ActionFXMethodInvocation {
      *            the class that is supposed to hold the method
      * @param methodName
      *            the method name to search for
+     * @param allowLessOrNoMethodArguments
+     *            in case there is no method that supports the full set of {@code arguments}, this flag determines
+     *            whether it is OK to "downgrade" to a method that only accepts a subset of arguments, or even no
+     *            arguments at all.
      * @param arguments
      *            the method arguments
      * @return the best matching method
@@ -132,10 +143,21 @@ public class ActionFXMethodInvocation {
      *             in case there is no match or the matches are ambiguous
      */
     private static Method identifyBestMatchingMethod(final Class<?> clazz, final String methodName,
+            final boolean allowLessOrNoMethodArguments,
             final Object[] arguments) {
         final List<Method> methods = ReflectionUtils.findMethods(clazz,
-                method -> method.getName().equals(methodName) && parameterMatches(method, arguments));
+                method -> method.getName().equals(methodName)
+                        && parameterMatches(method, false, arguments));
         if (methods.isEmpty()) {
+            // no method with all arguments found - shall we try to "downgrade" the method?
+            if (allowLessOrNoMethodArguments) {
+                final List<Method> fallbackMethods = ReflectionUtils.findMethods(clazz,
+                        method -> method.getName().equals(methodName)
+                                && parameterMatches(method, true, arguments));
+                if (!fallbackMethods.isEmpty() && fallbackMethods.size() == 1) {
+                    return fallbackMethods.get(0);
+                }
+            }
             throw new IllegalArgumentException("Class '" + clazz.getCanonicalName()
                     + "' does not have method with name '" + methodName + "' that accepts the supplied arguments '"
                     + ExceptionUtils.toPrintableString(arguments) + "'!");
@@ -155,12 +177,17 @@ public class ActionFXMethodInvocation {
      *
      * @param method
      *            the method to check its parameters against the supplied {@code arguments}.
+     * @param allowLessOrNoMethodArguments
+     *            in case there is no method that supports the full set of {@code arguments}, this flag determines
+     *            whether it is OK to "downgrade" to a method that only accepts a subset of arguments, or even no
+     *            arguments at all.
      * @param arguments
      *            the arguments
      * @return {@code true}, if the supplied {@code method} is able to accept the supplied {@code arguments},
      *         {@code false} otherwise.
      */
-    private static boolean parameterMatches(final Method method, final Object[] arguments) {
+    private static boolean parameterMatches(final Method method, final boolean allowLessOrNoMethodArguments,
+            final Object[] arguments) {
         // remove all parameters that carry an ActionFX method argument annotation or
         // ActionEvent parameters
         final List<Parameter> parameterList = new ArrayList<>(Arrays.asList(method.getParameters())).stream().filter(
@@ -171,19 +198,21 @@ public class ActionFXMethodInvocation {
         final List<Object> argumentList = new ArrayList<>(Arrays.asList(arguments)).stream()
                 .filter(arg -> arg == null || !isActionEventType(arg.getClass())).collect(Collectors.toList());
         if (parameterList.isEmpty() && argumentList.isEmpty()) {
-            // method does not have parameters and no parameters are expected...found the
+            // method does not have parameters and no parameters are expected...found the best match
             return true;
         }
         // for all remaining parameters, they need to accept the argument types
-        if (parameterList.size() != argumentList.size()) {
+        if (!allowLessOrNoMethodArguments && parameterList.size() != argumentList.size()) {
             return false;
         }
-        for (int i = 0; i < argumentList.size(); i++) {
+        for (int i = 0; i < parameterList.size(); i++) {
             final Parameter parameter = parameterList.get(i);
-            final Object argument = argumentList.get(i);
-            if (argument == null && parameter.getType().isPrimitive()
-                    || argument != null && !ClassUtils.isAssignable(parameter.getType(), argument.getClass())) {
-                return false;
+            if (argumentList.size() > i) {
+                final Object argument = argumentList.get(i);
+                if (argument == null && parameter.getType().isPrimitive()
+                        || argument != null && !ClassUtils.isAssignable(parameter.getType(), argument.getClass())) {
+                    return false;
+                }
             }
         }
         // all challenges mastered....so we have a match
@@ -232,7 +261,8 @@ public class ActionFXMethodInvocation {
      */
     public static EventHandler<ActionEvent> forOnActionProperty(final Object instance, final String methodName,
             final Object... arguments) {
-        return actionEvent -> new ActionFXMethodInvocation(instance, methodName, merge(actionEvent, arguments)).call();
+        return actionEvent -> new ActionFXMethodInvocation(instance, methodName, true, merge(actionEvent, arguments))
+                .call();
     }
 
     /**
@@ -249,7 +279,8 @@ public class ActionFXMethodInvocation {
      */
     public static EventHandler<ActionEvent> forOnActionProperty(final Object instance, final Method method,
             final Object... arguments) {
-        return actionEvent -> new ActionFXMethodInvocation(instance, method, merge(actionEvent, arguments)).call();
+        return actionEvent -> new ActionFXMethodInvocation(instance, method, merge(actionEvent, arguments))
+                .call();
     }
 
     /**
@@ -270,7 +301,7 @@ public class ActionFXMethodInvocation {
      */
     public static <T> EventHandler<ActionEvent> forOnActionPropertyWithAsyncCall(final Consumer<T> consumer,
             final Object instance, final String methodName, final Object... arguments) {
-        return actionEvent -> new ActionFXMethodInvocation(instance, methodName, merge(actionEvent, arguments))
+        return actionEvent -> new ActionFXMethodInvocation(instance, methodName, true, merge(actionEvent, arguments))
                 .callAsync(consumer);
     }
 

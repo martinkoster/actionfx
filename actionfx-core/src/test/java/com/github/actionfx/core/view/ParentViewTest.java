@@ -40,7 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
-import com.github.actionfx.core.view.AbstractView.RequiredFlagMapChangeListener;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
@@ -105,9 +104,9 @@ class ParentViewTest {
     void testRequiredFlagMapChangeListener() {
         // GIVEN
         final ParentView view = Mockito.spy(new ParentView("viewId", ViewClass.class, new ViewController()));
-        final RequiredFlagMapChangeListener l1 = view.new RequiredFlagMapChangeListener();
-        final RequiredFlagMapChangeListener l2 = view.new RequiredFlagMapChangeListener();
-        final RequiredFlagMapChangeListener l3 = view.new RequiredFlagMapChangeListener();
+        final AbstractValidatingView.RequiredFlagMapChangeListener l1 = view.new RequiredFlagMapChangeListener();
+        final AbstractValidatingView.RequiredFlagMapChangeListener l2 = view.new RequiredFlagMapChangeListener();
+        final AbstractValidatingView.RequiredFlagMapChangeListener l3 = view.new RequiredFlagMapChangeListener();
         final ObservableMap<Object, Object> map = FXCollections.observableHashMap();
 
         // WHEN

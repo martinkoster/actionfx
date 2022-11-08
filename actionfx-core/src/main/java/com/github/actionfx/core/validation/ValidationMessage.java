@@ -38,14 +38,22 @@ public class ValidationMessage implements Comparable<ValidationMessage> {
 
     private final String text;
 
-    private final ValidationStatus severity;
+    private final ValidationStatus status;
 
     private final Control target;
 
-    public ValidationMessage(final Control target, final String text, final ValidationStatus severity) {
+    private boolean applyValidationDecoration;
+
+    public ValidationMessage(final ValidationStatus status, final String text, final Control target) {
+        this(status, text, target, true);
+    }
+
+    public ValidationMessage(final ValidationStatus status, final String text, final Control target,
+            final boolean applyValidationDecoration) {
         this.text = text;
-        this.severity = severity == null ? ValidationStatus.ERROR : severity;
+        this.status = status == null ? ValidationStatus.ERROR : status;
         this.target = target;
+        this.applyValidationDecoration = applyValidationDecoration;
     }
 
     public Control getTarget() {
@@ -56,25 +64,35 @@ public class ValidationMessage implements Comparable<ValidationMessage> {
         return text;
     }
 
-    public ValidationStatus getSeverity() {
-        return severity;
+    public ValidationStatus getStatus() {
+        return status;
+    }
+
+    public boolean isApplyValidationDecoration() {
+        return applyValidationDecoration;
+    }
+
+    // Package protected as it can be only overridden by class ValidationResult
+    void setApplyValidationDecoration(final boolean applyValidationDecoration) {
+        this.applyValidationDecoration = applyValidationDecoration;
     }
 
     @Override
     public String toString() {
-        return String.format("%s(%s)", severity, text);
+        return "ValidationMessage [text=" + text + ", status=" + status + ", target=" + target
+                + ", applyValidationDecoration=" + applyValidationDecoration + "]";
     }
 
     @Override
     public int compareTo(final ValidationMessage msg) {
-        return msg == null || getTarget() != msg.getTarget() ? -1 : getSeverity().compareTo(msg.getSeverity());
+        return msg == null || getTarget() != msg.getTarget() ? -1 : getStatus().compareTo(msg.getStatus());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (severity == null ? 0 : severity.hashCode());
+        result = prime * result + (status == null ? 0 : status.hashCode());
         result = prime * result + (target == null ? 0 : target.hashCode());
         result = prime * result + (text == null ? 0 : text.hashCode());
         return result;
@@ -92,11 +110,11 @@ public class ValidationMessage implements Comparable<ValidationMessage> {
             return false;
         }
         final ValidationMessage other = (ValidationMessage) obj;
-        if (severity == null) {
-            if (other.severity != null) {
+        if (status == null) {
+            if (other.status != null) {
                 return false;
             }
-        } else if (!severity.equals(other.severity)) {
+        } else if (!status.equals(other.status)) {
             return false;
         }
         if (target == null) {

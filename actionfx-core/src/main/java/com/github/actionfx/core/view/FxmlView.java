@@ -33,7 +33,7 @@ import com.github.actionfx.core.utils.AFXUtils;
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
+public class FxmlView extends AbstractBindingView {
 
     private final Object controller;
 

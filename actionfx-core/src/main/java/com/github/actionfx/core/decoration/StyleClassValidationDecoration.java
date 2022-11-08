@@ -92,8 +92,8 @@ public class StyleClassValidationDecoration extends AbstractValidationDecoration
     @Override
     protected Collection<Decoration> createValidationDecorations(
             final ValidationMessage message) {
-        String validationClass = infoClass;
-        switch (message.getSeverity()) {
+        String validationClass;
+        switch (message.getStatus()) {
         case ERROR:
             validationClass = errorClass;
             break;
