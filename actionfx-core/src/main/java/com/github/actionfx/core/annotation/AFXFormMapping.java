@@ -82,32 +82,30 @@ public @interface AFXFormMapping {
     public String formatPattern() default "";
 
     /**
-     * The custom validation method inside the ActionFX controller to be invoked for the referenced control under
-     * {@link #controlId()} It is required that the referenced method needs to return a boolean value, indicating
-     * whether validation was successful ({@code true} or failed ({@code false}).
+     * The custom validation method inside the ActionFX controller to be invoked for the annotated control's value. It
+     * is required that the referenced method needs to return a boolean value, indicating whether validation was
+     * successful ({@code true} or failed ({@code false}).
      * <p>
-     * Referenced methods can be of the following signature (analog to {@link AFXOnControlValueChange}, but here, the
-     * method requires to return a boolean value):
+     * Referenced methods can be of the following signatures:
      * <p>
      * For controls with a single-value:
      * <ul>
-     * <li><tt>boolean methodName()</tt></li>
-     * <li><tt>boolean methodName(TYPE newValue)</tt></li>
-     * <li><tt>boolean methodName(TYPE newValue, TYPE oldValue, ObservableValue&lt;TYPE&gt;
-     * observableValue)</tt></li>
+     * <li><tt>ValidationResult methodName()</tt></li>
+     * <li><tt>ValidationResult methodName(TYPE newValue)</tt></li>
      * </ul>
      * <p>
      * For controls with multi-values:
      * <ul>
-     * <li><tt>boolean methodName()</tt></li>
-     * <li><tt>boolean methodName(ObservableList&lt;TYPE&gt; selectedValue)</tt></li>
-     * <li><tt>boolean methodName(ObservableList&lt;TYPE&gt; selectedValue, List&lt;TYPE&gt; addedList, List&lt;TYPE&gt; removedList, javafx.collections.ListChangeListener.Change change)</tt></li>
+     * <li><tt>ValidationResult methodName()</tt></li>
+     * <li><tt>ValidationResult methodName(ObservableList&lt;TYPE&gt; selectedValue)</tt></li>
      * </ul>
-     * The above signatures are supported without requiring the use of the {@link AFXArgHint} annotation. In case you
-     * need to change the order of the arguments, you will need to specify hints for defining, which argument is e.g.
-     * the "new" value (use @{@link AFXArgHint} with {@link ArgumentHint#NEW_VALUE}) and which argument is the "old"
-     * value (use @{@link AFXArgHint} with {@link ArgumentHint#OLD_VALUE})
-     *
+     * Alternatively to the method signatures above that return a
+     * {@link com.github.actionfx.core.validation.ValidationResult}, it is also possible invoke void-methods. In that
+     * case, developer need to handle the display of validation messages themselves in the validation method.
+     * <p>
+     * <ul>
+     * <li>void methodName()</li>
+     * </ul>
      *
      * @return the method name inside the ActionFX controller
      */

@@ -29,9 +29,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.lang.reflect.Method;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
@@ -52,7 +55,8 @@ class CustomMethodValidatorTest {
         // GIVEN
         final ControllerWithVoidMethod controller = new ControllerWithVoidMethod();
         controller.getTextField().setText("Hello there");
-        final CustomMethodValidator validator = new CustomMethodValidator(controller, "validateMethod");
+        final Method method = ReflectionUtils.findMethod(ControllerWithVoidMethod.class, "validateMethod");
+        final CustomMethodValidator validator = new CustomMethodValidator(controller, method);
 
         // WHEN
         final ValidationResult vr = validator.validate(controller.getTextField(),
@@ -69,7 +73,8 @@ class CustomMethodValidatorTest {
         // GIVEN
         final ControllerWithMethodAndValueParameter controller = new ControllerWithMethodAndValueParameter();
         controller.getTextField().setText("Hello there");
-        final CustomMethodValidator validator = new CustomMethodValidator(controller, "validateMethod");
+        final Method method = ReflectionUtils.findMethod(ControllerWithMethodAndValueParameter.class, "validateMethod");
+        final CustomMethodValidator validator = new CustomMethodValidator(controller, method);
 
         // WHEN
         final ValidationResult vr = validator.validate(controller.getTextField(),

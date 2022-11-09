@@ -23,39 +23,23 @@
  */
 package com.github.actionfx.core.validation;
 
-import java.lang.reflect.Method;
-
-import com.github.actionfx.core.method.ActionFXMethodInvocation;
 import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.scene.control.Control;
 
 /**
- * {@link Validator} implementation that forwards the validation to a method inside an ActionFX controller returning a
- * {@link ValidationResult} value.
+ * {@link Validator} implementation that
  *
  * @author MartinKoster
  */
-public class CustomMethodValidator implements Validator {
+public class TemporalValidator implements Validator {
 
-    private Object controller;
-
-    private Method method;
-
-    public CustomMethodValidator(final Object controller, final Method method) {
-        this.controller = controller;
-        this.method = method;
+    public TemporalValidator() {
     }
 
     @Override
     public ValidationResult validate(final Control control, final ControlProperties controlProperty) {
-        final ControlWrapper controlWrapper = ControlWrapper.of(control);
-        final Object currentValue = controlWrapper.getValue(controlProperty);
-        final ActionFXMethodInvocation methodInvocation = new ActionFXMethodInvocation(controller,
-                method, currentValue);
-        final Object returnValue = methodInvocation.call();
-        return returnValue instanceof ValidationResult ? (ValidationResult) returnValue : null;
+        return null;
     }
 
 }
