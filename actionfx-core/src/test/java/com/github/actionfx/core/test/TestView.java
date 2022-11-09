@@ -25,29 +25,29 @@ package com.github.actionfx.core.test;
 
 import javax.annotation.PostConstruct;
 
-import com.github.actionfx.core.view.AbstractView;
+import com.github.actionfx.core.view.AbstractBindingView;
 
 import javafx.scene.layout.AnchorPane;
 
-public class TestView extends AbstractView {
+public class TestView extends AbstractBindingView {
 
-	private boolean initializeInvoked = false;
+    private boolean initializeInvoked = false;
 
-	public TestView() {
-		data.rootNode = new AnchorPane();
-	}
+    public TestView() {
+        rootNode = new AnchorPane();
+    }
 
-	@PostConstruct
-	public void initialize() {
-		initializeInvoked = true;
-	}
+    @PostConstruct
+    public void initialize() {
+        initializeInvoked = true;
+    }
 
-	public boolean isInitializeInvoked() {
-		return initializeInvoked;
-	}
+    public boolean isInitializeInvoked() {
+        return initializeInvoked;
+    }
 
-	@Override
-	public Object getController() {
-		return null;
-	}
+    @Override
+    public Object getController() {
+        return null;
+    }
 }
