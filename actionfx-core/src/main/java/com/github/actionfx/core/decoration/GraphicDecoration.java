@@ -112,7 +112,7 @@ public class GraphicDecoration extends Decoration {
     /** {@inheritDoc} */
     @Override
     public void applyDecoration(final Node targetNode) {
-        final List<Node> targetNodeChildren = NodeWrapper.of(targetNode).getChildrenReadOnly();
+        final List<Node> targetNodeChildren = NodeWrapper.of(targetNode).getDecorationChildren();
         layoutGraphic(targetNode);
         if (!targetNodeChildren.contains(decorationNode)) {
             targetNodeChildren.add(decorationNode);
@@ -124,7 +124,7 @@ public class GraphicDecoration extends Decoration {
     /** {@inheritDoc} */
     @Override
     public boolean removeDecoration(final Node targetNode) {
-        final List<Node> targetNodeChildren = NodeWrapper.of(targetNode).getChildrenReadOnly();
+        final List<Node> targetNodeChildren = NodeWrapper.of(targetNode).getDecorationChildren();
         boolean removed = false;
         if (targetNodeChildren.contains(decorationNode)) {
             targetNodeChildren.remove(decorationNode);

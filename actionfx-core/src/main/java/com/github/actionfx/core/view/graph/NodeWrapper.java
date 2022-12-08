@@ -46,6 +46,7 @@ import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -53,6 +54,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
+import javafx.scene.control.SkinBase;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
@@ -747,6 +750,20 @@ public class NodeWrapper {
     public void undecorateAll() {
         assertWrappedIsOfTypeNode();
         DecorationUtils.removeAllDecorations(getWrapped());
+    }
+
+    /**
+     * Returns the children list for applying decorations to.
+     *
+     * @return the decoration children list
+     */
+    public <T> ObservableList<T> getDecorationChildren() {
+        if (isControl()) {
+            final Control c = (Control) wrapped;
+            final Skin<?> s = c.getSkin();
+            return s instanceof SkinBase ? ((SkinBase) s).getChildren() : FXCollections.observableArrayList();
+        }
+        return supportsMultipleChildren() ? getChildren() : FXCollections.observableArrayList();
     }
 
     /**

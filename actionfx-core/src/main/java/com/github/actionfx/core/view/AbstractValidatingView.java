@@ -32,7 +32,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import com.github.actionfx.core.annotation.ValidationMode;
+import com.github.actionfx.core.decoration.CompoundValidationDecoration;
 import com.github.actionfx.core.decoration.GraphicValidationDecoration;
+import com.github.actionfx.core.decoration.StyleClassValidationDecoration;
 import com.github.actionfx.core.decoration.ValidationDecoration;
 import com.github.actionfx.core.listener.TimedChangeListener;
 import com.github.actionfx.core.listener.TimedListChangeListener;
@@ -69,7 +71,8 @@ import javafx.scene.control.Control;
 public abstract class AbstractValidatingView extends AbstractView {
 
     protected ObjectProperty<ValidationDecoration> validationDecoratorProperty = new SimpleObjectProperty<>( // NOSONAR hierarchy depth
-            this, "validationDecorator", new GraphicValidationDecoration()) {
+            this, "validationDecorator",
+            new CompoundValidationDecoration(new GraphicValidationDecoration(), new StyleClassValidationDecoration())) {
         @Override
         protected void invalidated() {
             // when the decorator changes, rerun the decoration to update the visuals immediately.

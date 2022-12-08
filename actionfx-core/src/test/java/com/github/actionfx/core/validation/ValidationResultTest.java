@@ -190,4 +190,24 @@ class ValidationResultTest {
         assertThat(vr.getMessages().get(3).isApplyValidationDecoration(), equalTo(false));
     }
 
+    @Test
+    void testAddErrorMessageIf_errorMessageAdded() {
+        // WHEN
+        final ValidationResult vr = ValidationResult.builder().addErrorMessageIf("Error message", null, true);
+
+        // THEN
+        assertThat(vr.getMessages(), hasSize(1));
+        assertThat(vr.getStatus(), equalTo(ValidationStatus.ERROR));
+    }
+
+    @Test
+    void testAddErrorMessageIf_errorMessageNotAdded() {
+        // WHEN
+        final ValidationResult vr = ValidationResult.builder().addErrorMessageIf("Error message", null, false);
+
+        // THEN
+        assertThat(vr.getMessages(), hasSize(0));
+        assertThat(vr.getStatus(), equalTo(ValidationStatus.OK));
+    }
+
 }

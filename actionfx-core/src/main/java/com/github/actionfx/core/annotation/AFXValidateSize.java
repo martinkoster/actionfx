@@ -29,37 +29,39 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.github.actionfx.core.annotation.AFXValidateMinMax.AFXValidateMinMaxs;
+import com.github.actionfx.core.annotation.AFXValidateSize.AFXValidateSizes;
 import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
  * Field annotation that can be applied to a {@link javafx.scene.control.Control} for validating user input that has
- * been entered inside the annotated control and its value has to be between a minimum and a maximum value
- * (inclusively).
+ * been entered inside the annotated control and its value has to be of a certain size.
+ * <p>
+ * In case the property value is of type {@link java.lang.String}, the length of the string is checked. In case the
+ * property value is a {@link java.util.Collection}, then the size of this collection is validated.
  *
  * @author koster
  *
  */
-@Repeatable(AFXValidateMinMaxs.class)
+@Repeatable(AFXValidateSizes.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AFXValidateMinMax {
+public @interface AFXValidateSize {
 
     /**
      * The minimum value that the control needs to have to pass validation. If there is no value specified for this
      * attribute, no minimum validation is applied.
      *
-     * @return the minimum value. Default is {@link Double#MIN_VALUE} (which means, "no minimum specified").
+     * @return the minimum value. Default is {@link Long#MIN_VALUE} (which means, "no minimum specified").
      */
-    public double min() default Double.MIN_VALUE;
+    public long min() default Long.MIN_VALUE;
 
     /**
      * The maximum value that the control needs to have to pass validation. If there is no value specified for this
      * attribute, no maximum validation is applied.
      *
-     * @return the maximum value. Default is {@link Double#MAX_VALUE} (which means, "no maximum specified").
+     * @return the maximum value. Default is {@link Long#MAX_VALUE} (which means, "no maximum specified").
      */
-    public double max() default Double.MAX_VALUE;
+    public long max() default Long.MAX_VALUE;
 
     /**
      * Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation
@@ -69,15 +71,6 @@ public @interface AFXValidateMinMax {
      *         {@code false}.
      */
     public boolean required() default false;
-
-    /**
-     * An optional format pattern that is used for type conversion.
-     * <p>
-     * This parameter can be used for validating numerical values taken from text fields.
-     *
-     * @return the format pattern.
-     */
-    public String formatPattern() default "";
 
     /**
      * Validation error message to be displayed, in case the control failed validation.
@@ -130,15 +123,15 @@ public @interface AFXValidateMinMax {
     public ValidationMode validationMode() default ValidationMode.ONCHANGE;
 
     /**
-     * Annotation to make {@link AFXValidateMinMax} repeatable.
+     * Annotation to make {@link AFXValidateSize} repeatable.
      *
      * @author koster
      *
      */
     @Target({ ElementType.FIELD })
     @Retention(RetentionPolicy.RUNTIME)
-    @interface AFXValidateMinMaxs {
+    @interface AFXValidateSizes {
 
-        AFXValidateMinMax[] value();
+        AFXValidateSize[] value();
     }
 }

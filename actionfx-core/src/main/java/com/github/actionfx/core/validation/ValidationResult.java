@@ -93,6 +93,15 @@ public class ValidationResult {
     }
 
     /**
+     * Convenient method for return a {@link ValidationStatus} with status {@link ValidationStatus#OK}.
+     *
+     * @return a validation result with status OK
+     */
+    public static ValidationResult ok() {
+        return builder();
+    }
+
+    /**
      * Adds a new validation message with the given {@code status} and {@code text} associated to the supplied
      * {@code control}.
      *
@@ -160,8 +169,8 @@ public class ValidationResult {
     }
 
     /**
-     * Adds a new validation message of status {@link ValidationStatus#INFO} with the given {@code status} and
-     * {@code text} associated to the supplied {@code control}.
+     * Adds a new validation message of status {@link ValidationStatus#INFO} and {@code text} associated to the supplied
+     * {@code control}.
      *
      * @param text
      *            the validation message
@@ -174,8 +183,8 @@ public class ValidationResult {
     }
 
     /**
-     * Adds a new validation message of status {@link ValidationStatus#INFO} with the given {@code status} and
-     * {@code text} associated to the supplied {@code control}.
+     * Adds a new validation message of status {@link ValidationStatus#INFO} and {@code text} associated to the supplied
+     * {@code control}.
      *
      * @param text
      *            the validation message
@@ -191,8 +200,8 @@ public class ValidationResult {
     }
 
     /**
-     * Adds a new validation message of status {@link ValidationStatus#WARNING} with the given {@code status} and
-     * {@code text} associated to the supplied {@code control}.
+     * Adds a new validation message of status {@link ValidationStatus#WARNING} and {@code text} associated to the
+     * supplied {@code control}.
      *
      * @param text
      *            the validation message
@@ -205,8 +214,8 @@ public class ValidationResult {
     }
 
     /**
-     * Adds a new validation message of status {@link ValidationStatus#WARNING} with the given {@code status} and
-     * {@code text} associated to the supplied {@code control}.
+     * Adds a new validation message of status {@link ValidationStatus#WARNING} and {@code text} associated to the
+     * supplied {@code control}.
      *
      * @param text
      *            the validation message
@@ -222,8 +231,8 @@ public class ValidationResult {
     }
 
     /**
-     * Adds a new validation message of status {@link ValidationStatus#ERROR} with the given {@code status} and
-     * {@code text} associated to the supplied {@code control}.
+     * Adds a new validation message of status {@link ValidationStatus#ERROR} and {@code text} associated to the
+     * supplied {@code control}.
      *
      * @param text
      *            the validation message
@@ -236,8 +245,8 @@ public class ValidationResult {
     }
 
     /**
-     * Adds a new validation message of status {@link ValidationStatus#ERROR} with the given {@code status} and
-     * {@code text} associated to the supplied {@code control}.
+     * Adds a new validation message of status {@link ValidationStatus#ERROR} and {@code text} associated to the
+     * supplied {@code control}.
      *
      * @param text
      *            the validation message
@@ -250,6 +259,45 @@ public class ValidationResult {
     public ValidationResult addErrorMessage(final String text, final Control control,
             final boolean applyValidationDecoration) {
         return addMessage(ValidationStatus.ERROR, text, control, applyValidationDecoration);
+    }
+
+    /**
+     * Adds a new validation message of status {@link ValidationStatus#ERROR} and {@code text} associated to the
+     * supplied {@code control}, if and only if {@code condition} is {@code true}.
+     *
+     * @param text
+     *            the validation message
+     * @param control
+     *            the affected control
+     * @param condition
+     *            the condition (must be {@code true} for having a validation result of status ERROR)
+     * @return this instance for building
+     */
+    public ValidationResult addErrorMessageIf(final String text, final Control control,
+            final boolean condition) {
+        return addErrorMessageIf(text, control, condition, true);
+    }
+
+    /**
+     * Adds a new validation message of status {@link ValidationStatus#ERROR} and {@code text} associated to the
+     * supplied {@code control}, if and only if {@code condition} is {@code true}.
+     *
+     * @param text
+     *            the validation message
+     * @param control
+     *            the affected control
+     * @param condition
+     *            the condition (must be {@code true} for having a validation result of status ERROR)
+     * @param applyValidationDecoration
+     *            shall validation decorations be applied for this validation message?
+     * @return this instance for building
+     */
+    public ValidationResult addErrorMessageIf(final String text, final Control control,
+            final boolean condition, final boolean applyValidationDecoration) {
+        if (condition) {
+            return addErrorMessage(text, control, applyValidationDecoration);
+        }
+        return this;
     }
 
     /**

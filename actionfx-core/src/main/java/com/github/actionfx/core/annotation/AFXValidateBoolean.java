@@ -29,55 +29,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.github.actionfx.core.annotation.AFXValidateMinMax.AFXValidateMinMaxs;
+import com.github.actionfx.core.annotation.AFXValidateBoolean.AFXValidateBooleans;
 import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
  * Field annotation that can be applied to a {@link javafx.scene.control.Control} for validating user input that has
- * been entered inside the annotated control and its value has to be between a minimum and a maximum value
- * (inclusively).
+ * been entered inside the annotated control and that is expected to have a certain boolean value.
  *
  * @author koster
  *
  */
-@Repeatable(AFXValidateMinMaxs.class)
+@Repeatable(AFXValidateBooleans.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AFXValidateMinMax {
+public @interface AFXValidateBoolean {
 
     /**
-     * The minimum value that the control needs to have to pass validation. If there is no value specified for this
-     * attribute, no minimum validation is applied.
+     * The expected boolean value that is expected to present in the control's value.
      *
-     * @return the minimum value. Default is {@link Double#MIN_VALUE} (which means, "no minimum specified").
+     * @return the expected boolean value, default is {@code true}
      */
-    public double min() default Double.MIN_VALUE;
-
-    /**
-     * The maximum value that the control needs to have to pass validation. If there is no value specified for this
-     * attribute, no maximum validation is applied.
-     *
-     * @return the maximum value. Default is {@link Double#MAX_VALUE} (which means, "no maximum specified").
-     */
-    public double max() default Double.MAX_VALUE;
-
-    /**
-     * Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation
-     * {@link AFXValidateRequired} does not to be added to the control.
-     *
-     * @return {@code true}, if the annotated control needs to have a user value, {@code false} otherwise. Default is
-     *         {@code false}.
-     */
-    public boolean required() default false;
-
-    /**
-     * An optional format pattern that is used for type conversion.
-     * <p>
-     * This parameter can be used for validating numerical values taken from text fields.
-     *
-     * @return the format pattern.
-     */
-    public String formatPattern() default "";
+    public boolean expected() default true;
 
     /**
      * Validation error message to be displayed, in case the control failed validation.
@@ -130,15 +102,15 @@ public @interface AFXValidateMinMax {
     public ValidationMode validationMode() default ValidationMode.ONCHANGE;
 
     /**
-     * Annotation to make {@link AFXValidateMinMax} repeatable.
+     * Annotation to make {@link AFXValidateBoolean} repeatable.
      *
      * @author koster
      *
      */
     @Target({ ElementType.FIELD })
     @Retention(RetentionPolicy.RUNTIME)
-    @interface AFXValidateMinMaxs {
+    @interface AFXValidateBooleans {
 
-        AFXValidateMinMax[] value();
+        AFXValidateBoolean[] value();
     }
 }

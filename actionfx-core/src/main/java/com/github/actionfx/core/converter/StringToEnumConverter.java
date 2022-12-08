@@ -21,36 +21,33 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.validation;
-
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
+package com.github.actionfx.core.converter;
 
 /**
- * {@link Validator} implementation that
+ * Converts a {@link java.lang.String} into a {@link java.lang.Enum}.
  *
- * @author MartinKoster
+ * @author koster
  */
-public class RegExpValidator extends AbstractRequiredValidator {
+public class StringToEnumConverter<T extends Enum<T>> implements Converter<String, T> {
 
-    private Pattern pattern;
+    private final Class<T> targetType;
 
-    public RegExpValidator(final String message, final String regExp, final boolean required) {
-        super(message, required);
-        pattern = Pattern.compile(regExp);
+    /**
+     * Constructor accepting the target enum type to convert into.
+     *
+     * @param targetType
+     *            the target enum type to convert into
+     */
+    public StringToEnumConverter(final Class<T> targetType) {
+        this.targetType = targetType;
     }
 
+    /**
+     * Converts {@code source} as String parameter to a {@link java.lang.Boolean}.
+     */
     @Override
-    protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
-            final ControlProperties controlProperty) {
-        final Object value = controlWrapper.getValue(controlProperty);
-        return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
-    }
+    public T convert(final String source) {
+        return Enum.valueOf(targetType, source);
 
+    }
 }

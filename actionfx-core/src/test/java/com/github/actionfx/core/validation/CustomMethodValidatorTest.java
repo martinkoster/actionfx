@@ -73,7 +73,8 @@ class CustomMethodValidatorTest {
         // GIVEN
         final ControllerWithMethodAndValueParameter controller = new ControllerWithMethodAndValueParameter();
         controller.getTextField().setText("Hello there");
-        final Method method = ReflectionUtils.findMethod(ControllerWithMethodAndValueParameter.class, "validateMethod");
+        final Method method = ReflectionUtils.findMethod(ControllerWithMethodAndValueParameter.class, "validateMethod",
+                String.class);
         final CustomMethodValidator validator = new CustomMethodValidator(controller, method);
 
         // WHEN

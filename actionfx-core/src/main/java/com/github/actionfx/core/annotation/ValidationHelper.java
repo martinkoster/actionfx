@@ -21,36 +21,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.validation;
-
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
+package com.github.actionfx.core.annotation;
 
 /**
- * {@link Validator} implementation that
+ * Useful values for working with validation annotations.
  *
- * @author MartinKoster
+ * @author koster
  */
-public class RegExpValidator extends AbstractRequiredValidator {
+public class ValidationHelper {
 
-    private Pattern pattern;
-
-    public RegExpValidator(final String message, final String regExp, final boolean required) {
-        super(message, required);
-        pattern = Pattern.compile(regExp);
+    private ValidationHelper() {
+        // class can not be instantiated
     }
 
-    @Override
-    protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
-            final ControlProperties controlProperty) {
-        final Object value = controlWrapper.getValue(controlProperty);
-        return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
-    }
-
+    /**
+     * Regular expression for validating whether a string is a valid e-mail address (see https://emailregex.com/).
+     */
+    public static final String EMAIL_ADDRESS_REG_EXP = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
 }

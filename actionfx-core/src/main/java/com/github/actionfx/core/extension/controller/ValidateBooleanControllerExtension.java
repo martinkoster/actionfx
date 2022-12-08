@@ -39,9 +39,9 @@ import javafx.scene.control.Control;
  *
  * @author koster
  */
-public class ValidateCustomControllerExtension extends AbstractValidationControllerExtension<AFXValidateCustom> {
+public class ValidateBooleanControllerExtension extends AbstractValidationControllerExtension<AFXValidateCustom> {
 
-    public ValidateCustomControllerExtension() {
+    public ValidateBooleanControllerExtension() {
         super(AFXValidateCustom.class);
     }
 

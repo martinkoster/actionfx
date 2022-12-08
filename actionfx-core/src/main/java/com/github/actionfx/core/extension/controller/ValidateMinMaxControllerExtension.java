@@ -23,46 +23,40 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import com.github.actionfx.core.annotation.AFXValidateCustom;
-import com.github.actionfx.core.method.ActionFXMethodInvocation;
-import com.github.actionfx.core.validation.CustomMethodValidator;
+import com.github.actionfx.core.annotation.AFXValidateMinMax;
+import com.github.actionfx.core.validation.MinMaxValidator;
 import com.github.actionfx.core.validation.ValidationOptions;
 import com.github.actionfx.core.validation.Validator;
 import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a custom method inside the annotated ActionFX
- * controller.
+ * Controller field extension that applies validation on it using a min/max validator on a control's value.
  *
  * @author koster
  */
-public class ValidateCustomControllerExtension extends AbstractValidationControllerExtension<AFXValidateCustom> {
+public class ValidateMinMaxControllerExtension extends AbstractValidationControllerExtension<AFXValidateMinMax> {
 
-    public ValidateCustomControllerExtension() {
-        super(AFXValidateCustom.class);
+    public ValidateMinMaxControllerExtension() {
+        super(AFXValidateMinMax.class);
     }
 
     @Override
     protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateCustom annotation) {
-        final ControlWrapper controlWrapper = ControlWrapper.of(control);
-        final Object currentValue = controlWrapper.getValue(annotation.validationTargeProperty());
-        final ActionFXMethodInvocation methodInvocation = new ActionFXMethodInvocation(controller,
-                annotation.validationMethod(), true, currentValue);
-        return new CustomMethodValidator(controller, methodInvocation.getMethod());
+            final AFXValidateMinMax annotation) {
+        return new MinMaxValidator(annotation.message(), annotation.min(), annotation.max(), annotation.formatPattern(),
+                annotation.required());
     }
 
     @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateCustom annotation) {
+    protected ValidationOptions createValidationOptions(final AFXValidateMinMax annotation) {
         return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
                 .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
     }
 
     @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateCustom annotation) {
+    protected ControlProperties getValidatedControlProperty(final AFXValidateMinMax annotation) {
         return annotation.validationTargeProperty();
     }
 

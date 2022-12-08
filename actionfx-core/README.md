@@ -36,7 +36,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXShowView (Method Annotation)](#annotation-afxshowview)
     + [Annotations for working with JavaFX controls and their values](#annotations-for-working-with-javafx-controls-and-their-values)      
-      - [Annotation @AFXLoadControlData (Method Annotation)](#annotation-AFXLoadControlData)
+      - [Annotation @AFXLoadControlData (Method Annotation)](#annotation-afxloadcontroldata)
       - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation-afxoncontrolvaluechange)
       - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation-afxarghint)
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)

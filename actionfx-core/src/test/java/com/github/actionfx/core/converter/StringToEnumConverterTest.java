@@ -21,36 +21,33 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.validation;
+package com.github.actionfx.core.converter;
 
-import java.util.regex.Pattern;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
+import org.junit.jupiter.api.Test;
 
 /**
- * {@link Validator} implementation that
+ * JUnit test case for {@link StringToEnumConverter}.
  *
- * @author MartinKoster
+ * @author koster
+ *
  */
-public class RegExpValidator extends AbstractRequiredValidator {
+class StringToEnumConverterTest {
 
-    private Pattern pattern;
+    @Test
+    void testApply_convertsToTrue() {
+        // GIVEN
+        final StringToEnumConverter<TestEnum> converter = new StringToEnumConverter<>(TestEnum.class);
 
-    public RegExpValidator(final String message, final String regExp, final boolean required) {
-        super(message, required);
-        pattern = Pattern.compile(regExp);
+        // WHEN and THEN
+        assertThat(converter.convert("VALUEA"), equalTo(TestEnum.VALUEA));
+        assertThat(converter.convert("VALUEB"), equalTo(TestEnum.VALUEB));
     }
 
-    @Override
-    protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
-            final ControlProperties controlProperty) {
-        final Object value = controlWrapper.getValue(controlProperty);
-        return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
+    public static enum TestEnum {
+        VALUEA,
+        VALUEB,
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Martin Koster
+w * Copyright (c) 2022 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,36 +21,28 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.validation;
+package com.github.actionfx.validation.app;
 
-import java.util.regex.Pattern;
+import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.app.AbstractAFXApplication;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
+import javafx.application.Application;
 
 /**
- * {@link Validator} implementation that
+ * Main entry point in the sample application.
  *
- * @author MartinKoster
+ * @author koster
+ *
  */
-public class RegExpValidator extends AbstractRequiredValidator {
+public class ValidationApp {
 
-    private Pattern pattern;
-
-    public RegExpValidator(final String message, final String regExp, final boolean required) {
-        super(message, required);
-        pattern = Pattern.compile(regExp);
+    public static void main(final String[] argv) {
+        Application.launch(SampleActionFXApplication.class);
     }
 
-    @Override
-    protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
-            final ControlProperties controlProperty) {
-        final Object value = controlWrapper.getValue(controlProperty);
-        return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
+    @AFXApplication(mainViewId = "validationView", scanPackage = "com.github.actionfx.validation.controller", enableBeanContainerAutodetection = false)
+    public static class SampleActionFXApplication extends AbstractAFXApplication {
+
     }
 
 }

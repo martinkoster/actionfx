@@ -51,38 +51,29 @@ import javafx.scene.image.ImageView;
  */
 public class GraphicValidationDecoration extends AbstractValidationDecoration {
 
-    // TODO we shouldn't hardcode this - defer to CSS eventually
-
     private static final Image ERROR_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/decoration-error.png").toExternalForm()); //$NON-NLS-1$
+            .getResource("/validation/decoration-error.png").toExternalForm());
 
     private static final Image WARNING_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/decoration-warning.png").toExternalForm()); //$NON-NLS-1$
+            .getResource("/validation/decoration-warning.png").toExternalForm());
 
     private static final Image INFO_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/decoration-info.png").toExternalForm()); //$NON-NLS-1$
+            .getResource("/validation/decoration-info.png").toExternalForm());
 
     private static final Image REQUIRED_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/required-indicator.png").toExternalForm()); //$NON-NLS-1$
+            .getResource("/validation/required-indicator.png").toExternalForm());
 
-    private static final String SHADOW_EFFECT = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);"; //$NON-NLS-1$
+    private static final String SHADOW_EFFECT_CLASS = "shadowEffect";
 
-    private static final String POPUP_SHADOW_EFFECT = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);"; //$NON-NLS-1$
+    private static final String ERROR_TOOLTIP_EFFECT_CLASS = "errorTooltipEffect";
 
-    private static final String TOOLTIP_COMMON_EFFECTS = "-fx-font-weight: bold; -fx-padding: 5; -fx-border-width:1;"; //$NON-NLS-1$
+    private static final String WARNING_TOOLTIP_EFFECT_CLASS = "warningTooltipEffect";
 
-    private static final String ERROR_TOOLTIP_EFFECT = POPUP_SHADOW_EFFECT + TOOLTIP_COMMON_EFFECTS
-            + "-fx-background-color: FBEFEF; -fx-text-fill: cc0033; -fx-border-color:cc0033;"; //$NON-NLS-1$
-
-    private static final String WARNING_TOOLTIP_EFFECT = POPUP_SHADOW_EFFECT + TOOLTIP_COMMON_EFFECTS
-            + "-fx-background-color: FFFFCC; -fx-text-fill: CC9900; -fx-border-color: CC9900;"; //$NON-NLS-1$
-
-    private static final String INFO_TOOLTIP_EFFECT = POPUP_SHADOW_EFFECT + TOOLTIP_COMMON_EFFECTS
-            + "-fx-background-color: c4d0ef; -fx-text-fill: FFFFFF; -fx-border-color: a8c8ff;"; //$NON-NLS-1$
+    private static final String INFO_TOOLTIP_EFFECT_CLASS = "infoTooltipEffect";
 
     protected Node createDecorationNode(final ValidationMessage message) {
-        final Node graphic = getGraphicBySeverity(message.getStatus());
-        graphic.setStyle(SHADOW_EFFECT);
+        final Node graphic = getGraphicByStatus(message.getStatus());
+        graphic.getStyleClass().add(SHADOW_EFFECT_CLASS);
         final Label label = new Label();
         label.setGraphic(graphic);
         label.setTooltip(createTooltip(message));
@@ -90,8 +81,8 @@ public class GraphicValidationDecoration extends AbstractValidationDecoration {
         return label;
     }
 
-    protected Node getGraphicBySeverity(final com.github.actionfx.core.validation.ValidationStatus severity) {
-        switch (severity) {
+    protected Node getGraphicByStatus(final com.github.actionfx.core.validation.ValidationStatus status) {
+        switch (status) {
         case ERROR:
             return new ImageView(ERROR_IMAGE);
         case WARNING:
@@ -105,18 +96,18 @@ public class GraphicValidationDecoration extends AbstractValidationDecoration {
         final Tooltip tooltip = new Tooltip(message.getText());
         tooltip.setOpacity(.9);
         tooltip.setAutoFix(true);
-        tooltip.setStyle(getStyleBySeverity(message.getStatus()));
+        tooltip.getStyleClass().add(getStyleBySeverity(message.getStatus()));
         return tooltip;
     }
 
     protected String getStyleBySeverity(final ValidationStatus severity) {
         switch (severity) {
         case ERROR:
-            return ERROR_TOOLTIP_EFFECT;
+            return ERROR_TOOLTIP_EFFECT_CLASS;
         case WARNING:
-            return WARNING_TOOLTIP_EFFECT;
+            return WARNING_TOOLTIP_EFFECT_CLASS;
         default:
-            return INFO_TOOLTIP_EFFECT;
+            return INFO_TOOLTIP_EFFECT_CLASS;
         }
     }
 

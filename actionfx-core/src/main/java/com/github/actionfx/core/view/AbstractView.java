@@ -104,6 +104,8 @@ public abstract class AbstractView implements View {
         // stylesheets, once the view is part of a scene
         if (Parent.class.isAssignableFrom(rootNode.getClass())) {
             ((Parent) rootNode).sceneProperty().addListener((observable, oldScene, newScene) -> {
+                newScene.getStylesheets()
+                        .add(AbstractView.class.getResource("/validation/validation-styles.css").toExternalForm());
                 for (final String location : stylesheets) {
                     newScene.getStylesheets().add(AbstractView.class.getResource(location).toExternalForm());
                 }

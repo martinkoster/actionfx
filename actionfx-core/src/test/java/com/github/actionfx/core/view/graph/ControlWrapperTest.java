@@ -1822,6 +1822,61 @@ class ControlWrapperTest {
         assertThat(wrapper.isRequired(), equalTo(Boolean.TRUE));
     }
 
+    @Test
+    void testHasValue_userValue_isPresent() {
+        // WHEN and THEN
+        assertThat(ControlWrapperProvider.textArea("Hello there").hasValue(ControlProperties.USER_VALUE_OBSERVABLE),
+                equalTo(true));
+        assertThat(ControlWrapperProvider.tableView(false, "Item 1").hasValue(ControlProperties.USER_VALUE_OBSERVABLE),
+                equalTo(true));
+        assertThat(ControlWrapperProvider.checkBox(false).hasValue(ControlProperties.USER_VALUE_OBSERVABLE),
+                equalTo(true));
+    }
+
+    @Test
+    void testHasValue_userValue_isNotPresent() {
+        // WHEN and THEN
+        assertThat(ControlWrapperProvider.textArea(null).hasValue(ControlProperties.USER_VALUE_OBSERVABLE),
+                equalTo(false));
+        assertThat(ControlWrapperProvider.textArea("   ").hasValue(ControlProperties.USER_VALUE_OBSERVABLE),
+                equalTo(false));
+        assertThat(ControlWrapperProvider.tableView(false).hasValue(ControlProperties.USER_VALUE_OBSERVABLE),
+                equalTo(false));
+    }
+
+    @Test
+    void testHasValue_singleValue_isPresent() {
+        // WHEN and THEN
+        assertThat(ControlWrapperProvider.textArea("Hello there").hasValue(ControlProperties.SINGLE_VALUE_PROPERTY),
+                equalTo(true));
+    }
+
+    @Test
+    void testHasValue_singleValue_isNotPresent() {
+        // WHEN and THEN
+        assertThat(ControlWrapperProvider.textArea(null).hasValue(ControlProperties.SINGLE_VALUE_PROPERTY),
+                equalTo(false));
+        assertThat(ControlWrapperProvider.textArea("    ").hasValue(ControlProperties.SINGLE_VALUE_PROPERTY),
+                equalTo(false));
+    }
+
+    @Test
+    void testHasValue_items_isPresent() {
+        // WHEN and THEN
+        assertThat(ControlWrapperProvider.listView(false).hasValue(ControlProperties.ITEMS_OBSERVABLE_LIST),
+                equalTo(true));
+    }
+
+    @Test
+    void testHasValue_items_isNotPresent() {
+        // WHEN and THEN
+        final ControlWrapper wrapper = ControlWrapperProvider.listView(false);
+        final ListView<String> listView = wrapper.getWrapped();
+        listView.getItems().clear();
+        assertThat(wrapper.hasValue(ControlProperties.ITEMS_OBSERVABLE_LIST),
+                equalTo(false));
+    }
+
     private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {
         assertThat(wrapper.getValue(), equalTo(expectedValue));
     }

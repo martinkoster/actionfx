@@ -23,34 +23,46 @@
  */
 package com.github.actionfx.core.validation;
 
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 
 /**
- * {@link Validator} implementation that
+ * {@link Validator} implementation that checks whether the control's value is an expected boolean value, {@code true}
+ * or {@code false}.
  *
- * @author MartinKoster
+ * @author koster
  */
-public class RegExpValidator extends AbstractRequiredValidator {
+public class BooleanValidator extends AbstractRequiredValidator {
 
-    private Pattern pattern;
+    private boolean expectedValue;
 
-    public RegExpValidator(final String message, final String regExp, final boolean required) {
+    /**
+     * Default constructor.
+     *
+     * @param message
+     *            the message to integrate in the validation result in case of a validation failure
+     * @param expectedValue
+     *            the expected boolean value
+     * @param required
+     *            flag that indicates whether a value is required or not
+     */
+    public BooleanValidator(final String message, final boolean expectedValue,
+            final boolean required) {
         super(message, required);
-        pattern = Pattern.compile(regExp);
+        this.expectedValue = expectedValue;
     }
 
     @Override
     protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
             final ControlProperties controlProperty) {
-        final Object value = controlWrapper.getValue(controlProperty);
+        final Boolean value = getValue(controlWrapper, controlProperty);
+        // value is allowed to be null - if not, then you need to use the "required=true" attribute
         return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
+                value != null && value.booleanValue() != expectedValue);
     }
 
+    protected Boolean getValue(final ControlWrapper controlWrapper, final ControlProperties controlProperty) {
+        final Object value = controlWrapper.getValue(controlProperty);
+        return value != null ? convert(value, Boolean.class, null) : null;
+    }
 }

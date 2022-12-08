@@ -87,6 +87,15 @@ public @interface AFXValidateTemporal {
     public boolean required() default false;
 
     /**
+     * An optional format pattern that is used for type conversion.
+     * <p>
+     * This parameter can be used for validating numerical values taken from text fields.
+     *
+     * @return the format pattern.
+     */
+    public String formatPattern() default "";
+
+    /**
      * Validation error message to be displayed, in case the control failed validation.
      *
      * @return the validation error message

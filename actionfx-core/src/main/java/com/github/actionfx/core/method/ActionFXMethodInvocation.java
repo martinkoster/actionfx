@@ -124,6 +124,15 @@ public class ActionFXMethodInvocation {
     }
 
     /**
+     * Returns the method on that the invocation is applied to.
+     *
+     * @return the method to be invoked
+     */
+    public Method getMethod() {
+        return controllerMethodInvocationAdapter.getMethod();
+    }
+
+    /**
      * Tries to identify the best match of methods with nane {@code methodName} and the supplied {@code arguments},
      * considering that there can be also additionally ActionFX-annotated method arguments. In case there is no match or
      * matches are ambiguous, then an {@link IllegalArgumentException} is thrown.

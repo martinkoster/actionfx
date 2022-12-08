@@ -23,34 +23,30 @@
  */
 package com.github.actionfx.core.validation;
 
-import java.util.regex.Pattern;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
+import java.util.stream.Collectors;
 
 /**
- * {@link Validator} implementation that
+ * Util class for asserting {@link ValidationResult} instances.
  *
  * @author MartinKoster
  */
-public class RegExpValidator extends AbstractRequiredValidator {
+public class ValidationResultUtils {
 
-    private Pattern pattern;
-
-    public RegExpValidator(final String message, final String regExp, final boolean required) {
-        super(message, required);
-        pattern = Pattern.compile(regExp);
+    private ValidationResultUtils() {
+        // class can not be instantiated
     }
 
-    @Override
-    protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
-            final ControlProperties controlProperty) {
-        final Object value = controlWrapper.getValue(controlProperty);
-        return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
+    public static void assertThatStatusIs(final ValidationResult vr, final ValidationStatus status) {
+        assertThat(vr.getStatus(), equalTo(status));
+    }
+
+    public static void assertThatMessageWithTextIsPresent(final ValidationResult vr, final String text) {
+        assertThat(vr.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
+                hasItem(text));
     }
 
 }

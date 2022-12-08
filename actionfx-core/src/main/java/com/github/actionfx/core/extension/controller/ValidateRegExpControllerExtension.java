@@ -23,46 +23,39 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import com.github.actionfx.core.annotation.AFXValidateCustom;
-import com.github.actionfx.core.method.ActionFXMethodInvocation;
-import com.github.actionfx.core.validation.CustomMethodValidator;
+import com.github.actionfx.core.annotation.AFXValidateRegExp;
+import com.github.actionfx.core.validation.RegExpValidator;
 import com.github.actionfx.core.validation.ValidationOptions;
 import com.github.actionfx.core.validation.Validator;
 import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a custom method inside the annotated ActionFX
- * controller.
+ * Controller field extension that applies validation on it using a regular expression on the control's value.
  *
  * @author koster
  */
-public class ValidateCustomControllerExtension extends AbstractValidationControllerExtension<AFXValidateCustom> {
+public class ValidateRegExpControllerExtension extends AbstractValidationControllerExtension<AFXValidateRegExp> {
 
-    public ValidateCustomControllerExtension() {
-        super(AFXValidateCustom.class);
+    public ValidateRegExpControllerExtension() {
+        super(AFXValidateRegExp.class);
     }
 
     @Override
     protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateCustom annotation) {
-        final ControlWrapper controlWrapper = ControlWrapper.of(control);
-        final Object currentValue = controlWrapper.getValue(annotation.validationTargeProperty());
-        final ActionFXMethodInvocation methodInvocation = new ActionFXMethodInvocation(controller,
-                annotation.validationMethod(), true, currentValue);
-        return new CustomMethodValidator(controller, methodInvocation.getMethod());
+            final AFXValidateRegExp annotation) {
+        return new RegExpValidator(annotation.message(), annotation.regExp(), annotation.required());
     }
 
     @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateCustom annotation) {
+    protected ValidationOptions createValidationOptions(final AFXValidateRegExp annotation) {
         return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
                 .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
     }
 
     @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateCustom annotation) {
+    protected ControlProperties getValidatedControlProperty(final AFXValidateRegExp annotation) {
         return annotation.validationTargeProperty();
     }
 

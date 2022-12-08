@@ -24,22 +24,23 @@
 package com.github.actionfx.core.validation;
 
 import com.github.actionfx.core.view.graph.ControlProperties;
-
-import javafx.scene.control.Control;
+import com.github.actionfx.core.view.graph.ControlWrapper;
 
 /**
- * {@link Validator} implementation that
+ * {@link Validator} implementation that checks, whether a required field has a value.
  *
  * @author MartinKoster
  */
-public class RequiredValidator implements Validator {
+public class RequiredValidator extends AbstractRequiredValidator {
 
-    public RequiredValidator() {
+    public RequiredValidator(final String message) {
+        super(message, true);
     }
 
     @Override
-    public ValidationResult validate(final Control control, final ControlProperties controlProperty) {
-        return null;
+    protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
+            final ControlProperties controlProperty) {
+        return ValidationResult.ok();
     }
 
 }

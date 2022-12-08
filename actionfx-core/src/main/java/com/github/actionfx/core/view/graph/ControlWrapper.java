@@ -462,6 +462,43 @@ public class ControlWrapper extends NodeWrapper {
     }
 
     /**
+     * Checks, whether the wrapped control holds a value (non-null, non-blank) under the given {@code controlProperty}.
+     *
+     * @param controlProperty
+     *            the property that is checked
+     * @return {@code true}, if and only if the control holds a non-null, non-blank value under the given
+     *         {@code controlProperty}.
+     */
+    public boolean hasValue(final ControlProperties controlProperty) {
+        final Observable observable = getObservable(controlProperty);
+        return hasValue(observable);
+    }
+
+    /**
+     * Checks, whether the given {@code observable} holds a non-null, non-blank value.
+     *
+     * @param observable
+     *            the observable to check
+     * @return {@code true}, if and only if the observable's value is non-null and non-blank.
+     */
+    private boolean hasValue(final Observable observable) {
+        if (observable == null) {
+            return false;
+        }
+        if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
+            final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
+            return observableValueHoldsValue(observableValue);
+        } else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
+            final ObservableList<?> observableList = (ObservableList<?>) observable;
+            return !observableList.isEmpty();
+        }
+        throw new IllegalStateException(
+                "Observable in control '" + getWrappedType().getCanonicalName()
+                        + "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+
+    }
+
+    /**
      * Gets the {@link Observable} from the property described by {@link ControlProperties}.
      * <p>
      * The following value of the observable are the following:
@@ -767,18 +804,7 @@ public class ControlWrapper extends NodeWrapper {
      */
     public boolean hasValueOrItemsSet() {
         final Observable observable = getValueOrItemsAsObservable();
-        if (observable == null) {
-            return false;
-        }
-        if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
-            final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
-            return observableValueHoldsValue(observableValue);
-        } else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
-            final ObservableList<?> observableList = (ObservableList<?>) observable;
-            return !observableList.isEmpty();
-        }
-        throw new IllegalStateException("Value property in control '" + getWrappedType().getCanonicalName()
-                + "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+        return hasValue(observable);
     }
 
     /**
@@ -788,19 +814,7 @@ public class ControlWrapper extends NodeWrapper {
      * @return {@code true}, if the wrapped control has value set by the user, {@code false} otherwise.
      */
     public boolean hasUserValueSet() {
-        final Observable observable = getUserValueAsObservable();
-        if (observable == null) {
-            return false;
-        }
-        if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
-            final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
-            return observableValueHoldsValue(observableValue);
-        } else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
-            final ObservableList<?> observableList = (ObservableList<?>) observable;
-            return !observableList.isEmpty();
-        }
-        throw new IllegalStateException("User value property in control '" + getWrappedType().getCanonicalName()
-                + "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+        return hasValue(ControlProperties.USER_VALUE_OBSERVABLE);
     }
 
     /**

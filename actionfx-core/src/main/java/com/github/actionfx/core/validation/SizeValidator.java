@@ -29,20 +29,19 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 
 /**
- * {@link Validator} implementation that checks whether the control's value is between a min- and a max-value
+ * {@link Validator} implementation that checks whether the control's value size is between a min- and a max-value
  * (inclusively).
  * <p>
- * In case the control's value is a list, than the size of the list is checked to be between min- and max.
+ * In case the control's value is a list, than the size of the list is checked to be between min- and max. If the value
+ * is a {@code java.lang.String}, the length of the string is checked.
  *
  * @author koster
  */
-public class MinMaxValidator extends AbstractRequiredValidator {
+public class SizeValidator extends AbstractRequiredValidator {
 
-    private double min;
+    private long min;
 
-    private double max;
-
-    private String formatPattern;
+    private long max;
 
     /**
      * Default constructor.
@@ -53,41 +52,37 @@ public class MinMaxValidator extends AbstractRequiredValidator {
      *            the minimum value that the value must be (inclusively)
      * @param max
      *            the maximum value that the value must be (inclusively)
-     * @param formatPattern
-     *            optional format pattern that is used for potentially converting a value from a string-based control
-     *            into a numerical value
      * @param required
      *            flag that indicates whether a value is required or not
      */
-    public MinMaxValidator(final String message, final double min, final double max, final String formatPattern,
-            final boolean required) {
+    public SizeValidator(final String message, final long min, final long max, final boolean required) {
         super(message, required);
         this.min = min;
         this.max = max;
-        this.formatPattern = formatPattern;
     }
 
     @Override
     protected ValidationResult validateAfterRequiredCheck(final ControlWrapper controlWrapper,
             final ControlProperties controlProperty) {
-        final Double value = getValue(controlWrapper, controlProperty);
+        if (!controlWrapper.hasValue(controlProperty)) {
+            return ValidationResult.ok();
+        }
+        final long value = getValue(controlWrapper, controlProperty);
         // value is allowed to be null - if not, then you need to use the "required=true" attribute
         return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value == null && !canConvert(value, Double.class, formatPattern)
-                        || value != null && (value < min || value > max));
+                value < min || value > max);
     }
 
-    protected Double getValue(final ControlWrapper controlWrapper, final ControlProperties controlProperty) {
+    protected long getValue(final ControlWrapper controlWrapper, final ControlProperties controlProperty) {
         final Object value = controlWrapper.getValue(controlProperty);
-        if (value == null) {
-            return null;
-        }
         if (Collection.class.isAssignableFrom(value.getClass())) {
             final Collection<?> collection = (Collection<?>) value;
-            return Double.valueOf(collection.size());
+            return collection.size();
         }
-        // Convert to Double, if necessary
-        return convert(value, Double.class, formatPattern);
+        if (String.class.isAssignableFrom(value.getClass())) {
+            final String string = (String) value;
+            return string.length();
+        }
+        return convert(value, long.class, null);
     }
-
 }
