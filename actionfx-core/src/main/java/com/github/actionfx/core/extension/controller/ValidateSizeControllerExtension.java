@@ -32,31 +32,33 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a size validator on the control's value.
+ * Controller field extension that applies validation on it using a size
+ * validator on the control's value.
  *
  * @author koster
  */
 public class ValidateSizeControllerExtension extends AbstractValidationControllerExtension<AFXValidateSize> {
 
-    public ValidateSizeControllerExtension() {
-        super(AFXValidateSize.class);
-    }
+	public ValidateSizeControllerExtension() {
+		super(AFXValidateSize.class);
+	}
 
-    @Override
-    protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateSize annotation) {
-        return new SizeValidator(annotation.message(), annotation.min(), annotation.max(), annotation.required());
-    }
+	@Override
+	protected Validator createValidator(final Object controller, final Control control,
+			final AFXValidateSize annotation) {
+		return new SizeValidator(getMessage(controller.getClass(), annotation.messageKey(), annotation.message()),
+				annotation.min(), annotation.max(), annotation.required());
+	}
 
-    @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateSize annotation) {
-        return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
-                .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
-    }
+	@Override
+	protected ValidationOptions createValidationOptions(final AFXValidateSize annotation) {
+		return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
+				.validationStartTimeoutMs(annotation.validationStartTimeoutMs());
+	}
 
-    @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateSize annotation) {
-        return annotation.validationTargeProperty();
-    }
+	@Override
+	protected ControlProperties getValidatedControlProperty(final AFXValidateSize annotation) {
+		return annotation.validationTargeProperty();
+	}
 
 }

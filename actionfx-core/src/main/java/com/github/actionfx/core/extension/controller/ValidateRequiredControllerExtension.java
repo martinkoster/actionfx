@@ -32,31 +32,32 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a required field validator.
+ * Controller field extension that applies validation on it using a required
+ * field validator.
  *
  * @author koster
  */
 public class ValidateRequiredControllerExtension extends AbstractValidationControllerExtension<AFXValidateRequired> {
 
-    public ValidateRequiredControllerExtension() {
-        super(AFXValidateRequired.class);
-    }
+	public ValidateRequiredControllerExtension() {
+		super(AFXValidateRequired.class);
+	}
 
-    @Override
-    protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateRequired annotation) {
-        return new RequiredValidator(annotation.message());
-    }
+	@Override
+	protected Validator createValidator(final Object controller, final Control control,
+			final AFXValidateRequired annotation) {
+		return new RequiredValidator(getMessage(controller.getClass(), annotation.messageKey(), annotation.message()));
+	}
 
-    @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateRequired annotation) {
-        return ValidationOptions.options().required(true).validationMode(annotation.validationMode())
-                .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
-    }
+	@Override
+	protected ValidationOptions createValidationOptions(final AFXValidateRequired annotation) {
+		return ValidationOptions.options().required(true).validationMode(annotation.validationMode())
+				.validationStartTimeoutMs(annotation.validationStartTimeoutMs());
+	}
 
-    @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateRequired annotation) {
-        return annotation.validationTargeProperty();
-    }
+	@Override
+	protected ControlProperties getValidatedControlProperty(final AFXValidateRequired annotation) {
+		return annotation.validationTargeProperty();
+	}
 
 }

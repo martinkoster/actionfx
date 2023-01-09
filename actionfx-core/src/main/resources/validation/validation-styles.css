@@ -1,19 +1,19 @@
 
-.shadowEffect {
+.afxShadowEffect {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
-.poupShadowEffect {
+.afxPoupShadowEffect {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
 }
 
-.tooltipCommonEffect {
+.afxTooltipCommonEffect {
 	-fx-font-weight: bold; 
 	-fx-padding: 5; 
 	-fx-border-width:1;
 }
 
-.errorTooltipEffect {
+.afxErrorTooltipEffect {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
 	-fx-font-weight: bold; 
 	-fx-padding: 5; 
@@ -23,7 +23,7 @@
 	-fx-border-color:cc0033;
 }
 
-.warningTooltipEffect {
+.afxWarningTooltipEffect {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
 	-fx-font-weight: bold; 
 	-fx-padding: 5; 
@@ -33,7 +33,7 @@
 	-fx-border-color: CC9900;
 }
 
-.infoTooltipEffect {
+.afxInfoTooltipEffect {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
 	-fx-font-weight: bold; 
 	-fx-padding: 5; 
@@ -43,10 +43,10 @@
 	-fx-border-color: a8c8ff;
 }
 
-.warning {
+.afxWarning {
     -fx-effect: dropshadow(three-pass-box, gold, 2.0, 0.0, 0.0, 0.0);
 }
 
-.error {
+.afxError {
     -fx-effect: dropshadow(three-pass-box, hotpink, 10.0, 0.5, 0.0, 0.0);
 }

@@ -32,59 +32,58 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * Abstract base class for change listener implementation that do potentially support a delay in the invocation of a
- * wrapped change listener.
+ * Abstract base class for change listener implementation that do potentially
+ * support a delay in the invocation of a wrapped change listener.
  *
  * @author koster
  */
 public abstract class AbstractTimedChangeListener {
 
-    // property that allows to disable the listener
-    protected final SimpleBooleanProperty listenerEnabled = new SimpleBooleanProperty();
+	// property that allows to disable the listener
+	protected final SimpleBooleanProperty listenerEnabled = new SimpleBooleanProperty();
 
-    // uses a timer to call your resize method
-    protected final Timer timer = new Timer(true);
+	// uses a timer to call your resize method
+	protected final Timer timer = new Timer(true);
 
-    // task to execute after defined delay
-    protected TimerTask task = null;
+	// task to execute after defined delay
+	protected TimerTask task = null;
 
-    // delay that has to pass in order to consider an
-    // operation done
-    protected long delayTime = 200;
+	// delay that has to pass in order to consider an
+	// operation done
+	protected long delayTime = 200;
 
-    protected AbstractTimedChangeListener(final long delayTime,
-            final BooleanProperty fireListenerProperty) {
-        this.delayTime = delayTime;
-        if (fireListenerProperty != null) {
-            listenerEnabled.bind(fireListenerProperty);
-        } else {
-            listenerEnabled.set(true);
-        }
-    }
+	protected AbstractTimedChangeListener(final long delayTime, final BooleanProperty fireListenerProperty) {
+		this.delayTime = delayTime;
+		if (fireListenerProperty != null) {
+			listenerEnabled.bind(fireListenerProperty);
+		} else {
+			listenerEnabled.set(true);
+		}
+	}
 
-    protected void invokeListener(final Runnable listenerInvoker) {
-        if (!listenerEnabled.get()) {
-            return;
-        }
-        if (task != null) { // there was already a task scheduled from the
-                            // previous operation ...
-            task.cancel(); // cancel it, we have a new event to consider
-        }
-        if (delayTime == 0) {
-            // run now
-            AFXUtils.runInFxThread(listenerInvoker);
-        } else {
-            task = new TimerTask() // create new task
-            {
-                @Override
-                public void run() {
-                    // ensure execution inside the JavaFX thread
-                    AFXUtils.runInFxThread(listenerInvoker);
-                }
-            };
-            // schedule new task
-            timer.schedule(task, delayTime);
-        }
-    }
+	protected void invokeListener(final Runnable listenerInvoker) {
+		if (!listenerEnabled.get()) {
+			return;
+		}
+		if (task != null) { // there was already a task scheduled from the
+							// previous operation ...
+			task.cancel(); // cancel it, we have a new event to consider
+		}
+		if (delayTime <= 0) {
+			// run now
+			AFXUtils.runInFxThread(listenerInvoker);
+		} else {
+			task = new TimerTask() // create new task
+			{
+				@Override
+				public void run() {
+					// ensure execution inside the JavaFX thread
+					AFXUtils.runInFxThread(listenerInvoker);
+				}
+			};
+			// schedule new task
+			timer.schedule(task, delayTime);
+		}
+	}
 
 }

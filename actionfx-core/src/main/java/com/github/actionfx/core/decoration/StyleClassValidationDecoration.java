@@ -35,84 +35,78 @@ import com.github.actionfx.core.validation.ValidationMessage;
 import javafx.scene.control.Control;
 
 /**
- * Validation decorator to decorate component validation state using two CSS classes for errors and warnings. Here is
- * example of such decoration <br>
+ * Validation decorator to decorate component validation state using two CSS
+ * classes for errors and warnings. Here is example of such decoration <br>
  * <br>
- * <img src="StyleClassValidationDecoration.png" alt="Screenshot of StyleClassValidationDecoration">
+ * <img src="StyleClassValidationDecoration.png" alt="Screenshot of
+ * StyleClassValidationDecoration">
  */
 public class StyleClassValidationDecoration extends AbstractValidationDecoration {
 
-    private final String errorClass;
+	private final String errorClass;
 
-    private final String warningClass;
+	private final String warningClass;
 
-    private final String infoClass;
+	private final String infoClass;
 
-    private final String okClass;
+	private final String okClass;
 
-    /**
-     * Creates a default instance of a decorator
-     */
-    public StyleClassValidationDecoration() {
-        this(null, null);
-    }
+	/**
+	 * Creates a default instance of a decorator
+	 */
+	public StyleClassValidationDecoration() {
+		this(null, null);
+	}
 
-    /**
-     * Creates an instance of validator using custom class names
-     *
-     * @param errorClass
-     *            class name for error decoration
-     * @param warningClass
-     *            class name for warning decoration
-     */
-    public StyleClassValidationDecoration(final String errorClass, final String warningClass) {
-        this(errorClass, warningClass, null, null);
-    }
+	/**
+	 * Creates an instance of validator using custom class names
+	 *
+	 * @param errorClass   class name for error decoration
+	 * @param warningClass class name for warning decoration
+	 */
+	public StyleClassValidationDecoration(final String errorClass, final String warningClass) {
+		this(errorClass, warningClass, null, null);
+	}
 
-    /**
-     * Creates an instance of validator using custom class names
-     *
-     * @param errorClass
-     *            class name for error decoration
-     * @param warningClass
-     *            class name for warning decoration
-     * @param infoClass
-     *            class name for info decoration
-     * @param okClass
-     *            class name for ok decoration
-     */
-    public StyleClassValidationDecoration(final String errorClass, final String warningClass, final String infoClass,
-            final String okClass) {
-        this.errorClass = errorClass != null ? errorClass : "error";
-        this.warningClass = warningClass != null ? warningClass : "warning";
-        this.infoClass = infoClass != null ? infoClass : "info";
-        this.okClass = okClass != null ? okClass : "ok";
-    }
+	/**
+	 * Creates an instance of validator using custom class names
+	 *
+	 * @param errorClass   class name for error decoration
+	 * @param warningClass class name for warning decoration
+	 * @param infoClass    class name for info decoration
+	 * @param okClass      class name for ok decoration
+	 */
+	public StyleClassValidationDecoration(final String errorClass, final String warningClass, final String infoClass,
+			final String okClass) {
+		this.errorClass = errorClass != null ? errorClass : "afxError";
+		this.warningClass = warningClass != null ? warningClass : "afxWarning";
+		this.infoClass = infoClass != null ? infoClass : "afxInfo";
+		this.okClass = okClass != null ? okClass : "afxOk";
+	}
 
-    @Override
-    protected Collection<Decoration> createValidationDecorations(
-            final ValidationMessage message) {
-        String validationClass;
-        switch (message.getStatus()) {
-        case ERROR:
-            validationClass = errorClass;
-            break;
-        case WARNING:
-            validationClass = warningClass;
-            break;
-        case OK:
-            validationClass = okClass;
-            break;
-        default:
-            validationClass = infoClass;
-            break;
-        }
-        return Arrays.asList(new StyleClassDecoration(validationClass));
-    }
+	@Override
+	protected Collection<Decoration> createValidationDecorations(final ValidationMessage message) {
+		String validationClass;
+		switch (message.getStatus()) {
+		case ERROR:
+			validationClass = errorClass;
+			break;
+		case WARNING:
+			validationClass = warningClass;
+			break;
+		case OK:
+			validationClass = okClass;
+			break;
+		default:
+			validationClass = infoClass;
+			break;
+		}
+		return Arrays.asList(new StyleClassDecoration(validationClass));
+	}
 
-    @Override
-    protected Collection<Decoration> createRequiredDecorations(final Control target) {
-        return Collections.emptyList();
-    }
+	@Override
+	protected Collection<Decoration> createRequiredDecorations(final Control target) {
+		return Collections.emptyList();
+	}
 
 }

@@ -32,7 +32,7 @@ import com.github.actionfx.core.annotation.ValidationMode;
  * @author koster
  *
  */
-@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.core.test.app", enableBeanContainerAutodetection = false, globalValidationMode = ValidationMode.MANUAL)
+@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.core.test.app", enableBeanContainerAutodetection = false, validationGlobalMode = ValidationMode.MANUAL, validationApplyResultDecoration = false, validationApplyRequiredDecoration = false, validationStartTimeoutMs = 500)
 public class SampleApp {
 
 }

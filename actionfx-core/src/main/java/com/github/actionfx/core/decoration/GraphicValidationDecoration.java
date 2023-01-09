@@ -42,90 +42,92 @@ import javafx.scene.image.ImageView;
 
 /**
  * Validation decorator to decorate validation state using images. <br>
- * Validation icons are shown in the bottom-left corner of the control as it is seems to be the most logical location
- * for such information. Required components are marked at the top-left corner with small red triangle. Here is example
- * of such decoration <br>
+ * Validation icons are shown in the bottom-left corner of the control as it is
+ * seems to be the most logical location for such information. Required
+ * components are marked at the top-left corner with small red triangle. Here is
+ * example of such decoration <br>
  * <br>
- * <img src="GraphicValidationDecorationWithTooltip.png" alt="Screenshot of GraphicValidationDecoration">
+ * <img src="GraphicValidationDecorationWithTooltip.png" alt="Screenshot of
+ * GraphicValidationDecoration">
  *
  */
 public class GraphicValidationDecoration extends AbstractValidationDecoration {
 
-    private static final Image ERROR_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/decoration-error.png").toExternalForm());
+	private static final Image ERROR_IMAGE = new Image(
+			GraphicValidationDecoration.class.getResource("/validation/decoration-error.png").toExternalForm());
 
-    private static final Image WARNING_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/decoration-warning.png").toExternalForm());
+	private static final Image WARNING_IMAGE = new Image(
+			GraphicValidationDecoration.class.getResource("/validation/decoration-warning.png").toExternalForm());
 
-    private static final Image INFO_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/decoration-info.png").toExternalForm());
+	private static final Image INFO_IMAGE = new Image(
+			GraphicValidationDecoration.class.getResource("/validation/decoration-info.png").toExternalForm());
 
-    private static final Image REQUIRED_IMAGE = new Image(GraphicValidationDecoration.class
-            .getResource("/validation/required-indicator.png").toExternalForm());
+	private static final Image REQUIRED_IMAGE = new Image(
+			GraphicValidationDecoration.class.getResource("/validation/required-indicator.png").toExternalForm());
 
-    private static final String SHADOW_EFFECT_CLASS = "shadowEffect";
+	private static final String SHADOW_EFFECT_CLASS = "afxShadowEffect";
 
-    private static final String ERROR_TOOLTIP_EFFECT_CLASS = "errorTooltipEffect";
+	private static final String ERROR_TOOLTIP_EFFECT_CLASS = "afxErrorTooltipEffect";
 
-    private static final String WARNING_TOOLTIP_EFFECT_CLASS = "warningTooltipEffect";
+	private static final String WARNING_TOOLTIP_EFFECT_CLASS = "afxWarningTooltipEffect";
 
-    private static final String INFO_TOOLTIP_EFFECT_CLASS = "infoTooltipEffect";
+	private static final String INFO_TOOLTIP_EFFECT_CLASS = "afxInfoTooltipEffect";
 
-    protected Node createDecorationNode(final ValidationMessage message) {
-        final Node graphic = getGraphicByStatus(message.getStatus());
-        graphic.getStyleClass().add(SHADOW_EFFECT_CLASS);
-        final Label label = new Label();
-        label.setGraphic(graphic);
-        label.setTooltip(createTooltip(message));
-        label.setAlignment(Pos.CENTER);
-        return label;
-    }
+	protected Node createDecorationNode(final ValidationMessage message) {
+		final Node graphic = getGraphicByStatus(message.getStatus());
+		graphic.getStyleClass().add(SHADOW_EFFECT_CLASS);
+		final Label label = new Label();
+		label.setGraphic(graphic);
+		label.setTooltip(createTooltip(message));
+		label.setAlignment(Pos.CENTER);
+		return label;
+	}
 
-    protected Node getGraphicByStatus(final com.github.actionfx.core.validation.ValidationStatus status) {
-        switch (status) {
-        case ERROR:
-            return new ImageView(ERROR_IMAGE);
-        case WARNING:
-            return new ImageView(WARNING_IMAGE);
-        default:
-            return new ImageView(INFO_IMAGE);
-        }
-    }
+	protected Node getGraphicByStatus(final com.github.actionfx.core.validation.ValidationStatus status) {
+		switch (status) {
+		case ERROR:
+			return new ImageView(ERROR_IMAGE);
+		case WARNING:
+			return new ImageView(WARNING_IMAGE);
+		default:
+			return new ImageView(INFO_IMAGE);
+		}
+	}
 
-    protected Tooltip createTooltip(final ValidationMessage message) {
-        final Tooltip tooltip = new Tooltip(message.getText());
-        tooltip.setOpacity(.9);
-        tooltip.setAutoFix(true);
-        tooltip.getStyleClass().add(getStyleBySeverity(message.getStatus()));
-        return tooltip;
-    }
+	protected Tooltip createTooltip(final ValidationMessage message) {
+		final Tooltip tooltip = new Tooltip(message.getText());
+		tooltip.setOpacity(.9);
+		tooltip.setAutoFix(true);
+		tooltip.getStyleClass().add(getStyleBySeverity(message.getStatus()));
+		return tooltip;
+	}
 
-    protected String getStyleBySeverity(final ValidationStatus severity) {
-        switch (severity) {
-        case ERROR:
-            return ERROR_TOOLTIP_EFFECT_CLASS;
-        case WARNING:
-            return WARNING_TOOLTIP_EFFECT_CLASS;
-        default:
-            return INFO_TOOLTIP_EFFECT_CLASS;
-        }
-    }
+	protected String getStyleBySeverity(final ValidationStatus severity) {
+		switch (severity) {
+		case ERROR:
+			return ERROR_TOOLTIP_EFFECT_CLASS;
+		case WARNING:
+			return WARNING_TOOLTIP_EFFECT_CLASS;
+		default:
+			return INFO_TOOLTIP_EFFECT_CLASS;
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Collection<Decoration> createValidationDecorations(final ValidationMessage message) {
-        return Arrays.asList(new GraphicDecoration(createDecorationNode(message), Pos.BOTTOM_LEFT));
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Collection<Decoration> createValidationDecorations(final ValidationMessage message) {
+		return Arrays.asList(new GraphicDecoration(createDecorationNode(message), Pos.BOTTOM_LEFT));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Collection<Decoration> createRequiredDecorations(final Control target) {
-        return Arrays.asList(new GraphicDecoration(new ImageView(REQUIRED_IMAGE), Pos.TOP_LEFT,
-                REQUIRED_IMAGE.getWidth() / 2, REQUIRED_IMAGE.getHeight() / 2));
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Collection<Decoration> createRequiredDecorations(final Control target) {
+		return Arrays.asList(new GraphicDecoration(new ImageView(REQUIRED_IMAGE), Pos.TOP_LEFT,
+				REQUIRED_IMAGE.getWidth() / 2, REQUIRED_IMAGE.getHeight() / 2));
+	}
 
 }

@@ -82,682 +82,689 @@ import javafx.stage.Window;
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class ActionFXTest {
 
-    @BeforeEach
-    void onSetup() {
-        // reset instance to 'null' in order to force the creation of a
-        // new ActionFX instance for each test
-        ActionFX.instance = null;
-    }
-
-    @Test
-    void testBuilder_minimal_withConfigurationClass_sampleApp() {
-        // WHEN
-        assertThat(ActionFX.isConfigured(), equalTo(false));
-        assertThat(ActionFX.isInitialized(), equalTo(false));
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
-
-        // THEN
-        assertThat(ActionFX.isConfigured(), equalTo(true));
-        assertThat(ActionFX.isInitialized(), equalTo(false));
-        assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
-        assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
-        assertThat(actionFX.getMainViewId(), equalTo("mainView"));
-        assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-        assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
-        assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
-        assertThat(actionFX.getGlobalValidationMode(), equalTo(ValidationMode.MANUAL));
-        assertThat(actionFX, equalTo(ActionFX.getInstance()));
-    }
-
-    @Test
-    void testBuilder_minimal_withConfigurationClass_invalidConfigurationClass() {
-        // GIVEN
-        final ActionFXBuilder builder = ActionFX.builder();
-
-        // WHEN and THEN
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> builder.configurationClass(AppClassWithoutAFXApplicationAnnotation.class));
-        assertThat(ex.getMessage(), containsString("or its super-classes are not annotated with @AFXApplication"));
-    }
-
-    @Test
-    void testBuilder_configurative() {
-        // GIVEN
-        final ActionFXEnhancer enhancer = Mockito.mock(ActionFXEnhancer.class);
-
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
-                .mainViewId("mainView").actionFXEnhancer(enhancer).locale(Locale.US)
-                .enhancementStrategy(EnhancementStrategy.SUBCLASSING).globalValidationMode(ValidationMode.MANUAL)
-                .build();
-
-        // THEN
-        assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
-        assertThat(actionFX.getEnhancer(), equalTo(enhancer));
-        assertThat(actionFX.getMainViewId(), equalTo("mainView"));
-        assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-        assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
-        assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
-        assertThat(actionFX.getGlobalValidationMode(), equalTo(ValidationMode.MANUAL));
-        assertThat(actionFX, equalTo(ActionFX.getInstance()));
-    }
-
-    @Test
-    void testBuilder_notYetBuilt() {
-
-        // WHEN and THEN (
-        assertThrows(IllegalStateException.class, ActionFX::getInstance);
-    }
-
-    @Test
-    void testBuilder_alreadyBuilt() {
-
-        // GIVEN (instance is built)
-        final ActionFX actionFX = ActionFX.builder().build();
-
-        // WHEN and THEN (
-        assertThat(actionFX, notNullValue());
-        assertThrows(IllegalStateException.class, ActionFX::builder);
-    }
-
-    @Test
-    void testBuilder_uncaughtExceptionHandler() {
-        // GIVEN
-        final UncaughtExceptionHandler handler = (t, e) -> {
-        };
-
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().uncaughtExceptionHandler(handler).build();
-
-        // THEN
-        assertThat(actionFX, notNullValue());
-        assertThat(Thread.getDefaultUncaughtExceptionHandler(), sameInstance(handler));
-
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    void testBuilder_customController_and_customBeanExtensions_instancesArePassed() {
-        // GIVEN
-        final Consumer<Object> customControllerExtension = Mockito.mock(Consumer.class);
-        final BeanExtension customBeanExtension = Mockito.mock(BeanExtension.class);
-
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().controllerExtension(customControllerExtension)
-                .beanExtension(customBeanExtension).build();
-
-        // THEN
-        assertThat(actionFX.actionFXExtensionsBean, notNullValue());
-        assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
-                contains(customControllerExtension));
-        assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(), contains(customBeanExtension));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    void testBuilder_customController_and_customBeanExtensions_classesArePassed() {
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().controllerExtension(CustomControllerExtension.class)
-                .beanExtension(CustomBeanExtension.class).build();
-
-        // THEN
-        assertThat(actionFX.actionFXExtensionsBean, notNullValue());
-        assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
-                contains(instanceOf(CustomControllerExtension.class)));
-        assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(),
-                contains(instanceOf(CustomBeanExtension.class)));
-    }
-
-    @Test
-    void testBuilder_beanContainerClass_byClass() {
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().beanContainerClass(CustomBeanContainer.class).build();
-
-        // THEN
-        assertThat(actionFX.getBeanContainer(), instanceOf(CustomBeanContainer.class));
-    }
-
-    @Test
-    void testBuilder_beanContainer_byInstance() {
-        // WHEN
-        final CustomBeanContainer container = new CustomBeanContainer();
-        final ActionFX actionFX = ActionFX.builder().beanContainer(container).build();
-
-        // THEN
-        assertThat(actionFX.getBeanContainer(), sameInstance(container));
-    }
-
-    @Test
-    void testBuilder_enableBeanContainerAutodetection() {
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
-
-        // THEN
-        assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
-    }
-
-    @Test
-    void testBuilder_disableBeanContainerAutodetection() {
-        // WHEN
-        final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
-
-        // THEN
-        assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
-    }
-
-    @Test
-    void testScanForActionFXComponents_usingDefaultBeanContainer() {
-        // GIVEN
-        assertThat(ActionFX.isConfigured(), equalTo(false));
-        assertThat(ActionFX.isInitialized(), equalTo(false));
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
-
-        // WHEN
-        actionFX.scanForActionFXComponents();
-
-        // THEN
-        assertThat(ActionFX.isConfigured(), equalTo(true));
-        assertThat(ActionFX.isInitialized(), equalTo(true));
-        final View view = actionFX.getView("mainView");
-        final MainController mainControllerById = actionFX.getBean("mainController");
-        final MainController mainControllerByClassName = actionFX.getBean(MainController.class);
-
-        assertThat(view, notNullValue());
-        assertThat(mainControllerById, notNullValue());
-        assertThat(mainControllerByClassName, notNullValue());
-        assertThat(mainControllerById, sameInstance(mainControllerByClassName));
-    }
-
-    @Test
-    void testScanForActionFXComponents_usingCustomBeanContainer() {
-        // GIVEN
-        final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
-                .beanContainer(customBeanContainer).build();
-        final ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
-
-        // WHEN
-        actionFX.scanForActionFXComponents();
-
-        // THEN (custom container has be asked to populate container with the
-        // rootPackage of SampleApp)
-        verify(customBeanContainer).runComponentScan(rootPackageCaptor.capture());
-        assertThat(rootPackageCaptor.getValue(), equalTo(SampleApp.class.getPackageName()));
-    }
-
-    @Test
-    void testScanForActionFXComponents_scanAlreadyPerformed_illegalState() {
-        // GIVEN
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
-
-        // WHEN
-        actionFX.scanForActionFXComponents();
-
-        // THEN (another call to scanComponents results in an exception)
-        assertThrows(IllegalStateException.class, () -> actionFX.scanForActionFXComponents());
-    }
-
-    @Test
-    void testScanForActionFXComponents_getView_viewNotFound() {
-        // GIVEN
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
-
-        // WHEN
-        actionFX.scanForActionFXComponents();
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> actionFX.getView("fantasyView"));
-
-        // THEN
-        assertThat(ex.getMessage(), containsString("There is no view with ID='fantasyView'"));
-    }
-
-    @Test
-    void testScanForActionFXComponents_assureActionFXBeansAreAdded() {
-        // GIVEN
-        final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-        final ActionFX actionFX = ActionFX.builder().locale(Locale.US).beanContainer(customBeanContainer).build();
-
-        // WHEN
-        actionFX.scanForActionFXComponents();
-
-        // THEN
-        verify(customBeanContainer, times(1)).addActionFXBeans(eq(actionFX));
-    }
-
-    @Test
-    void testAddController() {
-        // GIVEN
-        final ActionFX actionFX = ActionFX.builder().build();
-        actionFX.scanForActionFXComponents();
-
-        // WHEN
-        actionFX.addController(TestController.class);
-
-        // THEN
-        assertThat(actionFX.getBean(TestController.class), notNullValue());
-    }
-
-    @Test
-    void testScanForActionFXComponents_getView_viewIsNotInstanceOfView() {
-        // GIVEN
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
-
-        // WHEN
-        actionFX.scanForActionFXComponents();
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> actionFX.getView("mainController"));
-
-        // THEN
-        assertThat(ex.getMessage(), containsString("Bean with ID='mainController' is not of type"));
-    }
-
-    @Test
-    void testGetConversionService() {
-        // GIVEN
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
-        actionFX.scanForActionFXComponents();
-
-        // WHEN
-        final ConversionService service = actionFX.getConversionService();
-
-        // THEN
-        assertThat(service, notNullValue());
-    }
-
-    @Test
-    void testGetEventBus() {
-        // GIVEN
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
-        actionFX.scanForActionFXComponents();
-
-        // WHEN
-        final PriorityAwareEventBus eventBus = actionFX.getEventBus();
-
-        // THEN
-        assertThat(eventBus, notNullValue());
-        assertThat(eventBus, instanceOf(SimplePriorityAwareEventBus.class));
-    }
-
-    @Test
-    void testGetView() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final Controller controller = new Controller();
-        final View mockView = Mockito.mock(View.class);
-        controller._view = mockView;
-        when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
-
-        // WHEN
-        final View view = actionFX.getView(controller);
-
-        // THEN
-        assertThat(view, sameInstance(mockView));
-    }
-
-    @Test
-    void testShowView() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final Controller controller = new Controller();
-        final View mockView = Mockito.mock(View.class);
-        controller._view = mockView;
-        when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
-
-        // WHEN
-        actionFX.showView(controller);
-
-        // THEN
-        verify(mockView, times(1)).show();
-    }
-
-    @Test
-    void testShowView_withViewId() {
-        // GIVEN
-        final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
-                .beanContainer(customBeanContainer).build();
-        actionFX.scanForActionFXComponents();
-        final View mockView = Mockito.mock(View.class);
-        when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
-
-        // WHEN
-        actionFX.showView("viewId");
-
-        // THEN
-        verify(mockView, times(1)).show();
-    }
-
-    @Test
-    @TestInFxThread
-    void testShowView_withStageSupplied() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final Controller controller = new Controller();
-        final View mockView = Mockito.mock(View.class);
-        controller._view = mockView;
-        when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
-        final Stage stage = new Stage();
-
-        // WHEN
-        actionFX.showView(controller, stage);
-
-        // THEN
-        verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
-    }
-
-    @Test
-    @TestInFxThread
-    void testShowView_withStageSupplied_withViewId() {
-        // GIVEN
-        final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
-                .beanContainer(customBeanContainer).build();
-        actionFX.scanForActionFXComponents();
-        final View mockView = Mockito.mock(View.class);
-        when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
-
-        final Stage stage = new Stage();
-
-        // WHEN
-        actionFX.showView("viewId", stage);
-
-        // THEN
-        verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
-    }
-
-    @Test
-    void testShowViewAndWait() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final Controller controller = new Controller();
-        final View mockView = Mockito.mock(View.class);
-        controller._view = mockView;
-        when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
-
-        // WHEN
-        actionFX.showViewAndWait(controller);
-
-        // THEN
-        verify(mockView, times(1)).showAndWait();
-    }
-
-    @Test
-    void testShowViewAndWait_withViewId() {
-        // GIVEN
-        final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
-        final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
-                .beanContainer(customBeanContainer).build();
-        actionFX.scanForActionFXComponents();
-        final View mockView = Mockito.mock(View.class);
-        when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
-
-        // WHEN
-        actionFX.showViewAndWait("viewId");
-
-        // THEN
-        verify(mockView, times(1)).showAndWait();
-    }
-
-    @Test
-    void testHideView() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final Controller controller = new Controller();
-        final View mockView = Mockito.mock(View.class);
-        controller._view = mockView;
-        when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
-
-        // WHEN
-        actionFX.hideView(controller);
-
-        // THEN
-        verify(mockView, times(1)).hide();
-    }
-
-    @Test
-    void testShowConfirmationDialog() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-        when(controller.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
-
-        // WHEN
-        assertThat(actionFX.showConfirmationDialog("Title", "HeaderText", "ContentText"), equalTo(Boolean.TRUE));
-
-        // THEN
-        verify(controller).showConfirmationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
-                ArgumentMatchers.eq("ContentText"));
-    }
-
-    @Test
-    void testShowWarningDialog() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-
-        // WHEN
-        actionFX.showWarningDialog("Title", "HeaderText", "ContentText");
-
-        // THEN
-        verify(controller).showWarningDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
-                ArgumentMatchers.eq("ContentText"));
-    }
-
-    @Test
-    void testShowInformationDialog() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-
-        // WHEN
-        actionFX.showInformationDialog("Title", "HeaderText", "ContentText");
-
-        // THEN
-        verify(controller).showInformationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
-                ArgumentMatchers.eq("ContentText"));
-    }
-
-    @Test
-    void testShowErrorDialog() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-
-        // WHEN
-        actionFX.showErrorDialog("Title", "HeaderText", "ContentText");
-
-        // THEN
-        verify(controller).showErrorDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
-                ArgumentMatchers.eq("ContentText"));
-    }
-
-    @Test
-    void testShowDirectoryChooser() throws IOException {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-        final Window owner = Mockito.mock(Window.class);
-        final File selectedFolder = Files.createTempDirectory("junit").toFile();
-        final File initialFolder = Files.createTempDirectory("junit").toFile();
-
-        when(controller.showDirectoryChooserDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
-                ArgumentMatchers.any(Window.class))).thenReturn(selectedFolder);
-
-        // WHEN
-        assertThat(actionFX.showDirectoryChooserDialog("Title", initialFolder, owner), equalTo(selectedFolder));
-
-        // THEN
-        verify(controller).showDirectoryChooserDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
-                ArgumentMatchers.eq(owner));
-    }
-
-    @Test
-    void testShowFileOpenDialog_initialFileName_extensionFilter() throws IOException {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-        final Window owner = Mockito.mock(Window.class);
-        final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
-        final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
-        final ExtensionFilter filter = new ExtensionFilter("Text Files", "*.txt");
-
-        when(controller.showFileOpenDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
-                ArgumentMatchers.anyString(), ArgumentMatchers.any(ExtensionFilter.class),
-                ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
-
-        // WHEN
-        assertThat(actionFX.showFileOpenDialog("Title", initialFolder, "initial.txt", filter, owner),
-                equalTo(selectedFile));
-
-        // THEN
-        verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
-                ArgumentMatchers.eq("initial.txt"), ArgumentMatchers.eq(filter), ArgumentMatchers.eq(owner));
-    }
-
-    @Test
-    void testShowFileOpenDialog() throws IOException {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-        final Window owner = Mockito.mock(Window.class);
-        final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
-        final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
-
-        when(controller.showFileOpenDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
-                ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
-
-        // WHEN
-        assertThat(actionFX.showFileOpenDialog("Title", initialFolder, owner), equalTo(selectedFile));
-
-        // THEN
-        verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
-                ArgumentMatchers.eq(owner));
-    }
-
-    @Test
-    void testShowFileSaveDialog() throws IOException {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-        final Window owner = Mockito.mock(Window.class);
-        final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
-        final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
-
-        when(controller.showFileSaveDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
-                ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
-
-        // WHEN
-        assertThat(actionFX.showFileSaveDialog("Title", initialFolder, owner), equalTo(selectedFile));
-
-        // THEN
-        verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
-                ArgumentMatchers.eq(owner));
-    }
-
-    @Test
-    void testShowFileSaveDialog_initialFileName_extensionFilter() throws IOException {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-        final Window owner = Mockito.mock(Window.class);
-        final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
-        final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
-        final ExtensionFilter filter = new ExtensionFilter("Text Files", "*.txt");
-
-        when(controller.showFileSaveDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
-                ArgumentMatchers.anyString(), ArgumentMatchers.any(ExtensionFilter.class),
-                ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
-
-        // WHEN
-        assertThat(actionFX.showFileSaveDialog("Title", initialFolder, "initial.txt", filter, owner),
-                equalTo(selectedFile));
-
-        // THEN
-        verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
-                ArgumentMatchers.eq("initial.txt"), ArgumentMatchers.eq(filter), ArgumentMatchers.eq(owner));
-    }
-
-    @Test
-    void testShowTextInputDialog() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-
-        when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString())).thenReturn("Text");
-
-        // WHEN
-        assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText"), equalTo("Text"));
-
-        // THEN
-        verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
-                ArgumentMatchers.eq("ContentText"));
-    }
-
-    @Test
-    void testShowTextInputDialog_withDefaultText() {
-        // GIVEN
-        final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
-        final DialogController controller = Mockito.mock(DialogController.class);
-        when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
-                .thenReturn(controller);
-
-        when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-                ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn("Text");
-
-        // WHEN
-        assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText", "DefaultText"), equalTo("Text"));
-
-        // THEN
-        verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
-                ArgumentMatchers.eq("ContentText"), ArgumentMatchers.eq("DefaultText"));
-    }
-
-    public static class AppClassWithoutAFXApplicationAnnotation {
-
-    }
-
-    public static class Controller {
-        public View _view;
-    }
-
-    public static class CustomControllerExtension implements Consumer<Object> {
-
-        @Override
-        public void accept(final Object t) {
-        }
-    }
-
-    public static class CustomBeanExtension implements BeanExtension {
-
-        @Override
-        public void extendBean(final Class<?> beanClass, final String beanId, final boolean singleton,
-                final boolean lazyInit) {
-        }
-    }
-
-    public static class CustomBeanContainer extends DefaultActionFXBeanContainer {
-
-    }
+	@BeforeEach
+	void onSetup() {
+		// reset instance to 'null' in order to force the creation of a
+		// new ActionFX instance for each test
+		ActionFX.instance = null;
+	}
+
+	@Test
+	void testBuilder_minimal_withConfigurationClass_sampleApp() {
+		// WHEN
+		assertThat(ActionFX.isConfigured(), equalTo(false));
+		assertThat(ActionFX.isInitialized(), equalTo(false));
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+
+		// THEN
+		assertThat(ActionFX.isConfigured(), equalTo(true));
+		assertThat(ActionFX.isInitialized(), equalTo(false));
+		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
+		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
+		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
+		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
+		assertThat(actionFX.getValidationGlobalMode(), equalTo(ValidationMode.MANUAL));
+		assertThat(actionFX.isValidationApplyResultDecoration(), equalTo(false));
+		assertThat(actionFX.isValidationApplyRequiredDecoration(), equalTo(false));
+		assertThat(actionFX.getValidationStartTimeoutMs(), equalTo(500));
+		assertThat(actionFX, equalTo(ActionFX.getInstance()));
+	}
+
+	@Test
+	void testBuilder_minimal_withConfigurationClass_invalidConfigurationClass() {
+		// GIVEN
+		final ActionFXBuilder builder = ActionFX.builder();
+
+		// WHEN and THEN
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> builder.configurationClass(AppClassWithoutAFXApplicationAnnotation.class));
+		assertThat(ex.getMessage(), containsString("or its super-classes are not annotated with @AFXApplication"));
+	}
+
+	@Test
+	void testBuilder_configurative() {
+		// GIVEN
+		final ActionFXEnhancer enhancer = Mockito.mock(ActionFXEnhancer.class);
+
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
+				.mainViewId("mainView").actionFXEnhancer(enhancer).locale(Locale.US)
+				.enhancementStrategy(EnhancementStrategy.SUBCLASSING).validationGlobalMode(ValidationMode.MANUAL)
+				.validationApplyResultDecoration(false).validationApplyRequiredDecoration(false)
+				.validationStartTimeoutMs(500).build();
+
+		// THEN
+		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
+		assertThat(actionFX.getEnhancer(), equalTo(enhancer));
+		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
+		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
+		assertThat(actionFX.getValidationGlobalMode(), equalTo(ValidationMode.MANUAL));
+		assertThat(actionFX.isValidationApplyResultDecoration(), equalTo(false));
+		assertThat(actionFX.isValidationApplyRequiredDecoration(), equalTo(false));
+		assertThat(actionFX.getValidationStartTimeoutMs(), equalTo(500));
+		assertThat(actionFX, equalTo(ActionFX.getInstance()));
+	}
+
+	@Test
+	void testBuilder_notYetBuilt() {
+
+		// WHEN and THEN (
+		assertThrows(IllegalStateException.class, ActionFX::getInstance);
+	}
+
+	@Test
+	void testBuilder_alreadyBuilt() {
+
+		// GIVEN (instance is built)
+		final ActionFX actionFX = ActionFX.builder().build();
+
+		// WHEN and THEN (
+		assertThat(actionFX, notNullValue());
+		assertThrows(IllegalStateException.class, ActionFX::builder);
+	}
+
+	@Test
+	void testBuilder_uncaughtExceptionHandler() {
+		// GIVEN
+		final UncaughtExceptionHandler handler = (t, e) -> {
+		};
+
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().uncaughtExceptionHandler(handler).build();
+
+		// THEN
+		assertThat(actionFX, notNullValue());
+		assertThat(Thread.getDefaultUncaughtExceptionHandler(), sameInstance(handler));
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testBuilder_customController_and_customBeanExtensions_instancesArePassed() {
+		// GIVEN
+		final Consumer<Object> customControllerExtension = Mockito.mock(Consumer.class);
+		final BeanExtension customBeanExtension = Mockito.mock(BeanExtension.class);
+
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().controllerExtension(customControllerExtension)
+				.beanExtension(customBeanExtension).build();
+
+		// THEN
+		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
+				contains(customControllerExtension));
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(), contains(customBeanExtension));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	void testBuilder_customController_and_customBeanExtensions_classesArePassed() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().controllerExtension(CustomControllerExtension.class)
+				.beanExtension(CustomBeanExtension.class).build();
+
+		// THEN
+		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
+				contains(instanceOf(CustomControllerExtension.class)));
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(),
+				contains(instanceOf(CustomBeanExtension.class)));
+	}
+
+	@Test
+	void testBuilder_beanContainerClass_byClass() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().beanContainerClass(CustomBeanContainer.class).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(CustomBeanContainer.class));
+	}
+
+	@Test
+	void testBuilder_beanContainer_byInstance() {
+		// WHEN
+		final CustomBeanContainer container = new CustomBeanContainer();
+		final ActionFX actionFX = ActionFX.builder().beanContainer(container).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), sameInstance(container));
+	}
+
+	@Test
+	void testBuilder_enableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+	}
+
+	@Test
+	void testBuilder_disableBeanContainerAutodetection() {
+		// WHEN
+		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
+
+		// THEN
+		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+	}
+
+	@Test
+	void testScanForActionFXComponents_usingDefaultBeanContainer() {
+		// GIVEN
+		assertThat(ActionFX.isConfigured(), equalTo(false));
+		assertThat(ActionFX.isInitialized(), equalTo(false));
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN
+		assertThat(ActionFX.isConfigured(), equalTo(true));
+		assertThat(ActionFX.isInitialized(), equalTo(true));
+		final View view = actionFX.getView("mainView");
+		final MainController mainControllerById = actionFX.getBean("mainController");
+		final MainController mainControllerByClassName = actionFX.getBean(MainController.class);
+
+		assertThat(view, notNullValue());
+		assertThat(mainControllerById, notNullValue());
+		assertThat(mainControllerByClassName, notNullValue());
+		assertThat(mainControllerById, sameInstance(mainControllerByClassName));
+	}
+
+	@Test
+	void testScanForActionFXComponents_usingCustomBeanContainer() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		final ArgumentCaptor<String> rootPackageCaptor = ArgumentCaptor.forClass(String.class);
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN (custom container has be asked to populate container with the
+		// rootPackage of SampleApp)
+		verify(customBeanContainer).runComponentScan(rootPackageCaptor.capture());
+		assertThat(rootPackageCaptor.getValue(), equalTo(SampleApp.class.getPackageName()));
+	}
+
+	@Test
+	void testScanForActionFXComponents_scanAlreadyPerformed_illegalState() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN (another call to scanComponents results in an exception)
+		assertThrows(IllegalStateException.class, () -> actionFX.scanForActionFXComponents());
+	}
+
+	@Test
+	void testScanForActionFXComponents_getView_viewNotFound() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> actionFX.getView("fantasyView"));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("There is no view with ID='fantasyView'"));
+	}
+
+	@Test
+	void testScanForActionFXComponents_assureActionFXBeansAreAdded() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().locale(Locale.US).beanContainer(customBeanContainer).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+
+		// THEN
+		verify(customBeanContainer, times(1)).addActionFXBeans(eq(actionFX));
+	}
+
+	@Test
+	void testAddController() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		actionFX.addController(TestController.class);
+
+		// THEN
+		assertThat(actionFX.getBean(TestController.class), notNullValue());
+	}
+
+	@Test
+	void testScanForActionFXComponents_getView_viewIsNotInstanceOfView() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+
+		// WHEN
+		actionFX.scanForActionFXComponents();
+		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> actionFX.getView("mainController"));
+
+		// THEN
+		assertThat(ex.getMessage(), containsString("Bean with ID='mainController' is not of type"));
+	}
+
+	@Test
+	void testGetConversionService() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final ConversionService service = actionFX.getConversionService();
+
+		// THEN
+		assertThat(service, notNullValue());
+	}
+
+	@Test
+	void testGetEventBus() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final PriorityAwareEventBus eventBus = actionFX.getEventBus();
+
+		// THEN
+		assertThat(eventBus, notNullValue());
+		assertThat(eventBus, instanceOf(SimplePriorityAwareEventBus.class));
+	}
+
+	@Test
+	void testGetView() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		final View view = actionFX.getView(controller);
+
+		// THEN
+		assertThat(view, sameInstance(mockView));
+	}
+
+	@Test
+	void testShowView() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showView(controller);
+
+		// THEN
+		verify(mockView, times(1)).show();
+	}
+
+	@Test
+	void testShowView_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		// WHEN
+		actionFX.showView("viewId");
+
+		// THEN
+		verify(mockView, times(1)).show();
+	}
+
+	@Test
+	@TestInFxThread
+	void testShowView_withStageSupplied() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+		final Stage stage = new Stage();
+
+		// WHEN
+		actionFX.showView(controller, stage);
+
+		// THEN
+		verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
+	}
+
+	@Test
+	@TestInFxThread
+	void testShowView_withStageSupplied_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		final Stage stage = new Stage();
+
+		// WHEN
+		actionFX.showView("viewId", stage);
+
+		// THEN
+		verify(mockView, times(1)).show(ArgumentMatchers.eq(stage));
+	}
+
+	@Test
+	void testShowViewAndWait() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		actionFX.showViewAndWait(controller);
+
+		// THEN
+		verify(mockView, times(1)).showAndWait();
+	}
+
+	@Test
+	void testShowViewAndWait_withViewId() {
+		// GIVEN
+		final BeanContainerFacade customBeanContainer = Mockito.mock(BeanContainerFacade.class);
+		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
+				.beanContainer(customBeanContainer).build();
+		actionFX.scanForActionFXComponents();
+		final View mockView = Mockito.mock(View.class);
+		when(customBeanContainer.getBean(ArgumentMatchers.eq("viewId"))).thenReturn(mockView);
+
+		// WHEN
+		actionFX.showViewAndWait("viewId");
+
+		// THEN
+		verify(mockView, times(1)).showAndWait();
+	}
+
+	@Test
+	void testHideView() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final Controller controller = new Controller();
+		final View mockView = Mockito.mock(View.class);
+		controller._view = mockView;
+		when(actionFX.getBean(ArgumentMatchers.eq(Controller.class))).thenReturn(controller);
+
+		// WHEN
+		actionFX.hideView(controller);
+
+		// THEN
+		verify(mockView, times(1)).hide();
+	}
+
+	@Test
+	void testShowConfirmationDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+		when(controller.showConfirmationDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
+
+		// WHEN
+		assertThat(actionFX.showConfirmationDialog("Title", "HeaderText", "ContentText"), equalTo(Boolean.TRUE));
+
+		// THEN
+		verify(controller).showConfirmationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowWarningDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+
+		// WHEN
+		actionFX.showWarningDialog("Title", "HeaderText", "ContentText");
+
+		// THEN
+		verify(controller).showWarningDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowInformationDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+
+		// WHEN
+		actionFX.showInformationDialog("Title", "HeaderText", "ContentText");
+
+		// THEN
+		verify(controller).showInformationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowErrorDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+
+		// WHEN
+		actionFX.showErrorDialog("Title", "HeaderText", "ContentText");
+
+		// THEN
+		verify(controller).showErrorDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowDirectoryChooser() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFolder = Files.createTempDirectory("junit").toFile();
+		final File initialFolder = Files.createTempDirectory("junit").toFile();
+
+		when(controller.showDirectoryChooserDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFolder);
+
+		// WHEN
+		assertThat(actionFX.showDirectoryChooserDialog("Title", initialFolder, owner), equalTo(selectedFolder));
+
+		// THEN
+		verify(controller).showDirectoryChooserDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileOpenDialog_initialFileName_extensionFilter() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+		final ExtensionFilter filter = new ExtensionFilter("Text Files", "*.txt");
+
+		when(controller.showFileOpenDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.anyString(), ArgumentMatchers.any(ExtensionFilter.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, "initial.txt", filter, owner),
+				equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq("initial.txt"), ArgumentMatchers.eq(filter), ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileOpenDialog() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+
+		when(controller.showFileOpenDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, owner), equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileSaveDialog() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+
+		when(controller.showFileSaveDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, owner), equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowFileSaveDialog_initialFileName_extensionFilter() throws IOException {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+		final Window owner = Mockito.mock(Window.class);
+		final File selectedFile = Files.createTempFile("junit", "-tmp").toFile();
+		final File initialFolder = Files.createTempFile("junit", "-tmp").toFile();
+		final ExtensionFilter filter = new ExtensionFilter("Text Files", "*.txt");
+
+		when(controller.showFileSaveDialog(ArgumentMatchers.anyString(), ArgumentMatchers.any(File.class),
+				ArgumentMatchers.anyString(), ArgumentMatchers.any(ExtensionFilter.class),
+				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
+
+		// WHEN
+		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, "initial.txt", filter, owner),
+				equalTo(selectedFile));
+
+		// THEN
+		verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
+				ArgumentMatchers.eq("initial.txt"), ArgumentMatchers.eq(filter), ArgumentMatchers.eq(owner));
+	}
+
+	@Test
+	void testShowTextInputDialog() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+
+		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString())).thenReturn("Text");
+
+		// WHEN
+		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText"), equalTo("Text"));
+
+		// THEN
+		verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"));
+	}
+
+	@Test
+	void testShowTextInputDialog_withDefaultText() {
+		// GIVEN
+		final ActionFX actionFX = Mockito.spy(ActionFX.builder().configurationClass(SampleApp.class).build());
+		final DialogController controller = Mockito.mock(DialogController.class);
+		when(actionFX.getBean(ArgumentMatchers.eq(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)))
+				.thenReturn(controller);
+
+		when(controller.showTextInputDialog(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn("Text");
+
+		// WHEN
+		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText", "DefaultText"), equalTo("Text"));
+
+		// THEN
+		verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
+				ArgumentMatchers.eq("ContentText"), ArgumentMatchers.eq("DefaultText"));
+	}
+
+	public static class AppClassWithoutAFXApplicationAnnotation {
+
+	}
+
+	public static class Controller {
+		public View _view;
+	}
+
+	public static class CustomControllerExtension implements Consumer<Object> {
+
+		@Override
+		public void accept(final Object t) {
+		}
+	}
+
+	public static class CustomBeanExtension implements BeanExtension {
+
+		@Override
+		public void extendBean(final Class<?> beanClass, final String beanId, final boolean singleton,
+				final boolean lazyInit) {
+		}
+	}
+
+	public static class CustomBeanContainer extends DefaultActionFXBeanContainer {
+
+	}
 }

@@ -32,32 +32,33 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a min/max validator on a control's value.
+ * Controller field extension that applies validation on it using a min/max
+ * validator on a control's value.
  *
  * @author koster
  */
 public class ValidateMinMaxControllerExtension extends AbstractValidationControllerExtension<AFXValidateMinMax> {
 
-    public ValidateMinMaxControllerExtension() {
-        super(AFXValidateMinMax.class);
-    }
+	public ValidateMinMaxControllerExtension() {
+		super(AFXValidateMinMax.class);
+	}
 
-    @Override
-    protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateMinMax annotation) {
-        return new MinMaxValidator(annotation.message(), annotation.min(), annotation.max(), annotation.formatPattern(),
-                annotation.required());
-    }
+	@Override
+	protected Validator createValidator(final Object controller, final Control control,
+			final AFXValidateMinMax annotation) {
+		return new MinMaxValidator(getMessage(controller.getClass(), annotation.messageKey(), annotation.message()),
+				annotation.min(), annotation.max(), annotation.formatPattern(), annotation.required());
+	}
 
-    @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateMinMax annotation) {
-        return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
-                .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
-    }
+	@Override
+	protected ValidationOptions createValidationOptions(final AFXValidateMinMax annotation) {
+		return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
+				.validationStartTimeoutMs(annotation.validationStartTimeoutMs());
+	}
 
-    @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateMinMax annotation) {
-        return annotation.validationTargeProperty();
-    }
+	@Override
+	protected ControlProperties getValidatedControlProperty(final AFXValidateMinMax annotation) {
+		return annotation.validationTargeProperty();
+	}
 
 }

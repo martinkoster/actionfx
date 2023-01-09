@@ -23,47 +23,42 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import com.github.actionfx.core.annotation.AFXValidateCustom;
-import com.github.actionfx.core.method.ActionFXMethodInvocation;
-import com.github.actionfx.core.validation.CustomMethodValidator;
+import com.github.actionfx.core.annotation.AFXValidateBoolean;
+import com.github.actionfx.core.validation.BooleanValidator;
 import com.github.actionfx.core.validation.ValidationOptions;
 import com.github.actionfx.core.validation.Validator;
 import com.github.actionfx.core.view.graph.ControlProperties;
-import com.github.actionfx.core.view.graph.ControlWrapper;
 
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a custom method inside the annotated ActionFX
- * controller.
+ * Controller field extension that applies validation on it using a custom
+ * method inside the annotated ActionFX controller.
  *
  * @author koster
  */
-public class ValidateBooleanControllerExtension extends AbstractValidationControllerExtension<AFXValidateCustom> {
+public class ValidateBooleanControllerExtension extends AbstractValidationControllerExtension<AFXValidateBoolean> {
 
-    public ValidateBooleanControllerExtension() {
-        super(AFXValidateCustom.class);
-    }
+	public ValidateBooleanControllerExtension() {
+		super(AFXValidateBoolean.class);
+	}
 
-    @Override
-    protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateCustom annotation) {
-        final ControlWrapper controlWrapper = ControlWrapper.of(control);
-        final Object currentValue = controlWrapper.getValue(annotation.validationTargeProperty());
-        final ActionFXMethodInvocation methodInvocation = new ActionFXMethodInvocation(controller,
-                annotation.validationMethod(), true, currentValue);
-        return new CustomMethodValidator(controller, methodInvocation.getMethod());
-    }
+	@Override
+	protected Validator createValidator(final Object controller, final Control control,
+			final AFXValidateBoolean annotation) {
+		return new BooleanValidator(getMessage(controller.getClass(), annotation.messageKey(), annotation.message()),
+				annotation.expected(), false);
+	}
 
-    @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateCustom annotation) {
-        return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
-                .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
-    }
+	@Override
+	protected ValidationOptions createValidationOptions(final AFXValidateBoolean annotation) {
+		return ValidationOptions.options().validationMode(annotation.validationMode())
+				.validationStartTimeoutMs(annotation.validationStartTimeoutMs());
+	}
 
-    @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateCustom annotation) {
-        return annotation.validationTargeProperty();
-    }
+	@Override
+	protected ControlProperties getValidatedControlProperty(final AFXValidateBoolean annotation) {
+		return annotation.validationTargeProperty();
+	}
 
 }

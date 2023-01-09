@@ -26,6 +26,7 @@ package com.github.actionfx.core.extension.controller;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.validation.ValidationOptions;
 import com.github.actionfx.core.validation.Validator;
@@ -41,65 +42,64 @@ import javafx.scene.control.Control;
  * @author koster
  */
 public abstract class AbstractValidationControllerExtension<A extends Annotation>
-        extends AbstractAnnotatedFieldControllerExtension<A> {
+		extends AbstractAnnotatedFieldControllerExtension<A> {
 
-    protected AbstractValidationControllerExtension(final Class<A> annotationType) {
-        super(annotationType);
-    }
+	protected AbstractValidationControllerExtension(final Class<A> annotationType) {
+		super(annotationType);
+	}
 
-    @Override
-    protected void extend(final Object controller, final Field annotatedElement, final A annotation) {
-        final View view = ControllerWrapper.of(controller).getView();
-        final Control control = getFieldValue(controller, annotatedElement, Control.class);
-        final Validator validator = createValidator(controller, control, annotation);
-        view.registerValidator(control, getValidatedControlProperty(annotation), validator,
-                createValidationOptions(annotation));
-    }
+	@Override
+	protected void extend(final Object controller, final Field annotatedElement, final A annotation) {
+		final View view = ControllerWrapper.of(controller).getView();
+		final Control control = getFieldValue(controller, annotatedElement, Control.class);
+		final Validator validator = createValidator(controller, control, annotation);
+		view.registerValidator(control, getValidatedControlProperty(annotation), validator,
+				createValidationOptions(annotation));
+	}
 
-    /**
-     * Implementing controller extension need to instantiate a {@link Validator} for the given {@link ControlWrapper}.
-     *
-     * @param controller
-     *            the ActionFX controller holding the control
-     * @param control
-     *            the control that shall be validated
-     * @param annotation
-     *            the annotation taken from the field holding the control
-     * @return the validator instance
-     */
-    protected abstract Validator createValidator(Object controller, Control control, A annotation);
+	/**
+	 * Implementing controller extension need to instantiate a {@link Validator} for
+	 * the given {@link ControlWrapper}.
+	 *
+	 * @param controller the ActionFX controller holding the control
+	 * @param control    the control that shall be validated
+	 * @param annotation the annotation taken from the field holding the control
+	 * @return the validator instance
+	 */
+	protected abstract Validator createValidator(Object controller, Control control, A annotation);
 
-    /**
-     * Implementing classes need to derive a valid set of {@link ValidationOptions} from the supplied
-     * {@code annotation}.
-     *
-     * @param annotation
-     *            the annotation
-     * @return the derived validation options.
-     */
-    protected abstract ValidationOptions createValidationOptions(A annotation);
+	/**
+	 * Implementing classes need to derive a valid set of {@link ValidationOptions}
+	 * from the supplied {@code annotation}.
+	 *
+	 * @param annotation the annotation
+	 * @return the derived validation options.
+	 */
+	protected abstract ValidationOptions createValidationOptions(A annotation);
 
-    /**
-     * Determines which property of the control shall be validated, using the given {@code annotation} as information
-     * source.
-     *
-     * @param annotation
-     *            the annotation specifying the property of the control to be validated
-     * @return the control property to be validated
-     */
-    protected abstract ControlProperties getValidatedControlProperty(A annotation);
+	/**
+	 * Determines which property of the control shall be validated, using the given
+	 * {@code annotation} as information source.
+	 *
+	 * @param annotation the annotation specifying the property of the control to be
+	 *                   validated
+	 * @return the control property to be validated
+	 */
+	protected abstract ControlProperties getValidatedControlProperty(A annotation);
 
-    /**
-     * Looks up an internationalized message for the currently set user locale within ActionFX. In case the
-     * {@code messageKey} is empty or can not be looked up, the {@code defaultMessage} will be returned.
-     *
-     * @param messageKey
-     *            the message key to look up
-     * @param defaultMessage
-     *            the default message to use, if the lookup via {@code messageKey} is not possible
-     * @return the resolved message
-     */
-    protected String getMessage(final String messageKey, final String defaultMessage) {
-        return defaultMessage;
-    }
+	/**
+	 * Looks up an internationalized message for the currently set user locale
+	 * within ActionFX. In case the {@code messageKey} is empty or can not be looked
+	 * up, the {@code defaultMessage} will be returned.
+	 *
+	 * @param controllerClass the controller class for that a resource bundle is
+	 *                        specified
+	 * @param messageKey      the message key to look up
+	 * @param defaultMessage  the default message to use, if the lookup via
+	 *                        {@code messageKey} is not possible
+	 * @return the resolved message
+	 */
+	protected String getMessage(final Class<?> controllerClass, final String messageKey, final String defaultMessage) {
+		return ActionFX.getInstance().getMessage(controllerClass, messageKey, defaultMessage);
+	}
 }

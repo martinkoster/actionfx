@@ -42,7 +42,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 /**
- * This util class helps to add or remove decorations to nodes in the JavaFX scenegraph.
+ * This util class helps to add or remove decorations to nodes in the JavaFX
+ * scenegraph.
  *
  * <h3>Example</h3>
  * <p>
@@ -55,8 +56,9 @@ import javafx.scene.Scene;
  * </pre>
  *
  * <p>
- * Similarly, if we wanted to add a CSS style class (e.g. because we have some css that knows to make the 'warning'
- * style class turn the TextField a lovely shade of bright red, we would simply do the following:
+ * Similarly, if we wanted to add a CSS style class (e.g. because we have some
+ * css that knows to make the 'warning' style class turn the TextField a lovely
+ * shade of bright red, we would simply do the following:
  *
  * <pre>
  * {@code
@@ -71,131 +73,126 @@ import javafx.scene.Scene;
  */
 public class DecorationUtils {
 
-    private static final String DECORATIONS_PROPERTY_KEY = "actionfx-decorations";
+	private static final String DECORATIONS_PROPERTY_KEY = "actionfx-decorations";
 
-    private DecorationUtils() {
-        // class can not be instantiated
-    }
+	private DecorationUtils() {
+		// class can not be instantiated
+	}
 
-    /**
-     * Adds the given decoration to the given node.
-     *
-     * @param target
-     *            The node to add the decoration to.
-     * @param decoration
-     *            The decoration to add to the node.
-     */
-    public static final void addDecoration(final Node target, final Decoration decoration) {
-        getDecorations(target).add(decoration);
-        getDecorationPane(target,
-                pane -> pane.addDecorationsToNode(target, FXCollections.observableArrayList(decoration)));
-    }
+	/**
+	 * Adds the given decoration to the given node.
+	 *
+	 * @param target     The node to add the decoration to.
+	 * @param decoration The decoration to add to the node.
+	 */
+	public static final void addDecoration(final Node target, final Decoration decoration) {
+		getDecorations(target).add(decoration);
+		getDecorationPane(target,
+				pane -> pane.addDecorationsToNode(target, FXCollections.observableArrayList(decoration)));
+	}
 
-    /**
-     * Removes the given decoration from the given node.
-     *
-     * @param target
-     *            The node to remove the decoration from.
-     * @param decoration
-     *            The decoration to remove from the node.
-     */
-    public static final void removeDecoration(final Node target, final Decoration decoration) {
-        getDecorations(target).remove(decoration);
-        getDecorationPane(target,
-                pane -> pane.removeDecorationsFromNode(target, FXCollections.observableArrayList(decoration)));
-    }
+	/**
+	 * Removes the given decoration from the given node.
+	 *
+	 * @param target     The node to remove the decoration from.
+	 * @param decoration The decoration to remove from the node.
+	 */
+	public static final void removeDecoration(final Node target, final Decoration decoration) {
+		getDecorations(target).remove(decoration);
+		getDecorationPane(target,
+				pane -> pane.removeDecorationsFromNode(target, FXCollections.observableArrayList(decoration)));
+	}
 
-    /**
-     * Removes all the decorations that have previously been set on the given node.
-     *
-     * @param target
-     *            The node from which all previously set decorations should be removed.
-     */
-    public static final void removeAllDecorations(final Node target) {
-        final List<Decoration> decorations = getDecorations(target);
-        final List<Decoration> removed = FXCollections.observableArrayList(decorations);
+	/**
+	 * Removes all the decorations that have previously been set on the given node.
+	 *
+	 * @param target The node from which all previously set decorations should be
+	 *               removed.
+	 */
+	public static final void removeAllDecorations(final Node target) {
+		final List<Decoration> decorations = getDecorations(target);
+		final List<Decoration> removed = FXCollections.observableArrayList(decorations);
 
-        target.getProperties().remove(DECORATIONS_PROPERTY_KEY);
-        getDecorationPane(target, pane -> pane.removeDecorationsFromNode(target, removed));
-    }
+		target.getProperties().remove(DECORATIONS_PROPERTY_KEY);
+		getDecorationPane(target, pane -> pane.removeDecorationsFromNode(target, removed));
+	}
 
-    /**
-     * Returns all the currently set decorations for the given node.
-     *
-     * @param target
-     *            The node for which all currently set decorations are required.
-     * @return an ObservableList of the currently set decorations for the given node.
-     */
-    @SuppressWarnings("unchecked")
-    public static final ObservableList<Decoration> getDecorations(final Node target) {
-        return (ObservableList<Decoration>) target.getProperties().computeIfAbsent(DECORATIONS_PROPERTY_KEY,
-                key -> FXCollections.observableArrayList());
-    }
+	/**
+	 * Returns all the currently set decorations for the given node.
+	 *
+	 * @param target The node for which all currently set decorations are required.
+	 * @return an ObservableList of the currently set decorations for the given
+	 *         node.
+	 */
+	@SuppressWarnings("unchecked")
+	public static final ObservableList<Decoration> getDecorations(final Node target) {
+		return (ObservableList<Decoration>) target.getProperties().computeIfAbsent(DECORATIONS_PROPERTY_KEY,
+				key -> FXCollections.observableArrayList());
+	}
 
-    private static List<Scene> currentlyInstallingScenes = new ArrayList<>();
+	private static List<Scene> currentlyInstallingScenes = new ArrayList<>();
 
-    private static Map<Scene, List<Consumer<DecorationPane>>> pendingTasksByScene = new HashMap<>();
+	private static Map<Scene, List<Consumer<DecorationPane>>> pendingTasksByScene = new HashMap<>();
 
-    private static void getDecorationPane(final Node target, final Consumer<DecorationPane> task) {
-        // find a DecorationPane parent and notify it that a node has updated
-        // decorations. If a DecorationPane doesn't exist, we install it into
-        // the scene. If a Scene does not exist, we add a listener to try again
-        // when a scene is available.
+	private static void getDecorationPane(final Node target, final Consumer<DecorationPane> task) {
+		// find a DecorationPane parent and notify it that a node has updated
+		// decorations. If a DecorationPane doesn't exist, we install it into
+		// the scene. If a Scene does not exist, we add a listener to try again
+		// when a scene is available.
 
-        final DecorationPane pane = getDecorationPaneInParentHierarchy(target);
+		final DecorationPane pane = getDecorationPaneInParentHierarchy(target);
 
-        if (pane != null) {
-            task.accept(pane);
-        } else {
-            // install decoration pane
-            final Consumer<Scene> sceneConsumer = scene -> {
-                if (currentlyInstallingScenes.contains(scene)) {
-                    List<Consumer<DecorationPane>> pendingTasks = pendingTasksByScene.get(scene);
-                    if (pendingTasks == null) {
-                        pendingTasks = new LinkedList<>();
-                        pendingTasksByScene.put(scene, pendingTasks);
-                    }
-                    pendingTasks.add(task);
-                    return;
-                }
+		if (pane != null) {
+			task.accept(pane);
+		} else {
+			// install decoration pane
+			AFXUtils.executeOnceWhenPropertyIsNonNull(target.sceneProperty(),
+					installDecorationSceneConsumer(target, task));
+		}
+	}
 
-                DecorationPane decorationPane = getDecorationPaneInParentHierarchy(target);
-                if (decorationPane == null) {
-                    currentlyInstallingScenes.add(scene);
-                    decorationPane = new DecorationPane();
-                    final Parent oldRoot = scene.getRoot();
-                    decorationPane.getStylesheets().addAll(oldRoot.getStylesheets());
-                    AFXUtils.injectAsRootPane(scene, decorationPane);
-                    decorationPane.setRoot(oldRoot);
-                    currentlyInstallingScenes.remove(scene);
-                }
+	private static Consumer<Scene> installDecorationSceneConsumer(final Node target,
+			final Consumer<DecorationPane> task) {
+		return scene -> {
+			if (currentlyInstallingScenes.contains(scene)) {
+				List<Consumer<DecorationPane>> pendingTasks = pendingTasksByScene.get(scene);
+				if (pendingTasks == null) {
+					pendingTasks = new LinkedList<>();
+					pendingTasksByScene.put(scene, pendingTasks);
+				}
+				pendingTasks.add(task);
+				return;
+			}
 
-                task.accept(decorationPane);
-                final List<Consumer<DecorationPane>> pendingTasks = pendingTasksByScene.remove(scene);
-                if (pendingTasks != null) {
-                    for (final Consumer<DecorationPane> pendingTask : pendingTasks) {
-                        pendingTask.accept(decorationPane);
-                    }
-                }
-            };
+			DecorationPane decorationPane = getDecorationPaneInParentHierarchy(target);
+			if (decorationPane == null) {
+				currentlyInstallingScenes.add(scene);
+				decorationPane = new DecorationPane();
+				final Parent oldRoot = scene.getRoot();
+				decorationPane.getStylesheets().addAll(oldRoot.getStylesheets());
+				AFXUtils.injectAsRootPane(scene, decorationPane);
+				decorationPane.setRoot(oldRoot);
+				currentlyInstallingScenes.remove(scene);
+			}
 
-            final Scene scene = target.getScene();
-            if (scene != null) {
-                sceneConsumer.accept(scene);
-            } else {
-                AFXUtils.executeOnceWhenPropertyIsNonNull(target.sceneProperty(), sceneConsumer);
-            }
-        }
-    }
+			task.accept(decorationPane);
+			final List<Consumer<DecorationPane>> pendingTasks = pendingTasksByScene.remove(scene);
+			if (pendingTasks != null) {
+				for (final Consumer<DecorationPane> pendingTask : pendingTasks) {
+					pendingTask.accept(decorationPane);
+				}
+			}
+		};
+	}
 
-    private static DecorationPane getDecorationPaneInParentHierarchy(final Node target) {
-        Parent p = target.getParent();
-        while (p != null) {
-            if (p instanceof DecorationPane) {
-                return (DecorationPane) p;
-            }
-            p = p.getParent();
-        }
-        return null;
-    }
+	private static DecorationPane getDecorationPaneInParentHierarchy(final Node target) {
+		Parent p = target.getParent();
+		while (p != null) {
+			if (p instanceof DecorationPane) {
+				return (DecorationPane) p;
+			}
+			p = p.getParent();
+		}
+		return null;
+	}
 }

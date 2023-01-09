@@ -32,31 +32,33 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a regular expression on the control's value.
+ * Controller field extension that applies validation on it using a regular
+ * expression on the control's value.
  *
  * @author koster
  */
 public class ValidateRegExpControllerExtension extends AbstractValidationControllerExtension<AFXValidateRegExp> {
 
-    public ValidateRegExpControllerExtension() {
-        super(AFXValidateRegExp.class);
-    }
+	public ValidateRegExpControllerExtension() {
+		super(AFXValidateRegExp.class);
+	}
 
-    @Override
-    protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateRegExp annotation) {
-        return new RegExpValidator(annotation.message(), annotation.regExp(), annotation.required());
-    }
+	@Override
+	protected Validator createValidator(final Object controller, final Control control,
+			final AFXValidateRegExp annotation) {
+		return new RegExpValidator(getMessage(controller.getClass(), annotation.messageKey(), annotation.message()),
+				annotation.regExp(), annotation.required());
+	}
 
-    @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateRegExp annotation) {
-        return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
-                .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
-    }
+	@Override
+	protected ValidationOptions createValidationOptions(final AFXValidateRegExp annotation) {
+		return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
+				.validationStartTimeoutMs(annotation.validationStartTimeoutMs());
+	}
 
-    @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateRegExp annotation) {
-        return annotation.validationTargeProperty();
-    }
+	@Override
+	protected ControlProperties getValidatedControlProperty(final AFXValidateRegExp annotation) {
+		return annotation.validationTargeProperty();
+	}
 
 }

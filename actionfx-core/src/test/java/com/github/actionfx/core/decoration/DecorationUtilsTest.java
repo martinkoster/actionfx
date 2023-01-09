@@ -1,5 +1,5 @@
 /*
-w * Copyright (c) 2022 Martin Koster
+ * Copyright (c) 2021,2022 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,27 +21,20 @@ w * Copyright (c) 2022 Martin Koster
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.validation.app;
+package com.github.actionfx.core.decoration;
 
-import com.github.actionfx.core.annotation.AFXApplication;
-import com.github.actionfx.core.app.AbstractAFXApplication;
-
-import javafx.application.Application;
+import org.junit.jupiter.api.Test;
 
 /**
- * Main entry point in the sample application.
+ * JUnit test for {@link DecorationUtils}.
  *
  * @author koster
  *
  */
-public class ValidationApp {
+class DecorationUtilsTest {
 
-	public static void main(final String[] argv) {
-		Application.launch(SampleActionFXApplication.class);
-	}
-
-	@AFXApplication(mainViewId = "validationView", scanPackage = "com.github.actionfx.validation.controller", enableBeanContainerAutodetection = false, validationApplyRequiredDecoration = false)
-	public static class SampleActionFXApplication extends AbstractAFXApplication {
+	@Test
+	void testAddDecoration() {
 
 	}
 

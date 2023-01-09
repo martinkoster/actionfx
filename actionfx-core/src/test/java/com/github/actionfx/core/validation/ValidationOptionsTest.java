@@ -39,58 +39,77 @@ import com.github.actionfx.core.annotation.ValidationMode;
  */
 class ValidationOptionsTest {
 
-    @AfterEach
-    void onTearDown() {
-        ActionFX.getInstance().reset();
-    }
+	@AfterEach
+	void onTearDown() {
+		ActionFX.getInstance().reset();
+	}
 
-    @Test
-    void testBuild_withGlobalValidationSet() {
-        // GIVEN
-        ActionFX.builder().scanPackage("dummy.package").globalValidationMode(ValidationMode.ONCHANGE).build()
-                .scanForActionFXComponents();
+	@Test
+	void testBuild_withGlobalValidationSet() {
+		// GIVEN
+		ActionFX.builder().scanPackage("dummy.package").validationGlobalMode(ValidationMode.ONCHANGE)
+				.validationApplyResultDecoration(false).validationStartTimeoutMs(300).build()
+				.scanForActionFXComponents();
 
-        // WHEN
-        final ValidationOptions options = ValidationOptions.options().required(true).applyValidationDecorations(false)
-                .validationStartTimeoutMs(300);
+		// WHEN
+		final ValidationOptions options = ValidationOptions.options().required(true);
 
-        // THEN
-        assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
-        assertThat(options.isRequired(), equalTo(true));
-        assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
-        assertThat(options.isApplyValidationDecorations(), equalTo(false));
-    }
+		// THEN
+		assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
+		assertThat(options.isRequired(), equalTo(true));
+		assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
+		assertThat(options.isApplyValidationResultDecorations(), equalTo(false));
+	}
 
-    @Test
-    void testBuild_withGlobalValidationSet_butOverriddenWithExplicateOption() {
-        // GIVEN
-        ActionFX.builder().scanPackage("dummy.package").build().scanForActionFXComponents();
+	@Test
+	void testBuild_withGlobalValidationSet_validationStartTimeoutOfMinusOneIsNotOverridden() {
+		// GIVEN
+		ActionFX.builder().scanPackage("dummy.package").validationGlobalMode(ValidationMode.ONCHANGE)
+				.validationApplyResultDecoration(false).validationApplyRequiredDecoration(false)
+				.validationStartTimeoutMs(300).build().scanForActionFXComponents();
 
-        // WHEN
-        final ValidationOptions options = ValidationOptions.options().required(true)
-                .validationMode(ValidationMode.ONCHANGE).validationStartTimeoutMs(300);
+		// WHEN
+		final ValidationOptions options = ValidationOptions.options().required(true).validationStartTimeoutMs(-1);
 
-        // THEN
-        assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
-        assertThat(options.isRequired(), equalTo(true));
-        assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
-        assertThat(options.isApplyValidationDecorations(), equalTo(true));
-    }
+		// THEN
+		assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
+		assertThat(options.isRequired(), equalTo(true));
+		assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
+		assertThat(options.isApplyValidationResultDecorations(), equalTo(false));
+	}
 
-    @Test
-    void testBuild_noGlobalValidationSet_noExpliciteValidationModeSet_defaultIsTaken() {
+	@Test
+	void testBuild_withGlobalValidationSet_butOverriddenWithExpliciteOption() {
+		// GIVEN
+		ActionFX.builder().scanPackage("dummy.package").validationGlobalMode(ValidationMode.MANUAL)
+				.validationApplyResultDecoration(true).validationApplyRequiredDecoration(true)
+				.validationStartTimeoutMs(100).build().scanForActionFXComponents();
 
-        // GIVEN
-        ActionFX.builder().scanPackage("dummy.package").build()
-                .scanForActionFXComponents();
+		// WHEN
+		final ValidationOptions options = ValidationOptions.options().required(true)
+				.validationMode(ValidationMode.ONCHANGE).validationStartTimeoutMs(300)
+				.applyValidationResultDecorations(false);
 
-        // WHEN
-        final ValidationOptions options = ValidationOptions.options().required(true).validationStartTimeoutMs(300);
+		// THEN
+		assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
+		assertThat(options.isRequired(), equalTo(true));
+		assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
+		assertThat(options.isApplyValidationResultDecorations(), equalTo(false));
+	}
 
-        // THEN
-        assertThat(options.getValidationMode(), equalTo(ValidationMode.MANUAL)); // default is manual
-        assertThat(options.isRequired(), equalTo(true));
-        assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
-        assertThat(options.isApplyValidationDecorations(), equalTo(true));
-    }
+	@Test
+	void testBuild_noGlobalValidationSet_noExpliciteValidationSettingsGiven_defaultIsTaken() {
+
+		// GIVEN
+		ActionFX.builder().scanPackage("dummy.package").build().scanForActionFXComponents();
+
+		// WHEN
+		final ValidationOptions options = ValidationOptions.options().required(true);
+
+		// THEN
+		assertThat(options.getValidationMode(), equalTo(ValidationMode.MANUAL)); // default is manual
+		assertThat(options.isRequired(), equalTo(true));
+		assertThat(options.getValidationStartTimeoutMs(), equalTo(-1));
+		assertThat(options.isApplyValidationResultDecorations(), equalTo(true));
+	}
 }

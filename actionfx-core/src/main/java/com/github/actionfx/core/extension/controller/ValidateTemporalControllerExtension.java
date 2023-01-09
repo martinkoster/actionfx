@@ -32,32 +32,34 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import javafx.scene.control.Control;
 
 /**
- * Controller field extension that applies validation on it using a temporal validator on the control's value.
+ * Controller field extension that applies validation on it using a temporal
+ * validator on the control's value.
  *
  * @author koster
  */
 public class ValidateTemporalControllerExtension extends AbstractValidationControllerExtension<AFXValidateTemporal> {
 
-    public ValidateTemporalControllerExtension() {
-        super(AFXValidateTemporal.class);
-    }
+	public ValidateTemporalControllerExtension() {
+		super(AFXValidateTemporal.class);
+	}
 
-    @Override
-    protected Validator createValidator(final Object controller, final Control control,
-            final AFXValidateTemporal annotation) {
-        return new TemporalValidator(annotation.message(), annotation.past(), annotation.pastOrPresent(),
-                annotation.future(), annotation.futureOrPresent(), annotation.formatPattern(), annotation.required());
-    }
+	@Override
+	protected Validator createValidator(final Object controller, final Control control,
+			final AFXValidateTemporal annotation) {
+		return new TemporalValidator(getMessage(controller.getClass(), annotation.messageKey(), annotation.message()),
+				annotation.past(), annotation.pastOrPresent(), annotation.future(), annotation.futureOrPresent(),
+				annotation.formatPattern(), annotation.required());
+	}
 
-    @Override
-    protected ValidationOptions createValidationOptions(final AFXValidateTemporal annotation) {
-        return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
-                .validationStartTimeoutMs(annotation.validationStartTimeoutMs());
-    }
+	@Override
+	protected ValidationOptions createValidationOptions(final AFXValidateTemporal annotation) {
+		return ValidationOptions.options().required(annotation.required()).validationMode(annotation.validationMode())
+				.validationStartTimeoutMs(annotation.validationStartTimeoutMs());
+	}
 
-    @Override
-    protected ControlProperties getValidatedControlProperty(final AFXValidateTemporal annotation) {
-        return annotation.validationTargeProperty();
-    }
+	@Override
+	protected ControlProperties getValidatedControlProperty(final AFXValidateTemporal annotation) {
+		return annotation.validationTargeProperty();
+	}
 
 }

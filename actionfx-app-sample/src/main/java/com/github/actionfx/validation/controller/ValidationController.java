@@ -57,58 +57,58 @@ import javafx.scene.control.TextField;
 @AFXController(viewId = "validationView", fxml = "/fxml/ValidationView.fxml", title = "ValidationView", width = 660, height = 450)
 public class ValidationController {
 
-    @AFXValidateBoolean(message = "Please confirms", expected = true)
-    @FXML
-    protected CheckBox checkbox;
+	@AFXValidateBoolean(message = "Please confirm", expected = true)
+	@FXML
+	protected CheckBox checkbox;
 
-    @AFXValidateRegExp(message = "Please enter a valid mail address", regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationStartTimeoutMs = 300, required = true)
-    @FXML
-    protected TextField emailTextField;
+	@AFXValidateRegExp(message = "Please enter a valid mail address", regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationStartTimeoutMs = 300, required = true)
+	@FXML
+	protected TextField emailTextField;
 
-    @AFXEnableMultiSelection
-    @AFXValidateSize(message = "Please select at 2 elements", min = 2)
-    @FXML
-    protected ListView<String> entryListView;
+	@AFXEnableMultiSelection
+	@AFXValidateSize(message = "Please select at 2 elements", min = 2)
+	@FXML
+	protected ListView<String> entryListView;
 
-    @AFXValidateTemporal(message = "Please enter a date in the future with pattern dd.MM.yyyy", future = true, formatPattern = "dd.MM.yyyy", validationStartTimeoutMs = 300)
-    @FXML
-    protected TextField futureTextField;
+	@AFXValidateTemporal(message = "Please enter a date in the future with pattern dd.MM.yyyy", future = true, formatPattern = "dd.MM.yyyy", validationStartTimeoutMs = 300)
+	@FXML
+	protected TextField futureTextField;
 
-    @AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
-    @FXML
-    protected TextField helloWorldTextField;
+	@AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
+	@FXML
+	protected TextField helloWorldTextField;
 
-    @AFXValidateSize(message = "Please enter a name of length 2 and 20", min = 2, max = 20, validationStartTimeoutMs = 300)
-    @FXML
-    protected TextField nameTextField;
+	@AFXValidateSize(message = "Please enter a name of length 2 and 20", min = 2, max = 20, validationStartTimeoutMs = 300)
+	@FXML
+	protected TextField nameTextField;
 
-    @AFXValidateMinMax(message = "Please enter a numerical value between 10 and 100", min = 10, max = 100, formatPattern = "#,###", validationStartTimeoutMs = 300)
-    @FXML
-    protected TextField numericalValueTextField;
+	@AFXValidateMinMax(message = "Please enter a numerical value between 10 and 100", min = 10, max = 100, formatPattern = "#,###", validationStartTimeoutMs = 300)
+	@FXML
+	protected TextField numericalValueTextField;
 
-    @AFXValidateTemporal(message = "Please select a date in the past", past = true)
-    @FXML
-    protected DatePicker pastDatePicker;
+	@AFXValidateTemporal(message = "Please select a date in the past", past = true)
+	@FXML
+	protected DatePicker pastDatePicker;
 
-    @AFXValidateRequired(message = "This is a mandatory field.", validationStartTimeoutMs = 300)
-    @FXML
-    protected TextField reqiredTextField;
+	@AFXValidateRequired(message = "This is a mandatory field.", validationStartTimeoutMs = 300)
+	@FXML
+	protected TextField reqiredTextField;
 
-    @FXML
-    protected Button validateButton;
+	@FXML
+	protected Button validateButton;
 
-    @AFXLoadControlData(controlId = "entryListView")
-    public List<String> listViewData() {
-        return Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4");
-    }
+	@AFXLoadControlData(controlId = "entryListView")
+	public List<String> listViewData() {
+		return Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4");
+	}
 
-    public ValidationResult customValidationMethod(final String text) {
-        return null;
-    }
+	public ValidationResult customValidationMethod(final String text) {
+		return null;
+	}
 
-    @AFXOnAction(nodeId = "validateButton", async = false)
-    public void validateButtonAction(final ActionEvent event) {
-        // TODO: implement action method
-    }
+	@AFXOnAction(nodeId = "validateButton", async = false)
+	public void validateButtonAction(final ActionEvent event) {
+		// TODO: implement action method
+	}
 
 }
