@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -12,12 +13,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <HBox alignment="CENTER" prefHeight="50.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="validateButton" mnemonicParsing="false" text="Trigger Manual Validation" />
+            <Button fx:id="validateButtonWithDecorations" mnemonicParsing="false" text="Trigger Manual Validation with Decorations" />
+            <Button fx:id="validateButtonWithoutDecorations" mnemonicParsing="false" text="Trigger Manual Validation without Decorations">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </Button>
          </children>
       </HBox>
    </bottom>
@@ -48,7 +53,7 @@
             <DatePicker fx:id="pastDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Label text="Date in the past:" GridPane.rowIndex="6" />
             <Label text="Date in the future (format dd.MM.yyyy):" GridPane.rowIndex="7" />
-            <Label text="Enter &quot;Hello World&quot; (strictly manual validation via Button below):" GridPane.rowIndex="8" />
+            <Label text="Enter &quot;Hello World&quot;:" GridPane.rowIndex="8" />
             <TextField fx:id="nameTextField" GridPane.columnIndex="1" />
             <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="numericalValueTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
