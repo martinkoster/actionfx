@@ -61,7 +61,7 @@ public class DisableNodeControllerExtension extends AbstractNodeActivationContro
 		final ControlBasedBooleanBindingBuilder builder = createBooleanBindingBuilder(view,
 				annotation.whenAllContolsHaveUserValues(), annotation.whenAllControlsHaveValues(),
 				annotation.whenAtLeastOneContolHasUserValue(), annotation.whenAtLeastOneControlHasValues(),
-				annotation.logicalOp());
+				annotation.whenControlsAreValid(), annotation.whenAllControlsValid(), annotation.logicalOp());
 		node.disableProperty().unbind();
 		node.disableProperty().bind(builder.build());
 	}

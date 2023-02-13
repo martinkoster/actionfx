@@ -63,6 +63,9 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 	 * @param whenAtLeastOneControlHasValuesIds   control IDs that are checked,
 	 *                                            whether at least on has a value or
 	 *                                            values
+	 * @param whenControlsAreValidIds             control IDs that are validated
+	 * @param whenAllControlsAreValid             flag indicating whether all
+	 *                                            controls shall be validated or not
 	 * @param booleanOp                           the boolean operation that shall
 	 *                                            be used to link the individual
 	 *                                            conditions with each other
@@ -71,16 +74,17 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 	protected ControlBasedBooleanBindingBuilder createBooleanBindingBuilder(final View view,
 			final String[] whenAllContolsHaveUserValuesIds, final String[] whenAllControlsHaveValuesIds,
 			final String[] whenAtLeastOneContolHasUserValueIds, final String[] whenAtLeastOneControlHasValuesIds,
-			final BooleanOp booleanOp) {
+			final String[] whenControlsAreValidIds, final boolean whenAllControlsAreValid, final BooleanOp booleanOp) {
 		final ControlWrapper[] whenAllContolsHaveUserValues = createControlWrapper(view,
 				whenAllContolsHaveUserValuesIds);
 		final ControlWrapper[] whenAllControlsHaveValues = createControlWrapper(view, whenAllControlsHaveValuesIds);
 		final ControlWrapper[] whenAtLeastOneContolHasUserValue = createControlWrapper(view,
 				whenAtLeastOneContolHasUserValueIds);
-		final ControlWrapper[] whenAtLeastOneControlHasValues = createControlWrapper(view,
-				whenAtLeastOneControlHasValuesIds);
+		final ControlWrapper[] whenAtLeastOneControlHasValues = createControlWrapper(view, whenControlsAreValidIds);
+		final ControlWrapper[] whenControlsAreValid = createControlWrapper(view, whenAtLeastOneControlHasValuesIds);
 		return createBooleanBindingBuilder(whenAllContolsHaveUserValues, whenAllControlsHaveValues,
-				whenAtLeastOneContolHasUserValue, whenAtLeastOneControlHasValues, booleanOp);
+				whenAtLeastOneContolHasUserValue, whenAtLeastOneControlHasValues, whenControlsAreValid,
+				whenAllControlsAreValid, booleanOp);
 	}
 
 	/**
@@ -98,6 +102,9 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 	 *                                         least on has a user value
 	 * @param whenAtLeastOneControlHasValues   controls that are checked, whether at
 	 *                                         least on has a value or values
+	 * @param whenControlsAreValid             control IDs that are validated
+	 * @param whenAllControlsAreValid          flag indicating whether all controls
+	 *                                         shall be validated or not
 	 * @param booleanOp                        the boolean operation that shall be
 	 *                                         used to link the individual
 	 *                                         conditions with each other
@@ -106,7 +113,8 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 	protected ControlBasedBooleanBindingBuilder createBooleanBindingBuilder(
 			final ControlWrapper[] whenAllContolsHaveUserValues, final ControlWrapper[] whenAllControlsHaveValues,
 			final ControlWrapper[] whenAtLeastOneContolHasUserValue,
-			final ControlWrapper[] whenAtLeastOneControlHasValues, final BooleanOp booleanOp) {
+			final ControlWrapper[] whenAtLeastOneControlHasValues, final ControlWrapper[] whenControlsAreValid,
+			final boolean whenAllControlsAreValid, final BooleanOp booleanOp) {
 		final ControlBasedBooleanBindingBuilder builder = ControlBasedBooleanBindingBuilder.create(false);
 		if (whenAllContolsHaveUserValues.length > 0) {
 			builder.addNewPredicate(booleanOp).forControlWrapper(whenAllContolsHaveUserValues)
@@ -127,6 +135,11 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
 			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneControlHasValues)
 					.observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
 					.atLeastOneFulfilledFunction(ControlWrapper::hasValueOrItemsSet);
+		}
+		if (whenControlsAreValid.length > 0) {
+			builder.addNewPredicate(booleanOp).forControlWrapper(whenControlsAreValid)
+					.observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
+					.allFulfilledFunction(ControlWrapper::hasValueOrItemsSet);
 		}
 		return builder;
 	}

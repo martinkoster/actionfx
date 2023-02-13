@@ -40,7 +40,7 @@ public class ValidationApp {
 		Application.launch(SampleActionFXApplication.class);
 	}
 
-	@AFXApplication(mainViewId = "validationView", scanPackage = "com.github.actionfx.validation.controller", enableBeanContainerAutodetection = false, validationApplyRequiredDecoration = false)
+	@AFXApplication(mainViewId = "validationView", scanPackage = "com.github.actionfx.validation.controller", enableBeanContainerAutodetection = false, validationApplyRequiredDecoration = true)
 	public static class SampleActionFXApplication extends AbstractAFXApplication {
 
 	}
