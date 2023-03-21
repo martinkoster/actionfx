@@ -27,45 +27,44 @@ import java.lang.reflect.Field;
 
 import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.utils.ControlBasedBooleanBindingBuilder;
+import com.github.actionfx.core.utils.BooleanBindingBuilder;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
 
 import javafx.scene.Node;
 
 /**
- * Controller field extension that enables nodes of the JavaFX scene graph
- * depending on control values.
+ * Controller field extension that enables nodes of the JavaFX scene graph depending on control values.
  *
  * @author koster
  *
  */
 public class EnableNodeControllerExtension extends AbstractNodeActivationControllerExtension<AFXEnableNode> {
 
-	public EnableNodeControllerExtension() {
-		super(AFXEnableNode.class);
-	}
+    public EnableNodeControllerExtension() {
+        super(AFXEnableNode.class);
+    }
 
-	@Override
-	protected void extend(final Object controller, final Field annotatedElement, final AFXEnableNode annotation) {
-		final Object annotatedNode = ReflectionUtils.getFieldValue(annotatedElement, controller);
-		if (annotatedNode == null) {
-			throw new IllegalStateException("Field value of field '" + annotatedElement.getName() + "' is null!");
-		}
-		if (!Node.class.isAssignableFrom(annotatedNode.getClass())) {
-			throw new IllegalStateException(
-					"Field value of field '" + annotatedElement.getName() + "' is not of type javafx.scene.Node!");
-		}
-		final Node node = (Node) annotatedNode;
-		final View view = ControllerWrapper.getViewFrom(controller);
-		final ControlBasedBooleanBindingBuilder builder = createBooleanBindingBuilder(view,
-				annotation.whenAllContolsHaveUserValues(), annotation.whenAllControlsHaveValues(),
-				annotation.whenAtLeastOneContolHasUserValue(), annotation.whenAtLeastOneControlHasValues(),
-				annotation.logicalOp());
-		// we have to negate the outcome of the boolean binding as the property is named
-		// "disabled" (and not "enabled")
-		builder.negateAll();
-		node.disableProperty().unbind();
-		node.disableProperty().bind(builder.build());
-	}
+    @Override
+    protected void extend(final Object controller, final Field annotatedElement, final AFXEnableNode annotation) {
+        final Object annotatedNode = ReflectionUtils.getFieldValue(annotatedElement, controller);
+        if (annotatedNode == null) {
+            throw new IllegalStateException("Field value of field '" + annotatedElement.getName() + "' is null!");
+        }
+        if (!Node.class.isAssignableFrom(annotatedNode.getClass())) {
+            throw new IllegalStateException(
+                    "Field value of field '" + annotatedElement.getName() + "' is not of type javafx.scene.Node!");
+        }
+        final Node node = (Node) annotatedNode;
+        final View view = ControllerWrapper.getViewFrom(controller);
+        final BooleanBindingBuilder builder = createBooleanBindingBuilder(view,
+                annotation.whenAllContolsHaveUserValues(), annotation.whenAllControlsHaveValues(),
+                annotation.whenAtLeastOneContolHasUserValue(), annotation.whenAtLeastOneControlHasValues(),
+                annotation.logicalOp());
+        // we have to negate the outcome of the boolean binding as the property is named
+        // "disabled" (and not "enabled")
+        builder.negateChainResult(true);
+        node.disableProperty().unbind();
+        node.disableProperty().bind(builder.build());
+    }
 }

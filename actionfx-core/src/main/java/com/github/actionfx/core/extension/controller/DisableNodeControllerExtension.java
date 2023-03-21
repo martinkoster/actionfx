@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
 
 import com.github.actionfx.core.annotation.AFXDisableNode;
 import com.github.actionfx.core.instrumentation.ControllerWrapper;
-import com.github.actionfx.core.utils.ControlBasedBooleanBindingBuilder;
+import com.github.actionfx.core.utils.BooleanBindingBuilder;
 import com.github.actionfx.core.utils.ReflectionUtils;
 import com.github.actionfx.core.view.View;
 
@@ -58,7 +58,7 @@ public class DisableNodeControllerExtension extends AbstractNodeActivationContro
 		}
 		final Node node = (Node) annotatedNode;
 		final View view = ControllerWrapper.getViewFrom(controller);
-		final ControlBasedBooleanBindingBuilder builder = createBooleanBindingBuilder(view,
+		final BooleanBindingBuilder builder = createBooleanBindingBuilder(view,
 				annotation.whenAllContolsHaveUserValues(), annotation.whenAllControlsHaveValues(),
 				annotation.whenAtLeastOneContolHasUserValue(), annotation.whenAtLeastOneControlHasValues(),
 				annotation.logicalOp());

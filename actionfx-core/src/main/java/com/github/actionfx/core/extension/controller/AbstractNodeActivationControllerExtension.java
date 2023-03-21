@@ -26,109 +26,107 @@ package com.github.actionfx.core.extension.controller;
 import java.lang.annotation.Annotation;
 
 import com.github.actionfx.core.annotation.BooleanOp;
-import com.github.actionfx.core.utils.ControlBasedBooleanBindingBuilder;
+import com.github.actionfx.core.utils.BooleanBindingBuilder;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlWrapper;
 
 /**
- * Abstract base class for controller field extension that manipulates the node
- * state via the {@link javafx.scene.Node#disabledProperty()} depending on
- * controls in the JavaFX scene graph.
+ * Abstract base class for controller field extension that manipulates the node state via the
+ * {@link javafx.scene.Node#disabledProperty()} depending on controls in the JavaFX scene graph.
  *
  * @author koster
  *
  */
 public abstract class AbstractNodeActivationControllerExtension<A extends Annotation>
-		extends AbstractAnnotatedFieldControllerExtension<A> {
+        extends AbstractAnnotatedFieldControllerExtension<A> {
 
-	protected AbstractNodeActivationControllerExtension(final Class<A> annotationType) {
-		super(annotationType);
-	}
+    protected AbstractNodeActivationControllerExtension(final Class<A> annotationType) {
+        super(annotationType);
+    }
 
-	/**
-	 * Creates a new {@link ControlBasedBooleanBindingBuilder} instance with the
-	 * controls defined in the arrays {@code whenAllControlsHaveUserValues}.
-	 * {@code whenAllControlsHaveValues}, {@code whenAtLeastOneContolHasUserValue}
-	 * and {@code whenAtLeastOneControlHasValues}. The controls are taken from the
-	 * supplied {@link View}.
-	 *
-	 * @param view                                the view
-	 * @param whenAllContolsHaveUserValuesIds     control IDs that are checked,
-	 *                                            whether all have user values
-	 * @param whenAllControlsHaveValuesIds        control IDs that are checked,
-	 *                                            whether all have a value or values
-	 * @param whenAtLeastOneContolHasUserValueIds control IDs that are checked,
-	 *                                            whether at least on has a user
-	 *                                            value
-	 * @param whenAtLeastOneControlHasValuesIds   control IDs that are checked,
-	 *                                            whether at least on has a value or
-	 *                                            values
-	 * @param booleanOp                           the boolean operation that shall
-	 *                                            be used to link the individual
-	 *                                            conditions with each other
-	 * @return
-	 */
-	protected ControlBasedBooleanBindingBuilder createBooleanBindingBuilder(final View view,
-			final String[] whenAllContolsHaveUserValuesIds, final String[] whenAllControlsHaveValuesIds,
-			final String[] whenAtLeastOneContolHasUserValueIds, final String[] whenAtLeastOneControlHasValuesIds,
-			final BooleanOp booleanOp) {
-		final ControlWrapper[] whenAllContolsHaveUserValues = createControlWrapper(view,
-				whenAllContolsHaveUserValuesIds);
-		final ControlWrapper[] whenAllControlsHaveValues = createControlWrapper(view, whenAllControlsHaveValuesIds);
-		final ControlWrapper[] whenAtLeastOneContolHasUserValue = createControlWrapper(view,
-				whenAtLeastOneContolHasUserValueIds);
-		final ControlWrapper[] whenAtLeastOneControlHasValues = createControlWrapper(view,
-				whenAtLeastOneControlHasValuesIds);
-		return createBooleanBindingBuilder(whenAllContolsHaveUserValues, whenAllControlsHaveValues,
-				whenAtLeastOneContolHasUserValue, whenAtLeastOneControlHasValues, booleanOp);
-	}
+    /**
+     * Creates a new {@link BooleanBindingBuilder} instance with the controls defined in the arrays
+     * {@code whenAllControlsHaveUserValues}. {@code whenAllControlsHaveValues},
+     * {@code whenAtLeastOneContolHasUserValue} and {@code whenAtLeastOneControlHasValues}. The controls are taken from
+     * the supplied {@link View}.
+     *
+     * @param view
+     *            the view
+     * @param whenAllContolsHaveUserValuesIds
+     *            control IDs that are checked, whether all have user values
+     * @param whenAllControlsHaveValuesIds
+     *            control IDs that are checked, whether all have a value or values
+     * @param whenAtLeastOneContolHasUserValueIds
+     *            control IDs that are checked, whether at least on has a user value
+     * @param whenAtLeastOneControlHasValuesIds
+     *            control IDs that are checked, whether at least on has a value or values
+     * @param booleanOp
+     *            the boolean operation that shall be used to link the individual conditions with each other
+     * @return
+     */
+    protected BooleanBindingBuilder createBooleanBindingBuilder(final View view,
+            final String[] whenAllContolsHaveUserValuesIds, final String[] whenAllControlsHaveValuesIds,
+            final String[] whenAtLeastOneContolHasUserValueIds, final String[] whenAtLeastOneControlHasValuesIds,
+            final BooleanOp booleanOp) {
+        final ControlWrapper[] whenAllContolsHaveUserValues = createControlWrapper(view,
+                whenAllContolsHaveUserValuesIds);
+        final ControlWrapper[] whenAllControlsHaveValues = createControlWrapper(view, whenAllControlsHaveValuesIds);
+        final ControlWrapper[] whenAtLeastOneContolHasUserValue = createControlWrapper(view,
+                whenAtLeastOneContolHasUserValueIds);
+        final ControlWrapper[] whenAtLeastOneControlHasValues = createControlWrapper(view,
+                whenAtLeastOneControlHasValuesIds);
+        return createBooleanBindingBuilder(whenAllContolsHaveUserValues, whenAllControlsHaveValues,
+                whenAtLeastOneContolHasUserValue, whenAtLeastOneControlHasValues, booleanOp);
+    }
 
-	/**
-	 * Creates a new {@link ControlBasedBooleanBindingBuilder} instance with the
-	 * controls defined in the arrays {@code whenAllControlsHaveUserValues}.
-	 * {@code whenAllControlsHaveValues}, {@code whenAtLeastOneContolHasUserValue}
-	 * and {@code whenAtLeastOneControlHasValues}. The controls are taken from the
-	 * supplied {@link View}.
-	 *
-	 * @param whenAllContolsHaveUserValues     controls that are checked, whether
-	 *                                         all have user values
-	 * @param whenAllControlsHaveValues        controls that are checked, whether
-	 *                                         all have a value or values
-	 * @param whenAtLeastOneContolHasUserValue controls that are checked, whether at
-	 *                                         least on has a user value
-	 * @param whenAtLeastOneControlHasValues   controls that are checked, whether at
-	 *                                         least on has a value or values
-	 * @param booleanOp                        the boolean operation that shall be
-	 *                                         used to link the individual
-	 *                                         conditions with each other
-	 * @return
-	 */
-	protected ControlBasedBooleanBindingBuilder createBooleanBindingBuilder(
-			final ControlWrapper[] whenAllContolsHaveUserValues, final ControlWrapper[] whenAllControlsHaveValues,
-			final ControlWrapper[] whenAtLeastOneContolHasUserValue,
-			final ControlWrapper[] whenAtLeastOneControlHasValues, final BooleanOp booleanOp) {
-		final ControlBasedBooleanBindingBuilder builder = ControlBasedBooleanBindingBuilder.create(false);
-		if (whenAllContolsHaveUserValues.length > 0) {
-			builder.addNewPredicate(booleanOp).forControlWrapper(whenAllContolsHaveUserValues)
-					.observableExtractorFunction(ControlWrapper::getUserValueAsObservable)
-					.allFulfilledFunction(ControlWrapper::hasUserValueSet);
-		}
-		if (whenAllControlsHaveValues.length > 0) {
-			builder.addNewPredicate(booleanOp).forControlWrapper(whenAllControlsHaveValues)
-					.observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
-					.allFulfilledFunction(ControlWrapper::hasValueOrItemsSet);
-		}
-		if (whenAtLeastOneContolHasUserValue.length > 0) {
-			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneContolHasUserValue)
-					.observableExtractorFunction(ControlWrapper::getUserValueAsObservable)
-					.atLeastOneFulfilledFunction(ControlWrapper::hasUserValueSet);
-		}
-		if (whenAtLeastOneControlHasValues.length > 0) {
-			builder.addNewPredicate(booleanOp).forControlWrapper(whenAtLeastOneControlHasValues)
-					.observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
-					.atLeastOneFulfilledFunction(ControlWrapper::hasValueOrItemsSet);
-		}
-		return builder;
-	}
+    /**
+     * Creates a new {@link BooleanBindingBuilder} instance with the controls defined in the arrays
+     * {@code whenAllControlsHaveUserValues}. {@code whenAllControlsHaveValues},
+     * {@code whenAtLeastOneContolHasUserValue} and {@code whenAtLeastOneControlHasValues}. The controls are taken from
+     * the supplied {@link View}.
+     *
+     * @param whenAllContolsHaveUserValues
+     *            controls that are checked, whether all have user values
+     * @param whenAllControlsHaveValues
+     *            controls that are checked, whether all have a value or values
+     * @param whenAtLeastOneContolHasUserValue
+     *            controls that are checked, whether at least on has a user value
+     * @param whenAtLeastOneControlHasValues
+     *            controls that are checked, whether at least on has a value or values
+     * @param booleanOp
+     *            the boolean operation that shall be used to link the individual conditions with each other
+     * @return
+     */
+    protected BooleanBindingBuilder createBooleanBindingBuilder(
+            final ControlWrapper[] whenAllContolsHaveUserValues, final ControlWrapper[] whenAllControlsHaveValues,
+            final ControlWrapper[] whenAtLeastOneContolHasUserValue,
+            final ControlWrapper[] whenAtLeastOneControlHasValues, final BooleanOp booleanOp) {
+        final BooleanBindingBuilder builder = BooleanBindingBuilder.builder();
+        if (whenAllContolsHaveUserValues.length > 0) {
+            builder.andAllTestablesFulfillPredicate(ControlWrapper::hasUserValueSet).booleanOp(booleanOp)
+                    .testables(whenAllContolsHaveUserValues)
+                    .observableExtractorFunction(ControlWrapper::getUserValueAsObservable)
+                    .finishPredicate();
+        }
+        if (whenAllControlsHaveValues.length > 0) {
+            builder.andAllTestablesFulfillPredicate(ControlWrapper::hasValueOrItemsSet).booleanOp(booleanOp)
+                    .testables(whenAllControlsHaveValues)
+                    .observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
+                    .finishPredicate();
+        }
+        if (whenAtLeastOneContolHasUserValue.length > 0) {
+            builder.andAtLeastOneTestableFulfillsPredicate(ControlWrapper::hasUserValueSet).booleanOp(booleanOp)
+                    .testables(whenAtLeastOneContolHasUserValue)
+                    .observableExtractorFunction(ControlWrapper::getUserValueAsObservable)
+                    .finishPredicate();
+        }
+        if (whenAtLeastOneControlHasValues.length > 0) {
+            builder.andAtLeastOneTestableFulfillsPredicate(ControlWrapper::hasValueOrItemsSet).booleanOp(booleanOp)
+                    .testables(whenAtLeastOneControlHasValues)
+                    .observableExtractorFunction(ControlWrapper::getValueOrItemsAsObservable)
+                    .finishPredicate();
+        }
+        return builder;
+    }
 
 }
