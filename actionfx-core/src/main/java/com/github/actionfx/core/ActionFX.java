@@ -58,6 +58,7 @@ import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
+import com.github.actionfx.core.validation.ValidationResult;
 import com.github.actionfx.core.view.View;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -762,21 +763,47 @@ public class ActionFX {
 
 	/**
 	 * Performs a validation on controls inside the given {@code controller}.
-	 * Controls need to be annotated by one or many of the following annotations:
 	 * <p>
-	 * <ul>
-	 * <li>{@link com.github.actionfx.core.annotation.AFXValidateRequired}
-	 * <li>{@link com.github.actionfx.core.annotation.AFXValidateRegExp}</li>
-	 * <li></li>
-	 * <li></li>
-	 * </ul>
+	 * This requires that {@link com.github.actionfx.core.validation.Validator}
+	 * instances are registered inside the {@link View} associated with the given
+	 * {@code controller}, or that the {@code controller} instance itself carries
+	 * validation related annotations like
+	 * {@link com.github.actionfx.core.annotation.AFXValidateRequired} or
+	 * {@link com.github.actionfx.core.annotation.AFXValidateRegExp}.
+	 *
+	 * @param controller                the controller referencing the JavaFX
+	 *                                  controls to validate
+	 * @param applyValidationDecoration indicates whether validation errors shall be
+	 *                                  displayed as decorations, when there is a
+	 *                                  validation failure
+	 * @return {@code true}, if all validations passed successfully, {@code false},
+	 *         if there are validation errors found in the annotated controls.
+	 */
+	public ValidationResult validate(final Object controller, final boolean applyValidationDecoration) {
+		final View view = getView(controller);
+		return view.validate(applyValidationDecoration);
+	}
+
+	/**
+	 * Performs a validation on controls inside the given {@code controller}.
+	 * <p>
+	 * This requires that {@link com.github.actionfx.core.validation.Validator}
+	 * instances are registered inside the {@link View} associated with the given
+	 * {@code controller}, or that the {@code controller} instance itself carries
+	 * validation related annotations like
+	 * {@link com.github.actionfx.core.annotation.AFXValidateRequired} or
+	 * {@link com.github.actionfx.core.annotation.AFXValidateRegExp}.
+	 * <p>
+	 * This method applies validation decorations by default. If you don't want to
+	 * display validation decoration and want to handle validation messages by
+	 * yourself, please use {@link #validate(Object, boolean)}.
 	 *
 	 * @param controller the controller referencing the JavaFX controls to validate
 	 * @return {@code true}, if all validations passed successfully, {@code false},
 	 *         if there are validation errors found in the annotated controls.
 	 */
-	public boolean validate(final Object controller) {
-		return true;
+	public ValidationResult validate(final Object controller) {
+		return validate(controller, true);
 	}
 
 	/**

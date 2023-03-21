@@ -67,6 +67,7 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
     protected BooleanBindingBuilder createBooleanBindingBuilder(final View view,
             final String[] whenAllContolsHaveUserValuesIds, final String[] whenAllControlsHaveValuesIds,
             final String[] whenAtLeastOneContolHasUserValueIds, final String[] whenAtLeastOneControlHasValuesIds,
+            final String[] whenControlsAreValidIds, final boolean whenAllControlsAreValid,
             final BooleanOp booleanOp) {
         final ControlWrapper[] whenAllContolsHaveUserValues = createControlWrapper(view,
                 whenAllContolsHaveUserValuesIds);

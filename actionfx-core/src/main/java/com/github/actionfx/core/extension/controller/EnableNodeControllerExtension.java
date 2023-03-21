@@ -60,7 +60,9 @@ public class EnableNodeControllerExtension extends AbstractNodeActivationControl
         final BooleanBindingBuilder builder = createBooleanBindingBuilder(view,
                 annotation.whenAllContolsHaveUserValues(), annotation.whenAllControlsHaveValues(),
                 annotation.whenAtLeastOneContolHasUserValue(), annotation.whenAtLeastOneControlHasValues(),
+                annotation.whenControlsAreValid(), annotation.whenAllControlsValid(),
                 annotation.logicalOp());
+
         // we have to negate the outcome of the boolean binding as the property is named
         // "disabled" (and not "enabled")
         builder.negateChainResult(true);

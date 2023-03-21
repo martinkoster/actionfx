@@ -26,6 +26,9 @@ package com.github.actionfx.validation.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
@@ -38,7 +41,9 @@ import com.github.actionfx.core.annotation.AFXValidateRequired;
 import com.github.actionfx.core.annotation.AFXValidateSize;
 import com.github.actionfx.core.annotation.AFXValidateTemporal;
 import com.github.actionfx.core.annotation.ValidationHelper;
+import com.github.actionfx.core.validation.ValidationMessage;
 import com.github.actionfx.core.validation.ValidationResult;
+import com.github.actionfx.core.validation.ValidationStatus;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -95,7 +100,13 @@ public class ValidationController {
 	protected TextField reqiredTextField;
 
 	@FXML
-	protected Button validateButton;
+	protected Button validateButtonWithDecorations;
+
+	@FXML
+	protected Button validateButtonWithoutDecorations;
+
+	@Inject
+	protected ActionFX actionFX;
 
 	@AFXLoadControlData(controlId = "entryListView")
 	public List<String> listViewData() {
@@ -103,12 +114,28 @@ public class ValidationController {
 	}
 
 	public ValidationResult customValidationMethod(final String text) {
-		return null;
+		return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.", helloWorldTextField,
+				!"Hello World".equals(text));
 	}
 
-	@AFXOnAction(nodeId = "validateButton", async = false)
-	public void validateButtonAction(final ActionEvent event) {
-		// TODO: implement action method
+	@AFXOnAction(nodeId = "validateButtonWithDecorations", async = false)
+	public void validateButtonWithDecorationsAction(final ActionEvent event) {
+		actionFX.validate(this);
+	}
+
+	@AFXOnAction(nodeId = "validateButtonWithoutDecorations", async = false)
+	public void validateButtonWithoutDecorationsAction(final ActionEvent event) {
+		final ValidationResult result = actionFX.validate(this, false);
+		final StringBuilder b = new StringBuilder();
+		if (result.getStatus() == ValidationStatus.ERROR) {
+			b.append("Validation errors have occured:\n");
+			for (final ValidationMessage msg : result.getErrors()) {
+				b.append(msg.getText()).append("\n");
+			}
+		} else {
+			b.append("Validation successful with status '").append(result.getStatus()).append("'.");
+		}
+		actionFX.showInformationDialog("Validation", b.toString(), "");
 	}
 
 }
