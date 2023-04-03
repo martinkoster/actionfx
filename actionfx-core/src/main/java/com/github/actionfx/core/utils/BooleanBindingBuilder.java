@@ -46,8 +46,8 @@ import javafx.scene.control.Control;
  * boolean_value = NOT? (NOT? predicate1 [AND|OR] NOT? predicate2 [AND|OR] predicate3 ....)
  * </pre>
  *
- * The predicates themselves again are evaluated against a list of controls, where you can chose, whether the predicate
- * needs to be {@code true} for all controls or only for at least one control. (see {@link MatchingOp}).
+ * The predicates themselves again are evaluated against a list of "testables", where you can chose, whether the
+ * predicate needs to be {@code true} for all testables or only for at least one testable. (see {@link MatchingOp}).
  *
  *
  * @author koster

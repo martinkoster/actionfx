@@ -57,11 +57,26 @@ class BooleanValidatorTest {
     }
 
     @Test
-    void testValidate_fromCheckBox_expectedValuePresent() {
+    void testValidate_fromCheckBox_expectedValuePresent_valueIsTrue() {
         // GIVEN
         final CheckBox checkBox = new CheckBox();
         checkBox.setSelected(true);
         final BooleanValidator validator = new BooleanValidator("Please agree to the terms and conditions", true,
+                false);
+
+        // WHEN
+        final ValidationResult vr = validator.validate(checkBox, ControlProperties.USER_VALUE_OBSERVABLE);
+
+        // THEN
+        assertThatStatusIs(vr, ValidationStatus.OK);
+    }
+
+    @Test
+    void testValidate_fromCheckBox_expectedValuePresent_valueIsFalse() {
+        // GIVEN
+        final CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(false);
+        final BooleanValidator validator = new BooleanValidator("Please agree to the terms and conditions", false,
                 false);
 
         // WHEN

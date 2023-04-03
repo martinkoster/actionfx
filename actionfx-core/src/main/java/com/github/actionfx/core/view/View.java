@@ -36,6 +36,7 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper.NodeAttacher;
 
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
@@ -263,5 +264,7 @@ public interface View {
     void registerValidator(final String nodeId, ControlProperties controlProperty,
             final Validator validator,
             ValidationOptions options);
+
+    ObservableValue<ValidationResult> validationResultProperty();
 
 }

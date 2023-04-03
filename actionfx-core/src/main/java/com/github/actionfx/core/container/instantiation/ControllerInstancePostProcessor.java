@@ -50,6 +50,7 @@ import com.github.actionfx.core.extension.controller.ValidateRegExpControllerExt
 import com.github.actionfx.core.extension.controller.ValidateRequiredControllerExtension;
 import com.github.actionfx.core.extension.controller.ValidateSizeControllerExtension;
 import com.github.actionfx.core.extension.controller.ValidateTemporalControllerExtension;
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
 
 /**
  * Post-processor for controller instances that is invoked after view creation and dependency injection, but before
@@ -75,8 +76,6 @@ public class ControllerInstancePostProcessor {
         controllerExtensions.add(new OnActionMethodControllerExtension());
         controllerExtensions.add(new ConverterControllerExtension());
         controllerExtensions.add(new CellValueConfigControllerExtension());
-        controllerExtensions.add(new EnableNodeControllerExtension());
-        controllerExtensions.add(new DisableNodeControllerExtension());
         controllerExtensions.add(new OnLoadControlDataMethodControllerExtension());
         controllerExtensions.add(new OnControlValueChangeMethodControllerExtension());
         controllerExtensions.add(new FormBindingControllerExtension());
@@ -89,6 +88,10 @@ public class ControllerInstancePostProcessor {
         controllerExtensions.add(new ValidateTemporalControllerExtension());
         controllerExtensions.add(new ValidateRegExpControllerExtension());
         controllerExtensions.add(new ValidateCustomControllerExtension());
+
+        // add node de-/activation extensions - these are depending on the validation extension
+        controllerExtensions.add(new EnableNodeControllerExtension());
+        controllerExtensions.add(new DisableNodeControllerExtension());
 
         // add the custom controller extensions
         controllerExtensions.addAll(customControllerExtension);
@@ -103,6 +106,9 @@ public class ControllerInstancePostProcessor {
      */
     public void postProcess(final Object controller) {
         applyControllerExtensions(controller);
+        // perform an initial validation of the form, so that the validation result inside the view
+        // reflects the current state of the controls.
+        ControllerWrapper.getViewFrom(controller).validate(false);
     }
 
     /**

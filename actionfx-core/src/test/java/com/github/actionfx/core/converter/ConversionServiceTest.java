@@ -47,6 +47,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
@@ -308,6 +309,7 @@ class ConversionServiceTest {
 
         // WHEN
         assertThat(service.canConvert("1.1.22", LocalDate.class, "dd.MM.yyyy"), equalTo(false));
+        assertThat(service.canConvert("Hello World", List.class, null), equalTo(false));
     }
 
     @Test

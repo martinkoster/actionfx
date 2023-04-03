@@ -268,8 +268,8 @@ public class ConversionService {
         try {
             // in order to know, whether a value is really convertible, we have to do it
             // (e.g. converting a string into a number/date/etc. requires the actual parsing of the conversion routine).
-            convert(value, targetType, formatPattern);
-            return true;
+            final Object converted = convert(value, targetType, formatPattern);
+            return value == null || value != null && converted != null;
         } catch (final Exception e) {
             return false;
         }

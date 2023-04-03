@@ -12,19 +12,34 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
-      <HBox alignment="CENTER" prefHeight="50.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="validateButtonWithDecorations" mnemonicParsing="false" text="Trigger Manual Validation with Decorations" />
-            <Button fx:id="validateButtonWithoutDecorations" mnemonicParsing="false" text="Trigger Manual Validation without Decorations">
-               <HBox.margin>
-                  <Insets left="25.0" />
-               </HBox.margin>
-            </Button>
+            <HBox alignment="CENTER" prefHeight="50.0">
+               <children>
+                  <Button fx:id="allControlsValidButton" mnemonicParsing="false" text="All Controls Valid!" textFill="#00b512" />
+                  <Button fx:id="twoControlsValidButton" mnemonicParsing="false" text="Required Field and Date in Past are valid! " textFill="#00b512">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="50.0">
+               <children>
+                  <Button fx:id="validateButtonWithDecorations" mnemonicParsing="false" text="Trigger Manual Validation with Decorations" />
+                  <Button fx:id="validateButtonWithoutDecorations" mnemonicParsing="false" text="Trigger Manual Validation without Decorations">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </VBox>
    </bottom>
    <center>
       <GridPane BorderPane.alignment="CENTER">

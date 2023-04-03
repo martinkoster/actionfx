@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXEnableMultiSelection;
+import com.github.actionfx.core.annotation.AFXEnableNode;
 import com.github.actionfx.core.annotation.AFXLoadControlData;
 import com.github.actionfx.core.annotation.AFXOnAction;
 import com.github.actionfx.core.annotation.AFXValidateBoolean;
@@ -62,80 +63,88 @@ import javafx.scene.control.TextField;
 @AFXController(viewId = "validationView", fxml = "/fxml/ValidationView.fxml", title = "ValidationView", width = 660, height = 450)
 public class ValidationController {
 
-	@AFXValidateBoolean(message = "Please confirm", expected = true)
-	@FXML
-	protected CheckBox checkbox;
+    @AFXValidateBoolean(message = "Please confirm", expected = true)
+    @FXML
+    protected CheckBox checkbox;
 
-	@AFXValidateRegExp(message = "Please enter a valid mail address", regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationStartTimeoutMs = 300, required = true)
-	@FXML
-	protected TextField emailTextField;
+    @AFXValidateRegExp(message = "Please enter a valid mail address", regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationStartTimeoutMs = 300, required = true)
+    @FXML
+    protected TextField emailTextField;
 
-	@AFXEnableMultiSelection
-	@AFXValidateSize(message = "Please select at 2 elements", min = 2)
-	@FXML
-	protected ListView<String> entryListView;
+    @AFXEnableMultiSelection
+    @AFXValidateSize(message = "Please select at 2 elements", min = 2)
+    @FXML
+    protected ListView<String> entryListView;
 
-	@AFXValidateTemporal(message = "Please enter a date in the future with pattern dd.MM.yyyy", future = true, formatPattern = "dd.MM.yyyy", validationStartTimeoutMs = 300)
-	@FXML
-	protected TextField futureTextField;
+    @AFXValidateTemporal(message = "Please enter a date in the future with pattern dd.MM.yyyy", future = true, formatPattern = "dd.MM.yyyy", validationStartTimeoutMs = 300)
+    @FXML
+    protected TextField futureTextField;
 
-	@AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
-	@FXML
-	protected TextField helloWorldTextField;
+    @AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
+    @FXML
+    protected TextField helloWorldTextField;
 
-	@AFXValidateSize(message = "Please enter a name of length 2 and 20", min = 2, max = 20, validationStartTimeoutMs = 300)
-	@FXML
-	protected TextField nameTextField;
+    @AFXValidateSize(message = "Please enter a name of length 2 and 20", min = 2, max = 20, validationStartTimeoutMs = 300)
+    @FXML
+    protected TextField nameTextField;
 
-	@AFXValidateMinMax(message = "Please enter a numerical value between 10 and 100", min = 10, max = 100, formatPattern = "#,###", validationStartTimeoutMs = 300)
-	@FXML
-	protected TextField numericalValueTextField;
+    @AFXValidateMinMax(message = "Please enter a numerical value between 10 and 100", min = 10, max = 100, formatPattern = "#,###", validationStartTimeoutMs = 300)
+    @FXML
+    protected TextField numericalValueTextField;
 
-	@AFXValidateTemporal(message = "Please select a date in the past", past = true)
-	@FXML
-	protected DatePicker pastDatePicker;
+    @AFXValidateTemporal(message = "Please select a date in the past", past = true)
+    @FXML
+    protected DatePicker pastDatePicker;
 
-	@AFXValidateRequired(message = "This is a mandatory field.", validationStartTimeoutMs = 300)
-	@FXML
-	protected TextField reqiredTextField;
+    @AFXValidateRequired(message = "This is a mandatory field.", validationStartTimeoutMs = 300)
+    @FXML
+    protected TextField reqiredTextField;
 
-	@FXML
-	protected Button validateButtonWithDecorations;
+    @FXML
+    protected Button validateButtonWithDecorations;
 
-	@FXML
-	protected Button validateButtonWithoutDecorations;
+    @FXML
+    protected Button validateButtonWithoutDecorations;
 
-	@Inject
-	protected ActionFX actionFX;
+    @AFXEnableNode(whenAllControlsValid = true)
+    @FXML
+    protected Button allControlsValidButton;
 
-	@AFXLoadControlData(controlId = "entryListView")
-	public List<String> listViewData() {
-		return Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4");
-	}
+    @AFXEnableNode(whenControlsAreValid = { "reqiredTextField", "pastDatePicker" })
+    @FXML
+    protected Button twoControlsValidButton;
 
-	public ValidationResult customValidationMethod(final String text) {
-		return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.", helloWorldTextField,
-				!"Hello World".equals(text));
-	}
+    @Inject
+    protected ActionFX actionFX;
 
-	@AFXOnAction(nodeId = "validateButtonWithDecorations", async = false)
-	public void validateButtonWithDecorationsAction(final ActionEvent event) {
-		actionFX.validate(this);
-	}
+    @AFXLoadControlData(controlId = "entryListView")
+    public List<String> listViewData() {
+        return Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4");
+    }
 
-	@AFXOnAction(nodeId = "validateButtonWithoutDecorations", async = false)
-	public void validateButtonWithoutDecorationsAction(final ActionEvent event) {
-		final ValidationResult result = actionFX.validate(this, false);
-		final StringBuilder b = new StringBuilder();
-		if (result.getStatus() == ValidationStatus.ERROR) {
-			b.append("Validation errors have occured:\n");
-			for (final ValidationMessage msg : result.getErrors()) {
-				b.append(msg.getText()).append("\n");
-			}
-		} else {
-			b.append("Validation successful with status '").append(result.getStatus()).append("'.");
-		}
-		actionFX.showInformationDialog("Validation", b.toString(), "");
-	}
+    public ValidationResult customValidationMethod(final String text) {
+        return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.", helloWorldTextField,
+                !"Hello World".equals(text));
+    }
+
+    @AFXOnAction(nodeId = "validateButtonWithDecorations", async = false)
+    public void validateButtonWithDecorationsAction(final ActionEvent event) {
+        actionFX.validate(this);
+    }
+
+    @AFXOnAction(nodeId = "validateButtonWithoutDecorations", async = false)
+    public void validateButtonWithoutDecorationsAction(final ActionEvent event) {
+        final ValidationResult result = actionFX.validate(this, false);
+        final StringBuilder b = new StringBuilder();
+        if (result.getStatus() == ValidationStatus.ERROR) {
+            b.append("Validation errors have occured:\n");
+            for (final ValidationMessage msg : result.getErrors()) {
+                b.append(msg.getText()).append("\n");
+            }
+        } else {
+            b.append("Validation successful with status '").append(result.getStatus()).append("'.");
+        }
+        actionFX.showInformationDialog("Validation", b.toString(), "");
+    }
 
 }
