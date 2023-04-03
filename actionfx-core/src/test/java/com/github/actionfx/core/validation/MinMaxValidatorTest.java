@@ -26,6 +26,8 @@ package com.github.actionfx.core.validation;
 import static com.github.actionfx.core.validation.ValidationResultUtils.assertThatMessageWithTextIsPresent;
 import static com.github.actionfx.core.validation.ValidationResultUtils.assertThatStatusIs;
 
+import java.util.Locale;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,7 @@ class MinMaxValidatorTest {
 
     @BeforeEach
     void setup() {
-        ActionFX.builder().build().scanForActionFXComponents();
+        ActionFX.builder().locale(Locale.US).build().scanForActionFXComponents();
     }
 
     @AfterEach
@@ -133,7 +135,7 @@ class MinMaxValidatorTest {
     @Test
     void testValidate_fromTextField_doubleWithFormatPattern_isWithinRange() {
         // GIVEN
-        final TextField textField = new TextField("0,5");
+        final TextField textField = new TextField("0.5");
         final MinMaxValidator validator = new MinMaxValidator("Value is mandatory and must be in range 0.0 to 1.0", 0.0,
                 1.0, "#,##", true);
 
@@ -147,7 +149,7 @@ class MinMaxValidatorTest {
     @Test
     void testValidate_fromTextField_doubleWithFormatPattern_isOutsideRange() {
         // GIVEN
-        final TextField textField = new TextField("1,01");
+        final TextField textField = new TextField("1.01");
         final MinMaxValidator validator = new MinMaxValidator("Value is mandatory and must be in range 0.0 to 1.0", 0.0,
                 1.0, "#,##", true);
 
