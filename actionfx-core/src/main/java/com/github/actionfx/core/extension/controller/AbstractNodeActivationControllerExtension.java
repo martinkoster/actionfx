@@ -172,11 +172,10 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
      * @return the predicate
      */
     protected Predicate<ObservableValue<ValidationResult>> createAllControlsAreValidPredicate(final View view) {
-        final Predicate<ObservableValue<ValidationResult>> predicate = observable -> {
+        return observable -> {
             final ValidationResult vr = observable.getValue();
             return vr.getErrors().isEmpty();
         };
-        return predicate;
     }
 
     /**
@@ -188,13 +187,12 @@ public abstract class AbstractNodeActivationControllerExtension<A extends Annota
      */
     protected Predicate<ObservableValue<ValidationResult>> createControlsAreValidPredicate(
             final Control[] controls) {
-        final Predicate<ObservableValue<ValidationResult>> predicate = observable -> {
+        return observable -> {
             final ValidationResult vr = observable.getValue();
             final List<ValidationMessage> errorMessages = vr.getErrors();
-            return !errorMessages.stream().map(ValidationMessage::getTarget).distinct()
-                    .anyMatch(Arrays.asList(controls)::contains);
+            return errorMessages.stream().map(ValidationMessage::getTarget).distinct()
+                    .noneMatch(Arrays.asList(controls)::contains);
         };
-        return predicate;
     }
 
 }

@@ -242,8 +242,6 @@ public class BooleanBindingBuilder {
      * Adds a single predicate to this chain builder, using the supplied {@code booleanOp} to connect it to a previously
      * added predicate. This method is specialized on accepting {@link Observable}s as the "testable".
      *
-     * @param <T>
-     *            the type of testable
      * @param booleanOp
      *            the boolean operation to link this predicate to a previously added predicate. In case no predicate has
      *            been added before, this value is ignored / not relevant for processing.
@@ -257,7 +255,7 @@ public class BooleanBindingBuilder {
      *            flag that determines whether the matching result over all testable shall be negated or not
      * @return the boolean binding builder
      */
-    public <T> BooleanBindingBuilder addPredicate(final BooleanOp booleanOp, final Predicate<Observable> predicate,
+    public BooleanBindingBuilder addPredicate(final BooleanOp booleanOp, final Predicate<Observable> predicate,
             final MatchingOp matchingOp,
             final Observable[] testables, final boolean negateResult) {
         predicateElements

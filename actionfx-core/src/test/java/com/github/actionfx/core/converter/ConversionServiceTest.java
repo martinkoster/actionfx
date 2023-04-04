@@ -33,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -389,7 +391,12 @@ class ConversionServiceTest {
 
     @Test
     void testConvert_fromStringToCharset() {
+        // GIVEN
+        final ConversionService service = new ConversionService();
 
+        // WHEN and THEN
+        assertThat(service.convert("UTF-8", Charset.class), equalTo(StandardCharsets.UTF_8));
+        assertThat(service.convert("utf8", Charset.class), equalTo(StandardCharsets.UTF_8));
     }
 
     public static enum TestEnum {

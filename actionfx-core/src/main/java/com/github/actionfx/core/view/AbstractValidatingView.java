@@ -273,6 +273,16 @@ public abstract class AbstractValidatingView extends AbstractView {
                 .flatMap(result -> result.getMessages().stream().max(ValidationMessage.COMPARATOR));
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     /**
      * A validation on a single control property. Class is only used for view-internal purposes.
      *

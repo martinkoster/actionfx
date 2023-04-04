@@ -48,6 +48,7 @@ import com.github.actionfx.core.annotation.ValidationHelper;
 import com.github.actionfx.core.annotation.ValidationMode;
 import com.github.actionfx.core.test.ViewCreator;
 import com.github.actionfx.core.validation.ValidationMessage;
+import com.github.actionfx.core.validation.ValidationResult;
 import com.github.actionfx.core.validation.ValidationStatus;
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlProperties;
@@ -199,7 +200,7 @@ class FormBindingControllerExtensionTest {
         // GIVEN
         final CustomerControllerWithValidation controller = new CustomerControllerWithValidation();
         final FormBindingControllerExtension extension = new FormBindingControllerExtension();
-        final CustomerModel model = createCustomerModel("", "", "", false);
+        final CustomerModel model = createCustomerModel("", "", "Germany", false);
 
         // WHEN
         extension.accept(controller);
@@ -214,9 +215,10 @@ class FormBindingControllerExtensionTest {
         assertControlHasValidationError(controller._view, controller.customerLastNameControl, "Last Name is mandatory");
         assertControlHasValidationError(controller._view, controller.customerEmailControl,
                 "Entered value is not a valid e-mail address");
+        assertControlHasValidationError(controller._view, controller.customerCountryControl,
+                "This service cannot be provided in country 'Germany'");
         assertControlHasValidationError(controller._view, controller.customerAgeControl,
                 "Entered age is not between 18 and 200");
-        assertControlHasNoValidationError(controller._view, controller.customerCountryControl);
         assertControlHasValidationError(controller._view, controller.customerSelectedProductsControl,
                 "Please select at least 1 product and at maximum 5 products");
         assertControlHasValidationError(controller._view, controller.customerTermsAndConditionsControl,
@@ -476,7 +478,7 @@ class FormBindingControllerExtensionTest {
         @AFXFormMapping(controlId = "customerLastNameControl", targetProperty = ControlProperties.SINGLE_VALUE_PROPERTY, propertyName = "lastName", required = true, validationMessage = "Last Name is mandatory")
         @AFXFormMapping(controlId = "customerEmailControl", propertyName = "email", required = true, regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationMessage = "Entered value is not a valid e-mail address")
         @AFXFormMapping(controlId = "customerAgeControl", propertyName = "age", required = true, minVal = 18.0, maxVal = 200.0, validationMessage = "Entered age is not between 18 and 200")
-        @AFXFormMapping(controlId = "customerCountryControl", propertyName = "country")
+        @AFXFormMapping(controlId = "customerCountryControl", propertyName = "country", validationMethod = "validateCountryControl")
         @AFXFormMapping(controlId = "customerSelectedProductsControl", targetProperty = ControlProperties.USER_VALUE_OBSERVABLE, propertyName = "selectedProducts", required = true, minSize = 1, maxSize = 5, validationMessage = "Please select at least 1 product and at maximum 5 products")
         @AFXFormMapping(controlId = "customerSelectedProductsControl", targetProperty = ControlProperties.ITEMS_OBSERVABLE_LIST, propertyName = "allProducts")
         @AFXFormMapping(controlId = "customerTermsAndConditionsControl", propertyName = "termsAndConditions", required = true, expectedBoolean = BooleanValue.TRUE, validationMessage = "Please accept the terms and conditions")
@@ -504,6 +506,11 @@ class FormBindingControllerExtensionTest {
                     .appendNode(customerSelectedProductsControl, "customerSelectedProductsControl")
                     .appendNode(customerTermsAndConditionsControl, "customerTermsAndConditionsControl")
                     .appendNode(localDateTimeTextField, "localDateTimeTextField");
+        }
+
+        public ValidationResult validateCountryControl(final String selectedCountry) {
+            return ValidationResult.builder().addErrorMessageIf("This service cannot be provided in country 'Germany'",
+                    customerCountryControl, "Germany".equals(selectedCountry));
         }
     }
 

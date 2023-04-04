@@ -34,126 +34,126 @@ import javafx.scene.control.Control;
  */
 public class ValidationMessage implements Comparable<ValidationMessage> {
 
-	public static final Comparator<ValidationMessage> COMPARATOR = new ValidationMessageComparator();
+    public static final Comparator<ValidationMessage> COMPARATOR = new ValidationMessageComparator();
 
-	private final String text;
+    private final String text;
 
-	private final ValidationStatus status;
+    private final ValidationStatus status;
 
-	private final Control target;
+    private final Control target;
 
-	private boolean applyValidationResultDecoration;
+    private boolean applyValidationResultDecoration;
 
-	public ValidationMessage(final ValidationStatus status, final String text, final Control target) {
-		this(status, text, target, true);
-	}
+    public ValidationMessage(final ValidationStatus status, final String text, final Control target) {
+        this(status, text, target, true);
+    }
 
-	public ValidationMessage(final ValidationStatus status, final String text, final Control target,
-			final boolean applyValidationResultDecoration) {
-		this.text = text;
-		this.status = status == null ? ValidationStatus.ERROR : status;
-		this.target = target;
-		this.applyValidationResultDecoration = applyValidationResultDecoration;
-	}
+    public ValidationMessage(final ValidationStatus status, final String text, final Control target,
+            final boolean applyValidationResultDecoration) {
+        this.text = text == null ? "" : text;
+        this.status = status == null ? ValidationStatus.ERROR : status;
+        this.target = target;
+        this.applyValidationResultDecoration = applyValidationResultDecoration;
+    }
 
-	public Control getTarget() {
-		return target;
-	}
+    public Control getTarget() {
+        return target;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public ValidationStatus getStatus() {
-		return status;
-	}
+    public ValidationStatus getStatus() {
+        return status;
+    }
 
-	public boolean isApplyValidationResultDecoration() {
-		return applyValidationResultDecoration;
-	}
+    public boolean isApplyValidationResultDecoration() {
+        return applyValidationResultDecoration;
+    }
 
-	// Package protected as it can be only overridden by class ValidationResult
-	void setApplyValidationResultDecoration(final boolean applyValidationResultDecoration) {
-		this.applyValidationResultDecoration = applyValidationResultDecoration;
-	}
+    // Package protected as it can be only overridden by class ValidationResult
+    void setApplyValidationResultDecoration(final boolean applyValidationResultDecoration) {
+        this.applyValidationResultDecoration = applyValidationResultDecoration;
+    }
 
-	@Override
-	public String toString() {
-		return "ValidationMessage [text=" + text + ", status=" + status + ", target=" + target
-				+ ", applyValidationDecoration=" + applyValidationResultDecoration + "]";
-	}
+    @Override
+    public String toString() {
+        return "ValidationMessage [text=" + text + ", status=" + status + ", target=" + target
+                + ", applyValidationDecoration=" + applyValidationResultDecoration + "]";
+    }
 
-	@Override
-	public int compareTo(final ValidationMessage msg) {
-		return msg == null || getTarget() != msg.getTarget() ? -1 : getStatus().compareTo(msg.getStatus());
-	}
+    @Override
+    public int compareTo(final ValidationMessage msg) {
+        return getStatus().compareTo(msg.getStatus());
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (status == null ? 0 : status.hashCode());
-		result = prime * result + (target == null ? 0 : target.hashCode());
-		result = prime * result + (text == null ? 0 : text.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (status == null ? 0 : status.hashCode());
+        result = prime * result + (target == null ? 0 : target.hashCode());
+        result = prime * result + (text == null ? 0 : text.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final ValidationMessage other = (ValidationMessage) obj;
-		if (status == null) {
-			if (other.status != null) {
-				return false;
-			}
-		} else if (!status.equals(other.status)) {
-			return false;
-		}
-		if (target == null) {
-			if (other.target != null) {
-				return false;
-			}
-		} else if (!target.equals(other.target)) {
-			return false;
-		}
-		if (text == null) {
-			if (other.text != null) {
-				return false;
-			}
-		} else if (!text.equals(other.text)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ValidationMessage other = (ValidationMessage) obj;
+        if (status == null) {
+            if (other.status != null) {
+                return false;
+            }
+        } else if (!status.equals(other.status)) {
+            return false;
+        }
+        if (target == null) {
+            if (other.target != null) {
+                return false;
+            }
+        } else if (!target.equals(other.target)) {
+            return false;
+        }
+        if (text == null) {
+            if (other.text != null) {
+                return false;
+            }
+        } else if (!text.equals(other.text)) {
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * Comparator for sorting validation messages according to their severity.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class ValidationMessageComparator implements Comparator<ValidationMessage> {
-		@Override
-		public int compare(final ValidationMessage vm1, final ValidationMessage vm2) {
-			if (vm1 == vm2) {
-				return 0;
-			}
-			if (vm1 == null) {
-				return 1;
-			}
-			if (vm2 == null) {
-				return -1;
-			}
-			return vm1.compareTo(vm2);
-		}
-	}
+    /**
+     * Comparator for sorting validation messages according to their severity.
+     *
+     * @author koster
+     *
+     */
+    public static class ValidationMessageComparator implements Comparator<ValidationMessage> {
+        @Override
+        public int compare(final ValidationMessage vm1, final ValidationMessage vm2) {
+            if (vm1 == vm2) {
+                return 0;
+            }
+            if (vm1 == null) {
+                return 1;
+            }
+            if (vm2 == null) {
+                return -1;
+            }
+            return vm1.compareTo(vm2);
+        }
+    }
 
 }

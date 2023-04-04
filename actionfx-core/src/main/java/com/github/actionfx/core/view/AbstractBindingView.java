@@ -74,4 +74,14 @@ public abstract class AbstractBindingView extends AbstractValidatingView {
             unbind(model);
         }
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
