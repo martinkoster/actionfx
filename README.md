@@ -31,7 +31,7 @@ This document contains the following chapters:
 ActionFX provides the following features in a declarative fashion without requiring you to write code: 
 - Use **Dependency Injection** with ActionFX directly or with a Spring container
 - Define controllers using **FXML** or statically implemented views
-- View handling through annotations e.g. injecting nested views into a scene graph or navigate to a certain view
+- **View handling through annotations** e.g. injecting nested views into a scene graph or navigate to a certain view
 - **Declarative form-binding** of custom domain objects either with JavaFX properties or plain Java types
 - **Declarative, control-based validation** mechanism that allows to apply validation rules on controls
   injected via `@FMXL`.
