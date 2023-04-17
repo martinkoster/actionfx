@@ -23,16 +23,15 @@
  */
 package com.github.actionfx.core.annotation;
 
+import com.github.actionfx.core.annotation.AFXFormMapping.AFXFormMappings;
+import com.github.actionfx.core.view.graph.ControlProperties;
+import javafx.beans.property.ObjectProperty;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.github.actionfx.core.annotation.AFXFormMapping.AFXFormMappings;
-import com.github.actionfx.core.view.graph.ControlProperties;
-
-import javafx.beans.property.ObjectProperty;
 
 /**
  * Repeatable annotation that can be applied at field level on a {@link ObjectProperty} additionally to a
@@ -82,9 +81,7 @@ public @interface AFXFormMapping {
     public String formatPattern() default "";
 
     /**
-     * The custom validation method inside the ActionFX controller to be invoked for the annotated control's value. It
-     * is required that the referenced method needs to return a boolean value, indicating whether validation was
-     * successful ({@code true} or failed ({@code false}).
+     * The custom validation method inside the ActionFX controller to be invoked for the annotated control's value.
      * <p>
      * Referenced methods can be of the following signatures:
      * <p>

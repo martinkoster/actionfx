@@ -23,14 +23,14 @@
  */
 package com.github.actionfx.core.annotation;
 
+import com.github.actionfx.core.annotation.AFXValidateCustom.AFXValidateCustoms;
+import com.github.actionfx.core.view.graph.ControlProperties;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.github.actionfx.core.annotation.AFXValidateCustom.AFXValidateCustoms;
-import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
  * Field annotation that can be applied to a
@@ -48,9 +48,7 @@ public @interface AFXValidateCustom {
 
 	/**
 	 * The custom validation method inside the ActionFX controller to be invoked for
-	 * the annotated control's value. It is required that the referenced method
-	 * needs to return a boolean value, indicating whether validation was successful
-	 * ({@code true} or failed ({@code false}).
+	 * the annotated control's value.
 	 * <p>
 	 * Referenced methods can be of the following signatures:
 	 * <p>

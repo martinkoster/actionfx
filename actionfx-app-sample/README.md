@@ -8,9 +8,14 @@ Module | Description | API Documentation
 
 This module contains the following demo applications:
 
-- [A Simple Book Store](#a-simple-book-store): A FXML-based demo showing most of the annotations available in ActionFX. The application has a main class for getting started via ActionFX's core bean container and a main class for getting starting with Spring Boot.
-- [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
-- [Texteditor Demo](#texteditor-demo): A simple text editor demonstrating how to use menus, open-, save- and other dialogs with ActionFX.
+- [A Simple Book Store](#a-simple-book-store): A FXML-based demo showing most of the annotations available in ActionFX.
+  The application has a main class for getting started via ActionFX's core bean container and a main class for getting
+  starting with Spring Boot.
+- [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations
+  for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
+- [Texteditor Demo](#texteditor-demo): A simple text editor demonstrating how to use menus, open-, save- and other
+  dialogs with ActionFX.
+- [Validation Demo](#validation-demo): A simple form holding control-based validations.
 
 If you are interested in how ActionFX supports form-binding, you can directly jump into the [CheckoutController](#checkoutcontroller) implementation of the Book Store sample application.
 
@@ -949,11 +954,29 @@ Again, this is a method argument annotation that can avoid the actual method to 
 Last but not least, we display a simple **"About" dialog** to the user via an "information" dialog:
 
 ```java
-	@AFXOnAction(nodeId = "aboutMenuItem")
-	public void about() {
-		actionFX.showInformationDialog("About", "About Text Editor",
-				"This is a simple Text Editor realized with ActionFX.");
-	}
+    @AFXOnAction(nodeId = "aboutMenuItem")
+public void about(){
+        actionFX.showInformationDialog("About","About Text Editor",
+        "This is a simple Text Editor realized with ActionFX.");
+        }
 ```
 
-Source Code can be found here: [TextEditorController](src/main/java/com/github/actionfx/texteditor/controller/TextEditorController.java)
+Source Code can be found
+here: [TextEditorController](src/main/java/com/github/actionfx/texteditor/controller/TextEditorController.java)
+
+## Validation Demo
+
+In this demo, we show how to use menus, open-, save- and other dialogs with ActionFX. For the view, we again use a
+simple FXML-based layout.
+
+The application's main class can be found
+here: [TextEditorApp](src/main/java/com/github/actionfx/texteditor/app/TextEditorApp.java)
+
+The editor itself has a simple menu structure for opening text files, saving text files, closing the application,
+finding a text and opening a small "About" dialog.
+
+![Text Editor UI](docs/images/texteditor.png)
+
+In the following, we focus on the only controller that we use for our simple text editor.
+
+

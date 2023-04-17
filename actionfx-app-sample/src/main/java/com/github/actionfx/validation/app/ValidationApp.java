@@ -25,7 +25,6 @@ package com.github.actionfx.validation.app;
 
 import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.app.AbstractAFXApplication;
-
 import javafx.application.Application;
 
 /**

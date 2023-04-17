@@ -23,14 +23,14 @@
  */
 package com.github.actionfx.core.annotation;
 
+import com.github.actionfx.core.annotation.AFXValidateRegExp.AFXValidateRegExps;
+import com.github.actionfx.core.view.graph.ControlProperties;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.github.actionfx.core.annotation.AFXValidateRegExp.AFXValidateRegExps;
-import com.github.actionfx.core.view.graph.ControlProperties;
 
 /**
  * Field annotation that can be applied to a
@@ -47,7 +47,7 @@ import com.github.actionfx.core.view.graph.ControlProperties;
 public @interface AFXValidateRegExp {
 
 	/**
-	 * The regular expression that a contol's value needs to match for passing
+	 * The regular expression that a control's value needs to match for passing
 	 * validation.
 	 *
 	 * @return the regular expression that needs to match

@@ -29,18 +29,26 @@ This document contains the following chapters:
 ## Feature Overview
 
 ActionFX provides the following features in a declarative fashion without requiring you to write code: 
-- Use Dependency Injection with ActionFX directly or with a Spring container
-- Define controllers using FXML or statically implemented views
+- Use **Dependency Injection** with ActionFX directly or with a Spring container
+- Define controllers using **FXML** or statically implemented views
 - View handling through annotations e.g. injecting nested views into a scene graph or navigate to a certain view
-- Declarative form-binding of custom domain objects either with JavaFX properties or plain Java types
-- Inject control values e.g. selected items from a `javafx.scene.control.TableView` into methods by using annotations on method arguments
-- Support for docking and undocking parts of the JavaFX scenegraph and display a part of a view into an own `javafx.stage.Stage`
-- Loose coupling of controller using a  basic publish/subscribe mechanism for ActionFX controller methods using `@AFXSubscribe`
-- Declaratively wire the `onActionProperty` of scene graph nodes to methods 
-- Configure complex table views or even tree table views by just using annotations, which avoids a lot of code lines compared to pure JavaFX
-- Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the user supplied input in other controls like text fields or table views
-- Integrate user confirmation dialogues or simple text input dialogs in a declarative fashion 
-- Out-of-the-box internationalization support through resource bundle integration (for Spring a `org.springframework.context.MessageSource` can be leveraged)
+- **Declarative form-binding** of custom domain objects either with JavaFX properties or plain Java types
+- **Declarative, control-based validation** mechanism that allows to apply validation rules on controls
+  injected via `@FMXL`.
+- Inject control values e.g. selected items from a `javafx.scene.control.TableView` into methods by using annotations on
+  method arguments
+- Support for **docking and undocking** parts of the JavaFX scenegraph and display a part of a view into an
+  own `javafx.stage.Stage`
+- Loose coupling of controller using a basic **publish/subscribe mechanism** for ActionFX controller methods
+  using `@AFXSubscribe`
+- Declaratively wire the `onActionProperty` of scene graph nodes to methods
+- Configure complex table views or even tree table views by just using annotations, which avoids a lot of code lines
+  compared to pure JavaFX
+- Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the user supplied input in other
+  controls like text fields or table views
+- Integrate **user confirmation dialogues** or simple text input dialogs in a declarative fashion
+- **Out-of-the-box internationalization support** through resource bundle integration (for Spring
+  a `org.springframework.context.MessageSource` can be leveraged)
 
 ## Module Overview
 

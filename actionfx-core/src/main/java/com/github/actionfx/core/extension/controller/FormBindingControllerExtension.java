@@ -136,7 +136,7 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
             addSizeValidator(validatorList, fm, validationMessage);
             addRegExpValidator(validatorList, fm, validationMessage);
             addTemporalValidator(validatorList, fm, validationMessage);
-            addBooleanValidator(validatorList, fm, validationMessage, controlWrapper);
+            addBooleanValidator(validatorList, fm, validationMessage);
             addCustomMethodValidator(validatorList, controller, fm, controlWrapper);
             validatorList.forEach(validator -> view.registerValidator((Control) controlWrapper.getWrapped(),
                     fm.targetProperty(), validator, validationOptions));
@@ -199,7 +199,7 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
     }
 
     private void addBooleanValidator(final List<Validator> validatorList, final AFXFormMapping fm,
-            final String validationMessage, final ControlWrapper controlWrapper) {
+            final String validationMessage) {
         if (fm.expectedBoolean() != BooleanValue.UNDEFINED) {
             validatorList.add(new BooleanValidator(validationMessage, fm.expectedBoolean().getValue(), fm.required()));
         }

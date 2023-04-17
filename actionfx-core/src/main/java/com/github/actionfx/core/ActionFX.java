@@ -131,7 +131,6 @@ public class ActionFX {
 
     // internal framework state, starting with UNINITIALIZED. Further states are
     // CONFIGURED and finally INITIALIZED
-    // BUILT
     protected static ActionFXState actionFXState = ActionFXState.UNINITIALIZED;
 
     // the internal bean container for managing ActionFX components
@@ -178,7 +177,7 @@ public class ActionFX {
     protected int validationStartTimeoutMs;
 
     /**
-     * Internal constructor. Use {@link #build()} method to create your application-specific instance of
+     * Internal constructor. Use {@link #builder()} method to create your application-specific instance of
      * {@link ActionFX}.
      */
     @SuppressFBWarnings(justification = "Design Decision")
