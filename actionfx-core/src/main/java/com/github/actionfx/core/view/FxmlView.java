@@ -33,7 +33,7 @@ import com.github.actionfx.core.utils.AFXUtils;
  * @author koster
  *
  */
-public class FxmlView extends AbstractView {
+public class FxmlView extends AbstractBindingView {
 
 	private final Object controller;
 
@@ -43,6 +43,7 @@ public class FxmlView extends AbstractView {
 
 	public FxmlView(final String id, final String fxmlLocation, final Object controller,
 			final ResourceBundle resourceBundle) {
+		super();
 		this.id = id;
 		rootNode = AFXUtils.loadFxml(fxmlLocation, controller, resourceBundle);
 		this.controller = controller;
@@ -52,5 +53,15 @@ public class FxmlView extends AbstractView {
 	@Override
 	public Object getController() {
 		return controller;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return super.equals(obj);
 	}
 }

@@ -25,6 +25,8 @@ package com.github.actionfx.core;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.Locale;
 
@@ -32,8 +34,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.test.i18n.I18NApp;
 import com.github.actionfx.core.test.i18n.I18NController;
+import com.github.actionfx.core.validation.ValidationStatus;
+import com.github.actionfx.core.view.FxmlView;
+import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 /**
@@ -76,4 +82,43 @@ class InternationalizationIntegrationTest {
 		assertThat(controller.textLabel.getText(), equalTo("Hallo Welt"));
 	}
 
+	@Test
+	@TestInFxThread
+	void testValidationInternationalization_english() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(I18NApp.class).locale(Locale.UK).build();
+		actionFX.scanForActionFXComponents();
+		final I18NController controller = actionFX.getBean("i18NController");
+		final FxmlView view = (FxmlView) ControllerWrapper.getViewFrom(controller);
+
+		// WHEN
+		controller.textLabel.setText("Contains the numerical value 9");
+
+		// THEN
+		assertThat(view.getValidationResult(), notNullValue());
+		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThat(view.getValidationResult().getErrors(), hasSize(1));
+		assertThat(view.getValidationResult().getErrors().get(0).getText(),
+				equalTo("Only characters allowed, no numerical values or special characters."));
+	}
+
+	@Test
+	@TestInFxThread
+	void testValidationInternationalization_german() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(I18NApp.class).locale(Locale.GERMANY).build();
+		actionFX.scanForActionFXComponents();
+		final I18NController controller = actionFX.getBean("i18NController");
+		final FxmlView view = (FxmlView) ControllerWrapper.getViewFrom(controller);
+
+		// WHEN
+		controller.textLabel.setText("Contains the numerical value 9");
+
+		// THEN
+		assertThat(view.getValidationResult(), notNullValue());
+		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThat(view.getValidationResult().getErrors(), hasSize(1));
+		assertThat(view.getValidationResult().getErrors().get(0).getText(),
+				equalTo("Nur Buchstaben erlaubt, keine numerischen Werte oder Sonderzeichen."));
+	}
 }

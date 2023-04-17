@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Martin Koster
+ * Copyright (c) 2022 Martin Koster
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -21,23 +21,33 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-package com.github.actionfx.core.utils;
+package com.github.actionfx.core.converter;
 
 /**
- * Wrapper class for transporting a {@link Throwable} as
- * {@link RuntimeException}.
+ * Converts a {@link java.lang.String} into a {@link java.lang.Enum}.
  *
  * @author koster
- *
  */
-public class RuntimeWithNestedThrowableException extends RuntimeException {
+public class StringToEnumConverter<T extends Enum<T>> implements Converter<String, T> {
 
-	/**
-	 * Generated serialVerionUID.
-	 */
-	private static final long serialVersionUID = -6211050178038291015L;
+    private final Class<T> targetType;
 
-	public RuntimeWithNestedThrowableException(final Throwable throwable) {
-		super(throwable);
-	}
+    /**
+     * Constructor accepting the target enum type to convert into.
+     *
+     * @param targetType
+     *            the target enum type to convert into
+     */
+    public StringToEnumConverter(final Class<T> targetType) {
+        this.targetType = targetType;
+    }
+
+    /**
+     * Converts {@code source} as String parameter to a {@link java.lang.Boolean}.
+     */
+    @Override
+    public T convert(final String source) {
+        return Enum.valueOf(targetType, source);
+
+    }
 }

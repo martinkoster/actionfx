@@ -25,6 +25,7 @@ package com.github.actionfx.core.view.graph;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -67,6 +68,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.skin.ButtonSkin;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -188,6 +191,39 @@ class NodeWrapperTest {
 		assertThat(wrapperWithVBox().supportsSingleChild(), equalTo(false));
 		assertThat(wrapperWithSplitPane().supportsSingleChild(), equalTo(false));
 		assertThat(wrapperWithScrollPane().supportsSingleChild(), equalTo(true)); // single child only
+	}
+
+	@Test
+	void testGetChildrenReadOnly_nodeSupportsMultipleChildren() {
+		// GIVEN
+		final Label[] labels = new Label[] { label("text1"), label("text2") };
+		final NodeWrapper wrapper = wrapperWithAnchorPane(labels);
+
+		// WHEN
+		final List<Node> result = wrapper.getChildrenReadOnly();
+
+		// THEN
+		assertThat(result, hasSize(2));
+		assertThat(result, contains(labels));
+	}
+
+	@Test
+	void testGetChildrenReadOnly_nodeSupportsSingleChild() {
+		// GIVEN
+		final Label label = label("text1");
+		final NodeWrapper wrapper = wrapperWithScrollPane(label);
+
+		// WHEN
+		final List<Node> result = wrapper.getChildrenReadOnly();
+
+		// THEN
+		assertThat(result, hasSize(1));
+		assertThat(result, contains(label));
+	}
+
+	@Test
+	void testGetChildrenReadOnly_nodeSupportsNoChildren() {
+		assertThat(wrapperWithCanvas().getChildrenReadOnly(), hasSize(0));
 	}
 
 	@Test
@@ -593,6 +629,75 @@ class NodeWrapperTest {
 
 		// THEN
 		assertThat(onActionProperty, nullValue());
+	}
+
+	@Test
+	void testGetDecorationChildren_isControl() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = ControlWrapperProvider.button();
+
+		// WHEN and THEN
+		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0));
+	}
+
+	@Test
+	void testGetDecorationChildren_isNotControl_supportsMultipleChildren() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = NodeWrapper.of(new AnchorPane());
+
+		// WHEN and THEN
+		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0));
+	}
+
+	@Test
+	void testGetDecorationChildren_isNotControl_doesNotSupportsMultipleChildren() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = NodeWrapper.of(new Tab());
+
+		// WHEN and THEN
+		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0));
+	}
+
+	@Test
+	void testDecorateWithDecorationNode_isControl() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = ControlWrapperProvider.button();
+		final Button button = nodeWrapper.getWrapped();
+		final Node decorationNode = new ImageView();
+
+		// WHEN
+		nodeWrapper.decorateWithDecorationNode(decorationNode);
+		button.setSkin(new ButtonSkin(button));
+
+		// THEN
+		assertThat(nodeWrapper.getDecorationChildren(), hasItem(decorationNode));
+	}
+
+	@Test
+	void testDecorateWithDecorationNode_isNotControl_doesNotSupportMultipleChildren() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = NodeWrapper.of(new Tab());
+		final Node decorationNode = new ImageView();
+
+		// WHEN
+		nodeWrapper.decorateWithDecorationNode(decorationNode);
+
+		// THEN
+		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0)); // not supported...
+
+	}
+
+	@Test
+	void testDecorateWithDecorationNode_isNotControl_supportsMultipleChildren() {
+		// GIVEN
+		final NodeWrapper nodeWrapper = NodeWrapper.of(new AnchorPane());
+		final Node decorationNode = new ImageView();
+
+		// WHEN
+		nodeWrapper.decorateWithDecorationNode(decorationNode);
+
+		// THEN
+		assertThat(nodeWrapper.getDecorationChildren(), hasItem(decorationNode));
 	}
 
 	private static NodeWrapper wrapperWithAccordion(final TitledPane titledPane) {

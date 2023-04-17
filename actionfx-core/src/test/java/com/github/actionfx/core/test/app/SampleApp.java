@@ -24,6 +24,7 @@
 package com.github.actionfx.core.test.app;
 
 import com.github.actionfx.core.annotation.AFXApplication;
+import com.github.actionfx.core.annotation.ValidationMode;
 
 /**
  * Sample application for testing.
@@ -31,7 +32,7 @@ import com.github.actionfx.core.annotation.AFXApplication;
  * @author koster
  *
  */
-@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.core.test.app", enableBeanContainerAutodetection = false)
+@AFXApplication(mainViewId = "mainView", scanPackage = "com.github.actionfx.core.test.app", enableBeanContainerAutodetection = false, validationGlobalMode = ValidationMode.MANUAL, validationApplyResultDecoration = false, validationApplyRequiredDecoration = false, validationStartTimeoutMs = 500)
 public class SampleApp {
 
 }

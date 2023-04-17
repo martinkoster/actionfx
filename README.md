@@ -29,28 +29,34 @@ This document contains the following chapters:
 ## Feature Overview
 
 ActionFX provides the following features in a declarative fashion without requiring you to write code: 
-- Use Dependency Injection with ActionFX directly or with a Spring container
-- Define controllers using FXML or statically implemented views
-- View handling through annotations e.g. injecting nested views into a scene graph or navigate to a certain view
-- Declarative form-binding of custom domain objects either with JavaFX properties or plain Java types
-- Inject control values e.g. selected items from a `javafx.scene.control.TableView` into methods by using annotations on method arguments
-- Support for docking and undocking parts of the JavaFX scenegraph and display a part of a view into an own `javafx.stage.Stage`
-- Loose coupling of controller using a  basic publish/subscribe mechanism for ActionFX controller methods using `@AFXSubscribe`
-- Declaratively wire the `onActionProperty` of scene graph nodes to methods 
-- Configure complex table views or even tree table views by just using annotations, which avoids a lot of code lines compared to pure JavaFX
-- Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the user supplied input in other controls like text fields or table views
-- Integrate user confirmation dialogues or simple text input dialogs in a declarative fashion 
-- Out-of-the-box internationalization support through resource bundle integration (for Spring a `org.springframework.context.MessageSource` can be leveraged)
-
+- **Dependency Injection** with plain ActionFX directly or with a Spring container
+- **FXML** support in order to define controllers (or use **statically** implemented views)
+- **View handling through annotations** e.g. injecting nested views into a scene graph or navigate to a certain view
+- **Declarative form-binding** of custom domain objects either with JavaFX properties or plain Java types
+- **Declarative, control-based validation** mechanism that allows to apply validation rules on controls
+  injected via `@FMXL`.
+- **Injection of control values** e.g. selected items from a `javafx.scene.control.TableView` into methods by using
+  annotations on method arguments
+- **Docking and Undocking** support for parts of the JavaFX scenegraph and display a part of a view into an
+  own `javafx.stage.Stage`
+- **Behaviour support for nodes**: Enable or disable nodes like a `javafx.scene.control.Button` depending on whether the
+  user supplied input in other controls like text fields or table views
+- **Publish/Subscribe mechanism** in order to implement a loose coupling of controller using `@AFXSubscribe` annotation
+- **Easy configuration of table/tree table views** by just using annotations, which avoids a lot of code lines compared
+  to pure JavaFX
+- **Integration of user confirmation dialogues** or simple text input dialogs in a declarative fashion
+- **Out-of-the-box internationalization support** through resource bundle integration (for Spring
+  a `org.springframework.context.MessageSource` can be leveraged)
+- Many more features and handy annotations (see annotations in [actionfx-core](actionfx-core/README.md))
 ## Module Overview
 
 ActionFX is split up into several sub-modules that can be optionally included in your application:
 
 Module | Description | API Documentation | Dependency 
 ------ | ----------- | ----------------- | ----------
-[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.5.2"`
-[actionfx-testing](actionfx-testing/README.md) | This module contains JUnit 5 classes for unit- and integration testing of JavaFX and ActionFX components. This is achieved by JUnit 5 extensions [FxThreadForAllMonocleExtension](actionfx-testing/src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java) and [FxThreadForEachMonocleExtension](actionfx-testing/src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java) to run tests inside the JavaFX thread. | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-testing/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-testing", version: "1.5.2"`
-[actionfx-spring-boot](actionfx-spring-boot/README.md) | This module contains Spring factories to use a Spring Bean container together with ActionFX. Additional Spring Boot is supported with the ActionFX autoconfiguration class [AFXAutoconfiguration](actionfx-spring-boot/src/main/java/com/github/actionfx/spring/autoconfigure/AFXAutoconfiguration.java). When using this module, Spring @Autowired can be used instead of @Inject to autowire views and controllers (and even more services and components managed by the Spring bean container). | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-spring-boot/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", version: "1.5.2"`
-[actionfx-controlsfx](actionfx-controlsfx/README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-controlsfx/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.5.2"`
-[actionfx-app-sample](actionfx-app-sample/README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-app-sample/index.html) | -
-[actionfx-appfactory](actionfx-appfactory/README.md) | This module contains an executable ActionFX application to easily scaffold new, Gradle-based ActionFX projects. Aside from generating the required build files, it generates ActionFX controller from existing FXML files for enhanced productivity. | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-appfactory/index.html) | -
+[actionfx-core](actionfx-core/README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-core/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.6.0"`
+[actionfx-testing](actionfx-testing/README.md) | This module contains JUnit 5 classes for unit- and integration testing of JavaFX and ActionFX components. This is achieved by JUnit 5 extensions [FxThreadForAllMonocleExtension](actionfx-testing/src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java) and [FxThreadForEachMonocleExtension](actionfx-testing/src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java) to run tests inside the JavaFX thread. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-testing/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-testing", version: "1.6.0"`
+[actionfx-spring-boot](actionfx-spring-boot/README.md) | This module contains Spring factories to use a Spring Bean container together with ActionFX. Additional Spring Boot is supported with the ActionFX autoconfiguration class [AFXAutoconfiguration](actionfx-spring-boot/src/main/java/com/github/actionfx/spring/autoconfigure/AFXAutoconfiguration.java). When using this module, Spring @Autowired can be used instead of @Inject to autowire views and controllers (and even more services and components managed by the Spring bean container). | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-spring-boot/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-spring-boot", version: "1.6.0"`
+[actionfx-controlsfx](actionfx-controlsfx/README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-controlsfx/index.html) | `implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.6.0"`
+[actionfx-app-sample](actionfx-app-sample/README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-app-sample/index.html) | -
+[actionfx-appfactory](actionfx-appfactory/README.md) | This module contains an executable ActionFX application to easily scaffold new, Gradle-based ActionFX projects. Aside from generating the required build files, it generates ActionFX controller from existing FXML files for enhanced productivity. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-appfactory/index.html) | -

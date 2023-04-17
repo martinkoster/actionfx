@@ -169,6 +169,7 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
     @SuppressWarnings("unchecked")
     protected <T> T getBeanByDefinition(final BeanDefinition beanDefinition) {
         if (beanDefinition.isSingleton()) {
+            // no "computeIfAbsent" here as it results in "ConcurrentModificationException" on component scan
             if (singletonCache.containsKey(beanDefinition)) {
                 return (T) singletonCache.get(beanDefinition);
             } else {

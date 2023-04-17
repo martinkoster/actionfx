@@ -36,16 +36,31 @@ import org.junit.jupiter.api.Test;
  */
 class ObjectToStringConverterTest {
 
-	@Test
-	void testApply() {
-		// GIVEN
-		final ObjectToStringConverter converter = new ObjectToStringConverter();
+    @Test
+    void testApply_onInteger() {
+        // GIVEN
+        final ObjectToStringConverter converter = new ObjectToStringConverter();
 
-		// WHEN
-		final String value = converter.apply(Integer.valueOf(42));
+        // WHEN
+        final String value = converter.apply(Integer.valueOf(42));
 
-		// THEN
-		assertThat(value, equalTo("42"));
-	}
+        // THEN
+        assertThat(value, equalTo("42"));
+    }
 
+    @Test
+    void testApply_onEnum() {
+        // GIVEN
+        final ObjectToStringConverter converter = new ObjectToStringConverter();
+
+        // WHEN
+        final String value = converter.apply(TestEnum.VALUEA);
+
+        // THEN
+        assertThat(value, equalTo("VALUEA"));
+    }
+
+    public static enum TestEnum {
+        VALUEA,
+    }
 }

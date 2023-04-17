@@ -23,87 +23,42 @@
  */
 package com.github.actionfx.core.listener;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.github.actionfx.core.utils.AFXUtils;
-
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * Implementation of the {@link ChangeListener} interface that schedules a
- * delayed action after the event occurs. In case an additional event occurs
- * before the action has been executed, the "old" task is cancelled and a new
- * one is scheduled for the new event.
+ * Implementation of the {@link ChangeListener} interface that schedules a delayed action after the event occurs. In
+ * case an additional event occurs before the action has been executed, the "old" task is cancelled and a new one is
+ * scheduled for the new event.
  *
  * @author koster
  */
-public class TimedChangeListener<T> implements ChangeListener<T> {
+public class TimedChangeListener<T> extends AbstractTimedChangeListener
+        implements ChangeListener<T> {
 
-	private final ChangeListener<T> changeListener;
+    private ChangeListener<T> changeListener;
 
-	// property that allows to disable the listener
-	private final SimpleBooleanProperty listenerEnabled = new SimpleBooleanProperty();
+    public TimedChangeListener(final ChangeListener<T> changeListener) {
+        this(changeListener, 200, null);
+    }
 
-	// uses a timer to call your resize method
-	private final Timer timer = new Timer(true);
+    public TimedChangeListener(final ChangeListener<T> changeListener, final long delayTime) {
+        this(changeListener, delayTime, null);
+    }
 
-	// task to execute after defined delay
-	private TimerTask task = null;
+    public TimedChangeListener(final ChangeListener<T> changeListener, final BooleanProperty fireListenerProperty) {
+        this(changeListener, 200, fireListenerProperty);
+    }
 
-	// delay that has to pass in order to consider an
-	// operation done
-	private long delayTime = 200;
+    public TimedChangeListener(final ChangeListener<T> changeListener, final long delayTime,
+            final BooleanProperty fireListenerProperty) {
+        super(delayTime, fireListenerProperty);
+        this.changeListener = changeListener;
+    }
 
-	public TimedChangeListener(final ChangeListener<T> changeListener) {
-		this(changeListener, 200, null);
-	}
-
-	public TimedChangeListener(final ChangeListener<T> changeListener, final long delayTime) {
-		this(changeListener, delayTime, null);
-	}
-
-	public TimedChangeListener(final ChangeListener<T> changeListener, final BooleanProperty fireListenerProperty) {
-		this(changeListener, 200, fireListenerProperty);
-	}
-
-	public TimedChangeListener(final ChangeListener<T> changeListener, final long delayTime,
-			final BooleanProperty fireListenerProperty) {
-		this.changeListener = changeListener;
-		this.delayTime = delayTime;
-		if (fireListenerProperty != null) {
-			listenerEnabled.bind(fireListenerProperty);
-		} else {
-			listenerEnabled.set(true);
-		}
-	}
-
-	@Override
-	public void changed(final ObservableValue<? extends T> observable, final T oldValue, final T newValue) {
-		if (!listenerEnabled.get()) {
-			return;
-		}
-		if (task != null) { // there was already a task scheduled from the
-							// previous operation ...
-			task.cancel(); // cancel it, we have a new event to consider
-		}
-		if (delayTime == 0) {
-			// run now
-			AFXUtils.runInFxThread(() -> changeListener.changed(observable, oldValue, newValue));
-		} else {
-			task = new TimerTask() // create new task
-			{
-				@Override
-				public void run() {
-					// ensure execution inside the JavaFX thread
-					AFXUtils.runInFxThread(() -> changeListener.changed(observable, oldValue, newValue));
-				}
-			};
-			// schedule new task
-			timer.schedule(task, delayTime);
-		}
-	}
+    @Override
+    public void changed(final ObservableValue<? extends T> observable, final T oldValue, final T newValue) {
+        invokeListener(() -> changeListener.changed(observable, oldValue, newValue));
+    }
 }

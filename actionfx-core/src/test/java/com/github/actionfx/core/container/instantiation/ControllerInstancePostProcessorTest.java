@@ -46,6 +46,14 @@ import com.github.actionfx.core.extension.controller.OnActionMethodControllerExt
 import com.github.actionfx.core.extension.controller.OnControlValueChangeMethodControllerExtension;
 import com.github.actionfx.core.extension.controller.OnLoadControlDataMethodControllerExtension;
 import com.github.actionfx.core.extension.controller.UseFilteredListControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateBooleanControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateCustomControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateMinMaxControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateRegExpControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateRequiredControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateSizeControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateTemporalControllerExtension;
+import com.github.actionfx.core.view.View;
 
 /**
  * JUnit test for {@link ControllerInstancePostProcessor}.
@@ -55,45 +63,81 @@ import com.github.actionfx.core.extension.controller.UseFilteredListControllerEx
  */
 class ControllerInstancePostProcessorTest {
 
-	private final Class<?>[] EXPECTED_EXTENSION = new Class[] { //
-			NestedViewControllerExtension.class, //
-			EnableMultiSelectionControllerExtension.class, //
-			UseFilteredListControllerExtension.class, //
-			OnActionMethodControllerExtension.class, //
-			ConverterControllerExtension.class, //
-			CellValueConfigControllerExtension.class, //
-			EnableNodeControllerExtension.class, //
-			DisableNodeControllerExtension.class, //
-			OnLoadControlDataMethodControllerExtension.class, //
-			OnControlValueChangeMethodControllerExtension.class, //
-			FormBindingControllerExtension.class };
+    private final Class<?>[] EXPECTED_EXTENSION = new Class[] { //
+            NestedViewControllerExtension.class, //
+            EnableMultiSelectionControllerExtension.class, //
+            UseFilteredListControllerExtension.class, //
+            OnActionMethodControllerExtension.class, //
+            ConverterControllerExtension.class, //
+            CellValueConfigControllerExtension.class, //
+            OnLoadControlDataMethodControllerExtension.class, //
+            OnControlValueChangeMethodControllerExtension.class, //
+            FormBindingControllerExtension.class,
+            ValidateRequiredControllerExtension.class, //
+            ValidateBooleanControllerExtension.class, //
+            ValidateMinMaxControllerExtension.class, //
+            ValidateSizeControllerExtension.class, //
+            ValidateTemporalControllerExtension.class, //
+            ValidateRegExpControllerExtension.class, //
+            ValidateCustomControllerExtension.class, //
+            EnableNodeControllerExtension.class, //
+            DisableNodeControllerExtension.class, //
+    };
 
-	@Test
-	void testRegisteredExtensions() {
-		// GIVEN
-		final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor();
+    @Test
+    void testRegisteredExtensions() {
+        // GIVEN
+        final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor();
 
-		// WHEN and THEN
-		assertThat(postProcessor.getUnmodifiableControllerExtensions().stream().map(Consumer::getClass)
-				.collect(Collectors.toList()), contains(EXPECTED_EXTENSION));
-	}
+        // WHEN and THEN
+        assertThat(postProcessor.getUnmodifiableControllerExtensions().stream().map(Consumer::getClass)
+                .collect(Collectors.toList()), contains(EXPECTED_EXTENSION));
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	void testPostProcess_customControllerExtensions() {
-		// GIVEN
-		final Object controller = Mockito.mock(Object.class);
-		final Consumer<Object> extension1 = Mockito.mock(Consumer.class);
-		final Consumer<Object> extension2 = Mockito.mock(Consumer.class);
-		final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor(
-				Arrays.asList(extension1, extension2));
+    @SuppressWarnings("unchecked")
+    @Test
+    void testPostProcess_customControllerExtensions() {
+        // GIVEN
+        final TestController controller = new TestController();
+        final View view = Mockito.mock(View.class);
+        controller.setView(view);
+        final Consumer<Object> extension1 = Mockito.mock(Consumer.class);
+        final Consumer<Object> extension2 = Mockito.mock(Consumer.class);
+        final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor(
+                Arrays.asList(extension1, extension2));
 
-		// WHEN
-		postProcessor.postProcess(controller);
+        // WHEN
+        postProcessor.postProcess(controller);
 
-		// THEN
-		verify(extension1, times(1)).accept(controller);
-		verify(extension2, times(1)).accept(controller);
-	}
+        // THEN
+        verify(extension1, times(1)).accept(controller);
+        verify(extension2, times(1)).accept(controller);
+    }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    void testPostProcess_initialValidationHasBeenPerformed() {
+        // GIVEN
+        final TestController controller = new TestController();
+        final View view = Mockito.mock(View.class);
+        controller.setView(view);
+        final Consumer<Object> extension1 = Mockito.mock(Consumer.class);
+        final Consumer<Object> extension2 = Mockito.mock(Consumer.class);
+        final ControllerInstancePostProcessor postProcessor = new ControllerInstancePostProcessor(
+                Arrays.asList(extension1, extension2));
+
+        // WHEN
+        postProcessor.postProcess(controller);
+
+        // THEN
+        verify(view, times(1)).validate(false);
+    }
+
+    public static class TestController {
+        public View _view;
+
+        public void setView(final View view) {
+            _view = view;
+        }
+    }
 }

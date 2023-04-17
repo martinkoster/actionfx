@@ -190,6 +190,71 @@ class ActionFXIntegrationTest {
 	}
 
 	@Test
+	void testGetMessage_messageKeyExists() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final String message = actionFX.getMessage(NestedViewController.class, "label.text", "Default message");
+
+		// THEN
+		assertThat(message, equalTo("Hello World"));
+	}
+
+	@Test
+	void testGetMessage_messageKeyDoesNotExist() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final String message = actionFX.getMessage(NestedViewController.class, "fantasy key", "Default message");
+
+		// THEN
+		assertThat(message, equalTo("Default message"));
+	}
+
+	@Test
+	void testGetMessage_messageKeyIsBlank() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final String message = actionFX.getMessage(NestedViewController.class, "", "Default message");
+
+		// THEN
+		assertThat(message, equalTo("Default message"));
+	}
+
+	@Test
+	void testGetMessage_messageKeyIsNull() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final String message = actionFX.getMessage(NestedViewController.class, null, "Default message");
+
+		// THEN
+		assertThat(message, equalTo("Default message"));
+	}
+
+	@Test
+	void testGetMessage_resourceBundleDoesNotExist() {
+		// GIVEN
+		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.UK).build();
+		actionFX.scanForActionFXComponents();
+
+		// WHEN
+		final String message = actionFX.getMessage(String.class, "label.text", "Default message");
+
+		// THEN
+		assertThat(message, equalTo("Default message"));
+	}
+
+	@Test
 	void testCheckActionFXBeanInjection() {
 		// GIVEN
 		final ActionFX actionFX = ActionFX.builder().configurationClass(NestedViewApp.class).locale(Locale.US).build();

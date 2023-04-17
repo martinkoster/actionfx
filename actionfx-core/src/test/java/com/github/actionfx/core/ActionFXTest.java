@@ -51,6 +51,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.github.actionfx.core.ActionFX.ActionFXBuilder;
+import com.github.actionfx.core.annotation.ValidationMode;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.converter.ConversionService;
@@ -104,6 +105,10 @@ class ActionFXTest {
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
 		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
+		assertThat(actionFX.getValidationGlobalMode(), equalTo(ValidationMode.MANUAL));
+		assertThat(actionFX.isValidationApplyResultDecoration(), equalTo(false));
+		assertThat(actionFX.isValidationApplyRequiredDecoration(), equalTo(false));
+		assertThat(actionFX.getValidationStartTimeoutMs(), equalTo(500));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 
@@ -126,7 +131,9 @@ class ActionFXTest {
 		// WHEN
 		final ActionFX actionFX = ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
 				.mainViewId("mainView").actionFXEnhancer(enhancer).locale(Locale.US)
-				.enhancementStrategy(EnhancementStrategy.SUBCLASSING).build();
+				.enhancementStrategy(EnhancementStrategy.SUBCLASSING).validationGlobalMode(ValidationMode.MANUAL)
+				.validationApplyResultDecoration(false).validationApplyRequiredDecoration(false)
+				.validationStartTimeoutMs(500).build();
 
 		// THEN
 		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
@@ -135,6 +142,10 @@ class ActionFXTest {
 		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
 		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
 		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
+		assertThat(actionFX.getValidationGlobalMode(), equalTo(ValidationMode.MANUAL));
+		assertThat(actionFX.isValidationApplyResultDecoration(), equalTo(false));
+		assertThat(actionFX.isValidationApplyRequiredDecoration(), equalTo(false));
+		assertThat(actionFX.getValidationStartTimeoutMs(), equalTo(500));
 		assertThat(actionFX, equalTo(ActionFX.getInstance()));
 	}
 

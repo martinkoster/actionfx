@@ -1,7 +1,25 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
-## 1.5.2 (08.06.2022) 
+## 1.6.0 (17.04.2023)
+
+### New Features
+
+- Support for validations using new annotations @AFXValidateRequired, @AFXValidateBoolean, @AFXValidateCustom,
+  @AFXValidateMinMax, @AFXValidateSize, @AFXValidateRegExp and @AFXValidateTemporal.
+- Extended @AFXFormMapping annotation in order to support validation
+- Extended @AFXEnableNode and @AFXDisableNode in order to enable/disable JavaFX nodes depending on a validation result
+
+### Technical Upgrades
+
+- Upgraded Gradle to 7.5.1
+- Updated dependencies:
+  * Spring Boot to 2.7.10
+  * Classgraph to 4.8.157
+  * ByteBuddy to 1.11.22
+
+## 1.5.2 (08.06.2022)
 
 This release is only a minor enhancement release.
 

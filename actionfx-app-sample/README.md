@@ -4,13 +4,18 @@ This module contains application sample with and without Spring as bean containe
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
-[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-app-sample/index.html) 
+[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-app-sample/index.html) 
 
 This module contains the following demo applications:
 
-- [A Simple Book Store](#a-simple-book-store): A FXML-based demo showing most of the annotations available in ActionFX. The application has a main class for getting started via ActionFX's core bean container and a main class for getting starting with Spring Boot.
-- [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
-- [Texteditor Demo](#texteditor-demo): A simple text editor demonstrating how to use menus, open-, save- and other dialogs with ActionFX.
+- [A Simple Book Store](#a-simple-book-store): A FXML-based demo showing most of the annotations available in ActionFX.
+  The application has a main class for getting started via ActionFX's core bean container and a main class for getting
+  starting with Spring Boot.
+- [Datacontainer Demo](#data-container-demo): A statically-coded view demo showing data container configurations
+  for `TableView`, `TreeTableView`, `TreeView`, `ListView`, `ChoiceBox` and `ComboBox`.
+- [Texteditor Demo](#texteditor-demo): A simple text editor demonstrating how to use menus, open-, save- and other
+  dialogs with ActionFX.
+- [Validation Demo](#validation-demo): A simple form holding control-based validations.
 
 If you are interested in how ActionFX supports form-binding, you can directly jump into the [CheckoutController](#checkoutcontroller) implementation of the Book Store sample application.
 
@@ -949,11 +954,190 @@ Again, this is a method argument annotation that can avoid the actual method to 
 Last but not least, we display a simple **"About" dialog** to the user via an "information" dialog:
 
 ```java
-	@AFXOnAction(nodeId = "aboutMenuItem")
-	public void about() {
-		actionFX.showInformationDialog("About", "About Text Editor",
-				"This is a simple Text Editor realized with ActionFX.");
-	}
+    @AFXOnAction(nodeId = "aboutMenuItem")
+public void about(){
+        actionFX.showInformationDialog("About","About Text Editor",
+        "This is a simple Text Editor realized with ActionFX.");
+        }
 ```
 
-Source Code can be found here: [TextEditorController](src/main/java/com/github/actionfx/texteditor/controller/TextEditorController.java)
+Source Code can be found
+here: [TextEditorController](src/main/java/com/github/actionfx/texteditor/controller/TextEditorController.java)
+
+## Validation Demo
+
+In this validation-centered demo, we show how controls can be validated and how validation results can be displayed as
+decoration to the controls.
+
+The application's main class can be found
+here: [ValidationApp](src/main/java/com/github/actionfx/validation/app/ValidationApp.java)
+
+The demo itself consists out of multiple input controls that carry validation-specific annotations.
+
+The initial view without any validation errors, but decorations for the required fields looks as follows:
+
+![Validation App UI](docs/images/validation.png)
+
+This sample demonstrates both, manual validation after clicking a button (through `ActionFX.validate()` method) as well
+as validation that is triggered after an `change` event occurs on one of the controls.
+
+In the following, the controller code defining the validations is listed:
+
+```java
+
+@AFXController(viewId = "validationView", fxml = "/fxml/ValidationView.fxml", title = "ValidationView", width = 660, height = 450)
+public class ValidationController {
+
+  @AFXValidateBoolean(message = "Please confirm", expected = true)
+  @FXML
+  protected CheckBox checkbox;
+
+  @AFXValidateRegExp(message = "Please enter a valid mail address", regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationStartTimeoutMs = 300, required = true)
+  @FXML
+  protected TextField emailTextField;
+
+  @AFXEnableMultiSelection
+  @AFXValidateSize(message = "Please select at 2 elements", min = 2)
+  @FXML
+  protected ListView<String> entryListView;
+
+  @AFXValidateTemporal(message = "Please enter a date in the future with pattern dd.MM.yyyy", future = true, formatPattern = "dd.MM.yyyy", validationStartTimeoutMs = 300)
+  @FXML
+  protected TextField futureTextField;
+
+  @AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
+  @FXML
+  protected TextField helloWorldTextField;
+
+  @AFXValidateSize(message = "Please enter a name of length 2 and 20", min = 2, max = 20, validationStartTimeoutMs = 300)
+  @FXML
+  protected TextField nameTextField;
+
+  @AFXValidateMinMax(message = "Please enter a numerical value between 10 and 100", min = 10, max = 100, formatPattern = "#,###", validationStartTimeoutMs = 300)
+  @FXML
+  protected TextField numericalValueTextField;
+
+  @AFXValidateTemporal(message = "Please select a date in the past", past = true)
+  @FXML
+  protected DatePicker pastDatePicker;
+
+  @AFXValidateRequired(message = "This is a mandatory field.", validationStartTimeoutMs = 300)
+  @FXML
+  protected TextField requiredTextField;
+
+  @FXML
+  protected Button validateButtonWithDecorations;
+
+  @FXML
+  protected Button validateButtonWithoutDecorations;
+
+  @AFXEnableNode(whenAllControlsValid = true)
+  @FXML
+  protected Button allControlsValidButton;
+
+  @AFXEnableNode(whenControlsAreValid = {"requiredTextField", "pastDatePicker"})
+  @FXML
+  protected Button twoControlsValidButton;
+
+  @Inject
+  protected ActionFX actionFX;
+
+  @AFXLoadControlData(controlId = "entryListView")
+  public List<String> listViewData() {
+    return Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4");
+  }
+
+  public ValidationResult customValidationMethod(final String text) {
+    return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.", helloWorldTextField,
+            !"Hello World".equals(text));
+  }
+
+  @AFXOnAction(nodeId = "validateButtonWithDecorations", async = false)
+  public void validateButtonWithDecorationsAction(final ActionEvent event) {
+    actionFX.validate(this);
+  }
+
+  @AFXOnAction(nodeId = "validateButtonWithoutDecorations", async = false)
+  public void validateButtonWithoutDecorationsAction(final ActionEvent event) {
+    final ValidationResult result = actionFX.validate(this, false);
+    final StringBuilder b = new StringBuilder();
+    if (result.getStatus() == ValidationStatus.ERROR) {
+      b.append("Validation errors have occured:\n");
+      for (final ValidationMessage msg : result.getErrors()) {
+        b.append(msg.getText()).append("\n");
+      }
+    } else {
+      b.append("Validation successful with status '").append(result.getStatus()).append("'.");
+    }
+    actionFX.showInformationDialog("Validation", b.toString(), "");
+  }
+
+}
+```
+
+The code shows the usage of the different validation-specific annotations.
+
+The most notable functionality inside this controller is:
+
+* Custom validation using the supplied method:
+  ```java 
+  @AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
+  @FXML
+  protected TextField helloWorldTextField;
+
+    public ValidationResult customValidationMethod(final String text) {
+    return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.", helloWorldTextField,
+            !"Hello World".equals(text));
+  }
+    ```
+  Here, the entered text is validated in the supplied method and a validation error is displayed, whenever the content
+  of the text field is not "Hello World". The value of text field is directly injected into the validation method as
+  method argument.
+* Enablement of controls like e.g. buttons, when defined controls inside the view are valid:
+  ```java
+  @AFXEnableNode(whenControlsAreValid = {"requiredTextField", "pastDatePicker"})
+  @FXML
+  protected Button twoControlsValidButton;
+  ```
+  In order for the button to be enabled, the values inside the controls "requiredTextField" and "pastDatePicker" need to
+  be valid.
+  ![Validation App Fields OK](docs/images/validation-fields-ok.png)
+* Enablement of controls like e.g. buttons, when all controls inside the view are valid:
+  ```java
+  @AFXEnableNode(whenAllControlsValid = true)
+  @FXML
+  protected Button allControlsValidButton;
+  ```
+  In order for the button to be enabled, **all** values inside the controls need to be valid.
+  ![Validation App OK](docs/images/validation-ok.png)
+* Manual validation including the display of all validation decorations can be triggered by a button click as follows:
+  ```java
+  @AFXOnAction(nodeId = "validateButtonWithDecorations", async = false)
+  public void validateButtonWithDecorationsAction(final ActionEvent event) {
+    actionFX.validate(this);
+  }
+  ```
+* Manual validation with a programmatic handling of validation errors can be triggered as follows:
+  ```java
+  @AFXOnAction(nodeId = "validateButtonWithoutDecorations", async = false)
+  public void validateButtonWithoutDecorationsAction(final ActionEvent event) {
+    final ValidationResult result = actionFX.validate(this, false);
+    final StringBuilder b = new StringBuilder();
+    if (result.getStatus() == ValidationStatus.ERROR) {
+      b.append("Validation errors have occured:\n");
+      for (final ValidationMessage msg : result.getErrors()) {
+        b.append(msg.getText()).append("\n");
+      }
+    } else {
+      b.append("Validation successful with status '").append(result.getStatus()).append("'.");
+    }
+    actionFX.showInformationDialog("Validation", b.toString(), "");
+  }
+  ```
+  In this method, the validation result is computed and returned after calling method `actionFX.validate(this, false)`
+  and the validation messages are displayed in a popup window.
+  ![Validation App Popup](docs/images/validation-popup.png)
+
+Source Code can be found
+here: [ValidationController](src/main/java/com/github/actionfx/validation/controller/ValidationController.java)
+

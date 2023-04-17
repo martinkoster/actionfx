@@ -23,13 +23,13 @@
  */
 package com.github.actionfx.core.test;
 
-import com.github.actionfx.core.view.AbstractView;
+import com.github.actionfx.core.view.AbstractBindingView;
 
-public class TestViewWithoutNoArgConstructor extends AbstractView {
+public class TestViewWithoutNoArgConstructor extends AbstractBindingView {
 
-	@Override
-	public Object getController() {
-		return null;
-	}
+    @Override
+    public Object getController() {
+        return null;
+    }
 
 }

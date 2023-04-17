@@ -25,7 +25,7 @@ package com.github.actionfx.core.test;
 
 import java.util.ResourceBundle;
 
-import com.github.actionfx.core.view.AbstractView;
+import com.github.actionfx.core.view.AbstractBindingView;
 
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
@@ -38,41 +38,41 @@ import javafx.scene.layout.AnchorPane;
  */
 public class ViewCreator {
 
-	private ViewCreator() {
-	}
+    private ViewCreator() {
+    }
 
-	public static StaticView create(final Node node, final String nodeId) {
-		node.setId(nodeId);
-		return new StaticView("staticView", node);
-	}
+    public static StaticView create(final Node node, final String nodeId) {
+        node.setId(nodeId);
+        return new StaticView("staticView", node);
+    }
 
-	public static StaticView create() {
-		return new StaticView("staticView");
-	}
+    public static StaticView create() {
+        return new StaticView("staticView");
+    }
 
-	public static class StaticView extends AbstractView {
+    public static class StaticView extends AbstractBindingView {
 
-		public StaticView(final String viewId, final Node... node) {
-			id = viewId;
-			final AnchorPane pane = new AnchorPane();
-			pane.getChildren().addAll(node);
-			rootNode = pane;
-		}
+        public StaticView(final String viewId, final Node... node) {
+            id = viewId;
+            final AnchorPane pane = new AnchorPane();
+            pane.getChildren().addAll(node);
+            rootNode = pane;
+        }
 
-		@Override
-		public Object getController() {
-			return null;
-		}
+        @Override
+        public Object getController() {
+            return null;
+        }
 
-		public StaticView appendNode(final Node node, final String nodeId) {
-			node.setId(nodeId);
-			((AnchorPane) getRootNode()).getChildren().add(node);
-			return this;
-		}
+        public StaticView appendNode(final Node node, final String nodeId) {
+            node.setId(nodeId);
+            ((AnchorPane) getRootNode()).getChildren().add(node);
+            return this;
+        }
 
-		public StaticView resourceBundle(final ResourceBundle resourceBundle) {
-			this.resourceBundle = resourceBundle;
-			return this;
-		}
-	}
+        public StaticView resourceBundle(final ResourceBundle resourceBundle) {
+            this.resourceBundle = resourceBundle;
+            return this;
+        }
+    }
 }

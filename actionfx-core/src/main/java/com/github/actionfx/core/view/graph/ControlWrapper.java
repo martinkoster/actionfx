@@ -96,7 +96,12 @@ public class ControlWrapper extends NodeWrapper {
     /**
      * Key to {@link Node#getProperties()} under that an instance of this control wrapper is stored after construction.
      */
-    public static final String USER_PROPERTIES_KEY = ControlWrapper.class.getCanonicalName();
+    public static final String USER_PROPERTIES_CONTROLWRAPPER_KEY = "actionfx-controlwrapper-instance";
+
+    /**
+     * key to the user properties whose value identifies the wrapped control as "required" or not
+     */
+    public static final String USER_PROPERTIES_REQUIRED_KEY = "actionfx-required";
 
     /**
      * expected location of the control configuration properties, where "%s" is the full canonical class name of the
@@ -151,7 +156,7 @@ public class ControlWrapper extends NodeWrapper {
         super(control);
         controlConfig = retrieveControlConfig(control.getClass());
         // cache the instance in the node
-        control.getProperties().put(USER_PROPERTIES_KEY, this);
+        control.getProperties().put(USER_PROPERTIES_CONTROLWRAPPER_KEY, this);
     }
 
     /**
@@ -170,7 +175,7 @@ public class ControlWrapper extends NodeWrapper {
      * @return the control wrapper instance
      */
     public static ControlWrapper of(final Control control) {
-        ControlWrapper wrapper = (ControlWrapper) control.getProperties().get(USER_PROPERTIES_KEY);
+        ControlWrapper wrapper = (ControlWrapper) control.getProperties().get(USER_PROPERTIES_CONTROLWRAPPER_KEY);
         if (wrapper == null) {
             wrapper = new ControlWrapper(control);
         }
@@ -424,6 +429,103 @@ public class ControlWrapper extends NodeWrapper {
     public Object getUserValue() {
         final Observable observable = getUserValueAsObservable();
         return getValueFromObservable(observable);
+    }
+
+    /**
+     * Gets the value from the property described by {@link ControlProperties}.
+     * <p>
+     * The following values are returned for the specified control property:
+     * <ul>
+     * <li>{@link ControlProperties#SINGLE_VALUE_PROPERTY}: The simple value, e.g. the text from a
+     * {@link javafx.scene.control.TextField} is returned.</li>
+     * <li>{@link ControlProperties#ITEMS_OBSERVABLE_LIST}: The items of the control are returned, e.g. all items
+     * displayed in a {@link javafx.scene.control.TableView}.</li>
+     * <li>{@link ControlProperties#USER_VALUE_OBSERVABLE}: The user value is returned. This can be a single value e.g.
+     * for a {@link javafx.scene.control.TextField} or a {@link javafx.scene.control.TableView} with single-selection
+     * model, or can be a list for a {@link javafx.scene.control.TableView} with a multi-selection model.</li>
+     * </ul>
+     *
+     * @param controlProperty
+     *            the property to retrieve the value from
+     * @return the retrieved value
+     */
+    public Object getValue(final ControlProperties controlProperty) {
+        switch (controlProperty) {
+        case SINGLE_VALUE_PROPERTY:
+            return getValue();
+        case ITEMS_OBSERVABLE_LIST:
+            return getItemsOrValue();
+        case USER_VALUE_OBSERVABLE:
+        default:
+            return getUserValue();
+        }
+    }
+
+    /**
+     * Checks, whether the wrapped control holds a value (non-null, non-blank) under the given {@code controlProperty}.
+     *
+     * @param controlProperty
+     *            the property that is checked
+     * @return {@code true}, if and only if the control holds a non-null, non-blank value under the given
+     *         {@code controlProperty}.
+     */
+    public boolean hasValue(final ControlProperties controlProperty) {
+        final Observable observable = getObservable(controlProperty);
+        return hasValue(observable);
+    }
+
+    /**
+     * Checks, whether the given {@code observable} holds a non-null, non-blank value.
+     *
+     * @param observable
+     *            the observable to check
+     * @return {@code true}, if and only if the observable's value is non-null and non-blank.
+     */
+    private boolean hasValue(final Observable observable) {
+        if (observable == null) {
+            return false;
+        }
+        if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
+            final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
+            return observableValueHoldsValue(observableValue);
+        } else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
+            final ObservableList<?> observableList = (ObservableList<?>) observable;
+            return !observableList.isEmpty();
+        }
+        throw new IllegalStateException(
+                "Observable in control '" + getWrappedType().getCanonicalName()
+                        + "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+
+    }
+
+    /**
+     * Gets the {@link Observable} from the property described by {@link ControlProperties}.
+     * <p>
+     * The following value of the observable are the following:
+     * <ul>
+     * <li>{@link ControlProperties#SINGLE_VALUE_PROPERTY}: The simple value, e.g. the text from a
+     * {@link javafx.scene.control.TextField} is returned.</li>
+     * <li>{@link ControlProperties#ITEMS_OBSERVABLE_LIST}: The items of the control are returned, e.g. all items
+     * displayed in a {@link javafx.scene.control.TableView}.</li>
+     * <li>{@link ControlProperties#USER_VALUE_OBSERVABLE}: The user value is returned. This can be a single value e.g.
+     * for a {@link javafx.scene.control.TextField} or a {@link javafx.scene.control.TableView} with single-selection
+     * model, or can be a list for a {@link javafx.scene.control.TableView} with a multi-selection model.</li>
+     * </ul>
+     *
+     * @param controlProperty
+     *            the property to retrieve the value from
+     * @return the retrieved observable
+     */
+    public Observable getObservable(final ControlProperties controlProperty) {
+        switch (controlProperty) {
+        case SINGLE_VALUE_PROPERTY:
+            return getValueProperty();
+        case ITEMS_OBSERVABLE_LIST:
+            return getItems();
+        case USER_VALUE_OBSERVABLE:
+        default:
+            return getUserValueAsObservable();
+        }
     }
 
     /**
@@ -702,18 +804,7 @@ public class ControlWrapper extends NodeWrapper {
      */
     public boolean hasValueOrItemsSet() {
         final Observable observable = getValueOrItemsAsObservable();
-        if (observable == null) {
-            return false;
-        }
-        if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
-            final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
-            return observableValueHoldsValue(observableValue);
-        } else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
-            final ObservableList<?> observableList = (ObservableList<?>) observable;
-            return !observableList.isEmpty();
-        }
-        throw new IllegalStateException("Value property in control '" + getWrappedType().getCanonicalName()
-                + "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+        return hasValue(observable);
     }
 
     /**
@@ -723,19 +814,7 @@ public class ControlWrapper extends NodeWrapper {
      * @return {@code true}, if the wrapped control has value set by the user, {@code false} otherwise.
      */
     public boolean hasUserValueSet() {
-        final Observable observable = getUserValueAsObservable();
-        if (observable == null) {
-            return false;
-        }
-        if (ObservableValue.class.isAssignableFrom(observable.getClass())) {
-            final ObservableValue<?> observableValue = (ObservableValue<?>) observable;
-            return observableValueHoldsValue(observableValue);
-        } else if (ObservableList.class.isAssignableFrom(observable.getClass())) {
-            final ObservableList<?> observableList = (ObservableList<?>) observable;
-            return !observableList.isEmpty();
-        }
-        throw new IllegalStateException("User value property in control '" + getWrappedType().getCanonicalName()
-                + "' is of unknown type '" + observable.getClass().getCanonicalName() + "'!");
+        return hasValue(ControlProperties.USER_VALUE_OBSERVABLE);
     }
 
     /**
@@ -838,20 +917,7 @@ public class ControlWrapper extends NodeWrapper {
      */
     public Binding bind(final BeanPropertyReference<?> beanPropertyReference, final ControlProperties controlProperty,
             final String formatPattern) {
-        Observable observable;
-        switch (controlProperty) {
-        case SINGLE_VALUE_PROPERTY:
-            observable = getValueProperty();
-            break;
-        case ITEMS_OBSERVABLE_LIST:
-            observable = getItems();
-            break;
-        case USER_VALUE_OBSERVABLE:
-            observable = getUserValueAsObservable();
-            break;
-        default:
-            throw new IllegalStateException("Unsupported ControlProperties of type '" + controlProperty + "'!");
-        }
+        final Observable observable = getObservable(controlProperty);
         if (isObservableList(observable)) {
             return bindTypeObservableList((ObservableList<?>) observable, beanPropertyReference,
                     controlProperty == ControlProperties.USER_VALUE_OBSERVABLE);
@@ -937,7 +1003,28 @@ public class ControlWrapper extends NodeWrapper {
             return !StringUtils.isBlank((String) value);
         }
         return true;
+    }
 
+    /**
+     * Identifies the given control as mandatory.
+     *
+     * @param required
+     *            {@code true}, if the control and its value is required, {@code false} otherwise.
+     */
+    public void setRequired(final boolean required) {
+        final Control control = getWrapped();
+        control.getProperties().put(USER_PROPERTIES_REQUIRED_KEY, Boolean.valueOf(required));
+    }
+
+    /**
+     * Checks whether the control is mandatory.
+     *
+     * @return {@code true}, if the control's value is required, {@code false} otherwise.
+     */
+    public boolean isRequired() {
+        final Control control = getWrapped();
+        final Object value = control.getProperties().get(USER_PROPERTIES_REQUIRED_KEY);
+        return value instanceof Boolean && ((Boolean) value).booleanValue();
     }
 
     /**

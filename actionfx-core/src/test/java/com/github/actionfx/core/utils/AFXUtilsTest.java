@@ -25,6 +25,7 @@ package com.github.actionfx.core.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -64,16 +65,19 @@ import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
 import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -670,5 +674,58 @@ class AFXUtilsTest {
         assertThat(AFXUtils.determineObservableValueType(new SimpleMapProperty<>()), equalTo(ObservableMap.class));
         assertThat(AFXUtils.determineObservableValueType(new SimpleSetProperty<>()), equalTo(ObservableSet.class));
         assertThat(AFXUtils.determineObservableValueType(new SimpleListProperty<>()), equalTo(ObservableList.class));
+    }
+
+    @Test
+    void testInjectAsRootPane_newRootIsRegion_andSupportsMultipleChildren() {
+        // GIVEN
+        final BorderPane oldRoot = new BorderPane();
+        final AnchorPane newRoot = new AnchorPane();
+        final Scene scene = new Scene(oldRoot);
+
+        // WHEN
+        AFXUtils.injectAsRootPane(scene, newRoot);
+
+        // THEN
+        assertThat(scene.getRoot(), equalTo(newRoot));
+        assertThat(newRoot.getChildren(), hasSize(1));
+        assertThat(newRoot.getChildren().get(0), equalTo(oldRoot));
+        assertThat(oldRoot.getMaxWidth(), equalTo(Double.MAX_VALUE));
+        assertThat(oldRoot.getMaxHeight(), equalTo(Double.MAX_VALUE));
+    }
+
+    @Test
+    void testInjectAsRootPane_newRootIsRegion_andSupportsSingleChild() {
+        // GIVEN
+        final BorderPane oldRoot = new BorderPane();
+        final ScrollPane newRoot = new ScrollPane();
+        final Scene scene = new Scene(oldRoot);
+
+        // WHEN
+        AFXUtils.injectAsRootPane(scene, newRoot);
+
+        // THEN
+        assertThat(scene.getRoot(), equalTo(newRoot));
+        assertThat(newRoot.getContent(), equalTo(oldRoot));
+        assertThat(oldRoot.getMaxWidth(), equalTo(Double.MAX_VALUE));
+        assertThat(oldRoot.getMaxHeight(), equalTo(Double.MAX_VALUE));
+    }
+
+    @Test
+    void testInjectAsRootPane_newRootIsNotRegion() {
+        // GIVEN
+        final BorderPane oldRoot = new BorderPane();
+        final Group newRoot = new Group();
+        final Scene scene = new Scene(oldRoot);
+
+        // WHEN
+        AFXUtils.injectAsRootPane(scene, newRoot);
+
+        // THEN
+        assertThat(scene.getRoot(), equalTo(newRoot));
+        assertThat(newRoot.getChildren(), hasSize(1));
+        assertThat(newRoot.getChildren().get(0), equalTo(oldRoot));
+        assertThat(oldRoot.getMaxWidth(), not(equalTo(Double.MAX_VALUE)));
+        assertThat(oldRoot.getMaxHeight(), not(equalTo(Double.MAX_VALUE)));
     }
 }

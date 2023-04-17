@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -42,6 +43,7 @@ import com.github.actionfx.core.annotation.AFXApplication;
 import com.github.actionfx.core.annotation.AFXControlValue;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXSubscribe;
+import com.github.actionfx.core.annotation.ValidationMode;
 import com.github.actionfx.core.container.BeanContainerFacade;
 import com.github.actionfx.core.container.DefaultActionFXBeanContainer;
 import com.github.actionfx.core.container.instantiation.ConstructorBasedInstantiationSupplier;
@@ -56,6 +58,7 @@ import com.github.actionfx.core.instrumentation.ControllerWrapper;
 import com.github.actionfx.core.instrumentation.bytebuddy.ActionFXByteBuddyEnhancer;
 import com.github.actionfx.core.utils.AnnotationUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
+import com.github.actionfx.core.validation.ValidationResult;
 import com.github.actionfx.core.view.View;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -128,7 +131,6 @@ public class ActionFX {
 
     // internal framework state, starting with UNINITIALIZED. Further states are
     // CONFIGURED and finally INITIALIZED
-    // BUILT
     protected static ActionFXState actionFXState = ActionFXState.UNINITIALIZED;
 
     // the internal bean container for managing ActionFX components
@@ -160,8 +162,22 @@ public class ActionFX {
     // ActionFX setup
     protected ActionFXExtensionsBean actionFXExtensionsBean;
 
+    // the global validation mode to be applied to controls, in case these
+    // carry validation-related annotations. in that case, annotation do not need
+    // to mention a validation mode
+    protected ValidationMode validationGlobalMode;
+
+    // shall validation decorations be applied to scenegraph nodes in case of validation errors?
+    protected boolean validationApplyResultDecoration;
+
+    // shall decorations be applied to required fields in the scenegraph?
+    protected boolean validationApplyRequiredDecoration;
+
+    // what is the timeout in milliseconds ActionFX shall wait before starting to trigger a validation?
+    protected int validationStartTimeoutMs;
+
     /**
-     * Internal constructor. Use {@link #build()} method to create your application-specific instance of
+     * Internal constructor. Use {@link #builder()} method to create your application-specific instance of
      * {@link ActionFX}.
      */
     @SuppressFBWarnings(justification = "Design Decision")
@@ -342,6 +358,33 @@ public class ActionFX {
      */
     public ResourceBundle getControllerResourceBundle(final Class<?> controllerClass) {
         return beanContainer.resolveResourceBundle(controllerClass, observableLocale.getValue());
+    }
+
+    /**
+     * Gets an internationalized message from an underlying resource bundle that is registered for the supplied
+     * {@code controllerClass}.
+     * <p>
+     * In case the {@code messageKey} can not be resolved with the looked up resource bundle, the {@code defaultMessage}
+     * will be returned.
+     *
+     * @param controllerClass
+     *            the controller class for that a resource bundle was defined
+     * @param messageKey
+     *            the message key to look up
+     * @param defaultMessage
+     *            the default message that is returned in case the look up for the supplied {@code messageKey} fails
+     * @return the internationalized message
+     */
+    public String getMessage(final Class<?> controllerClass, final String messageKey, final String defaultMessage) {
+        final ResourceBundle resourceBundle = getControllerResourceBundle(controllerClass);
+        if (resourceBundle == null || StringUtils.isBlank(messageKey)) {
+            return defaultMessage;
+        }
+        try {
+            return resourceBundle.getString(messageKey);
+        } catch (final MissingResourceException e) {
+            return defaultMessage;
+        }
     }
 
     /**
@@ -741,6 +784,47 @@ public class ActionFX {
     }
 
     /**
+     * Performs a validation on controls inside the given {@code controller}.
+     * <p>
+     * This requires that {@link com.github.actionfx.core.validation.Validator} instances are registered inside the
+     * {@link View} associated with the given {@code controller}, or that the {@code controller} instance itself carries
+     * validation related annotations like {@link com.github.actionfx.core.annotation.AFXValidateRequired} or
+     * {@link com.github.actionfx.core.annotation.AFXValidateRegExp}.
+     *
+     * @param controller
+     *            the controller referencing the JavaFX controls to validate
+     * @param applyValidationDecoration
+     *            indicates whether validation errors shall be displayed as decorations, when there is a validation
+     *            failure
+     * @return {@code true}, if all validations passed successfully, {@code false}, if there are validation errors found
+     *         in the annotated controls.
+     */
+    public ValidationResult validate(final Object controller, final boolean applyValidationDecoration) {
+        final View view = getView(controller);
+        return view.validate(applyValidationDecoration);
+    }
+
+    /**
+     * Performs a validation on controls inside the given {@code controller}.
+     * <p>
+     * This requires that {@link com.github.actionfx.core.validation.Validator} instances are registered inside the
+     * {@link View} associated with the given {@code controller}, or that the {@code controller} instance itself carries
+     * validation related annotations like {@link com.github.actionfx.core.annotation.AFXValidateRequired} or
+     * {@link com.github.actionfx.core.annotation.AFXValidateRegExp}.
+     * <p>
+     * This method applies validation decorations by default. If you don't want to display validation decoration and
+     * want to handle validation messages by yourself, please use {@link #validate(Object, boolean)}.
+     *
+     * @param controller
+     *            the controller referencing the JavaFX controls to validate
+     * @return {@code true}, if all validations passed successfully, {@code false}, if there are validation errors found
+     *         in the annotated controls.
+     */
+    public ValidationResult validate(final Object controller) {
+        return validate(controller, true);
+    }
+
+    /**
      * The package name with dot-notation "." that shall be scanned for ActionFX components.
      *
      * @return this builder
@@ -794,6 +878,51 @@ public class ActionFX {
      */
     public ObservableValue<Locale> getObservableLocale() {
         return observableLocale;
+    }
+
+    /**
+     * Gets the global validation mode, if specified. When specifying a global validation mode as part of the setup
+     * phase of ActionFX, this global validation mode makes the specification of a particular validation mode inside a
+     * validation-related annotation like {@link com.github.actionfx.core.annotation.AFXValidateRequired} obsolete,
+     * reducing the number of attributes to be specified in these type of annotations.
+     *
+     * @return the global validation mode configured for ActionFX.
+     */
+    public ValidationMode getValidationGlobalMode() {
+        return validationGlobalMode;
+    }
+
+    /**
+     * Flag that indicates, whether validation decorations for validation results shall be displayed for controls under
+     * validation.
+     *
+     * @return {@code true}, if validation decorations shall be applied to controls under validation, {@code false}
+     *         otherwise.
+     */
+    public boolean isValidationApplyResultDecoration() {
+        return validationApplyResultDecoration;
+    }
+
+    /**
+     * Flag that indicates, whether decorations for required fields shall be displayed for controls under validation.
+     *
+     * @return {@code true}, if validation decorations for required fields shall be applied to controls, {@code false}
+     *         otherwise.
+     */
+    public boolean isValidationApplyRequiredDecoration() {
+        return validationApplyRequiredDecoration;
+    }
+
+    /**
+     * A global timeout setting for staring a control validation after a change in a particular control occurs. If the
+     * returned value is {@code -1}, there is no global timeout setting and the timeout value needs to be defined in all
+     * validation related annotations directly (this might make more sense in many cases).
+     *
+     * @return the validation start timeout value in milliseconds, or {@code -1}, if there is no global setting for the
+     *         validation start timeout.
+     */
+    public int getValidationStartTimeoutMs() {
+        return validationStartTimeoutMs;
     }
 
     /**
@@ -867,6 +996,14 @@ public class ActionFX {
 
         private boolean enableBeanContainerAutodetection = true;
 
+        private ValidationMode validationGlobalMode = null;
+
+        protected boolean validationApplyResultDecoration = true;
+
+        protected boolean validationApplyRequiredDecoration = true;
+
+        private int validationStartTimeoutMs = -1;
+
         /**
          * Creates the instance of {@link ActionFX} ready to use.
          *
@@ -885,6 +1022,11 @@ public class ActionFX {
                     : (thread, exception) -> LOG.error("[Thread {}] Uncaught exception", thread.getName(), exception);
             actionFX.observableLocale = observableLocale != null ? observableLocale
                     : new SimpleObjectProperty<>(Locale.getDefault());
+            actionFX.validationGlobalMode = validationGlobalMode != null ? validationGlobalMode
+                    : ValidationMode.GLOBAL_VALIDATION_MODE_UNSPECIFIED;
+            actionFX.validationApplyResultDecoration = validationApplyResultDecoration;
+            actionFX.validationApplyRequiredDecoration = validationApplyRequiredDecoration;
+            actionFX.validationStartTimeoutMs = validationStartTimeoutMs;
             postConstruct(actionFX);
             return actionFX;
         }
@@ -912,6 +1054,10 @@ public class ActionFX {
             mainViewId = afxApplication.mainViewId();
             scanPackage = afxApplication.scanPackage();
             enableBeanContainerAutodetection = afxApplication.enableBeanContainerAutodetection();
+            validationGlobalMode = afxApplication.validationGlobalMode();
+            validationApplyResultDecoration = afxApplication.validationApplyResultDecoration();
+            validationApplyRequiredDecoration = afxApplication.validationApplyRequiredDecoration();
+            validationStartTimeoutMs = afxApplication.validationStartTimeoutMs();
             return this;
         }
 
@@ -1132,6 +1278,63 @@ public class ActionFX {
          */
         public ActionFXBuilder enableBeanContainerAutodetection(final boolean enableAutoDetect) {
             enableBeanContainerAutodetection = enableAutoDetect;
+            return this;
+        }
+
+        /**
+         * Specifies the global validation mode that shall be applied on JavaFX controls that carry an
+         * validation-related annotation like {@link com.github.actionfx.core.annotation.AFXValidateRequired}. In case a
+         * global validation mode is set via this builder, the annotations do not need to specify a validation mode
+         * anymore. This is helpful for reducing the number of attributes in validation-related annotations and ActionFX
+         * controllers.
+         *
+         * @param globalValidationMode
+         *            the global validation mode
+         * @return this builder
+         */
+        public ActionFXBuilder validationGlobalMode(final ValidationMode globalValidationMode) {
+            validationGlobalMode = globalValidationMode;
+            return this;
+        }
+
+        /**
+         * Specifies the flag that indicates, whether validation decorations for validation results shall be applied to
+         * controls under validation. Default is {@code true}.
+         *
+         * @param validationApplyResultDecoration
+         *            flag indicating whether decorations for validated controls shall be displayed or not.
+         * @return this builder
+         */
+        public ActionFXBuilder validationApplyResultDecoration(final boolean validationApplyResultDecoration) {
+            this.validationApplyResultDecoration = validationApplyResultDecoration;
+            return this;
+        }
+
+        /**
+         * Specifies the flag that indicates, whether validation decorations for required fields shall be applied to
+         * controls under validation. Decorations include marking required fields. Default is {@code true}.
+         *
+         * @param validationApplyRequiredDecoration
+         *            flag indicating whether decorations for required fields shall be displayed or not.
+         * @return this builder
+         */
+        public ActionFXBuilder validationApplyRequiredDecoration(final boolean validationApplyRequiredDecoration) {
+            this.validationApplyRequiredDecoration = validationApplyRequiredDecoration;
+            return this;
+        }
+
+        /**
+         * A global timeout setting for staring a control validation after a change in a particular control occurs. If
+         * the returned value is {@code -1}, there is no global timeout setting and the timeout value needs to be
+         * defined in all validation related annotations directly (this might make more sense in many cases). Default is
+         * {@code -1} (no global timeout).
+         *
+         * @param validationStartTimeoutMs
+         *            the timeout in milliseconds after that the validations shall be executed on a control's value
+         * @return this builder
+         */
+        public ActionFXBuilder validationStartTimeoutMs(final int validationStartTimeoutMs) {
+            this.validationStartTimeoutMs = validationStartTimeoutMs;
             return this;
         }
 

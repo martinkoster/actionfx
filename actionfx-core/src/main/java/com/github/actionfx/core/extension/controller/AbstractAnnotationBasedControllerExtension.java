@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.beans.BeanWrapper;
 import com.github.actionfx.core.extension.AbstractAnnotationBasedExtension;
 import com.github.actionfx.core.view.View;
@@ -122,6 +123,21 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
     }
 
     /**
+     * Looks up controls identified by {@code controlIds}. The controls with the given ID are supposed to by inside the
+     * given {@code view}.
+     *
+     * @param view
+     *            the view containing the controls with id {@code controlIds}
+     * @param controlIds
+     *            the control IDs for the controls to be looked up
+     * @return an array with looked up controls, never {@code null}
+     */
+    protected Control[] lookupControls(final View view, final String... controlIds) {
+        return Arrays.stream(createControlWrapper(view, controlIds)).map(ControlWrapper::getWrapped)
+                .toArray(size -> new Control[size]);
+    }
+
+    /**
      * Creates a {@link NodeWrapper} for a node identified by {@code nodeId}. The node with the given ID is supposed to
      * by inside the given {@code view}.
      *
@@ -162,6 +178,22 @@ public abstract class AbstractAnnotationBasedControllerExtension<A extends Annot
             return (T) fieldValue;
         }
         return null;
+    }
+
+    /**
+     * Looks up an internationalized message for the currently set user locale within ActionFX. In case the
+     * {@code messageKey} is empty or can not be looked up, the {@code defaultMessage} will be returned.
+     *
+     * @param controllerClass
+     *            the controller class for that a resource bundle is specified
+     * @param messageKey
+     *            the message key to look up
+     * @param defaultMessage
+     *            the default message to use, if the lookup via {@code messageKey} is not possible
+     * @return the resolved message
+     */
+    protected String getMessage(final Class<?> controllerClass, final String messageKey, final String defaultMessage) {
+        return ActionFX.getInstance().getMessage(controllerClass, messageKey, defaultMessage);
     }
 
 }

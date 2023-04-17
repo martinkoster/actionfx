@@ -43,67 +43,89 @@ import com.github.actionfx.core.extension.controller.OnActionMethodControllerExt
 import com.github.actionfx.core.extension.controller.OnControlValueChangeMethodControllerExtension;
 import com.github.actionfx.core.extension.controller.OnLoadControlDataMethodControllerExtension;
 import com.github.actionfx.core.extension.controller.UseFilteredListControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateBooleanControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateCustomControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateMinMaxControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateRegExpControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateRequiredControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateSizeControllerExtension;
+import com.github.actionfx.core.extension.controller.ValidateTemporalControllerExtension;
+import com.github.actionfx.core.instrumentation.ControllerWrapper;
 
 /**
- * Post-processor for controller instances that is invoked after view creation
- * and dependency injection, but before potential
- * {@code @PostConstruct}-annotated methods.
+ * Post-processor for controller instances that is invoked after view creation and dependency injection, but before
+ * potential {@code @PostConstruct}-annotated methods.
  *
  * @author koster
  *
  */
 public class ControllerInstancePostProcessor {
 
-	private final List<Consumer<Object>> controllerExtensions = new ArrayList<>();
+    private final List<Consumer<Object>> controllerExtensions = new ArrayList<>();
 
-	public ControllerInstancePostProcessor() {
-		this(Collections.emptyList());
-	}
+    public ControllerInstancePostProcessor() {
+        this(Collections.emptyList());
+    }
 
-	public ControllerInstancePostProcessor(final List<Consumer<Object>> customControllerExtension) {
-		// order of extensions is important - field level-control configuration must be
-		// performed before data is populated in the controls
-		controllerExtensions.add(new NestedViewControllerExtension());
-		controllerExtensions.add(new EnableMultiSelectionControllerExtension());
-		controllerExtensions.add(new UseFilteredListControllerExtension());
-		controllerExtensions.add(new OnActionMethodControllerExtension());
-		controllerExtensions.add(new ConverterControllerExtension());
-		controllerExtensions.add(new CellValueConfigControllerExtension());
-		controllerExtensions.add(new EnableNodeControllerExtension());
-		controllerExtensions.add(new DisableNodeControllerExtension());
-		controllerExtensions.add(new OnLoadControlDataMethodControllerExtension());
-		controllerExtensions.add(new OnControlValueChangeMethodControllerExtension());
-		controllerExtensions.add(new FormBindingControllerExtension());
+    public ControllerInstancePostProcessor(final List<Consumer<Object>> customControllerExtension) {
+        // order of extensions is important - field level-control configuration must be
+        // performed before data is populated in the controls
+        controllerExtensions.add(new NestedViewControllerExtension());
+        controllerExtensions.add(new EnableMultiSelectionControllerExtension());
+        controllerExtensions.add(new UseFilteredListControllerExtension());
+        controllerExtensions.add(new OnActionMethodControllerExtension());
+        controllerExtensions.add(new ConverterControllerExtension());
+        controllerExtensions.add(new CellValueConfigControllerExtension());
+        controllerExtensions.add(new OnLoadControlDataMethodControllerExtension());
+        controllerExtensions.add(new OnControlValueChangeMethodControllerExtension());
+        controllerExtensions.add(new FormBindingControllerExtension());
 
-		// add the custom controller extensions
-		controllerExtensions.addAll(customControllerExtension);
-	}
+        // add validation extensions
+        controllerExtensions.add(new ValidateRequiredControllerExtension());
+        controllerExtensions.add(new ValidateBooleanControllerExtension());
+        controllerExtensions.add(new ValidateMinMaxControllerExtension());
+        controllerExtensions.add(new ValidateSizeControllerExtension());
+        controllerExtensions.add(new ValidateTemporalControllerExtension());
+        controllerExtensions.add(new ValidateRegExpControllerExtension());
+        controllerExtensions.add(new ValidateCustomControllerExtension());
 
-	/**
-	 * Performs a post-processing on the supplied {@code controller}, including
-	 * parsing of applied ActionFX annotations like {@link AFXNestedViews},
-	 * {@link AFXLoadControlData}, {@link AFXOnAction}.
-	 *
-	 * @param controller the controller instance to post process
-	 */
-	public void postProcess(final Object controller) {
-		applyControllerExtensions(controller);
-	}
+        // add node de-/activation extensions - these are depending on the validation extension
+        controllerExtensions.add(new EnableNodeControllerExtension());
+        controllerExtensions.add(new DisableNodeControllerExtension());
 
-	/**
-	 * Applies method-level annotations (e.g. {@link AFXOnControlValueChange}.
-	 *
-	 * @param instance the instance that is checked for ActionFX method level
-	 *                 annotations
-	 * @param view     the view that belongs to the controller
-	 */
-	private void applyControllerExtensions(final Object instance) {
-		for (final Consumer<Object> extension : controllerExtensions) {
-			extension.accept(instance);
-		}
-	}
+        // add the custom controller extensions
+        controllerExtensions.addAll(customControllerExtension);
+    }
 
-	public List<Consumer<Object>> getUnmodifiableControllerExtensions() {
-		return Collections.unmodifiableList(controllerExtensions);
-	}
+    /**
+     * Performs a post-processing on the supplied {@code controller}, including parsing of applied ActionFX annotations
+     * like {@link AFXNestedViews}, {@link AFXLoadControlData}, {@link AFXOnAction}.
+     *
+     * @param controller
+     *            the controller instance to post process
+     */
+    public void postProcess(final Object controller) {
+        applyControllerExtensions(controller);
+        // perform an initial validation of the form, so that the validation result inside the view
+        // reflects the current state of the controls.
+        ControllerWrapper.getViewFrom(controller).validate(false);
+    }
+
+    /**
+     * Applies method-level annotations (e.g. {@link AFXOnControlValueChange}.
+     *
+     * @param instance
+     *            the instance that is checked for ActionFX method level annotations
+     * @param view
+     *            the view that belongs to the controller
+     */
+    private void applyControllerExtensions(final Object instance) {
+        for (final Consumer<Object> extension : controllerExtensions) {
+            extension.accept(instance);
+        }
+    }
+
+    public List<Consumer<Object>> getUnmodifiableControllerExtensions() {
+        return Collections.unmodifiableList(controllerExtensions);
+    }
 }

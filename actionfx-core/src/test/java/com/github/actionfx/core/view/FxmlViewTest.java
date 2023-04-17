@@ -27,38 +27,59 @@ import static com.github.actionfx.core.test.utils.TestUtils.assertControlHasUser
 import static com.github.actionfx.core.test.utils.TestUtils.enterValue;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.testfx.util.WaitForAsyncUtils;
 
+import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.annotation.AFXShowView;
+import com.github.actionfx.core.annotation.ValidationMode;
 import com.github.actionfx.core.bind.BindingTargetResolver;
 import com.github.actionfx.core.bind.MappingBasedBindingTargetResolver;
 import com.github.actionfx.core.container.instantiation.MultilingualViewController;
+import com.github.actionfx.core.decoration.Decoration;
+import com.github.actionfx.core.decoration.DecorationUtils;
+import com.github.actionfx.core.decoration.GraphicDecoration;
+import com.github.actionfx.core.decoration.StyleClassDecoration;
+import com.github.actionfx.core.validation.ValidationMessage;
+import com.github.actionfx.core.validation.ValidationOptions;
+import com.github.actionfx.core.validation.ValidationResult;
+import com.github.actionfx.core.validation.ValidationStatus;
+import com.github.actionfx.core.validation.Validator;
 import com.github.actionfx.core.view.graph.ControlProperties;
+import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.core.view.graph.NodeWrapper;
 import com.github.actionfx.testing.annotation.TestInFxThread;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
@@ -69,6 +90,11 @@ import javafx.stage.Stage;
 
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class FxmlViewTest {
+
+	@AfterEach
+	void onTearDown() {
+		resetActionFX();
+	}
 
 	@Test
 	void testFxmlView() {
@@ -356,6 +382,348 @@ class FxmlViewTest {
 		assertThat(model.getPostalCode(), equalTo("Please enter postal code"));
 		assertThat(model.getCity(), equalTo("Please enter city"));
 		assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_onChange_noDelayedValidation_noRequiredDecoration() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE,
+				ValidationResult.builder().addErrorMessage("Error message", textField, true));
+
+		// WHEN
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().validationMode(ValidationMode.ONCHANGE));
+		textField.setText("Hello there");
+
+		// THEN
+		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+		assertThat(ControlWrapper.of(textField).isRequired(), equalTo(false));
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_onChange_noDelayedValidation_requiredDecorationIsApplied() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE, ValidationResult.builder());
+
+		// WHEN
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().required(true).validationMode(ValidationMode.ONCHANGE));
+		textField.setText("Hello there");
+
+		// THEN
+		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.OK));
+		assertThat(ControlWrapper.of(textField).isRequired(), equalTo(true));
+		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class);
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_onChange_noDelayedValidation_requiredDecorationAndErrorDecorationIsApplied() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE,
+				ValidationResult.builder().addErrorMessage("Error message", textField, true));
+
+		// WHEN
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().required(true).validationMode(ValidationMode.ONCHANGE));
+		textField.setText("Hello there");
+
+		// THEN
+		assertThatValidationStatusIsERROR(view.getValidationResult());
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+		assertThat(ControlWrapper.of(textField).isRequired(), equalTo(true));
+		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class, GraphicDecoration.class,
+				StyleClassDecoration.class);
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_onChange_noDelayedValidation_errorValidationDecorationIsApplied() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE, ValidationResult.builder().addErrorMessage("Error message", // ERROR
+																														// (onChange)
+						textField, true));
+
+		// WHEN register
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().validationMode(ValidationMode.ONCHANGE));
+		// THEN everything is OK
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// AND WHEN a change in the control occurs
+		textField.setText("New Text");
+
+		// THEN an error is registered
+		assertThatValidationStatusIsERROR(view.getValidationResult());
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class, StyleClassDecoration.class);
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_onChange_noDelayedValidation_errorValidationDecorationIsDisabled() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE, ValidationResult.builder().addErrorMessage("Error message", // ERROR
+																														// (onChange)
+						textField, true));
+
+		// WHEN register
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().validationMode(ValidationMode.ONCHANGE)
+						.applyValidationResultDecorations(false));
+		// THEN everything is OK
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// AND WHEN a change in the control occurs
+		textField.setText("New Text");
+
+		// THEN an error is registered, but node has no decoration
+		assertThatValidationStatusIsERROR(view.getValidationResult());
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+		assertThatNodeHasNoDecorations(textField);
+	}
+
+	@Test
+	void testRegisterValidator_onChange_delayedValidation_errorValidationDecorationIsApplied() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE, ValidationResult.builder().addErrorMessage("Error message", // ERROR
+																														// (onChange)
+						textField, true));
+
+		// WHEN register
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().validationMode(ValidationMode.ONCHANGE).validationStartTimeoutMs(100));
+		// THEN everything is OK
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// AND WHEN a change in the control occurs
+		textField.setText("New Text");
+		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
+
+		// THEN an error is registered
+		assertThatValidationStatusIsERROR(view.getValidationResult());
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class, StyleClassDecoration.class);
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_onChange_noDelayedValidation_onObservableList_onUserValue() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final ListView<String> shoppingCartListView = controller.shoppingCartListView;
+
+		final Validator validator = validatorProducingValidationResultsForControl(shoppingCartListView,
+				ControlProperties.USER_VALUE_OBSERVABLE, ValidationResult.builder().addErrorMessage("Error message", // ERROR
+																														// (onChange)
+						shoppingCartListView, true));
+
+		// WHEN register
+		view.registerValidator("shoppingCartListView", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options().validationMode(ValidationMode.ONCHANGE));
+		// THEN everything is OK
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// AND WHEN a change in the control occurs
+		shoppingCartListView.getSelectionModel().select("Item 1");
+
+		// THEN an error is registered
+		assertThatValidationStatusIsERROR(view.getValidationResult());
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+	}
+
+	@Test
+	@TestInFxThread
+	void testRegisterValidator_withGlobalValidationModeOnChange_noDelayedValidation() {
+		// GIVEN
+		givenActionFXSpecifiesValidationMode(ValidationMode.ONCHANGE);
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+		final TextField textField = view.lookupNode("lastNameTextField").getWrapped();
+		final Validator validator = validatorProducingValidationResultsForControl(textField,
+				ControlProperties.USER_VALUE_OBSERVABLE, ValidationResult.builder().addErrorMessage("Error message", // ERROR
+																														// (onChange)
+						textField, true));
+
+		// WHEN register
+		view.registerValidator("lastNameTextField", ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options()); // no validation mode specified here, take the global validation mode
+
+		// THEN everything is OK
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// AND WHEN a change in the control occurs
+		textField.setText("New Text");
+
+		// THEN an error is registered
+		assertThatValidationStatusIsERROR(view.getValidationResult());
+		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
+	}
+
+	@Test
+	@TestInFxThread
+	void testValidate_withValidationDecorationsApplied() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+
+		final Control lastNameTextField = view.lookupNode("lastNameTextField").getWrapped();
+		registerValidatorWithControl(view, lastNameTextField,
+				ValidationResult.builder().addErrorMessage("Error message 1", // ERROR (onValidate)
+						lastNameTextField, true));
+
+		final Control firstNameTextField = view.lookupNode("firstNameTextField").getWrapped();
+		registerValidatorWithControl(view, firstNameTextField,
+				ValidationResult.builder().addErrorMessage("Error message 2", // ERROR (onValidate)
+						firstNameTextField, true));
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// WHEN an explicite validation is requested
+		final ValidationResult validationResult = view.validate();
+
+		// THEN two errors are registered
+		assertThatValidationStatusIsERROR(validationResult);
+		assertThatValidationResultHoldsMessagesWithText(validationResult, "Error message 1", "Error message 2");
+		assertThatNodeHasDecorationsOfType(validationResult.getMessages().get(0).getTarget(),
+				StyleClassDecoration.class, GraphicDecoration.class);
+		assertThatNodeHasDecorationsOfType(validationResult.getMessages().get(1).getTarget(),
+				StyleClassDecoration.class, GraphicDecoration.class);
+	}
+
+	@Test
+	@TestInFxThread
+	void testValidate_withValidationDecorationsDisabled() {
+		// GIVEN
+		givenActionFXIsSetupWithDefaults();
+		final CustomerController controller = new CustomerController();
+		final FxmlView view = new FxmlView("testId", "/testfxml/CustomerForm.fxml", controller);
+		controller.init();
+
+		final Control lastNameTextField = view.lookupNode("lastNameTextField").getWrapped();
+		registerValidatorWithControl(view, lastNameTextField,
+				ValidationResult.builder().addErrorMessage("Error message 1", // ERROR (onValidate)
+						lastNameTextField, true));
+
+		final Control firstNameTextField = view.lookupNode("firstNameTextField").getWrapped();
+		registerValidatorWithControl(view, firstNameTextField,
+				ValidationResult.builder().addErrorMessage("Error message 2", // ERROR (onValidate)
+						firstNameTextField, true));
+		assertThatValidationStatusIsOK(view.getValidationResult());
+
+		// WHEN an explicite validation is requested
+		final ValidationResult validationResult = view.validate(false);
+
+		// THEN two errors are registered
+		assertThatValidationStatusIsERROR(validationResult);
+		assertThatValidationResultHoldsMessagesWithText(validationResult, "Error message 1", "Error message 2");
+		assertThatNodeHasNoDecorations(validationResult.getMessages().get(0).getTarget());
+		assertThatNodeHasNoDecorations(validationResult.getMessages().get(1).getTarget());
+	}
+
+	private void registerValidatorWithControl(final FxmlView view, final Control control, final ValidationResult result,
+			final ValidationResult... results) {
+		final Validator validator = validatorProducingValidationResultsForControl(control,
+				ControlProperties.USER_VALUE_OBSERVABLE, result, results);
+		view.registerValidator(control, ControlProperties.USER_VALUE_OBSERVABLE, validator,
+				ValidationOptions.options());
+	}
+
+	private Validator validatorProducingValidationResultsForControl(final Control control,
+			final ControlProperties controlProperty, final ValidationResult result, final ValidationResult... results) {
+
+		final Validator validator = Mockito.mock(Validator.class);
+		when(validator.validate(control, controlProperty)).thenReturn(result, results);
+		return validator;
+	}
+
+	private void assertThatValidationResultHoldsMessagesWithText(final ValidationResult validationResult,
+			final String... messages) {
+		assertThat(validationResult, notNullValue());
+		assertThat(validationResult.getMessages(), hasSize(messages.length));
+		assertThat(validationResult.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
+				containsInAnyOrder(messages));
+	}
+
+	private void assertThatValidationStatusIsOK(final ValidationResult validationResult) {
+		if (validationResult != null) {
+			assertThat(validationResult.getStatus(), equalTo(ValidationStatus.OK));
+		}
+	}
+
+	private void assertThatValidationStatusIsERROR(final ValidationResult validationResult) {
+		assertThat(validationResult, notNullValue());
+		assertThat(validationResult.getStatus(), equalTo(ValidationStatus.ERROR));
+	}
+
+	private void assertThatNodeHasDecorationsOfType(final Node node, final Class<?>... decorationTypes) {
+		final List<Decoration> nodeDecorations = DecorationUtils.getDecorations(node);
+		assertThat(nodeDecorations, hasSize(decorationTypes.length));
+		assertThat(nodeDecorations.stream().map(Decoration::getClass).collect(Collectors.toList()),
+				hasItems(decorationTypes));
+	}
+
+	private void assertThatNodeHasNoDecorations(final Node node) {
+		final List<Decoration> nodeDecorations = DecorationUtils.getDecorations(node);
+		assertThat(nodeDecorations, hasSize(0));
+	}
+
+	private void givenActionFXSpecifiesValidationMode(final ValidationMode validationMode) {
+		ActionFX.builder().validationGlobalMode(validationMode).build();
+	}
+
+	private void givenActionFXIsSetupWithDefaults() {
+		ActionFX.builder().build();
+	}
+
+	private void resetActionFX() {
+		if (ActionFX.isConfigured()) {
+			ActionFX.getInstance().reset();
+		}
 	}
 
 	private CustomerModel createCustomerModel() {

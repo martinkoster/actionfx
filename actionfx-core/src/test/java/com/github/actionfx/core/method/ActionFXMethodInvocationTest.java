@@ -73,7 +73,7 @@ class ActionFXMethodInvocationTest {
     @Test
     void testCall_voidMethod() {
         // GIVEN
-        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "voidMethod");
+        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "voidMethod", false);
 
         // WHEN
         final Object returnValue = invocation.call();
@@ -86,7 +86,7 @@ class ActionFXMethodInvocationTest {
     @Test
     void testCall_intMethod() {
         // GIVEN
-        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "intMethod", 42);
+        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "intMethod", false, 42);
 
         // WHEN
         final Object returnValue = invocation.call();
@@ -100,7 +100,7 @@ class ActionFXMethodInvocationTest {
     @Test
     void testCallAsync_intMethod() {
         // GIVEN
-        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "intMethod", 42);
+        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "intMethod", false, 42);
         final Consumer<Integer> consumer = Mockito.mock(Consumer.class);
 
         // WHEN
@@ -116,7 +116,7 @@ class ActionFXMethodInvocationTest {
     void testCall_methodWithActionEvent() {
         // GIVEN
         final ActionEvent actionEvent = new ActionEvent();
-        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "methodWithArgs",
+        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "methodWithArgs", false,
                 "Hello World", 42, actionEvent);
 
         // WHEN
@@ -130,6 +130,7 @@ class ActionFXMethodInvocationTest {
     void testCall_methodWithAnnotation() {
         // GIVEN
         final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "methodWithArgsAndAnnotation",
+                false,
                 "Hello World", 42);
 
         // WHEN
@@ -144,7 +145,7 @@ class ActionFXMethodInvocationTest {
     void testCall_ambiguousMethod() {
         // WHEN
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> new ActionFXMethodInvocation(holder, "ambigiousMethod", "Hello World", 42));
+                () -> new ActionFXMethodInvocation(holder, "ambigiousMethod", false, "Hello World", 42));
 
         // THEN
         assertThat(ex.getMessage(), containsString(
@@ -155,11 +156,38 @@ class ActionFXMethodInvocationTest {
     void testCall_noMatchingMethod() {
         // WHEN
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> new ActionFXMethodInvocation(holder, "voidMethod", "Hello World", 42));
+                () -> new ActionFXMethodInvocation(holder, "voidMethod", false, "Hello World", 42));
 
         // THEN
         assertThat(ex.getMessage(),
                 containsString("does not have method with name 'voidMethod' that accepts the supplied arguments"));
+    }
+
+    @Test
+    void testCall_findMethodWithNoArguments() {
+        // GIVEN
+        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "voidMethod", true,
+                "Hello World", 42);
+
+        // WHEN
+        final Object returnValue = invocation.call();
+
+        // THEN
+        verify(holder, times(1)).voidMethod();
+        assertThat(returnValue, nullValue());
+    }
+
+    @Test
+    void testCall_findMethodWithLessArguments() {
+        // GIVEN
+        final ActionFXMethodInvocation invocation = new ActionFXMethodInvocation(holder, "intMethod", true, 42, 43, 44,
+                45);
+
+        // WHEN
+        invocation.call();
+
+        // THEN
+        verify(holder, times(1)).intMethod(42);
     }
 
     @Test

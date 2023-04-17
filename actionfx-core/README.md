@@ -4,12 +4,12 @@ The "actionfx-core" module consists of the core functionality of ActionFX.
 
 Module | Description | API Documentation 
 ------ | ----------- | ----------------- 
-[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/1.5.2/actionfx-core/index.html) 
+[actionfx-core](README.md) | The core routines around ActionFX. It contains the central class [ActionFX](actionfx-core/src/main/java/com/github/actionfx/core/ActionFX.java) for accessing controllers and views. As ActionFX uses an internal bean container with dependency injection support, it is recommended to wire all controllers with @Inject instead of accessing them through this class (please note that there is also support of Spring's bean container through ActionFX's `actionfx-spring-boot` module). | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-core/index.html) 
 
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.5.2"
+implementation group: "com.github.martinkoster", name: "actionfx-core", version: "1.6.0"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-core</artifactId>
-    <version>1.5.2</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
@@ -35,21 +35,29 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
     + [Annotations for handling Views](#annotations-for-handling-views)
       - [Annotation @AFXNestedView (Field Annotation for fields annotated with @FXML)](#annotation-afxnestedview)
       - [Annotation @AFXShowView (Method Annotation)](#annotation-afxshowview)
-    + [Annotations for working with JavaFX controls and their values](#annotations-for-working-with-javafx-controls-and-their-values)      
-      - [Annotation @AFXLoadControlData (Method Annotation)](#annotation-AFXLoadControlData)
+    + [Annotations for working with JavaFX controls and their values](#annotations-for-working-with-javafx-controls-and-their-values)
+      - [Annotation @AFXLoadControlData (Method Annotation)](#annotation-afxloadcontroldata)
       - [Annotation @AFXOnControlValueChange (Method Annotation)](#annotation-afxoncontrolvaluechange)
       - [Annotation @AFXArgHint (Method Argument Annotation)](#annotation-afxarghint)
       - [Annotation @AFXControlValue (Method Argument Annotation)](#annotation-afxcontrolvalue)
       - [Annotation @AFXConverter (Field Annotation)](#annotation-afxconverter)
       - [Annotation @AFXOnAction (Method Annotation)](#annotation-afxonaction)
-    + [Annotations for declarative Form-Binding](#annotations-for-declarative-form-binding)  
+    + [Annotations for declarative Form-Binding](#annotations-for-declarative-form-binding)
       - [Annotation @AFXFormBinding (Field Annotation)](#annotation-afxformbinding)
       - [Annotation @AFXFormMapping (Field Annotation)](#annotation-afxformmapping)
-    + [Annotations for configuring Tables](#annotations-for-configuring-tables)      
+    + [Annotations for Validations](#annotations-for-validations)
+      - [Annotation @AFXValidateRequired (Field Annotation)](#annotation-afxvalidaterequired)
+      - [Annotation @AFXValidateSize (Field Annotation)](#annotation-afxvalidatesize)
+      - [Annotation @AFXValidateMinMax (Field Annotation)](#annotation-afxvalidateminmax)
+      - [Annotation @AFXValidateBoolean (Field Annotation)](#annotation-afxvalidateboolean)
+      - [Annotation @AFXValidateRegExp (Field Annotation)](#annotation-afxvalidateregexp)
+      - [Annotation @AFXValidateTemporal (Field Annotation)](#annotation-afxvalidatetemporal)
+      - [Annotation @AFXValidateCustom (Field Annotation)](#annotation-afxvalidatecustom)
+    + [Annotations for configuring Tables](#annotations-for-configuring-tables)
       - [Annotation @AFXCellValueConfig (Field Annotation)](#annotation-afxcellvalueconfig)
       - [Annotation @AFXEnableMultiSelection (Field Annotation for fields annotated with @FXML)](#annotation-afxenablemultiselection)
       - [Annotation @AFXUseFilteredList (Field Annotation for fields annotated with @FXML)](#annotation-afxusefilteredlist)
-    + [Annotations for controlling the disabled state of a Node](#annotations-for-controlling-the-disabled-state-of-a-node)      
+    + [Annotations for controlling the disabled state of a Node](#annotations-for-controlling-the-disabled-state-of-a-node)
       - [Annotation @AFXEnableNode (Field Annotation)](#annotation-afxenablenode)
       - [Annotation @AFXDisableNode (Field Annotation)](#annotation-afxdisablenode)
     + [Annotations triggering User Dialogs](#annotations-triggering-user-dialogs)
@@ -66,13 +74,30 @@ implementation group: "com.github.martinkoster", name: "actionfx-core", version:
 ## Overview
 
 This module provides:
-- The central class [ActionFX](src/main/java/com/github/actionfx/core/ActionFX.java) for retrieving views and controllers (however, retrieving controllers and views via dependency injection via fields annotated by @Inject should be preferred). An instance of the ActionFX class can be retrieved after successful setup via `ActionFX.getInstance()`
-- A bean container that supports dependency injections via @Inject and supports post construction method invocation via @PostConstruct.
-- Controller definitions via the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) annotation, declaring FXML-based views.
-- Support for nested views: It is possible to embed further views into a view via the [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation, either as part of the controller definition in [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java) or by applying the [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation on @FXML annotated view components.
-- Byte-code enhancement via [ActionFXByteBuddyEnhancer](src/main/java/com/github/actionfx/core/instrumentation/bytebuddy/ActionFXByteBuddyEnhancer.java) facilities in order to enhance controller classes and to allow aspect-oriented programming. Two strategies are supported: byte-code enhancement via a Java agent installed at runtime, or enhancement by sub-classing. 
-- Annotations are provided that can be used inside ActionFX controllers to wire JavaFX controls to controller methods. No more tons of code like `tableView.getSelectionModel().getSelectedItem().addChangeListener((observable, oldValue, newValue) -> onTableViewSelect(newValue));`. This makes the code more readable and maintainable.
-- Methods annotated by [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) can be used to implement a flow between view. Those annotated methods are intercepted and after successful method invocation, the desired view is shown (either as nested view in the current scene graph by attaching the sub-view or by displaying the view in a new stage).
+- The central class [ActionFX](src/main/java/com/github/actionfx/core/ActionFX.java) for retrieving views and
+  controllers (however, retrieving controllers and views via dependency injection via fields annotated by @Inject should
+  be preferred). An instance of the ActionFX class can be retrieved after successful setup via `ActionFX.getInstance`
+- A bean container that supports dependency injections via @Inject and supports post construction method invocation via
+  @PostConstruct.
+- Controller definitions via the [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java)
+  annotation, declaring FXML-based views.
+- Support for nested views: It is possible to embed further views into a view via
+  the [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation, either as part
+  of the controller definition in [@AFXController](src/main/java/com/github/actionfx/core/annotation/AFXController.java)
+  or by applying the [@AFXNestedView](src/main/java/com/github/actionfx/core/annotation/AFXNestedView.java) annotation
+  on @FXML annotated view components.
+- Byte-code enhancement
+  via [ActionFXByteBuddyEnhancer](src/main/java/com/github/actionfx/core/instrumentation/bytebuddy/ActionFXByteBuddyEnhancer.java)
+  facilities in order to enhance controller classes and to allow aspect-oriented programming. Two strategies are
+  supported: byte-code enhancement via a Java agent installed at runtime, or enhancement by sub-classing.
+- Annotations are provided that can be used inside ActionFX controllers to wire JavaFX controls to controller methods.
+  No more tons of code
+  like `tableView.getSelectionModel().getSelectedItem().addChangeListener((observable, oldValue, newValue) -> onTableViewSelect(newValue));`.
+  This makes the code more readable and maintainable.
+- Methods annotated by [@AFXShowView](src/main/java/com/github/actionfx/core/annotation/AFXShowView.java) can be used to
+  implement a flow between view. Those annotated methods are intercepted and after successful method invocation, the
+  desired view is shown (either as nested view in the current scene graph by attaching the sub-view or by displaying the
+  view in a new stage).
 
 
 ## Setting up ActionFX
@@ -106,46 +131,50 @@ In the example above, the package `com.github.actionfx.sampleapp.core.app` is sc
 Instead of using the base class mentioned in the previous section, an own customized ActionFX instance can be setup with:
 
 ```java
-	@Override
-	public void init() throws Exception {
-		ActionFX.builder().configurationClass(getClass()).build();
-	}
+    @Override
+public void init()throws Exception{
+        ActionFX.builder().configurationClass(getClass()).build();
+        }
 ```
 
 The builder for the ActionFX instance offers the following configuration options:
 
-Builder Method | Description
--------------- | -----------
-`configurationClass(final Class<?> configurationClass)` | Reads out the `AFXApplication` annotation that is expected to be  present on the given `configurationClass`. In case the annotation is not present on the given class (or on its super-classes), an `IllegalArgumentException` is thrown.
-`mainViewId(final String mainViewId)` | Sets the ID / name of the view that is used to be displayed in JavaFX's primary `Stage`. Please note that this ID must of course exist inside ActionFX's container e.g. by annotating a controller with `AFXController` and defining this view ID there.
-`scanPackage(final String scanPackage)` | The package name with dot-notation "." that shall be scanned for ActionFX components.
-`enhancementStrategy(final EnhancementStrategy enhancementStrategy)` | The byte-code enhancement strategy to use within ActionFX. Currently the following enhancement strategies are available:1.) `EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT}`: A byte-code instrumentation agent is installed/attached at runtime. Methods of controllerclasses are directly enhanced via method interceptors. 2.) `EnhancementStrategy.SUBCLASSING`: Controller classes are sub-classed, while controller methods are overriden and method interceptors are attached.
-`actionFXEnhancer(final ActionFXEnhancer actionFXEnhancer)` | Sets the implementation of interface `ActionFXEnhancer` to use within ActionFX. In case there is no instance set, the default enhancer `ActionFXByteBuddyEnhancer` is used. Please note that implementations of interface `ActionFXEnhancer` must provide the possibility of both, byte code instrumentation via a runtime agent and byte code enhancement via sub-classing.
-`uncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler)` | Configures an exception handler for uncaught exceptions.
-`locale(final Locale locale)` | Configures a `java.util.Locale` for internationalization. The locale itself is wrapped into an `ObservableValue<Locale>`
-`observableLocale(final ObservableValue<Locale> observableLocale)` | Configures an `javafx.beans.value.ObservableValue` that holds a proper `java.util.Locale` for internationalization.
-`controllerExtension(final Consumer<Object>... extensions)`  | Registers custom controller extensions instances implemented by the user. Controller extensions are applied to the controller after instantiation, after dependency injection, but before methods annotated with `@PostConstruct` are invoked. As mandated by the design philosophy, this builder method accepts a generic `Consumer` instance, where it is up to the developer to decide what to do with the controller instance. In case you are interested in doing something with a field, you can derive your implementation from [AbstractAnnotatedFieldControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedFieldControllerExtension.java). For extending methods, you can derive your implementation from [AbstractAnnotatedMethodControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedMethodControllerExtension.java).
-`controllerExtension(final Class<? extends Consumer<Object>>... extensionClasses)` | Same as `controllerExtension(final Consumer<Object>... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.
-`beanExtension(final BeanExtension... extensions)`  | Registers custom bean extensions instances implemented by the user. Bean extensions are invoked right after a new bean definition is added to the used bean container. Callback implementations can be used to add new functionality to ActionFX that are not applied directly to instances during instantiation time like controller extensions.
-`beanExtension(final Class<? extends BeanExtension>... extensionClasses)` | Same as `beanExtension(final BeanExtension... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.
-`beanContainer(final BeanContainerFacade beanContainer)` | Defines the bean container instance to use for ActionFX. The container class needs to implement the [BeanContainerFacade](src/main/java/com/github/actionfx/core/container.BeanContainerFacade.java) interface and need to provide routines for registering bean definitions and retrieving bean instances (singleton, prototypes) from the underlying container.
-`beanContainerClass(final Class<? extends BeanContainerFacade> beanContainerClass)` |  Defines the bean container instance to use for ActionFX. The container class needs to implement the [BeanContainerFacade](src/main/java/com/github/actionfx/core/container.BeanContainerFacade.java) interface and need to provide routines for registering bean definitions and retrieving bean instances (singleton, prototypes) from the underlying container. It is expected that the supplied class as a no-argument default constructor.
-`enableBeanContainerAutodetection(final boolean enableAutoDetect) ` | Flag that determines whether ActionFX shall try to autodetect the bean container implementation to use. Using autodetection together with directly setting the bean container via `beanContainer(BeanContainerFacade)` or `beanContainerClass(Class)` is pointless. When using an explicit bean container implementation, the autodetection is switched off (`enableBeanContainerAutodetection(false)`). If the autodetection is enabled, it is checked whether a known bean container implementation is present on the classpath (e.g. the container implementation for Spring). If no container implementation is found on the classpath, ActionFX default bean container for ActionFX is used (see [here](src/main/java/com/github/actionfx/core/container/DefaultActionFXBeanContainer.java)). The default is that autodetection is enabled.			
+ Builder Method                                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+--------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ `configurationClass(final Class<?> configurationClass)`                              | Reads out the `AFXApplication` annotation that is expected to be  present on the given `configurationClass`. In case the annotation is not present on the given class (or on its super-classes), an `IllegalArgumentException` is thrown.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+ `mainViewId(final String mainViewId)`                                                | Sets the ID / name of the view that is used to be displayed in JavaFX's primary `Stage`. Please note that this ID must of course exist inside ActionFX's container e.g. by annotating a controller with `AFXController` and defining this view ID there.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+ `scanPackage(final String scanPackage)`                                              | The package name with dot-notation "." that shall be scanned for ActionFX components.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+ `enhancementStrategy(final EnhancementStrategy enhancementStrategy)`                 | The byte-code enhancement strategy to use within ActionFX. Currently the following enhancement strategies are available:1.) `EnhancementStrategy.RUNTIME_INSTRUMENTATION_AGENT}`: A byte-code instrumentation agent is installed/attached at runtime. Methods of controllerclasses are directly enhanced via method interceptors. 2.) `EnhancementStrategy.SUBCLASSING`: Controller classes are sub-classed, while controller methods are overriden and method interceptors are attached.                                                                                                                                                                                                                                                                                                                                                                                                                               
+ `actionFXEnhancer(final ActionFXEnhancer actionFXEnhancer)`                          | Sets the implementation of interface `ActionFXEnhancer` to use within ActionFX. In case there is no instance set, the default enhancer `ActionFXByteBuddyEnhancer` is used. Please note that implementations of interface `ActionFXEnhancer` must provide the possibility of both, byte code instrumentation via a runtime agent and byte code enhancement via sub-classing.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+ `uncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler)`  | Configures an exception handler for uncaught exceptions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+ `locale(final Locale locale)`                                                        | Configures a `java.util.Locale` for internationalization. The locale itself is wrapped into an `ObservableValue<Locale>`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+ `observableLocale(final ObservableValue<Locale> observableLocale)`                   | Configures an `javafx.beans.value.ObservableValue` that holds a proper `java.util.Locale` for internationalization.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+ `controllerExtension(final Consumer<Object>... extensions)`                          | Registers custom controller extensions instances implemented by the user. Controller extensions are applied to the controller after instantiation, after dependency injection, but before methods annotated with `@PostConstruct` are invoked. As mandated by the design philosophy, this builder method accepts a generic `Consumer` instance, where it is up to the developer to decide what to do with the controller instance. In case you are interested in doing something with a field, you can derive your implementation from [AbstractAnnotatedFieldControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedFieldControllerExtension.java). For extending methods, you can derive your implementation from [AbstractAnnotatedMethodControllerExtension](src/main/java/com/github/actionfx/core/container/extension/AbstractAnnotatedMethodControllerExtension.java). 
+ `controllerExtension(final Class<? extends Consumer<Object>>... extensionClasses)`   | Same as `controllerExtension(final Consumer<Object>... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+ `beanExtension(final BeanExtension... extensions)`                                   | Registers custom bean extensions instances implemented by the user. Bean extensions are invoked right after a new bean definition is added to the used bean container. Callback implementations can be used to add new functionality to ActionFX that are not applied directly to instances during instantiation time like controller extensions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+ `beanExtension(final Class<? extends BeanExtension>... extensionClasses)`            | Same as `beanExtension(final BeanExtension... extensions)`, but the extension classes are instantiated by ActionFX. It is expected that these extension implementations have a default no-argument constructor.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+ `beanContainer(final BeanContainerFacade beanContainer)`                             | Defines the bean container instance to use for ActionFX. The container class needs to implement the [BeanContainerFacade](src/main/java/com/github/actionfx/core/container.BeanContainerFacade.java) interface and need to provide routines for registering bean definitions and retrieving bean instances (singleton, prototypes) from the underlying container.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+ `beanContainerClass(final Class<? extends BeanContainerFacade> beanContainerClass)`  | Defines the bean container instance to use for ActionFX. The container class needs to implement the [BeanContainerFacade](src/main/java/com/github/actionfx/core/container.BeanContainerFacade.java) interface and need to provide routines for registering bean definitions and retrieving bean instances (singleton, prototypes) from the underlying container. It is expected that the supplied class as a no-argument default constructor.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+ `enableBeanContainerAutodetection(final boolean enableAutoDetect) `                  | Flag that determines whether ActionFX shall try to autodetect the bean container implementation to use. Using autodetection together with directly setting the bean container via `beanContainer(BeanContainerFacade)` or `beanContainerClass(Class)` is pointless. When using an explicit bean container implementation, the autodetection is switched off (`enableBeanContainerAutodetection(false)`). If the autodetection is enabled, it is checked whether a known bean container implementation is present on the classpath (e.g. the container implementation for Spring). If no container implementation is found on the classpath, ActionFX default bean container for ActionFX is used (see [here](src/main/java/com/github/actionfx/core/container/DefaultActionFXBeanContainer.java)). The default is that autodetection is enabled.			                                                                     
+ `validationGlobalMode(final ValidationMode globalValidationMode`                     | Specifies the global validation mode that shall be applied on JavaFX controls that carry a validation-related annotation like `com.github.actionfx.core.annotation.AFXValidateRequired`. In case a global validation mode is set via this builder, the annotations do not need to specify a validation mode anymore. This is helpful for reducing the number of attributes in validation-related annotations and ActionFX controllers.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+ `validationApplyResultDecoration(final boolean validationApplyResultDecoration)`     | Specifies the flag that indicates, whether validation decorations for validation results shall be applied to controls under validation. Default is `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+ `validationApplyRequiredDecoration(final boolean validationApplyRequiredDecoration)` | Specifies the flag that indicates, whether validation decorations for required fields shall be applied to controls under validation. Decorations include marking required fields. Default is `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ `validationStartTimeoutMs(final int validationStartTimeoutMs)`                       | A global timeout setting for staring a control validation after a change in a particular control occurs. If the returned value is {@code -1}, there is no global timeout setting and the timeout value needs to be defined in all validation related annotations directly (this might make more sense in many cases). Default is `-1` (no global timeout).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 
-Once the ActionFX instance is setup with all configuration parameters, it is required to scan for components / controllers with
+Once the ActionFX instance is setup with all configuration parameters, it is required to scan for components /
+controllers with
 
 ```java
-	ActionFX.getInstance().scanForActionFXComponents();
+    ActionFX.getInstance().scanForActionFXComponents();
 ```
 
 Once the ActionFX instance is configured and initialized with components, you can display the main view with:
 
-
 ```java
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		ActionFX.getInstance().displayMainView(primaryStage);
-	}
+    @Override
+public void start(Stage primaryStage)throws Exception{
+        ActionFX.getInstance().displayMainView(primaryStage);
+        }
 ```
 
 ## Implementing ActionFX controllers
@@ -256,7 +285,7 @@ The following attributes are available inside the annotation:
 Attribute 							| Description 
 ----------------------------------- | -------------------------------------------------
 `refViewId` 						| The referenced view ID that shall nested in the view.
-`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used inside a `@AFXController` annotation. If used on a field annotated by `@FXML`, this value is irrelevant.
+`attachToNodeWithId`				| The parent node ID where the nested view shall be attached to. Please note that this ID is a real node ID in the JavaFX scene graph. This field is mandatory, if this annotation is used on top of a `@AFXController` annotation at class-level. If used on a field annotated by `@FXML`, this value is irrelevant.
 `attachToIndex`					| Optional index referring to the target node's children list, where the view shall be attached to.
 `attachToColumn`					| Optional column index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInRow`.
 `attachToRow`						| Optional row index in case the target node is a `javafx.scene.layout.GridPane`. Must be used together with `attachInColum`.
@@ -516,7 +545,7 @@ Attribute 					| Description
 ```
 ### Annotations for declarative Form-Binding
 
-Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control and finding the desired JavaFX property (does the control have a `valueProperty`, do you need to navigate over a `SelectionModel`? What was the value again of a `CheckBox`?). Then, the developer need to decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
+Form-binding of domain objects in plain JavaFX can be a cumbersome task resulting in a lot of code. Developers usually need to navigate through the structure of single control and finding the desired JavaFX property (does the control have a `valueProperty`, do you need to navigate over a `SelectionModel`? What was the value again of a `CheckBox`?). Then, the developers need to decide to do either a uni- or bidirectional binding (in case supported by the property). And this has to be repeated over and over again for each property inside a Java domain object. 
 
 Also the structure of the domain object itself influences the binding code, as the domain object can either have also JavaFX properties (for bidirectional binding) or just plain Java type properties like `java.lang.String`. Having just plain Java types on the other hand is often sufficient for simple forms and even reduces the code inside the Java domain object. 
 
@@ -577,75 +606,112 @@ Attribute 					| Description
 	}
 ```
 
-This example shows the setup on how to bind an instance of type `CustomerModel` to the view by setting the instance into the annotated ObjectProperty. The properties inside the `CustomerModel` instance are bound bidirectionally. 
+This example shows the setup on how to bind an instance of type `CustomerModel` to the view by setting the instance into
+the annotated ObjectProperty. The properties inside the `CustomerModel` instance are bound bidirectionally.
 
-The view itself has controls `customerFirstNameControl`, `customerLastNameControl`, `customerCountryControl`, `customerSelectedProductsControl` and `customerTermsAndConditionsControl`. The controls do not need to be injected into the controller via `@FXML`. However, the view needs to have controls with these particular IDs for the binding to work.
+The view itself has
+controls `customerFirstNameControl`, `customerLastNameControl`, `customerCountryControl`, `customerSelectedProductsControl`
+and `customerTermsAndConditionsControl`. The controls do not need to be injected into the controller via `@FXML`.
+However, the view needs to have controls with these particular IDs for the binding to work.
 
-Please note that the domain object `CustomerModel` is not forced to have JavaFX properties. It would be sufficient for the class to have plain Java types like `java.lang.String`, `java.util.List`or `java.lang.Boolean` instead of the property versions of it. In case the domain object has plain Java types, an unidirectional binding is applied. That means that the value from the domain object is set into the control on initial binding / setting into the annotated `ObjectProperty` and changed in the model instance, when the value of the JavaFX control is changed. In many cases this might be sufficient.
+Please note that the domain object `CustomerModel` is not forced to have JavaFX properties. It would be sufficient for
+the class to have plain Java types like `java.lang.String`, `java.util.List`or `java.lang.Boolean` instead of the
+property versions of it. In case the domain object has plain Java types, an unidirectional binding is applied. That
+means that the value from the domain object is set into the control on initial binding / setting into the
+annotated `ObjectProperty` and changed in the model instance, when the value of the JavaFX control is changed. In many
+cases this might be sufficient.
 
 #### Annotation @AFXFormMapping
 
-The repeatable annotation [@AFXFormMapping](src/main/java/com/github/actionfx/core/annotation/AFXFormMapping.java)  can be applied at field level on a `javafx.beans.property.ObjectProperty` additionally to a [@AFXFormBinding](#annotation-afxformbinding) annotation to explicitly map a field in a model class to a control name.
+The repeatable annotation [@AFXFormMapping](src/main/java/com/github/actionfx/core/annotation/AFXFormMapping.java)  can
+be applied at field level on a `javafx.beans.property.ObjectProperty` additionally to
+a [@AFXFormBinding](#annotation-afxformbinding) annotation to explicitly map a field in a model class to a control name.
 
-**Please note:** Using this annotation on a field without a [@AFXFormBinding](#annotation-afxformbinding) annotation will have no effect.
+As an additional feature, this annotation offers attributes to perform data validations on the control's value that are
+applied before performing the data binding. The optional additional attributes are a convenient way to implement
+validations aside from the Control-specific validations listed in
+section [Annotations for Validations](#annotations-for-validations). The functionality behind the validation during
+binding is the same than the Control-specific validations in the section mentioned.
+
+**Please note:** Using this annotation on a field without a [@AFXFormBinding](#annotation-afxformbinding) annotation
+will have no effect.
 
 The following attributes are available inside the annotation:
 
-Attribute 					| Description 
---------------------------- | -------------------------------------------------
-`propertyName`            | The name of the field inside the model class. The value can be also a nested path using the "." notation for Java beans.
-`controlId`               | The ID of the control that shall be mapped to the field name in the model class.
-`targetProperty`          | The control's target property that shall be used as binding target. Default is the user value of the control (`USER_VALUE_OBSERVABLE`). Other possible values are `SINGLE_VALUE_PROPERTY` (text in a text field - but which is the user value at the same time) or `ITEMS_OBSERVABLE_LIST` (e.g. items in a table view or list view).
-`formatPattern`           | An optional format pattern that is used to format. This parameter can be used e.g to convert floating point numbers to/from string with a specific pattern or to convert Java `java.time` datetime types to/from string.
+ Attribute 	                | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Default Value                             
+----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------                       
+ `propertyName`             | The name of the field inside the model class. The value can be also a nested path using the "." notation for Java beans.                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+ `controlId`                | The ID of the control that shall be mapped to the field name in the model class.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+ `targetProperty`           | The control's target property that shall be used as binding target. Default is the user value of the control (`USER_VALUE_OBSERVABLE`). Other possible values are `SINGLE_VALUE_PROPERTY` (text in a text field - but which is the user value at the same time) or `ITEMS_OBSERVABLE_LIST` (e.g. items in a table view or list view).                                                                                                                                                                                                                                | `ControlProperties.USER_VALUE_OBSERVABLE` 
+ `formatPattern`            | An optional format pattern that is used to format. This parameter can be used e.g to convert floating point numbers to/from string with a specific pattern or to convert Java `java.time` datetime types to/from string.                                                                                                                                                                                                                                                                                                                                             | ""                                        
+ `validationMethod`         | The custom validation method inside the ActionFX controller to be invoked for the annotated control's value. Referenced methods can be of the following signatures: 1. `ValidationResult methodName()`, 2. `ValidationResult methodName(TYPE newValue)`, 3. `ValidationResult methodName(ObservableList<TYPE> selectedValue)`, 4. `void methodName()` (in which case developer needs to handle the display of validation messages themselves in the validation method).  See also [Annotation @AFXValidateCustom (Field Annotation)](#annotation-afxvalidatecustom). | ""                                        
+ `required`                 | Indicates whether the referenced control is mandatory to be filled out (see also [Annotation @AFXValidateRequired (Field Annotation)](#annotation-afxvalidaterequired)).                                                                                                                                                                                                                                                                                                                                                                                             | `false`                                   
+ `minVal`                   | The minimum value that the control needs to have to pass validation (in case of string based controls the string is converted into a number and then validated against this attribute value). If there is no value specified for this attribute, no minimum validation is applied. See also [Annotation @AFXValidateMinMax (Field Annotation)](#annotation-afxvalidateminmax).                                                                                                                                                                                       | `Double.MIN_VALUE`                        
+ `maxVal`                   | The maximum value that the control needs to have to pass validation (in case of string based controls the string is converted into a number and then validated against this attribute value). If there is no value specified for this attribute, no maximum validation is applied. See also [Annotation @AFXValidateMinMax (Field Annotation)](#annotation-afxvalidateminmax).                                                                                                                                                                                       | `Double.MAX_VALUE`                        
+ `minSize`                  | The minimum size that the control needs to have to pass validation (string length in case of string based controls, list size in case of list based controls). If there is no value specified for this attribute, no minimum size validation is applied. See also [Annotation @AFXValidateSize (Field Annotation)](#annotation-afxvalidatesize).	                                                                                                                                                                                                                    | `Long.MIN_VALUE`                          
+ `maxSize`                  | The maximum size that the control needs to have to pass validation (string length in case of string based controls, list size in case of list based controls). If there is no value specified for this attribute, no minimum size validation is applied. See also [Annotation @AFXValidateSize (Field Annotation)](#annotation-afxvalidatesize).	                                                                                                                                                                                                                    | `Long.MAX_VALUE`                          
+ `regExp`                   | The regular expression that a control's value needs to match for passing validation. See also [Annotation @AFXValidateRegExp (Field Annotation)](#annotation-afxvalidateregexp).                                                                                                                                                                                                                                                                                                                                                                                     | ""                                        
+ `past`                     | Set this attribute to true, if the value of the referenced control needs to hold a temporal value in the past. See also [Annotation @AFXValidateTemporal (Field Annotation)](#annotation-afxvalidatetemporal).                                                                                                                                                                                                                                                                                                                                                       | `false`                                   
+ `pastOrPresent`            | Set this attribute to true, if the value of the referenced control needs to hold a temporal value in the past or present.  See also [Annotation @AFXValidateTemporal (Field Annotation)](#annotation-afxvalidatetemporal).                                                                                                                                                                                                                                                                                                                                           | `false`                                   
+ `future`                   | Set this attribute to true, if the value of the referenced control needs to hold a temporal value in the future. See also [Annotation @AFXValidateTemporal (Field Annotation)](#annotation-afxvalidatetemporal).                                                                                                                                                                                                                                                                                                                                                     | `false`                                   
+ `futureOrPresent`          | Set this attribute to true, if the value of the referenced control needs to hold a temporal value in the future or present. See also [Annotation @AFXValidateTemporal (Field Annotation)](#annotation-afxvalidatetemporal).                                                                                                                                                                                                                                                                                                                                          | `false`                                   
+ `expectedBoolean`          | Set his attribute to BooleanValue.TRUE, if the value of the referenced control holds a boolean value that is mandatory to be true, or set it to `BooleanValue.FALSE`, if the value of the control has to be `false`.  See also [Annotation @AFXValidateBoolean (Field Annotation)](#annotation-afxvalidateboolean).                                                                                                                                                                                                                                                  | `BooleanValue.UNDEFINED`                  
+ `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                                                                                                                                                                                                                                                                                                                                                                                                  | -1 (no timeout)                           
+ `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                                                                                                                                                                                                                                                                                                                                                                                                   | `ValidationMode.ONCHANGE`                 
+ `validationMessage`        | Validation error message to be displayed, in case the control failed validation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | ""                                        
+ `validationMessageKey`     | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message()`.                                                                                                                                                                                                                                                                                                                                                                        | ""                                        
 
 **Example:**
 
-This example shows how a JavaFX control with the specified `controlId` is mapped to a Java property with the given `name` inside the class `CustomerModel`.
+This example shows how a JavaFX control with the specified `controlId` is mapped to a Java property with the
+given `name` inside the class `CustomerModel`.
 
 ```java
-		// the mappings are taken for matching binding targets.
-		// name based matchings are explicitly disabled here.
-		@AFXFormBinding(disableNameBasedMapping = true)
-		@AFXFormMapping(controlId = "customerFirstNameControl", propertyName = "firstName")
-		@AFXFormMapping(controlId = "customerLastNameControl", propertyName = "lastName")
-		@AFXFormMapping(controlId = "customerCountryControl", propertyName = "country")
-		@AFXFormMapping(controlId = "customerSelectedProductsControl", propertyName = "selectedProducts")
-		@AFXFormMapping(controlId = "customerTermsAndConditionsControl", propertyName = "termsAndConditions")
-		private final ObjectProperty<CustomerModel> modelWithMappingBasedBinding = new SimpleObjectProperty<>();
-		
-		// The controls that are used as binding target
-		// These don't need to be necessarily injected via @FXML!
-		@FXML
-		public TextField customerFirstNameControl;
+        // the mappings are taken for matching binding targets.
+// name based matchings are explicitly disabled here.
+@AFXFormBinding(disableNameBasedMapping = true)
+@AFXFormMapping(controlId = "customerFirstNameControl", propertyName = "firstName", required = true) // required field
+@AFXFormMapping(controlId = "customerLastNameControl", propertyName = "lastName", required = true) // required field
+@AFXFormMapping(controlId = "customerCountryControl", propertyName = "country")
+@AFXFormMapping(controlId = "customerSelectedProductsControl", propertyName = "selectedProducts", minSize = 1, maxSize = 100)
+// minimum of 1 product, maximum of 100 products
+@AFXFormMapping(controlId = "customerTermsAndConditionsControl", propertyName = "termsAndConditions", expectedBoolean = BooleanValue.TRUE)
+// needs to be checked
+private final ObjectProperty<CustomerModel> modelWithMappingBasedBinding=new SimpleObjectProperty<>();
 
-		@FXML
-		public TextField customerLastNameControl;
+// The controls that are used as binding target
+// These don't need to be necessarily injected via @FXML!
+@FXML
+public TextField customerFirstNameControl;
 
-		@FXML
-		public ChoiceBox<String> customerCountryControl;
+@FXML
+public TextField customerLastNameControl;
 
-		@FXML
-		public ListView<String> customerSelectedProductsControl;
+@FXML
+public ChoiceBox<String> customerCountryControl;
 
-		@FXML
-		public CheckBox customerTermsAndConditionsControl;
-   ...
+@FXML
+public ListView<String> customerSelectedProductsControl;
 
-	// the model class used for form binding
-	public class CustomerModel {
+@FXML
+public CheckBox customerTermsAndConditionsControl;
+        ...
 
-		private final StringProperty firstName = new SimpleStringProperty();
+// the model class used for form binding
+public class CustomerModel {
 
-		private final StringProperty lastName = new SimpleStringProperty();
+  private final StringProperty firstName = new SimpleStringProperty();
 
-		private final StringProperty country = new SimpleStringProperty();
+  private final StringProperty lastName = new SimpleStringProperty();
 
-		private final ObservableList<String> selectedProducts = FXCollections.observableArrayList();
+  private final StringProperty country = new SimpleStringProperty();
 
-		private final BooleanProperty termsAndConditions = new SimpleBooleanProperty();
-	
-	   // JavaFX property-getter and setter go here...
-	}
+  private final ObservableList<String> selectedProducts = FXCollections.observableArrayList();
+
+  private final BooleanProperty termsAndConditions = new SimpleBooleanProperty();
+
+  // JavaFX property-getter and setter go here...
+}
 ```
 
 In case the control's property and the mapped model property have different types (e.g. when binding a Double value to a JavaFX text field), an optional format pattern can be provided:
@@ -659,20 +725,301 @@ In case the control's property and the mapped model property have different type
 @AFXFormMapping(controlId = "dateTimeTextField", propertyName = "localDateTime", formatPattern = "dd.MM.yyyy HH:mm")
 ```
 
-In the above examples, type conversion to/from string is automatically performed during binding. 
+In the above examples, type conversion to/from string is automatically performed during binding.
 
-The value of the `formatPattern` attribute needs to be adjusted depending on the underlying data types and formatter. ActionFX supports the following formatter for to/from-string conversions:
+The value of the `formatPattern` attribute needs to be adjusted depending on the underlying data types and formatter.
+ActionFX supports the following formatter for to/from-string conversions:
+
 * `java.text.NumberFormat` for converting double and float to and from string.
 * `java.text.SimpleDateFormat` for converting a `java.util.Date`to and from string.
-* `java.time.format.DateTimeFormatter`for converting classes derived from `java.time.temporal.TemporalAccessor` (e.g. `java.time.Instant`, `java.time.LocalDateTime`, `java.time.ZonedDateTime` etc.)
+* `java.time.format.DateTimeFormatter`for converting classes derived from `java.time.temporal.TemporalAccessor` (
+  e.g. `java.time.Instant`, `java.time.LocalDateTime`, `java.time.ZonedDateTime` etc.)
+
+### Annotations for Validations
+
+ActionFX supports a declarative, control-based validation mechanism that allows to apply validation rules on controls
+injected via `@FMXL`. In contrast to validations on JavaBeans (like
+in [Jakarta Bean Validation](https://beanvalidation.org/)), it is possible to perform validation **before** data binding
+to a Java bean is performed. In case you have a text field, where you shall enter some kind of numerical value, ActionFX
+can validate this input e.g. against a regular expression, before a binding with a Java property in a bean occurs. This
+way, it is possible to define the data type in the Java bean directly, e.g. as a `Double` value and not as string.
+
+The supported set of validations however is directly comparable to the JavaBeans validation framework (see
+also [Using Bean Validation Constraints](https://docs.oracle.com/javaee/7/tutorial/bean-validation001.htm)).
+
+The available ActionFX annotations provide configuration attributes for **when** to execute a validation. However, it is
+also possible to specify some validation behaviour on a global, application-wide level, so that you don't need to repeat
+configuration aspects within each validation annotation.
+
+The following code snippet e.g. shows how to setup validations that occur, when an `onchage` event on controls is fired
+with a validation start timeout of 500ms (a "delay" after the actual change occurs), while the default decorations for
+required fields and for the validation messages themselves used by the validations are disabled:
+
+```java
+        final ActionFX actionFX=ActionFX.builder().scanPackage(SampleApp.class.getPackage().getName())
+        .mainViewId("mainView")
+        .validationGlobalMode(ValidationMode.ONCHANGE)
+        .validationStartTimeoutMs(500)
+        .validationApplyResultDecoration(false)
+        .validationApplyRequiredDecoration(false)
+        .build();
+
+```
+
+The following sub-sections describe the annotations that are available for fields that hold controls injected
+with `@FXML`.
+
+#### Annotation @AFXValidateRequired
+
+The [@AFXValidateRequired](src/main/java/com/github/actionfx/core/annotation/AFXValidateRequired.java)  can be applied
+to a field of type `javafx.scene.control.Control` for validating user input that has been entered inside the annotated
+control and that is required for passing validation.
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                 | Default                                   |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                            | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`. | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                      | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                         | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                          | `ValidationMode.ONCHANGE`                 |
+
+**Example:**
+
+```java
+@AFXValidateRequired(message = "This is a mandatory field.", validationStartTimeoutMs = 300)
+@FXML
+protected TextField reqiredTextField;
+```
+
+#### Annotation @AFXValidateSize
+
+The [@AFXValidateSize](src/main/java/com/github/actionfx/core/annotation/AFXValidateSize.java) can be applied to a field
+of type `javafx.scene.control.Control` for validating user input that has been entered inside the annotated control and
+its value has to be of a certain size. In case the property value is of type `java.lang.String`, the length of the
+string is checked. In case the property value is a `java.util.Collection`, then the size of this collection is
+validated.
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                 | Default                                   |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `min`                      | The minimum value that the control needs to have to pass validation. If there is no value specified for this attribute, no minimum validation is applied.                                   | `Long.MIN_VALUÈ` (no minimum)             |
+| `max`                      | The maximum value that the control needs to have to pass validation. If there is no value specified for this attribute, no maximum validation is applied.                                   | `Long.MAX_VALUÈ` (no maximum)             |                                                    
+| `required`                 | Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation AFXValidateRequired does not to be added to the control.                     | `false`                                   |
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                            | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`. | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                      | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                         | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                          | `ValidationMode.ONCHANGE`                 |
+
+**Example:**
+
+```java
+@AFXValidateSize(message = "Please enter a name of length 2 and 20", min = 2, max = 20, validationStartTimeoutMs = 300)
+@FXML
+protected TextField nameTextField;
+
+@AFXValidateSize(message = "Please select between 1 and 10 products from the list", min = 1, max = 10, validationStartTimeoutMs = 300)
+@FXML
+protected ListView<Product> productListView;
+```
+
+#### Annotation @AFXValidateMinMax
+
+The [@AFXValidateMinMax](src/main/java/com/github/actionfx/core/annotation/AFXValidateMinMax.java) can be applied to
+a `javafx.scene.control.Control` for validating user input that has been entered inside the annotated control and its
+value has to be between a minimum and a maximum value (inclusively).
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                 | Default                                   |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `min`                      | The minimum value that the control needs to have to pass validation. If there is no value specified for this attribute, no minimum validation is applied.                                   | `Double.MIN_VALUÈ` (no minimum)           |
+| `max`                      | The maximum value that the control needs to have to pass validation. If there is no value specified for this attribute, no maximum validation is applied.                                   | `Double.MAX_VALUÈ` (no maximum)           |                                                    
+| `required`                 | Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation AFXValidateRequired does not to be added to the control.                     | `false`                                   |
+| `formatPattern`            | An optional format pattern that is used for type conversion. This parameter can be used for validating numerical values taken from text fields.                                             | ""                                        |                   
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                            | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`. | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                      | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                         | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                          | `ValidationMode.ONCHANGE`                 |
+
+The value of the `formatPattern` attribute needs to be adjusted depending on the underlying data types and formatter.
+ActionFX supports the following formatter for to/from-string conversions:
+
+* `java.text.NumberFormat` for converting double and float to and from string.
+* `java.text.SimpleDateFormat` for converting a `java.util.Date`to and from string.
+* `java.time.format.DateTimeFormatter`for converting classes derived from `java.time.temporal.TemporalAccessor` (
+  e.g. `java.time.Instant`, `java.time.LocalDateTime`, `java.time.ZonedDateTime` etc.)
+
+**Example:**
+
+```java
+@AFXValidateMinMax(message = "Please enter a numerical value between 10 and 100", min = 10, max = 100, formatPattern = "#,###", validationStartTimeoutMs = 300)
+@FXML
+protected TextField numericalValueTextField;
+```
+
+#### Annotation @AFXValidateBoolean
+
+The [@AFXValidateBoolean](src/main/java/com/github/actionfx/core/annotation/AFXValidateBoolean.java)
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                 | Default                                   |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `expected`                 | The expected boolean value that is expected to present in the control's value.                                                                                                              | `true`                                    |             
+| `required`                 | Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation AFXValidateRequired does not to be added to the control.                     | `false`                                   |
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                            | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`. | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                      | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                         | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                          | `ValidationMode.ONCHANGE`                 |
+
+**Example:**
+
+```java
+@AFXValidateBoolean(message = "Please confirm the terms and conditions.", expected = true)
+@FXML
+protected CheckBox termsAndConditionsCheckbox;
+```
+
+#### Annotation @AFXValidateRegExp
+
+The [@AFXValidateRegExp](src/main/java/com/github/actionfx/core/annotation/AFXValidateRegExp.java)
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                 | Default                                   |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `regExp`                   | The regular expression that a control's value needs to match for passing validation.                                                                                                        |                                           |                             
+| `required`                 | Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation AFXValidateRequired does not to be added to the control.                     | `false`                                   |
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                            | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`. | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                      | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                         | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                          | `ValidationMode.ONCHANGE`                 |
+
+**Example:**
+
+```java
+@AFXValidateRegExp(message = "Please enter a valid mail address", regExp = ValidationHelper.EMAIL_ADDRESS_REG_EXP, validationStartTimeoutMs = 300, required = true)
+@FXML
+protected TextField emailTextField;
+```
+
+The regular expression for an e-mail address can be found
+in [com.github.actionfx.core.annotation.ValidationHelper](src/main/resources/com/github/actionfx/core/annotation/ValidationHelper.java):
+
+```java
+    /**
+ * Regular expression for validating whether a string is a valid e-mail address (see https://emailregex.com/).
+ */
+public static final String EMAIL_ADDRESS_REG_EXP="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+```
+
+#### Annotation @AFXValidateTemporal
+
+The [@AFXValidateTemporal(src/main/java/com/github/actionfx/core/annotation/AFXValidateTemporal.java)
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                 | Default                                   |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `past`                     | Set this attribute to `true`, if the value of the annotated control needs to hold a temporal value in the past.                                                                             | `false`                                   |
+| `pastOrPresent`            | Set this attribute to `true`, if the value of the annotated control needs to hold a temporal value in the past or present.                                                                  | `false`                                   |
+| `future`                   | Set this attribute to `true`, if the value of the annotated control needs to hold a temporal value in the future.                                                                           | `false`                                   |
+| `futureOrPresent`          | Set this attribute to `true`, if the value of the annotated control needs to hold a temporal value in the future or present.                                                                | `false`                                   |
+| `required`                 | Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation AFXValidateRequired does not to be added to the control.                     | `false`                                   |
+| `formatPattern`            | An optional format pattern that is used for type conversion. This parameter can be used for validating numerical values taken from text fields.                                             | ""                                        |                   
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                            | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`. | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                      | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                         | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                          | `ValidationMode.ONCHANGE`                 |
+
+The value of the `formatPattern` attribute needs to be adjusted depending on the underlying data types and formatter.
+ActionFX supports the following formatter for to/from-string conversions:
+
+* `java.text.SimpleDateFormat` for converting a `java.util.Date`to and from string.
+* `java.time.format.DateTimeFormatter`for converting classes derived from `java.time.temporal.TemporalAccessor` (
+  e.g. `java.time.Instant`, `java.time.LocalDateTime`, `java.time.ZonedDateTime` etc.)
+
+**Example:**
+
+```java
+@AFXValidateTemporal(message = "Please enter a date in the future with pattern dd.MM.yyyy", future = true, formatPattern = "dd.MM.yyyy", validationStartTimeoutMs = 300)
+@FXML
+protected TextField futureTextField;
+
+@AFXValidateTemporal(message = "Please select a date in the past", past = true)
+@FXML
+protected DatePicker pastDatePicker;
+```
+
+#### Annotation @AFXValidateCustom
+
+The [@AFXValidateCustom](src/main/java/com/github/actionfx/core/annotation/AFXValidateCustom.java) can be applied to
+a `javafx.scene.control.Control` for validating user input that has been
+entered inside the annotated control. The value itself is validated inside a specified method inside the ActionFX
+controller.
+
+Methods referenced by the `validationMethod()` attribute can be of the following signatures:
+
+For controls with a single-value:
+
+- `ValidationResult methodName()`
+- `ValidationResult methodName(TYPE newValue)`
+
+For controls with multi-values:
+
+- `ValidationResult methodName()`
+- `ValidationResult methodName(ObservableList<TYPE> selectedValue)`
+
+Alternatively to the method signatures above that return a `com.github.actionfx.core.validation.ValidationResult`, it is
+also possible to invoke void-methods. In that case, the developer needs to handle the display of validation messages
+themselves in the validation method.
+
+- `void methodName()`
+
+The following attributes are available inside the annotation:
+
+| Attribute                  | Description                                                                                                                                                                                     | Default                                   |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
+| `validationMethod`         | The custom validation method inside the ActionFX controller to be invoked for the annotated control's value. It is required that the referenced method preferably returns a `ValidationResult`. |                                           |
+| `required`                 | Indicates whether the annotated control is mandatory to be filled out. By using this attribute, the annotation AFXValidateRequired does not to be added to the control.                         | `false`                                   |
+| `message`                  | Validation error message to be displayed, in case the control failed validation.                                                                                                                | ""                                        |
+| `messageKey`               | Properties key to a validation error message to be displayed, in case the control failed validation. A value in this attribute has a higher priority than the value specified in `message`.     | ""                                        |
+| `validationTargeProperty`  | Defines, which control value shall be validated. Default is `ControlProperties.USER_VALUE_OBSERVABLE`.                                                                                          | `ControlProperties.USER_VALUE_OBSERVABLE` |
+| `validationStartTimeoutMs` | Defines the timeout in milliseconds that has to pass after changing a control value, before the actual validation is applied. Default is -1 (no timeout specified).                             | -1 (no timeout)                           |
+| `validationMode`           | Defines when the actual validation is performed. Possible options are: `ValidationMode.ONCHANGE` or `ValidationMode.MANUAL`. Default is `ValidationMode.ONCHANGE`.                              | `ValidationMode.ONCHANGE`                 |
+
+**Example:**
+
+```java
+@AFXValidateCustom(validationMethod = "customValidationMethod", validationStartTimeoutMs = 300)
+@FXML
+protected TextField helloWorldTextField;
+
+public ValidationResult customValidationMethod(final String text){
+        return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.",helloWorldTextField,
+        !"Hello World".equals(text));
+
+}
+```
 
 ### Annotations for configuring Tables
 
-This chapter contains annotations for configuring and handling of tables like `javafx.scene.control.TableView`, `javafx.scene.control.TreeTableView`, `javafx.scene.control.TreeView` and `javafx.scene.control.ListView`. 
+This chapter contains annotations for configuring and handling of tables
+like `javafx.scene.control.TableView`, `javafx.scene.control.TreeTableView`, `javafx.scene.control.TreeView`
+and `javafx.scene.control.ListView`.
 
 #### Annotation @AFXCellValueConfig
 
-The [@AFXCellValueConfig](src/main/java/com/github/actionfx/core/annotation/AFXCellValueConfig.java) annotation can be applied at field level to configure tables/table columns and what data shall be displayed there and how.
+The [@AFXCellValueConfig](src/main/java/com/github/actionfx/core/annotation/AFXCellValueConfig.java) annotation can be
+applied at field level to configure tables/table columns and what data shall be displayed there and how.
 
 The annotation can be applied on:
 - `javafx.scene.control.TableView` or `javafx.scene.control.TreeTableView` for configuring the contained columns without the need to have the columns itself injected via @FXML
@@ -735,10 +1082,10 @@ This annotation can be e.g. applied to a field of type `javafx.scene.control.Tab
 
 The following attributes are available inside the annotation:
 
-Attribute 							| Description 
------------------------------------ | -------------------------------------------------
-`wrapInSortedList` 				| Optionally the `FilteredList` can be additionally wrapped inside a `javafx.collections.transformation.SortedList`. Default is however `false`.
-`filterPredicateProperty`        | Optional expression that is resolved to an `ObservableValue` holding a filter `Predicate`, that is set as filter predicate in the `FilteredList` and is observed for changes.
+ Attribute 							         | Description                                                                                                                                                                   
+---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ `wrapInSortedList` 				   | Optionally the `FilteredList` can be additionally wrapped inside a `javafx.collections.transformation.SortedList`. Default is however `false`.                                
+ `filterPredicateProperty` | Optional expression that is resolved to an `ObservableValue` holding a filter `Predicate`, that is set as filter predicate in the `FilteredList` and is observed for changes. 
 
 **Example:**
 
@@ -762,39 +1109,48 @@ Attribute 							| Description
 
 ### Annotations for controlling the disabled state of a Node
 
-Handling the disabled-state of a node in the scene graph depending on the state of other controls and/or user input can be a tedious task. Usually, you will find yourself creating boolean bindings. While it is not difficult to implement that approach for a single control, it can be a cumbersome task for wiring together multiple controls in a single boolean binding for activating or deactivating a node e.g. like a `javafx.scene.control.Button`. The following annotations are offered by ActionFX to simplify that task. 
+Handling the disabled-state of a node in the scene graph depending on the state of other controls and/or user input can
+be a tedious task. Usually, you will find yourself creating boolean bindings. While it is not difficult to implement
+that approach for a single control, it can be a cumbersome task for wiring together multiple controls in a single
+boolean binding for activating or deactivating a node e.g. like a `javafx.scene.control.Button`. The following
+annotations are offered by ActionFX to simplify that task.
 
 #### Annotation @AFXEnableNode
 
-The [@AFXEnableNode](src/main/java/com/github/actionfx/core/annotation/AFXEnableNode.java) annotation can be applied at field level on fields of type `javafx.scene.Node` to control its `disabledProperty()` and when a node shall be enabled. This annotation can be useful e.g. when you want to activate a control like a `javafx.scene.control.Button` only, when the user has specified a value in another control e.g. like in a `javafx.scene.control.TextField`.
+The [@AFXEnableNode](src/main/java/com/github/actionfx/core/annotation/AFXEnableNode.java) annotation can be applied at
+field level on fields of type `javafx.scene.Node` to control its `disabledProperty()` and when a node shall be enabled.
+This annotation can be useful e.g. when you want to activate a control like a `javafx.scene.control.Button` only, when
+the user has specified a value in another control e.g. like in a `javafx.scene.control.TextField`.
 
 The following attributes are available inside the annotation:
 
-Attribute                                       | Description 
------------------------------------------------ | -------------------------------------------------
-`whenAllContolsHaveUserValues`              | Annotated node is enabled, if all controls specified in this attribute have a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).  
-`whenAtLeastOneContolHasUserValue`          | Annotated node is enabled, if at least one of the controls specified in this attribute has a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).
-`whenAllControlsHaveValues`                  | Annotated node is enabled, if all controls specified in this attribute have a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
-`whenAtLeastOneControlHasValues`            | Annotated node is enabled, if at least one control specified in this attribute has a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
-`logicalOp`                                    | In case more than one attribute is specified as part of this annotation, this boolean operation describes how the different attributes shall be logically linked with each other. Possible values are `BooleanOp.AND` and `BooleanOp.OR`. Default is `BooleanOp.AND`.
+ Attribute                          | Description                                                                                                                                                                                                                                                           
+------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ `whenAllContolsHaveUserValues`     | Annotated node is enabled, if all controls specified in this attribute have a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).                                                            
+ `whenAtLeastOneContolHasUserValue` | Annotated node is enabled, if at least one of the controls specified in this attribute has a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).                                             
+ `whenAllControlsHaveValues`        | Annotated node is enabled, if all controls specified in this attribute have a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).                                                                           
+ `whenAtLeastOneControlHasValues`   | Annotated node is enabled, if at least one control specified in this attribute has a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).                                                                    
+ `whenControlsAreValid`             | Annotated node is enabled, if all controls specified in this attribute are successfully validated against registered `com.github.actionfx.core.validation.Validator` instances (which are added to the view by using the `@AFXValidate*` annotations).                
+ `whenAllControlsValid`             | Annotated node is enabled, if the entire form / all validated controls are valid in respect to the applied `@AFXValidate*` annotations.                                                                                                                               
+ `logicalOp`                        | In case more than one attribute is specified as part of this annotation, this boolean operation describes how the different attributes shall be logically linked with each other. Possible values are `BooleanOp.AND` and `BooleanOp.OR`. Default is `BooleanOp.AND`. 
 
 **Example:**
 
 ```java
-	// activate button, when the table view has items
-	@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
-	@FXML
-	private Button removeAllButton;
+    // activate button, when the table view has items
+@AFXEnableNode(whenAllControlsHaveValues = "bookTableView")
+@FXML
+private Button removeAllButton;
 
-	// activate button, when user selected values in table view
-	@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
-	@FXML
-	private Button removeSelectedButton;
+// activate button, when user selected values in table view
+@AFXEnableNode(whenAllContolsHaveUserValues = "bookTableView")
+@FXML
+private Button removeSelectedButton;
 
-	// activate button, when all controls of the form have values
-	@AFXEnableNode(whenAllControlsHaveValues = {"usernameTextField" , "passwordTextField")
-	@FXML
-	private Button submitButton;
+// activate button, when all controls are valid concerning the applied control-based validation rules
+@AFXEnableNode(whenAllControlsAreValid = true)
+@FXML
+private Button submitButton;
 ```
 
 #### Annotation @AFXDisableNode
@@ -803,13 +1159,15 @@ The [@AFXDisableNode](src/main/java/com/github/actionfx/core/annotation/AFXDisab
 
 The following attributes are available inside the annotation:
 
-Attribute                                       | Description 
------------------------------------------------ | -------------------------------------------------
-`whenAllContolsHaveUserValues`              | Annotated node is disabled, if all controls specified in this attribute have a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).  
-`whenAtLeastOneContolHasUserValue`          | Annotated node is disabled, if at least one of the controls specified in this attribute has a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).
-`whenAllControlsHaveValues`                  | Annotated node is disabled, if all controls specified in this attribute have a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
-`whenAtLeastOneControlHasValues`            | Annotated node is disabled, if at least one control specified in this attribute has a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).
-`logicalOp`                                    | In case more than one attribute is specified as part of this annotation, this boolean operation describes how the different attributes shall be logically linked with each other. Possible values are `BooleanOp.AND` and `BooleanOp.OR`. Default is `BooleanOp.AND`.
+ Attribute                          | Description                                                                                                                                                                                                                                                           
+------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ `whenAllContolsHaveUserValues`     | Annotated node is disabled, if all controls specified in this attribute have a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).                                                           
+ `whenAtLeastOneContolHasUserValue` | Annotated node is disabled, if at least one of the controls specified in this attribute has a user value (i.e. a text in a `javafx.scene.control.TextField` or **selected values** in a `javafx.scene.control.TableView`).                                            
+ `whenAllControlsHaveValues`        | Annotated node is disabled, if all controls specified in this attribute have a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).                                                                          
+ `whenAtLeastOneControlHasValues`   | Annotated node is disabled, if at least one control specified in this attribute has a value (i.e. a text in a `javafx.scene.control.TextField` or items set in a `javafx.scene.control.TableView`).                                                                   
+ `whenControlsAreValid`             | Annotated node is disabled, if all controls specified in this attribute are successfully validated against registered `com.github.actionfx.core.validation.Validator` instances (which are added to the view by using the `@AFXValidate*` annotations).               
+ `whenAllControlsValid`             | Annotated node is disabled, if the entire form / all validated controls are valid in respect to the applied `@AFXValidate*` annotations.                                                                                                                              
+ `logicalOp`                        | In case more than one attribute is specified as part of this annotation, this boolean operation describes how the different attributes shall be logically linked with each other. Possible values are `BooleanOp.AND` and `BooleanOp.OR`. Default is `BooleanOp.AND`. 
 
 **Example:**
 
@@ -1136,7 +1494,7 @@ In this case, FXML views can contain "%" prefixed placeholder that are replaced 
 **Example of an internationalized FXML:**
 
 ```xml
-<BorderPane fx:controller="bundledemo.MyController" xmlns:fx="http://javafx.com/fxml">
+<BorderPane xmlns:fx="http://javafx.com/fxml">
     <center>
         <!-- This label's text will be taken from the bundle automatically -->
         <Label text="%messageKey"/>
@@ -1155,16 +1513,17 @@ ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class)
 **Controller definition with using a `java.util.ResourceBundle`:**
 
 ```java
+
 @AFXController(viewId = "multilingualView", fxml = "/testfxml/MultilingualView.fxml", resourcesBasename = "i18n.TextResources")
 public class MultilingualViewController {
 
-	// The locale can be injected into the controller in the following forms, if desired and needed...
+  // The locale can be injected into the controller in the following forms, if desired and needed...
 
-	@Inject
-	private Locale locale:
-	
-	@Inject
-	private ObservableValue<Locale> observableLocale;
+  @Inject
+  private Locale locale;
+
+  @Inject
+  private ObservableValue<Locale> observableLocale;
 }
 ```
 Using this configuration, it is expected that there are localized properties files in folder `i18n` with names:

@@ -28,6 +28,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,9 +38,13 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 
+import com.github.actionfx.core.view.graph.ControlWrapper;
 import com.github.actionfx.testing.junit5.FxThreadForAllMonocleExtension;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -54,120 +60,141 @@ import javafx.scene.layout.HBox;
 @ExtendWith(FxThreadForAllMonocleExtension.class)
 class ParentViewTest {
 
-	@Test
-	void testParentView() {
-		// WHEN
-		final ParentView view = new ParentView("viewId", ViewClass.class, new ViewController());
+    @Test
+    void testParentView() {
+        // WHEN
+        final ParentView view = new ParentView("viewId", ViewClass.class, new ViewController());
 
-		// THEN
-		assertThat(view.getController(), instanceOf(ViewController.class));
-		assertThat(view.getId(), equalTo("viewId"));
-		assertThat(view.getRootNode(), instanceOf(ViewClass.class));
+        // THEN
+        assertThat(view.getController(), instanceOf(ViewController.class));
+        assertThat(view.getId(), equalTo("viewId"));
+        assertThat(view.getRootNode(), instanceOf(ViewClass.class));
 
-		// check that view component injection into controller works
-		final ViewController controller = (ViewController) view.getController();
-		assertThat(controller.label, notNullValue());
-		assertThat(controller.label.getId(), equalTo("label"));
-		assertThat(controller.label.getText(), equalTo("Hello World"));
-		assertThat(controller.tableView, notNullValue());
-		assertThat(controller.tableView.getId(), equalTo("tableView"));
-	}
+        // check that view component injection into controller works
+        final ViewController controller = (ViewController) view.getController();
+        assertThat(controller.label, notNullValue());
+        assertThat(controller.label.getId(), equalTo("label"));
+        assertThat(controller.label.getText(), equalTo("Hello World"));
+        assertThat(controller.tableView, notNullValue());
+        assertThat(controller.tableView.getId(), equalTo("tableView"));
+    }
 
-	@Test
-	void testParentView_withResourceBundle() {
-		// WHEN
-		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
-		final ParentView view = new ParentView("viewId", ViewClassWithResourceBundle.class, new ViewController(),
-				resourceBundle);
+    @Test
+    void testParentView_withResourceBundle() {
+        // WHEN
+        final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
+        final ParentView view = new ParentView("viewId", ViewClassWithResourceBundle.class, new ViewController(),
+                resourceBundle);
 
-		// THEN
-		assertThat(view.getController(), instanceOf(ViewController.class));
-		assertThat(view.getId(), equalTo("viewId"));
-		assertThat(view.getRootNode(), instanceOf(ViewClassWithResourceBundle.class));
+        // THEN
+        assertThat(view.getController(), instanceOf(ViewController.class));
+        assertThat(view.getId(), equalTo("viewId"));
+        assertThat(view.getRootNode(), instanceOf(ViewClassWithResourceBundle.class));
 
-		// check that view component injection into controller works
-		final ViewController controller = (ViewController) view.getController();
-		assertThat(controller.label, notNullValue());
-		assertThat(controller.label.getId(), equalTo("label"));
-		assertThat(controller.label.getText(), equalTo("Hello World"));
-		assertThat(controller.tableView, notNullValue());
-		assertThat(controller.tableView.getId(), equalTo("tableView"));
-	}
+        // check that view component injection into controller works
+        final ViewController controller = (ViewController) view.getController();
+        assertThat(controller.label, notNullValue());
+        assertThat(controller.label.getId(), equalTo("label"));
+        assertThat(controller.label.getText(), equalTo("Hello World"));
+        assertThat(controller.tableView, notNullValue());
+        assertThat(controller.tableView.getId(), equalTo("tableView"));
+    }
 
-	@Test
-	void testGetViewNodesAsStream() {
-		// GIVEN
-		final ParentView view = new ParentView("viewId", ViewClass.class, new ViewController());
+    @Test
+    void testRequiredFlagMapChangeListener() {
+        // GIVEN
+        final ParentView view = Mockito.spy(new ParentView("viewId", ViewClass.class, new ViewController()));
+        final AbstractValidatingView.RequiredFlagMapChangeListener l1 = view.new RequiredFlagMapChangeListener();
+        final AbstractValidatingView.RequiredFlagMapChangeListener l2 = view.new RequiredFlagMapChangeListener();
+        final AbstractValidatingView.RequiredFlagMapChangeListener l3 = view.new RequiredFlagMapChangeListener();
+        final ObservableMap<Object, Object> map = FXCollections.observableHashMap();
 
-		// WHEN
-		final List<String> idList = view.getViewNodesAsStream()
-				.map(wrapper -> wrapper.getWrapped().getClass().getSimpleName()).collect(Collectors.toList());
+        // WHEN
+        map.addListener(l1);
+        map.removeListener(l1);
+        map.addListener(l2);
+        map.removeListener(l2);
+        map.addListener(l3);
+        map.put(ControlWrapper.USER_PROPERTIES_REQUIRED_KEY, Boolean.TRUE);
 
-		// THEN
-		assertThat(idList, contains("ViewClass", "HBox", "Label", "String", "TableView"));
-	}
+        // THEN (redecorate is called exactly once, 2 listener were removed, 1 persisted)
+        verify(view, times(1)).redecorate();
 
-	/**
-	 * View class.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class ViewClass extends AnchorPane {
+    }
 
-		public ViewClass() {
-			final HBox hbox = new HBox();
+    @Test
+    void testGetViewNodesAsStream() {
+        // GIVEN
+        final ParentView view = new ParentView("viewId", ViewClass.class, new ViewController());
 
-			final Label label = new Label("Hello World");
-			label.setId("label");
+        // WHEN
+        final List<String> idList = view.getViewNodesAsStream()
+                .map(wrapper -> wrapper.getWrapped().getClass().getSimpleName()).collect(Collectors.toList());
 
-			final TableView<String> tableView = new TableView<>();
-			tableView.setId("tableView");
+        // THEN
+        assertThat(idList, contains("ViewClass", "HBox", "Label", "String", "TableView"));
+    }
 
-			hbox.getChildren().addAll(label, tableView);
+    /**
+     * View class.
+     *
+     * @author koster
+     *
+     */
+    public static class ViewClass extends AnchorPane {
 
-			getChildren().add(hbox);
-		}
-	}
+        public ViewClass() {
+            final HBox hbox = new HBox();
 
-	/**
-	 * View class with constructor accepting a {@link ResourceBundle}.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class ViewClassWithResourceBundle extends AnchorPane {
+            final Label label = new Label("Hello World");
+            label.setId("label");
 
-		public ViewClassWithResourceBundle(final ResourceBundle resourceBundle) {
-			final HBox hbox = new HBox();
+            final TableView<String> tableView = new TableView<>();
+            tableView.setId("tableView");
 
-			// lets get the internationalized text from the bundle
-			final Label label = new Label(resourceBundle.getString("label.text"));
-			label.setId("label");
+            hbox.getChildren().addAll(label, tableView);
 
-			final TableView<String> tableView = new TableView<>();
-			tableView.setId("tableView");
+            getChildren().add(hbox);
+        }
+    }
 
-			hbox.getChildren().addAll(label, tableView);
+    /**
+     * View class with constructor accepting a {@link ResourceBundle}.
+     *
+     * @author koster
+     *
+     */
+    public static class ViewClassWithResourceBundle extends AnchorPane {
 
-			getChildren().add(hbox);
-		}
-	}
+        public ViewClassWithResourceBundle(final ResourceBundle resourceBundle) {
+            final HBox hbox = new HBox();
 
-	/**
-	 * Controller class for {@link ViewClass} and
-	 * {@link ViewClassWithResourceBundle}.
-	 *
-	 * @author koster
-	 *
-	 */
-	public static class ViewController {
+            // lets get the internationalized text from the bundle
+            final Label label = new Label(resourceBundle.getString("label.text"));
+            label.setId("label");
 
-		@FXML
-		protected Label label;
+            final TableView<String> tableView = new TableView<>();
+            tableView.setId("tableView");
 
-		@FXML
-		protected TableView<String> tableView;
-	}
+            hbox.getChildren().addAll(label, tableView);
+
+            getChildren().add(hbox);
+        }
+    }
+
+    /**
+     * Controller class for {@link ViewClass} and {@link ViewClassWithResourceBundle}.
+     *
+     * @author koster
+     *
+     */
+    public static class ViewController {
+
+        @FXML
+        protected Label label;
+
+        @FXML
+        protected TableView<String> tableView;
+    }
 
 }

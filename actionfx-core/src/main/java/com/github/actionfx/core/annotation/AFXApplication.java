@@ -67,4 +67,50 @@ public @interface AFXApplication {
 	 *         be autodetected or not. Default is {@code true}.
 	 */
 	public boolean enableBeanContainerAutodetection() default true;
+
+	/**
+	 * Specifies the global validation mode that shall be applied on JavaFX controls
+	 * that carry an validation-related annotation like
+	 * {@link com.github.actionfx.core.annotation.AFXValidateRequired}. In case a
+	 * global validation mode is set via this builder, the annotations do not need
+	 * to specify a validation mode anymore. This is helpful for reducing the number
+	 * of attributes in validation-related annotations and ActionFX controllers.
+	 *
+	 * @return the global validation mode. Default value is
+	 *         {@link ValidationMode#GLOBAL_VALIDATION_MODE_UNSPECIFIED}, means, the
+	 *         specification of a validation mode is in responsibility of any
+	 *         validation-related annotation.s
+	 */
+	public ValidationMode validationGlobalMode() default ValidationMode.GLOBAL_VALIDATION_MODE_UNSPECIFIED;
+
+	/**
+	 * Flag that indicates, whether validation decorations for validation results
+	 * shall be applied to controls under validation. Default is {@code true}.
+	 *
+	 * @return {@code true}, if validation decorations shall be applied to controls
+	 *         under validation, {@code false} otherwise.
+	 */
+	public boolean validationApplyResultDecoration() default true;
+
+	/**
+	 * Flag that indicates, whether validation decorations for marking required
+	 * fields shall be displayed. Default is {@code true}.
+	 *
+	 * @return {@code true}, if validation decorations for required fields shall be
+	 *         displayed for controls under validation, {@code false} otherwise.
+	 */
+	public boolean validationApplyRequiredDecoration() default true;
+
+	/**
+	 * A global timeout setting for staring a control validation after a change in a
+	 * particular control occurs. If the returned value is {@code -1}, there is no
+	 * global timeout setting and the timeout value needs to be defined in all
+	 * validation related annotations directly (this might make more sense in many
+	 * cases). Default is {@code -1} (no global timeout).
+	 *
+	 * @return the validation start timeout value in milliseconds, or {@code -1}, if
+	 *         there is no global setting for the validation start timeout.
+	 */
+	public int validationStartTimeoutMs() default -1;
+
 }

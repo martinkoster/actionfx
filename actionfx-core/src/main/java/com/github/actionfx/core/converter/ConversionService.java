@@ -251,6 +251,31 @@ public class ConversionService {
     }
 
     /**
+     * Checks, whether the given {@code value} can be converted to {@code targetType} by this service.
+     *
+     * @param value
+     *            the value to convert
+     * @param targetType
+     *            the target type
+     * @param formatPattern
+     *            optional format pattern that is used for checking the conversion (can be null)
+     * @return {@code true}, if this service is able to convert the given source type to the specified target type
+     */
+    public boolean canConvert(final Object value, final Class<?> targetType, final String formatPattern) {
+        if (value != null && !canConvert(value.getClass(), targetType)) {
+            return false;
+        }
+        try {
+            // in order to know, whether a value is really convertible, we have to do it
+            // (e.g. converting a string into a number/date/etc. requires the actual parsing of the conversion routine).
+            final Object converted = convert(value, targetType, formatPattern);
+            return value == null || converted != null;
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Creates a {@link Converter} for converting the given {@code sourceType} to {@code targetType}. In case there is
      * no converter for handling these source and target types, {@code null} will be returned.
      *
@@ -435,6 +460,12 @@ public class ConversionService {
         CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Number.class),
                 (sourceClass, targetClass, locale, formatPattern) -> new StringToNumberConverter<>(targetClass));
 
+        // string -> Boolean
+        CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Boolean.class), (sourceClass, targetClass, locale,
+                formatPattern) -> new StringToBooleanConverter(true));
+        CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, boolean.class), (sourceClass, targetClass, locale,
+                formatPattern) -> new StringToBooleanConverter(false));
+
         // Date converter
         CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Date.class),
                 (sourceClass, targetClass, locale, formatPattern) -> new StringToDateConverter(formatPattern, locale));
@@ -454,6 +485,13 @@ public class ConversionService {
         CONVERTER_FACTORIES.put(ConvertiblePair.of(TemporalAccessor.class, String.class), (sourceClass, targetClass,
                 locale, formatPattern) -> new JavaTimeToStringConverter(formatPattern, locale));
 
+        // Enum converter
+        CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Enum.class),
+                (sourceClass, targetClass, locale, formatPattern) -> new StringToEnumConverter<>(targetClass));
+
+        // FALLBACK String to Object conversion
+        CONVERTER_FACTORIES.put(ConvertiblePair.of(String.class, Object.class), (sourceClass, targetClass,
+                locale, formatPattern) -> new StringToObjectConverter<>(targetClass));
     }
 
     /**

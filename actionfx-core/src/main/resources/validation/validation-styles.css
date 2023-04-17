@@ -1,0 +1,52 @@
+
+.afxShadowEffect {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.afxPoupShadowEffect {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
+}
+
+.afxTooltipCommonEffect {
+	-fx-font-weight: bold; 
+	-fx-padding: 5; 
+	-fx-border-width:1;
+}
+
+.afxErrorTooltipEffect {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
+	-fx-font-weight: bold; 
+	-fx-padding: 5; 
+	-fx-border-width:1;
+	-fx-background-color: FBEFEF; 
+	-fx-text-fill: cc0033; 
+	-fx-border-color:cc0033;
+}
+
+.afxWarningTooltipEffect {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
+	-fx-font-weight: bold; 
+	-fx-padding: 5; 
+	-fx-border-width:1;
+	-fx-background-color: FFFFCC; 
+	-fx-text-fill: CC9900; 
+	-fx-border-color: CC9900;
+}
+
+.afxInfoTooltipEffect {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 5);
+	-fx-font-weight: bold; 
+	-fx-padding: 5; 
+	-fx-border-width:1;
+	-fx-background-color: c4d0ef; 
+	-fx-text-fill: FFFFFF; 
+	-fx-border-color: a8c8ff;
+}
+
+.afxWarning {
+    -fx-effect: dropshadow(three-pass-box, gold, 2.0, 0.0, 0.0, 0.0);
+}
+
+.afxError {
+    -fx-effect: dropshadow(three-pass-box, hotpink, 10.0, 0.5, 0.0, 0.0);
+}
