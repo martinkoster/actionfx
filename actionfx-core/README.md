@@ -1007,7 +1007,7 @@ public ValidationResult customValidationMethod(final String text){
         return ValidationResult.builder().addErrorMessageIf("Please enter 'Hello World' only.",helloWorldTextField,
         !"Hello World".equals(text));
 
-        }
+}
 ```
 
 ### Annotations for configuring Tables
