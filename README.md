@@ -47,8 +47,7 @@ ActionFX provides the following features in a declarative fashion without requir
 - **Integration of user confirmation dialogues** or simple text input dialogs in a declarative fashion
 - **Out-of-the-box internationalization support** through resource bundle integration (for Spring
   a `org.springframework.context.MessageSource` can be leveraged)
-- Declaratively wire the `onActionProperty` of scene graph nodes to methods
-
+- Many more features and handy annotations (see annotations in [actionfx-core](actionfx-core/README.md))
 ## Module Overview
 
 ActionFX is split up into several sub-modules that can be optionally included in your application:
