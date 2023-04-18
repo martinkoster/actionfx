@@ -864,7 +864,9 @@ protected TextField numericalValueTextField;
 
 #### Annotation @AFXValidateBoolean
 
-The [@AFXValidateBoolean](src/main/java/com/github/actionfx/core/annotation/AFXValidateBoolean.java)
+The [@AFXValidateBoolean](src/main/java/com/github/actionfx/core/annotation/AFXValidateBoolean.java) can be applied to
+a `javafx.scene.control.Control` for validating user input that has been entered inside the annotated control and that
+is expected to have a certain boolean value.
 
 The following attributes are available inside the annotation:
 
@@ -884,11 +886,16 @@ The following attributes are available inside the annotation:
 @AFXValidateBoolean(message = "Please confirm the terms and conditions.", expected = true)
 @FXML
 protected CheckBox termsAndConditionsCheckbox;
+
+@AFXValidateBoolean(message = "Please enter yes/no in the text field.", expected = true)
+@FXML
+protected TextField termsAndConditionsTextField;
 ```
 
 #### Annotation @AFXValidateRegExp
 
-The [@AFXValidateRegExp](src/main/java/com/github/actionfx/core/annotation/AFXValidateRegExp.java)
+The [@AFXValidateRegExp](src/main/java/com/github/actionfx/core/annotation/AFXValidateRegExp.java) can be applied to
+a `javafx.scene.control.Control` for validating user input that needs to match a specified regular expression.
 
 The following attributes are available inside the annotation:
 
@@ -922,7 +929,9 @@ public static final String EMAIL_ADDRESS_REG_EXP="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]
 
 #### Annotation @AFXValidateTemporal
 
-The [@AFXValidateTemporal(src/main/java/com/github/actionfx/core/annotation/AFXValidateTemporal.java)
+The [@AFXValidateTemporal](src/main/java/com/github/actionfx/core/annotation/AFXValidateTemporal.java) can be applied to
+a `javafx.scene.control.Control` for validating user input that has been entered inside the annotated control and is
+expected to represent a temporal value (e.g. `java.util.Date` or `java.time.LocalDate`) fulfilling certain criteria.
 
 The following attributes are available inside the annotation:
 
@@ -962,9 +971,8 @@ protected DatePicker pastDatePicker;
 #### Annotation @AFXValidateCustom
 
 The [@AFXValidateCustom](src/main/java/com/github/actionfx/core/annotation/AFXValidateCustom.java) can be applied to
-a `javafx.scene.control.Control` for validating user input that has been
-entered inside the annotated control. The value itself is validated inside a specified method inside the ActionFX
-controller.
+a `javafx.scene.control.Control` for validating user input that has been entered inside the annotated control. The value
+itself is validated inside a specified method inside the ActionFX controller.
 
 Methods referenced by the `validationMethod()` attribute can be of the following signatures:
 
