@@ -6,8 +6,11 @@ plugins {
 description = "afx-core: This module contains the core classes of the ActionFX framework."
 
 dependencies {
-	
-        // JAVAFX DEPENDENCIES    
+    implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+
+
+	// JAVAFX DEPENDENCIES
         javafx {
             version = "${javafxVersion}"
             modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]

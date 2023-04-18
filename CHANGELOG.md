@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Technical Upgrades
 
+- Added module-info.java descriptor
 - Upgraded Gradle to 7.5.1
 - Updated dependencies:
   * Spring Boot to 2.7.10

@@ -278,7 +278,12 @@ task incPatchVersion {
 	}
 }
 
-	
+dependencies {
+    implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+}
+
+
 def setVersionTo(newVersion) {
 	    println("Increasing version number from ${project.version} to ${newVersion}")
 	    ant.replaceregexp(match:"version\\s+=\\s+${project.version}", replace:"version							= ${newVersion}", flags:'g', byline:true) {
