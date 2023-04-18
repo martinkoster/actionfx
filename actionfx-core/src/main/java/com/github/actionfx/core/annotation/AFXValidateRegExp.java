@@ -34,12 +34,9 @@ import java.lang.annotation.Target;
 
 /**
  * Field annotation that can be applied to a
- * {@link javafx.scene.control.Control} for validating user input that has been
- * entered inside the annotated control and has to be between a specified
- * minimum and maximum value.
+ * {@link javafx.scene.control.Control} for validating user input that needs to match a specified regular expression.
  *
  * @author koster
- *
  */
 @Repeatable(AFXValidateRegExps.class)
 @Target({ ElementType.FIELD })

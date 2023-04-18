@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.6.0 (17.04.2023)
+## 1.6.0 (18.04.2023)
 
 ### New Features
 
