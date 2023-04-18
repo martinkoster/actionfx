@@ -4,7 +4,6 @@
 *.ear
 *.class
 
-# eclipse specific git ignore
 .project
 .metadata
 **/.gradle/**
