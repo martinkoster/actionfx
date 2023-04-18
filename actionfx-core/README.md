@@ -918,7 +918,7 @@ protected TextField emailTextField;
 ```
 
 The regular expression for an e-mail address can be found
-in [com.github.actionfx.core.annotation.ValidationHelper](src/main/resources/com/github/actionfx/core/annotation/ValidationHelper.java):
+in [com.github.actionfx.core.annotation.ValidationHelper](src/main/java/com/github/actionfx/core/annotation/ValidationHelper.java):
 
 ```java
     /**
