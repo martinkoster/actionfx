@@ -6,8 +6,11 @@ plugins {
 description = "actionfx-controlsfx: This module contains an integration of the ControlsFX (https://github.com/controlsfx/controlsfx) framework into ActionFX."
 
 dependencies {
-	
-        // JAVAFX DEPENDENCIES    
+    implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+    implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+
+
+    // JAVAFX DEPENDENCIES
         javafx {
             version = "${javafxVersion}"
             modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]

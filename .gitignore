@@ -4,10 +4,10 @@
 *.ear
 *.class
 
-# eclipse specific git ignore
 .project
 .metadata
 **/.gradle/**
+**/.idea/**
 **/build/**
 **/out/**
 **/bin/**

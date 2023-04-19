@@ -1,19 +1,26 @@
 plugins {
-    id("org.openjfx.javafxplugin") version "${javafxPluginVersion}"
-    id "library-publishing-conventions"
+	id("org.openjfx.javafxplugin") version "${javafxPluginVersion}"
+	id "library-publishing-conventions"
 }
 
 description = "afx-spring-boot: This module contains integration classes for using ActionFX with the Spring Framework."
 
+configurations.all {
+	exclude group: "commons-logging", module: "commons-logging"
+}
+
 dependencies {
-	
-	    // JAVAFX DEPENDENCIES    
-        javafx {
-            version = "${javafxVersion}"
-            modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
-        }
-        
-        api project(":actionfx-core")
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+
+
+	// JAVAFX DEPENDENCIES
+	javafx {
+		version = "${javafxVersion}"
+		modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing']
+	}
+
+	api project(":actionfx-core")
 
 		// Spring Dependencies are not declared as "api" dependencies. We just want these dependencies at
 		// compile time. It is up to the user of this module, which exact version of Spring or Spring Boot to use.

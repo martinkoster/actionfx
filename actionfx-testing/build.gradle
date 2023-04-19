@@ -6,22 +6,27 @@ plugins {
 description = "afx-testing: This module contains classes for testing any JavaFX component."
 
 dependencies {
-	
-        // JAVAFX DEPENDENCIES    
-        javafx {
-            version = "${javafxVersion}"
-            modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
-        }
-        
- 		implementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
-    	runtimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
-    	
-		api group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
-    	api group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
-    	api group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
 
-		testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
-		testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
+
+	// JAVAFX DEPENDENCIES
+	javafx {
+		version = "${javafxVersion}"
+		modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing']
+	}
+
+	implementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
+	implementation group: "org.junit.platform", name: "junit-platform-commons", version: "${junitJupiterPlatfomCommonsVersion}"
+
+	runtimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
+
+	api group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
+	api group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
+	api group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
+
+	testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
+	testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
 
 }
 

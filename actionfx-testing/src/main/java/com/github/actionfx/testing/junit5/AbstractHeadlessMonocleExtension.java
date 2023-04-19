@@ -23,19 +23,12 @@
  */
 package com.github.actionfx.testing.junit5;
 
-import static org.junit.platform.commons.util.ReflectionUtils.newInstance;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
-
+import com.github.actionfx.testing.annotation.TestInFxThread;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -57,13 +50,19 @@ import org.testfx.framework.junit5.Start;
 import org.testfx.framework.junit5.Stop;
 import org.testfx.util.WaitForAsyncUtils;
 
-import com.github.actionfx.testing.annotation.TestInFxThread;
-
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.stage.Stage;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Extension to TestFX's {@link ApplicationExtension} that sets the test platform "Monocle" to "headless".
@@ -112,6 +111,38 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
         } catch (final Exception e) {
             throw new TestInstantiationException(e.getMessage(), e);
         }
+    }
+
+    public static <T> T newInstance(Class<T> clazz, Object... args) {
+        try {
+            Class<?>[] parameterTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
+            return newInstance(clazz.getDeclaredConstructor(parameterTypes), args);
+        } catch (Throwable t) {
+            throw new IllegalStateException(getUnderlyingCause(t));
+        }
+    }
+
+    @SuppressWarnings("deprecation") // "AccessibleObject.isAccessible()" is deprecated in Java 9
+    public static <T extends AccessibleObject> T makeAccessible(T object) {
+        if (!object.isAccessible()) {
+            object.setAccessible(true);
+        }
+        return object;
+    }
+
+    public static <T> T newInstance(Constructor<T> constructor, Object... args) {
+        try {
+            return makeAccessible(constructor).newInstance(args);
+        } catch (Throwable t) {
+            throw new IllegalStateException(getUnderlyingCause(t));
+        }
+    }
+
+    private static Throwable getUnderlyingCause(Throwable t) {
+        if (t instanceof InvocationTargetException) {
+            return getUnderlyingCause(((InvocationTargetException) t).getTargetException());
+        }
+        return t;
     }
 
     @Override
