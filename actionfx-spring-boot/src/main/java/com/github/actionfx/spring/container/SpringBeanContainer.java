@@ -177,7 +177,6 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 	 *
 	 * @param beanName    the bean name
 	 * @param definition  the bean definition
-	 * @param beanFactory the bean factory
 	 */
 	protected void registerBeanDefinition(final String beanName, final BeanDefinition definition) {
 		checkSpringContextAvailability();

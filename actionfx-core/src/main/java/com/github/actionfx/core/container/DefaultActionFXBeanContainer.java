@@ -167,7 +167,7 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
      * @return the bean instance
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getBeanByDefinition(final BeanDefinition beanDefinition) {
+    private <T> T getBeanByDefinition(final BeanDefinition beanDefinition) {
         if (beanDefinition.isSingleton()) {
             // no "computeIfAbsent" here as it results in "ConcurrentModificationException" on component scan
             if (singletonCache.containsKey(beanDefinition)) {
@@ -226,7 +226,7 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
      *            the bean to perform dependency injection on
      */
     protected void injectDependencies(final Object bean) {
-        final Class<? extends Object> clazz = bean.getClass();
+        final Class<?> clazz = bean.getClass();
         injectMembers(clazz, bean);
     }
 
@@ -234,14 +234,12 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
         LOG.debug("Injecting members for class {} and instance {}", clazz.getCanonicalName(), instance);
         final AFXController afxController = AnnotationUtils.findAnnotation(clazz, AFXController.class);
         final Field[] fields = clazz.getDeclaredFields();
-        if (fields != null) {
-            for (final Field field : fields) {
-                if (field.isAnnotationPresent(Inject.class)) {
-                    injectSingleField(instance, afxController, field);
-                }
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                injectSingleField(instance, afxController, field);
             }
         }
-        final Class<? extends Object> superclass = clazz.getSuperclass();
+        final Class<?> superclass = clazz.getSuperclass();
         if (superclass != null) {
             injectMembers(superclass, instance);
         }
@@ -272,7 +270,6 @@ public class DefaultActionFXBeanContainer extends AbstractActionFXBeanContainer 
     /**
      * Tries to resolve the ID and / or type to a bean by using the internal {@link BeanResolutionFunction}.
      *
-     * @param <T>
      * @param id
      *            the ID / bean name
      * @param type

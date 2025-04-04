@@ -1140,6 +1140,7 @@ The most notable functionality inside this controller is:
   ```
   In this method, the validation result is computed and returned after calling method `actionFX.validate(this, false)`
   and the validation messages are displayed in a popup window.
+
   ![Validation App Popup](docs/images/validation-popup.png)
 
 Source Code can be found

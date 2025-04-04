@@ -116,8 +116,6 @@ public class ControllerInstancePostProcessor {
      *
      * @param instance
      *            the instance that is checked for ActionFX method level annotations
-     * @param view
-     *            the view that belongs to the controller
      */
     private void applyControllerExtensions(final Object instance) {
         for (final Consumer<Object> extension : controllerExtensions) {

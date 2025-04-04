@@ -75,7 +75,7 @@ public final class ConstructorBasedInstantiationSupplier<T> extends AbstractInst
      * @param constructorArguments
      *            the available constructor arguments
      */
-    protected void resolveConstructorAndArguments(final Object... constructorArguments) {// NOSONAR
+    private void resolveConstructorAndArguments(final Object... constructorArguments) {// NOSONAR
         if (findConstructorWithExactlyMatchingTypes(constructorArguments)) {
             // we found an exact match, no further checking required.
             return;
@@ -183,9 +183,9 @@ public final class ConstructorBasedInstantiationSupplier<T> extends AbstractInst
      * @return the selected value, or {@code null}, if no value exists for the given {@code type}
      */
     private Object selectValueByType(final Class<?> type, final Object[] values) {
-        for (int i = 0; i < values.length; i++) {
-            if (type.isAssignableFrom(values[i].getClass())) {
-                return values[i];
+        for (final Object value : values) {
+            if (type.isAssignableFrom(value.getClass())) {
+                return value;
             }
         }
         return null;

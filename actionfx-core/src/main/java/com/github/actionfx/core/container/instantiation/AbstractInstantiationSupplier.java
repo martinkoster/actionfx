@@ -40,9 +40,9 @@ public abstract class AbstractInstantiationSupplier<T> implements Supplier<T> {
 	}
 
 	/**
-	 * Method to implement for
+	 * Method to implement for creating an instance of type T.
 	 *
-	 * @return
+	 * @return the created instance
 	 */
 	protected abstract T createInstance();
 

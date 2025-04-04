@@ -52,6 +52,8 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
  */
 public class ControllerFactory {
 
+    public static final String CONTROLLER_SUFFIX = "Controller";
+    public static final String VIEW_SUFFIX = "View";
     private final ControllerFactoryConfig factoryConfig;
 
 	private final Consumer<String> logConsumer;
@@ -62,15 +64,19 @@ public class ControllerFactory {
     }
 
     public void produce() {
-        final String fxmlFile = factoryConfig.getAbsoluteFxmlFilePath();
-        final FxmlDocument fxmlDocument = readFxmlDocument(fxmlFile);
-        final ControllerModel controllerModel = createControllerModel(fxmlDocument, fxmlFile);
-        createControllerDirectory();
+        String fxmlFile = factoryConfig.getAbsoluteFxmlFilePath();
         if (!factoryConfig.getAbsoluteFxmlFilePath().contains(factoryConfig.getAbsoluteFXMLResourcesDirectory())) {
             // copy FXML file to project resource
             createFxmlResourcesDirectory();
-            copyFxmlFileToResourcesDirectory(fxmlFile);
+
+            // FXML is relocated into the project directory structure
+            fxmlFile = copyFxmlFileToResourcesDirectory(fxmlFile);
         }
+
+        final FxmlDocument fxmlDocument = readFxmlDocument(fxmlFile);
+        createControllerDirectory();
+        final ControllerModel controllerModel = createControllerModel(fxmlDocument, fxmlFile);
+
         final Path controllerPath = Path.of(factoryConfig.getAbsoluteControllerDirectory(),
                 controllerModel.getControllerName() + ".java");
         createController(controllerModel, controllerPath.toFile());
@@ -98,10 +104,11 @@ public class ControllerFactory {
                 + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
     }
 
-    private void copyFxmlFileToResourcesDirectory(final String fxmlFile) {
+    private String copyFxmlFileToResourcesDirectory(final String fxmlFile) {
         FileUtils.copyFile(fxmlFile, factoryConfig.getAbsoluteFXMLResourcesDirectory());
         logConsumer.accept("Copied FXML file from '" + fxmlFile + "' to '"
                 + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
+        return factoryConfig.getAbsoluteFXMLResourcesDirectory() + "/" + Path.of(fxmlFile).getFileName();
     }
 
     private ControllerModel createControllerModel(final FxmlDocument fxmlDocument, final String fxmlFile) {
@@ -209,9 +216,18 @@ public class ControllerFactory {
      */
     private String deriveControllerName(final String fxmlFile) {
         final String nameWithoutExtension = getFilenameWithoutExtension(fxmlFile);
-        return nameWithoutExtension.endsWith("View")
-                ? nameWithoutExtension.substring(0, nameWithoutExtension.indexOf("View")) + "Controller"
-                : nameWithoutExtension;
+        return nameWithoutExtension.endsWith(VIEW_SUFFIX)
+                ? deriveControllerNameByViewNameEndingWithView(nameWithoutExtension)
+                : deriveControllerNameByViewName(nameWithoutExtension);
+    }
+
+    private static String deriveControllerNameByViewName(final String nameWithoutExtension) {
+        return nameWithoutExtension.length() == 1 ? nameWithoutExtension.substring(0, 1).toUpperCase() + CONTROLLER_SUFFIX :
+                nameWithoutExtension.substring(0, 1).toUpperCase() + nameWithoutExtension.substring(1, nameWithoutExtension.length()) + CONTROLLER_SUFFIX;
+    }
+
+    private static String deriveControllerNameByViewNameEndingWithView(final String nameWithoutExtension) {
+        return nameWithoutExtension.substring(0, nameWithoutExtension.indexOf(VIEW_SUFFIX)) + CONTROLLER_SUFFIX;
     }
 
     /**
