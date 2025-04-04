@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import com.github.actionfx.core.view.View;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.control.Control;
 
 /**
@@ -92,7 +93,7 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @author koster
 	 *
 	 */
-	private static class CacheKey {
+	private static final class CacheKey {
 
 		private final Class<?> beanClass;
 
@@ -137,6 +138,7 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @author koster
 	 *
 	 */
+	@SuppressFBWarnings(value = "SE_COMPARATOR_SHOULD_BE_SERIALIZABLE", justification = "Making the Comparator serializable does not make sense as compared items BindingTarget are not serializable either (and not planned to be serializable).")
 	private static class BindingTargetComparator implements Comparator<BindingTarget> {
 
 		@Override

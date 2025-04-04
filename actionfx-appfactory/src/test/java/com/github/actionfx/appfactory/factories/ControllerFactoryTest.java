@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.appfactory.factories;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -81,11 +78,11 @@ class ControllerFactoryTest {
         TestUtils.assertFileContentIdentical(tmpFolder.toAbsolutePath() + "/MainView.fxml", "/fxml/MainView.fxml");
         final ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(logConsumer, times(4)).accept(captor.capture());
-        assertThat(captor.getAllValues(), contains(//
-                containsString("Created ActionFX controller directory"), //
-                containsString("Created resources folder for FXML file in"), //
-                containsString("Copied FXML file from"), //
-                containsString("Created ActionFX controller with name")));
+        assertThat(captor.getAllValues())
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller directory"))
+                .anyMatch(phrase -> phrase.contains("Created resources folder for FXML file in"))
+                .anyMatch(phrase -> phrase.contains("Copied FXML file from"))
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller with name"));
     }
 
     @SuppressWarnings("unchecked")
@@ -117,9 +114,9 @@ class ControllerFactoryTest {
                 "/fxml/MainView.fxml");
         final ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(logConsumer, times(2)).accept(captor.capture());
-        assertThat(captor.getAllValues(), contains(//
-                containsString("Created ActionFX controller directory"), //
-                containsString("Created ActionFX controller with name")));
+        assertThat(captor.getAllValues())
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller directory"))
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller with name"));
     }
 
     @SuppressWarnings("unchecked")
@@ -132,6 +129,6 @@ class ControllerFactoryTest {
         final ControllerFactory controllerFactory = new ControllerFactory(cfg, logConsumer);
 
         // WHEN and THEN
-        assertThat(controllerFactory.getViewId(), equalTo("MainView"));
+        assertThat(controllerFactory.getViewId()).isEqualTo("MainView");
     }
 }

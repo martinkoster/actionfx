@@ -38,7 +38,7 @@ import javafx.scene.control.Button;
 @AFXController(fxml = "/testfxml/ViewWithButton.fxml", viewId = "viewWithButton")
 public class ViewWithButtonController extends AbstractController {
 
-	private boolean actionFired = false;
+	private boolean actionFired;
 
 	@FXML
 	private Button actionFXButton;

@@ -66,7 +66,7 @@ public class NestedExpression extends Expression implements Iterable<SingleExpre
 	 * @author koster
 	 *
 	 */
-	class NestedExpressionIterator implements Iterator<SingleExpression> {
+	static class NestedExpressionIterator implements Iterator<SingleExpression> {
 
 		private String value;
 
@@ -83,7 +83,7 @@ public class NestedExpression extends Expression implements Iterable<SingleExpre
 		 */
 		@Override
 		public boolean hasNext() {
-			return getValue() != null && getValue().length() > 0;
+			return getValue() != null && !getValue().isEmpty();
 		}
 
 		/**
@@ -95,7 +95,7 @@ public class NestedExpression extends Expression implements Iterable<SingleExpre
 		@Override
 		public SingleExpression next() {
 			final String expression = getValue();
-			if (expression == null || expression.length() == 0) {
+			if (expression == null || expression.isEmpty()) {
 				throw new NoSuchElementException("No expressions left");
 			}
 			final SingleExpression singleExpression = previewNext();

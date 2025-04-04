@@ -33,9 +33,9 @@ import java.nio.file.Path;
  */
 public class MainAppFactoryConfig {
 
-    public static final String CURRENT_ACTIONFX_VERSION = "1.6.0";
+    public static final String CURRENT_ACTIONFX_VERSION = "1.7.0";
 
-    public static final String PREVIOUS_ACTIONFX_VERSION = "1.5.2";
+    public static final String PREVIOUS_ACTIONFX_VERSION = "1.6.0";
 
     public static final String DEFAULT_JAVA_SOURCE_DIR = "src/main/java";
 

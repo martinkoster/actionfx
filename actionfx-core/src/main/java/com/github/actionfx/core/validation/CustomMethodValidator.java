@@ -39,9 +39,9 @@ import javafx.scene.control.Control;
  */
 public class CustomMethodValidator implements Validator {
 
-    private Object controller;
+	private final Object controller;
 
-    private Method method;
+	private final Method method;
 
     public CustomMethodValidator(final Object controller, final Method method) {
         this.controller = controller;

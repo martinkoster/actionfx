@@ -47,7 +47,7 @@ public abstract class AbstractValidationDecoration implements ValidationDecorati
     private static final String VALIDATION_DECORATION = "$com.github.actionfx.core.decoration.validation$";
 
     private static boolean isValidationDecoration(final Decoration decoration) {
-        return decoration != null && decoration.getProperties().get(VALIDATION_DECORATION) == Boolean.TRUE;
+        return decoration != null && Boolean.TRUE.equals(decoration.getProperties().get(VALIDATION_DECORATION));
     }
 
     private static void setValidationDecoration(final Decoration decoration) {

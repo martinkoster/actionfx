@@ -86,7 +86,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class AbstractHeadlessMonocleExtension extends FxRobot implements BeforeAllCallback, AfterEachCallback,
         TestInstancePostProcessor, ParameterResolver, TestInstanceFactory, InvocationInterceptor {
 
-    private boolean executeAllMethodsInFxThread = false;
+    private boolean executeAllMethodsInFxThread;
 
     private ApplicationFixture applicationFixture;
 
@@ -284,7 +284,7 @@ public abstract class AbstractHeadlessMonocleExtension extends FxRobot implement
         }
     }
 
-    private static class AnnotationBasedApplicationFixture implements ApplicationFixture {
+	private static final class AnnotationBasedApplicationFixture implements ApplicationFixture {
 
         private final Object testInstance;
 

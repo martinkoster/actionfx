@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
@@ -66,7 +63,7 @@ class InternationalizationIntegrationTest {
 		final I18NController controller = actionFX.getBean("i18NController");
 
 		// THEN
-		assertThat(controller.textLabel.getText(), equalTo("Hello World"));
+		assertThat(controller.textLabel.getText()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -79,7 +76,7 @@ class InternationalizationIntegrationTest {
 		final I18NController controller = actionFX.getBean("i18NController");
 
 		// THEN
-		assertThat(controller.textLabel.getText(), equalTo("Hallo Welt"));
+		assertThat(controller.textLabel.getText()).isEqualTo("Hallo Welt");
 	}
 
 	@Test
@@ -95,11 +92,10 @@ class InternationalizationIntegrationTest {
 		controller.textLabel.setText("Contains the numerical value 9");
 
 		// THEN
-		assertThat(view.getValidationResult(), notNullValue());
-		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.ERROR));
-		assertThat(view.getValidationResult().getErrors(), hasSize(1));
-		assertThat(view.getValidationResult().getErrors().get(0).getText(),
-				equalTo("Only characters allowed, no numerical values or special characters."));
+		assertThat(view.getValidationResult()).isNotNull();
+		assertThat(view.getValidationResult().getStatus()).isEqualTo(ValidationStatus.ERROR);
+		assertThat(view.getValidationResult().getErrors()).hasSize(1);
+		assertThat(view.getValidationResult().getErrors().get(0).getText()).isEqualTo("Only characters allowed, no numerical values or special characters.");
 	}
 
 	@Test
@@ -115,10 +111,9 @@ class InternationalizationIntegrationTest {
 		controller.textLabel.setText("Contains the numerical value 9");
 
 		// THEN
-		assertThat(view.getValidationResult(), notNullValue());
-		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.ERROR));
-		assertThat(view.getValidationResult().getErrors(), hasSize(1));
-		assertThat(view.getValidationResult().getErrors().get(0).getText(),
-				equalTo("Nur Buchstaben erlaubt, keine numerischen Werte oder Sonderzeichen."));
+		assertThat(view.getValidationResult()).isNotNull();
+		assertThat(view.getValidationResult().getStatus()).isEqualTo(ValidationStatus.ERROR);
+		assertThat(view.getValidationResult().getErrors()).hasSize(1);
+		assertThat(view.getValidationResult().getErrors().get(0).getText()).isEqualTo("Nur Buchstaben erlaubt, keine numerischen Werte oder Sonderzeichen.");
 	}
 }

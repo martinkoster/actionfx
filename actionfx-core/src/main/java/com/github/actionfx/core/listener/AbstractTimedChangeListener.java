@@ -46,7 +46,7 @@ public abstract class AbstractTimedChangeListener {
 	protected final Timer timer = new Timer(true);
 
 	// task to execute after defined delay
-	protected TimerTask task = null;
+	protected TimerTask task;
 
 	// delay that has to pass in order to consider an
 	// operation done

@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.bind;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
@@ -61,7 +59,7 @@ class NameBasedBindindTargetResolverTest {
 		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(targets, hasSize(2));
+		assertThat(targets).hasSize(2);
 		assertBindingTarget(targets, 0, "helloWorldLabel", Model.class, "helloWorld");
 		assertBindingTarget(targets, 1, "tableView", Model.class, "tableView");
 	}
@@ -77,7 +75,7 @@ class NameBasedBindindTargetResolverTest {
 		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(targets, hasSize(1));
+		assertThat(targets).hasSize(1);
 		assertBindingTarget(targets, 0, "tableView", Model.class, "tableView");
 	}
 
@@ -92,16 +90,16 @@ class NameBasedBindindTargetResolverTest {
 		final List<BindingTarget> targets = resolver.resolve(model, view);
 
 		// THEN
-		assertThat(targets, hasSize(1));
+		assertThat(targets).hasSize(1);
 		assertBindingTarget(targets, 0, "prefixHelloWorldSuffix", Model.class, "helloWorld");
 	}
 
 	private static void assertBindingTarget(final List<BindingTarget> targets, final int index, final String controlId,
 			final Class<?> beanClass, final String beanPathExpression) {
 		final BindingTarget target = targets.get(index);
-		assertThat(target.getControl().getId(), equalTo(controlId));
-		assertThat(target.getBeanClass(), equalTo(beanClass));
-		assertThat(target.getBeanPathExpression(), equalTo(beanPathExpression));
+		assertThat(target.getControl().getId()).isEqualTo(controlId);
+		assertThat(target.getBeanClass()).isEqualTo(beanClass);
+		assertThat(target.getBeanPathExpression()).isEqualTo(beanPathExpression);
 	}
 
 	/**

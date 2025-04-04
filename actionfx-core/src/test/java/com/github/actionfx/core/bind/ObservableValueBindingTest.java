@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.bind;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
@@ -69,12 +67,12 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(target.get(), equalTo("Hello World"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("Hello World");
 		target.set("Hello back");
-		assertThat(source.getValue(), equalTo("Hello back"));
+		assertThat(source.getValue()).isEqualTo("Hello back");
 		source.setValue("nice talking to you");
-		assertThat(target.get(), equalTo("nice talking to you"));
+		assertThat(target.get()).isEqualTo("nice talking to you");
 	}
 
 	@Test
@@ -89,12 +87,12 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(target.get(), equalTo("0"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("0");
 		target.set("42");
-		assertThat(source.getValue(), equalTo(42));
+		assertThat(source.getValue()).isEqualTo(42);
 		source.setValue(21);
-		assertThat(target.get(), equalTo("21"));
+		assertThat(target.get()).isEqualTo("21");
 	}
 
 	@Test
@@ -109,10 +107,10 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(target.get(), equalTo(5));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo(5);
 		target.set(42);
-		assertThat(source.getValue(), equalTo(Integer.valueOf(42)));
+		assertThat(source.getValue()).isEqualTo(Integer.valueOf(42));
 	}
 
 	@Test
@@ -128,10 +126,10 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(target.get(), equalTo("05.09.2021 13:05"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("05.09.2021 13:05");
 		target.set("05.10.2021 15:10");
-		assertThat(source.getValue(), equalTo(LocalDateTime.of(2021, 10, 5, 15, 10)));
+		assertThat(source.getValue()).isEqualTo(LocalDateTime.of(2021, 10, 5, 15, 10));
 	}
 
 	@Test
@@ -147,10 +145,10 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(target.get(), equalTo("05.09.2021 13:05"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("05.09.2021 13:05");
 		target.set("invalid"); // invalid date input
-		assertThat(source.getValue(), equalTo(LocalDateTime.of(2021, 9, 5, 13, 5))); // old value still present
+		assertThat(source.getValue()).isEqualTo(LocalDateTime.of(2021, 9, 5, 13, 5)); // old value still present
 	}
 
 	@Test
@@ -170,12 +168,12 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(choiceBox.getValue(), equalTo("Item 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(choiceBox.getValue()).isEqualTo("Item 2");
 		choiceBox.getSelectionModel().select("Item 3");
-		assertThat(source.getValue(), equalTo("Item 3"));
+		assertThat(source.getValue()).isEqualTo("Item 3");
 		model.setStringValue("Item 1");
-		assertThat(choiceBox.getValue(), equalTo("Item 1"));
+		assertThat(choiceBox.getValue()).isEqualTo("Item 1");
 	}
 
 	@Test
@@ -190,8 +188,8 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(target.get(), equalTo("Hello World"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -206,10 +204,10 @@ class ObservableValueBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(target.get(), equalTo("Hello World"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("Hello World");
 		target.set("Hello back");
-		assertThat(source.getValue(), equalTo("Hello back"));
+		assertThat(source.getValue()).isEqualTo("Hello back");
 	}
 
 	@Test
@@ -225,10 +223,10 @@ class ObservableValueBindingTest {
 		binding.unbind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(target.get(), equalTo("Hello World"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("Hello World");
 		target.set("Hello back");
-		assertThat(source.getValue(), equalTo("Hello World")); // no value change, property is not bound anymore
+		assertThat(source.getValue()).isEqualTo("Hello World"); // no value change, property is not bound anymore
 	}
 
 	@Test
@@ -244,8 +242,8 @@ class ObservableValueBindingTest {
 		binding.unbind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(target.get(), equalTo("Hello World"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -261,10 +259,10 @@ class ObservableValueBindingTest {
 		binding.unbind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(target.get(), equalTo("Hello World"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(target.get()).isEqualTo("Hello World");
 		target.set("Hello back");
-		assertThat(source.getValue(), equalTo("Hello World")); // no value change, property is not bound anymore
+		assertThat(source.getValue()).isEqualTo("Hello World"); // no value change, property is not bound anymore
 	}
 
 	@Test
@@ -279,7 +277,7 @@ class ObservableValueBindingTest {
 				() -> new ObservableValueBinding<>(source, target));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("has a property-getter, but property-getter did a null value!"));
+		assertThat(ex.getMessage()).contains("has a property-getter, but property-getter did a null value!");
 	}
 
 	private class ReadOnlyPropertyImpl extends ReadOnlyStringProperty {

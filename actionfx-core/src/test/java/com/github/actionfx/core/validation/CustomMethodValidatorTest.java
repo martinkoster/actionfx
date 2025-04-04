@@ -23,11 +23,7 @@
  */
 package com.github.actionfx.core.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Method;
 
@@ -62,9 +58,9 @@ class CustomMethodValidatorTest {
         final ValidationResult vr = validator.validate(controller.getTextField(),
                 ControlProperties.USER_VALUE_OBSERVABLE);
 
-        // THEN
-        assertThat(vr, nullValue());
-        assertThat(controller.getTextField().getText(), equalTo("TextField is validated"));
+		// THEN
+		assertThat(vr).isNull();
+		assertThat(controller.getTextField().getText()).isEqualTo("TextField is validated");
     }
 
     @Test
@@ -81,12 +77,12 @@ class CustomMethodValidatorTest {
         final ValidationResult vr = validator.validate(controller.getTextField(),
                 ControlProperties.USER_VALUE_OBSERVABLE);
 
-        // THEN
-        assertThat(vr, notNullValue());
-        assertThat(vr.getMessages(), hasSize(1));
-        assertThat(vr.getMessages().get(0).getStatus(), equalTo(ValidationStatus.ERROR));
-        assertThat(vr.getMessages().get(0).getText(), equalTo("Hello there"));
-        assertThat(vr.getMessages().get(0).getTarget(), equalTo(controller.getTextField()));
+		// THEN
+		assertThat(vr).isNotNull();
+		assertThat(vr.getMessages()).hasSize(1);
+		assertThat(vr.getMessages().get(0).getStatus()).isEqualTo(ValidationStatus.ERROR);
+		assertThat(vr.getMessages().get(0).getText()).isEqualTo("Hello there");
+		assertThat(vr.getMessages().get(0).getTarget()).isEqualTo(controller.getTextField());
 
     }
 

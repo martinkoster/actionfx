@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.7.0
+
+- Updated build to Java 17
+- Upgraded Gradle to 8.13 for build and for actionfx-app-factory generated applications
+- Upgraded external dependencies to recent versions (commons-lang3, commons-beanutils, bytebuddy, SonarQube Plugin)
+- Replaced JavaEE javax.* packages by corresponding Jakarta packages
+- Migrated all JUnit tests from using Hamcrest Matcher to AssertJ.
+
 ## 1.6.0 (18.04.2023)
 
 ### New Features

@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
@@ -45,9 +43,9 @@ class StringToDoubleConverterTest {
 		final StringToDoubleConverter converter = new StringToDoubleConverter("#,###.##", Locale.GERMANY, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply("10.000,44"), equalTo(Double.valueOf(10000.44)));
-		assertThat(converter.apply("100"), equalTo(Double.valueOf(100)));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply("10.000,44")).isEqualTo(Double.valueOf(10000.44));
+		assertThat(converter.apply("100")).isEqualTo(Double.valueOf(100));
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -56,9 +54,9 @@ class StringToDoubleConverterTest {
 		final StringToDoubleConverter converter = new StringToDoubleConverter("#,###.##", Locale.US, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply("10,000.44"), equalTo(Double.valueOf(10000.44)));
-		assertThat(converter.apply("100"), equalTo(Double.valueOf(100)));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply("10,000.44")).isEqualTo(Double.valueOf(10000.44));
+		assertThat(converter.apply("100")).isEqualTo(Double.valueOf(100));
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -67,9 +65,9 @@ class StringToDoubleConverterTest {
 		final StringToDoubleConverter converter = new StringToDoubleConverter(null, Locale.US, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply("10,000.44"), equalTo(Double.valueOf(10000.44)));
-		assertThat(converter.apply("100"), equalTo(Double.valueOf(100)));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply("10,000.44")).isEqualTo(Double.valueOf(10000.44));
+		assertThat(converter.apply("100")).isEqualTo(Double.valueOf(100));
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -78,7 +76,7 @@ class StringToDoubleConverterTest {
 		final StringToDoubleConverter converter = new StringToDoubleConverter("#,###.##", Locale.US, false);
 
 		// WHEN and THEN
-		assertThat(converter.apply(null), equalTo(StringToDoubleConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS));
-		assertThat(converter.apply("invalid"), equalTo(StringToDoubleConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS));
+		assertThat(converter.apply(null)).isEqualTo(StringToDoubleConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS);
+		assertThat(converter.apply("invalid")).isEqualTo(StringToDoubleConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS);
 	}
 }

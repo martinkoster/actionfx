@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,7 +44,7 @@ import javafx.scene.control.Control;
  * @author koster
  *
  */
-public class ValidationAsserter {
+public final class ValidationAsserter {
 
 	private ValidationAsserter() {
 		// class can not be instantiated
@@ -60,11 +58,11 @@ public class ValidationAsserter {
 
 		verify(view, times(1)).registerValidator(eq(control), eq(ControlProperties.USER_VALUE_OBSERVABLE),
 				validatorCaptor.capture(), optionsCaptor.capture());
-		assertThat(validatorCaptor.getValue(), instanceOf(actualValidatorClass));
+		assertThat(validatorCaptor.getValue()).isInstanceOf(actualValidatorClass);
 		final ValidationOptions options = optionsCaptor.getValue();
-		assertThat(options.getValidationMode(), equalTo(validationMode));
-		assertThat(options.getValidationStartTimeoutMs(), equalTo(validationStartTimeoutMs));
-		assertThat(options.isApplyValidationResultDecorations(), equalTo(applyValidationDecorations));
-		assertThat(options.isRequired(), equalTo(required));
+		assertThat(options.getValidationMode()).isEqualTo(validationMode);
+		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(validationStartTimeoutMs);
+		assertThat(options.isApplyValidationResultDecorations()).isEqualTo(applyValidationDecorations);
+		assertThat(options.isRequired()).isEqualTo(required);
 	}
 }

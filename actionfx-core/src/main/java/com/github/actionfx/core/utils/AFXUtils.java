@@ -82,7 +82,7 @@ import javafx.util.Duration;
  *
  * @author MartinKoster
  */
-public class AFXUtils {
+public final class AFXUtils {
 
     /**
      * Class is not instantiable.
@@ -99,7 +99,7 @@ public class AFXUtils {
      *            the controller to set
      * @return the loaded {@code Node} instance
      */
-    public static final <T> T loadFxml(final String fxmlPath, final Object controller) {
+    public static <T> T loadFxml(final String fxmlPath, final Object controller) {
         return loadFxml(fxmlPath, controller, null);
     }
 
@@ -114,7 +114,7 @@ public class AFXUtils {
      *            the resource bundle that shall be used for localization
      * @return the loaded {@code Node} instance
      */
-    public static final <T> T loadFxml(final String fxmlPath, final Object controller,
+    public static <T> T loadFxml(final String fxmlPath, final Object controller,
             final ResourceBundle resourceBundle) {
         try {
             final FXMLLoader loader = new FXMLLoader(AFXUtils.class.getResource(fxmlPath), resourceBundle);

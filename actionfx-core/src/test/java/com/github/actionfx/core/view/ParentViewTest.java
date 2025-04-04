@@ -23,11 +23,7 @@
  */
 package com.github.actionfx.core.view;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -66,17 +62,17 @@ class ParentViewTest {
         final ParentView view = new ParentView("viewId", ViewClass.class, new ViewController());
 
         // THEN
-        assertThat(view.getController(), instanceOf(ViewController.class));
-        assertThat(view.getId(), equalTo("viewId"));
-        assertThat(view.getRootNode(), instanceOf(ViewClass.class));
+        assertThat(view.getController()).isInstanceOf(ViewController.class);
+        assertThat(view.getId()).isEqualTo("viewId");
+        assertThat((Object) view.getRootNode()).isInstanceOf(ViewClass.class);
 
         // check that view component injection into controller works
         final ViewController controller = (ViewController) view.getController();
-        assertThat(controller.label, notNullValue());
-        assertThat(controller.label.getId(), equalTo("label"));
-        assertThat(controller.label.getText(), equalTo("Hello World"));
-        assertThat(controller.tableView, notNullValue());
-        assertThat(controller.tableView.getId(), equalTo("tableView"));
+        assertThat(controller.label).isNotNull();
+        assertThat(controller.label.getId()).isEqualTo("label");
+        assertThat(controller.label.getText()).isEqualTo("Hello World");
+        assertThat(controller.tableView).isNotNull();
+        assertThat(controller.tableView.getId()).isEqualTo("tableView");
     }
 
     @Test
@@ -87,17 +83,17 @@ class ParentViewTest {
                 resourceBundle);
 
         // THEN
-        assertThat(view.getController(), instanceOf(ViewController.class));
-        assertThat(view.getId(), equalTo("viewId"));
-        assertThat(view.getRootNode(), instanceOf(ViewClassWithResourceBundle.class));
+        assertThat(view.getController()).isInstanceOf(ViewController.class);
+        assertThat(view.getId()).isEqualTo("viewId");
+        assertThat((Object) view.getRootNode()).isInstanceOf(ViewClassWithResourceBundle.class);
 
         // check that view component injection into controller works
         final ViewController controller = (ViewController) view.getController();
-        assertThat(controller.label, notNullValue());
-        assertThat(controller.label.getId(), equalTo("label"));
-        assertThat(controller.label.getText(), equalTo("Hello World"));
-        assertThat(controller.tableView, notNullValue());
-        assertThat(controller.tableView.getId(), equalTo("tableView"));
+        assertThat(controller.label).isNotNull();
+        assertThat(controller.label.getId()).isEqualTo("label");
+        assertThat(controller.label.getText()).isEqualTo("Hello World");
+        assertThat(controller.tableView).isNotNull();
+        assertThat(controller.tableView.getId()).isEqualTo("tableView");
     }
 
     @Test
@@ -132,7 +128,7 @@ class ParentViewTest {
                 .map(wrapper -> wrapper.getWrapped().getClass().getSimpleName()).collect(Collectors.toList());
 
         // THEN
-        assertThat(idList, contains("ViewClass", "HBox", "Label", "String", "TableView"));
+        assertThat(idList).containsExactly("ViewClass", "HBox", "Label", "String", "TableView");
     }
 
     /**

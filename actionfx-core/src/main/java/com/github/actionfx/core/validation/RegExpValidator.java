@@ -37,7 +37,7 @@ import com.github.actionfx.core.view.graph.ControlWrapper;
  */
 public class RegExpValidator extends AbstractRequiredValidator {
 
-    private Pattern pattern;
+	private final Pattern pattern;
 
     public RegExpValidator(final String message, final String regExp, final boolean required) {
         super(message, required);

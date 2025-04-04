@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.testing.junit5;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,13 +37,13 @@ class FxThreadForAllMonocleExtensionTest {
 
 	@Test
 	void testExecutionIsNotInsideJavaFxThread() {
-		assertThat(Platform.isFxApplicationThread(), equalTo(false));
+		assertThat(Platform.isFxApplicationThread()).isEqualTo(false);
 	}
 
 	@Test
 	@TestInFxThread
 	void testExecutionIsInsideJavaFxThread() {
-		assertThat(Platform.isFxApplicationThread(), equalTo(true));
+		assertThat(Platform.isFxApplicationThread()).isEqualTo(true);
 	}
 
 }

@@ -71,7 +71,7 @@ import javafx.scene.Scene;
  * but refactored to ActionFX's needs, Java 11 and Clean Code standards.
  *
  */
-public class DecorationUtils {
+public final class DecorationUtils {
 
 	private static final String DECORATIONS_PROPERTY_KEY = "actionfx-decorations";
 
@@ -85,7 +85,7 @@ public class DecorationUtils {
 	 * @param target     The node to add the decoration to.
 	 * @param decoration The decoration to add to the node.
 	 */
-	public static final void addDecoration(final Node target, final Decoration decoration) {
+	public static void addDecoration(final Node target, final Decoration decoration) {
 		getDecorations(target).add(decoration);
 		getDecorationPane(target,
 				pane -> pane.addDecorationsToNode(target, FXCollections.observableArrayList(decoration)));
@@ -97,7 +97,7 @@ public class DecorationUtils {
 	 * @param target     The node to remove the decoration from.
 	 * @param decoration The decoration to remove from the node.
 	 */
-	public static final void removeDecoration(final Node target, final Decoration decoration) {
+	public static void removeDecoration(final Node target, final Decoration decoration) {
 		getDecorations(target).remove(decoration);
 		getDecorationPane(target,
 				pane -> pane.removeDecorationsFromNode(target, FXCollections.observableArrayList(decoration)));
@@ -109,7 +109,7 @@ public class DecorationUtils {
 	 * @param target The node from which all previously set decorations should be
 	 *               removed.
 	 */
-	public static final void removeAllDecorations(final Node target) {
+	public static void removeAllDecorations(final Node target) {
 		final List<Decoration> decorations = getDecorations(target);
 		final List<Decoration> removed = FXCollections.observableArrayList(decorations);
 
@@ -125,14 +125,14 @@ public class DecorationUtils {
 	 *         node.
 	 */
 	@SuppressWarnings("unchecked")
-	public static final ObservableList<Decoration> getDecorations(final Node target) {
+	public static ObservableList<Decoration> getDecorations(final Node target) {
 		return (ObservableList<Decoration>) target.getProperties().computeIfAbsent(DECORATIONS_PROPERTY_KEY,
 				key -> FXCollections.observableArrayList());
 	}
 
-	private static List<Scene> currentlyInstallingScenes = new ArrayList<>();
+	private static final List<Scene> currentlyInstallingScenes = new ArrayList<>();
 
-	private static Map<Scene, List<Consumer<DecorationPane>>> pendingTasksByScene = new HashMap<>();
+	private static final Map<Scene, List<Consumer<DecorationPane>>> pendingTasksByScene = new HashMap<>();
 
 	private static void getDecorationPane(final Node target, final Consumer<DecorationPane> task) {
 		// find a DecorationPane parent and notify it that a node has updated

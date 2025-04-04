@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.method;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -92,9 +89,9 @@ class FromTextInputDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, notNullValue());
-		assertThat(result, equalTo("music.wav"));
-		assertThat(resolver.continueMethodInvocation(), equalTo(true));
+		assertThat(result).isNotNull();
+		assertThat(result).isEqualTo("music.wav");
+		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
 	}
 
 	@Test
@@ -112,8 +109,8 @@ class FromTextInputDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, nullValue());
-		assertThat(resolver.continueMethodInvocation(), equalTo(false));
+		assertThat(result).isNull();
+		assertThat(resolver.continueMethodInvocation()).isEqualTo(false);
 	}
 
 	public class ClassWithMethods {

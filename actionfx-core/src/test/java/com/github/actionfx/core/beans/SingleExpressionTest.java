@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.beans;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -40,20 +38,20 @@ class SingleExpressionTest {
 
 	@Test
 	void testGetPropertyName() {
-		assertThat(expr(null).getPropertyName(), equalTo(""));
-		assertThat(expr("").getPropertyName(), equalTo(""));
-		assertThat(expr("field").getPropertyName(), equalTo("field"));
-		assertThat(expr("field[2]").getPropertyName(), equalTo("field"));
-		assertThat(expr("field(map.key)").getPropertyName(), equalTo("field"));
+		assertThat(expr(null).getPropertyName()).isEqualTo("");
+		assertThat(expr("").getPropertyName()).isEqualTo("");
+		assertThat(expr("field").getPropertyName()).isEqualTo("field");
+		assertThat(expr("field[2]").getPropertyName()).isEqualTo("field");
+		assertThat(expr("field(map.key)").getPropertyName()).isEqualTo("field");
 	}
 
 	@Test
 	void testGetIndex() {
-		assertThat(expr(null).getIndex(), equalTo(-1));
-		assertThat(expr("").getIndex(), equalTo(-1));
-		assertThat(expr("field").getIndex(), equalTo(-1));
-		assertThat(expr("field[2]").getIndex(), equalTo(2));
-		assertThat(expr("field(map.key)").getIndex(), equalTo(-1));
+		assertThat(expr(null).getIndex()).isEqualTo(-1);
+		assertThat(expr("").getIndex()).isEqualTo(-1);
+		assertThat(expr("field").getIndex()).isEqualTo(-1);
+		assertThat(expr("field[2]").getIndex()).isEqualTo(2);
+		assertThat(expr("field(map.key)").getIndex()).isEqualTo(-1);
 		assertThrows(IllegalArgumentException.class, () -> expr("field[nonnumber]").getIndex());
 		assertThrows(IllegalArgumentException.class, () -> expr("field[]").getIndex());
 		assertThrows(IllegalArgumentException.class, () -> expr("field[nonnumber").getIndex());
@@ -61,30 +59,30 @@ class SingleExpressionTest {
 
 	@Test
 	void testGetKey() {
-		assertThat(expr(null).getKey(), nullValue());
-		assertThat(expr("").getKey(), nullValue());
-		assertThat(expr("field").getKey(), nullValue());
-		assertThat(expr("field[2]").getKey(), equalTo(""));
-		assertThat(expr("field(map.key)").getKey(), equalTo("map.key"));
+		assertThat(expr(null).getKey()).isNull();
+		assertThat(expr("").getKey()).isNull();
+		assertThat(expr("field").getKey()).isNull();
+		assertThat(expr("field[2]").getKey()).isEqualTo("");
+		assertThat(expr("field(map.key)").getKey()).isEqualTo("map.key");
 		assertThrows(IllegalArgumentException.class, () -> expr("field(map.key").getKey());
 	}
 
 	@Test
 	void testIsIndexed() {
-		assertThat(expr(null).isIndexed(), equalTo(false));
-		assertThat(expr("").isIndexed(), equalTo(false));
-		assertThat(expr("field").isIndexed(), equalTo(false));
-		assertThat(expr("field[2]").isIndexed(), equalTo(true));
-		assertThat(expr("field(map.key)").isIndexed(), equalTo(false));
+		assertThat(expr(null).isIndexed()).isEqualTo(false);
+		assertThat(expr("").isIndexed()).isEqualTo(false);
+		assertThat(expr("field").isIndexed()).isEqualTo(false);
+		assertThat(expr("field[2]").isIndexed()).isEqualTo(true);
+		assertThat(expr("field(map.key)").isIndexed()).isEqualTo(false);
 	}
 
 	@Test
 	void testIsMapped() {
-		assertThat(expr(null).isMapped(), equalTo(false));
-		assertThat(expr("").isMapped(), equalTo(false));
-		assertThat(expr("field").isMapped(), equalTo(false));
-		assertThat(expr("field[2]").isMapped(), equalTo(false));
-		assertThat(expr("field(map.key)").isMapped(), equalTo(true));
+		assertThat(expr(null).isMapped()).isEqualTo(false);
+		assertThat(expr("").isMapped()).isEqualTo(false);
+		assertThat(expr("field").isMapped()).isEqualTo(false);
+		assertThat(expr("field[2]").isMapped()).isEqualTo(false);
+		assertThat(expr("field(map.key)").isMapped()).isEqualTo(true);
 	}
 
 	private static SingleExpression expr(final String value) {

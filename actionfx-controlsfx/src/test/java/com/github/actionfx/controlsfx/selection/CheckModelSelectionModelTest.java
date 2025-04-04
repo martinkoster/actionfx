@@ -23,13 +23,7 @@
  */
 package com.github.actionfx.controlsfx.selection;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.controlsfx.control.CheckComboBox;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,11 +66,11 @@ class CheckModelSelectionModelTest {
 		wrapper.selectIndices(0);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_1));
-		assertThat(wrapper.getSelectedIndex(), equalTo(0));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_1);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
 	}
 
 	@Test
@@ -85,11 +79,11 @@ class CheckModelSelectionModelTest {
 		wrapper.selectIndices(1, 2);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1, 2));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2, ITEM_3));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(1, 2);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_2, ITEM_3);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_3);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
 	}
 
 	@Test
@@ -98,11 +92,11 @@ class CheckModelSelectionModelTest {
 		checkComboBox.getCheckModel().check(0);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_1));
-		assertThat(wrapper.getSelectedIndex(), equalTo(0));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_1);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
 	}
 
 	@Test
@@ -112,11 +106,11 @@ class CheckModelSelectionModelTest {
 		checkComboBox.getCheckModel().check(2);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1, 2));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2, ITEM_3));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(1, 2);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_2, ITEM_3);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_3);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
 	}
 
 	@Test
@@ -125,11 +119,11 @@ class CheckModelSelectionModelTest {
 		wrapper.selectAll();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0, 1, 2));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1, ITEM_2, ITEM_3));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0, 1, 2);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1, ITEM_2, ITEM_3);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_3);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
 	}
 
 	@Test
@@ -138,11 +132,11 @@ class CheckModelSelectionModelTest {
 		wrapper.selectFirst();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_1));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_1));
-		assertThat(wrapper.getSelectedIndex(), equalTo(0));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_1);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
 	}
 
 	@Test
@@ -151,29 +145,29 @@ class CheckModelSelectionModelTest {
 		wrapper.selectLast();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_3));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(2);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_3);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_3);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
 	}
 
 	@Test
 	void testClearAndSelect() {
 		// GIVEN
 		wrapper.selectFirst();
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
 
 		// WHEN
 		wrapper.clearAndSelect(1);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_2));
-		assertThat(wrapper.getSelectedIndex(), equalTo(1));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(1);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_2);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_2);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(1);
 	}
 
 	@Test
@@ -182,11 +176,11 @@ class CheckModelSelectionModelTest {
 		wrapper.select(2);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_3));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_3));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(2);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_3);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_3);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
 	}
 
 	@Test
@@ -195,58 +189,58 @@ class CheckModelSelectionModelTest {
 		wrapper.select(ITEM_2);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(1));
-		assertThat(wrapper.getSelectedItems(), containsInAnyOrder(ITEM_2));
-		assertThat(wrapper.getSelectedItem(), equalTo(ITEM_2));
-		assertThat(wrapper.getSelectedIndex(), equalTo(1));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(1);
+		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_2);
+		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_2);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(1);
 	}
 
 	@Test
 	void testClearSelectionByIndex() {
 		// GIVEN
 		wrapper.selectFirst();
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
 
 		// WHEN
 		wrapper.clearSelection(0);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), hasSize(0));
-		assertThat(wrapper.getSelectedItems(), hasSize(0));
-		assertThat(wrapper.getSelectedItem(), nullValue());
-		assertThat(wrapper.getSelectedIndex(), equalTo(-1));
+		assertThat(wrapper.getSelectedIndices()).hasSize(0);
+		assertThat(wrapper.getSelectedItems()).hasSize(0);
+		assertThat(wrapper.getSelectedItem()).isNull();
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(-1);
 	}
 
 	@Test
 	void testClearSelection() {
 		// GIVEN
 		wrapper.selectIndices(0, 1);
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(0, 1));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0, 1);
 
 		// WHEN
 		wrapper.clearSelection();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), hasSize(0));
-		assertThat(wrapper.getSelectedItems(), hasSize(0));
-		assertThat(wrapper.getSelectedItem(), nullValue());
-		assertThat(wrapper.getSelectedIndex(), equalTo(-1));
+		assertThat(wrapper.getSelectedIndices()).hasSize(0);
+		assertThat(wrapper.getSelectedItems()).hasSize(0);
+		assertThat(wrapper.getSelectedItem()).isNull();
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(-1);
 	}
 
 	@Test
 	void testIsSelected() {
 		// GIVEN
 		wrapper.select(2);
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(2);
 
 		// WHEN and THEN
-		assertThat(wrapper.isSelected(2), equalTo(true));
-		assertThat(wrapper.isSelected(0), equalTo(false));
-		assertThat(wrapper.isSelected(1), equalTo(false));
+		assertThat(wrapper.isSelected(2)).isEqualTo(true);
+		assertThat(wrapper.isSelected(0)).isEqualTo(false);
+		assertThat(wrapper.isSelected(1)).isEqualTo(false);
 	}
 
 	@Test
@@ -256,11 +250,11 @@ class CheckModelSelectionModelTest {
 		wrapper.select(2); // select again - we don't want the entry to be twice in the selected index list
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), notNullValue());
-		assertThat(wrapper.getSelectedIndices(), hasSize(1));
-		assertThat(wrapper.getSelectedIndices(), containsInAnyOrder(2));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
-		assertThat(wrapper.isSelected(2), equalTo(true));
+		assertThat(wrapper.getSelectedIndices()).isNotNull();
+		assertThat(wrapper.getSelectedIndices()).hasSize(1);
+		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(2);
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
+		assertThat(wrapper.isSelected(2)).isEqualTo(true);
 	}
 
 	@Test
@@ -272,10 +266,10 @@ class CheckModelSelectionModelTest {
 		wrapper.selectPrevious();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), contains(1, 0));
-		assertThat(wrapper.getSelectedItems(), contains("item-2", "item-1"));
-		assertThat(wrapper.getSelectedIndex(), equalTo(0));
-		assertThat(wrapper.getSelectedItem(), equalTo("item-1"));
+		assertThat(wrapper.getSelectedIndices()).containsExactly(1, 0);
+		assertThat(wrapper.getSelectedItems()).containsExactly("item-2", "item-1");
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+		assertThat(wrapper.getSelectedItem()).isEqualTo("item-1");
 	}
 
 	@Test
@@ -287,10 +281,10 @@ class CheckModelSelectionModelTest {
 		wrapper.selectPrevious();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), contains(0));
-		assertThat(wrapper.getSelectedItems(), contains("item-1"));
-		assertThat(wrapper.getSelectedIndex(), equalTo(0));
-		assertThat(wrapper.getSelectedItem(), equalTo("item-1"));
+		assertThat(wrapper.getSelectedIndices()).containsExactly(0);
+		assertThat(wrapper.getSelectedItems()).containsExactly("item-1");
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+		assertThat(wrapper.getSelectedItem()).isEqualTo("item-1");
 	}
 
 	@Test
@@ -302,10 +296,10 @@ class CheckModelSelectionModelTest {
 		wrapper.selectNext();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), contains(1, 2));
-		assertThat(wrapper.getSelectedItems(), contains("item-2", "item-3"));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
-		assertThat(wrapper.getSelectedItem(), equalTo("item-3"));
+		assertThat(wrapper.getSelectedIndices()).containsExactly(1, 2);
+		assertThat(wrapper.getSelectedItems()).containsExactly("item-2", "item-3");
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
+		assertThat(wrapper.getSelectedItem()).isEqualTo("item-3");
 	}
 
 	@Test
@@ -317,9 +311,9 @@ class CheckModelSelectionModelTest {
 		wrapper.selectNext();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices(), contains(2));
-		assertThat(wrapper.getSelectedItems(), contains("item-3"));
-		assertThat(wrapper.getSelectedIndex(), equalTo(2));
-		assertThat(wrapper.getSelectedItem(), equalTo("item-3"));
+		assertThat(wrapper.getSelectedIndices()).containsExactly(2);
+		assertThat(wrapper.getSelectedItems()).containsExactly("item-3");
+		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
+		assertThat(wrapper.getSelectedItem()).isEqualTo("item-3");
 	}
 }

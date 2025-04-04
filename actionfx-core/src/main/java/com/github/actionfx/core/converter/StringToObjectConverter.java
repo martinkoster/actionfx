@@ -42,7 +42,7 @@ public class StringToObjectConverter<T> implements Converter<String, T> {
 
     private static final Class<?>[] STRING_CLASS_PARAMETER = new Class[] { String.class };
 
-    private Class<T> targetType;
+	private final Class<T> targetType;
 
     public StringToObjectConverter(final Class<T> targetType) {
         this.targetType = targetType;

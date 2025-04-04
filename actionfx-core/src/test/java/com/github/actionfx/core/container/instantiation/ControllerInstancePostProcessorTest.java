@@ -23,14 +23,12 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -63,7 +61,7 @@ import com.github.actionfx.core.view.View;
  */
 class ControllerInstancePostProcessorTest {
 
-    private final Class<?>[] EXPECTED_EXTENSION = new Class[] { //
+    private final Class<?>[] expectedExtension = new Class[] { //
             NestedViewControllerExtension.class, //
             EnableMultiSelectionControllerExtension.class, //
             UseFilteredListControllerExtension.class, //
@@ -91,7 +89,7 @@ class ControllerInstancePostProcessorTest {
 
         // WHEN and THEN
         assertThat(postProcessor.getUnmodifiableControllerExtensions().stream().map(Consumer::getClass)
-                .collect(Collectors.toList()), contains(EXPECTED_EXTENSION));
+                .toList()).allMatch(extension -> Arrays.asList(expectedExtension).contains(extension));
     }
 
     @SuppressWarnings("unchecked")

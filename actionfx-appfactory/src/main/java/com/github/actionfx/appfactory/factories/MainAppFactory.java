@@ -31,6 +31,8 @@ import com.github.actionfx.appfactory.config.ControllerFactoryConfig;
 import com.github.actionfx.appfactory.config.MainAppFactoryConfig;
 import com.github.actionfx.appfactory.utils.FileUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Factory implementation for producing ActionFX main classes.
  *
@@ -45,6 +47,7 @@ public class MainAppFactory {
 
     private final Consumer<String> logConsumer;
 
+    @SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
     public MainAppFactory(final MainAppFactoryConfig factoryConfig,
             final ControllerFactoryConfig controllerFactoryConfig, final Consumer<String> logConsumer) {
         mainAppFactoryConfig = factoryConfig;

@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
@@ -45,9 +43,9 @@ class FloatToStringConverterTest {
 		final FloatToStringConverter converter = new FloatToStringConverter("#,###.##", Locale.GERMANY, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply(Float.valueOf(10000.4356f)), equalTo("10.000,44")); // German format with rounding
-		assertThat(converter.apply(Float.valueOf(100f)), equalTo("100"));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply(Float.valueOf(10000.4356f))).isEqualTo("10.000,44"); // German format with rounding
+		assertThat(converter.apply(Float.valueOf(100f))).isEqualTo("100");
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -56,9 +54,9 @@ class FloatToStringConverterTest {
 		final FloatToStringConverter converter = new FloatToStringConverter("#,###.##", Locale.US, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply(Float.valueOf(10000.4356f)), equalTo("10,000.44")); // US format with rounding
-		assertThat(converter.apply(Float.valueOf(100f)), equalTo("100"));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply(Float.valueOf(10000.4356f))).isEqualTo("10,000.44"); // US format with rounding
+		assertThat(converter.apply(Float.valueOf(100f))).isEqualTo("100");
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -67,7 +65,7 @@ class FloatToStringConverterTest {
 		final FloatToStringConverter converter = new FloatToStringConverter("#,###.##", Locale.GERMANY, false);
 
 		// WHEN and THEN
-		assertThat(converter.apply(null), equalTo("0"));
+		assertThat(converter.apply(null)).isEqualTo("0");
 	}
 
 }

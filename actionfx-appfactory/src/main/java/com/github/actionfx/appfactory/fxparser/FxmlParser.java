@@ -78,9 +78,9 @@ public class FxmlParser {
 		// id -> simple node name
 		private final Map<String, String> idNodesMap = new TreeMap<>();
 
-		private FxmlElement rootElement = null;
+		private FxmlElement rootElement;
 
-		private FxmlElement currentElement = null;
+		private FxmlElement currentElement;
 
 		@Override
 		public void startElement(final String uri, final String localName, final String qName,

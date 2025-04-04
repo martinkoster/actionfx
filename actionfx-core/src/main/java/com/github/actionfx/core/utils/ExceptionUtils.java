@@ -31,7 +31,7 @@ import java.util.Collection;
  * @author koster
  *
  */
-public class ExceptionUtils {
+public final class ExceptionUtils {
 
 	public static final String NULL_VALUE_STRING = "null";
 

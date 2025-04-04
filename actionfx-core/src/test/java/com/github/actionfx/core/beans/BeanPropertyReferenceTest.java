@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.beans;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +46,7 @@ class BeanPropertyReferenceTest {
 		final BeanPropertyReference<String> propertyValue = new BeanPropertyReference<>(property, model);
 
 		// WHEN and THEN
-		assertThat(propertyValue.getValue(), equalTo("Hello"));
+		assertThat(propertyValue.getValue()).isEqualTo("Hello");
 	}
 
 	@Test
@@ -58,7 +57,7 @@ class BeanPropertyReferenceTest {
 		final BeanPropertyReference<Boolean> propertyValue = new BeanPropertyReference<>(property, model);
 
 		// WHEN and THEN
-		assertThat(propertyValue.getValue(), equalTo(Boolean.TRUE));
+		assertThat(propertyValue.getValue()).isEqualTo(Boolean.TRUE);
 	}
 
 	@Test
@@ -72,7 +71,7 @@ class BeanPropertyReferenceTest {
 		propertyValue.setValue("Hello World");
 
 		// THEN
-		assertThat(model.getJavaFXProperty(), equalTo("Hello World"));
+		assertThat(model.getJavaFXProperty()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -83,7 +82,7 @@ class BeanPropertyReferenceTest {
 		final BeanPropertyReference<String> propertyValue = new BeanPropertyReference<>(property, model);
 
 		// WHEN and THEN
-		assertThat(propertyValue.getFxProperty(), equalTo(model.javaFXProperty));
+		assertThat(propertyValue.getFxProperty()).isEqualTo(model.javaFXProperty);
 	}
 
 	private Model model() {

@@ -26,7 +26,7 @@ package com.github.actionfx.bookstore.controller;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.actionfx.bookstore.model.Book;
 import com.github.actionfx.bookstore.model.Customer;
@@ -112,13 +112,12 @@ public class CheckoutController {
         final Customer customer = model.getCustomer();
         final Order order = model.getOrder();
         final DoubleCurrencyStringConverter converter = new DoubleCurrencyStringConverter();
-        builder.append(customer.getFirstName() + " " + customer.getLastName() + "\n");
+        builder.append(customer.getFirstName() + " ").append(customer.getLastName()).append("\n");
         builder.append(customer.getCountry() + "\n");
         builder.append(customer.getStreet() + "\n");
-        builder.append(customer.getPostalCode() + " " + customer.getCity() + "\n");
+        builder.append(customer.getPostalCode() + " ").append(customer.getCity()).append("\n");
         builder.append("\n");
-        builder.append("Books ordered: " + order.getOrderedBooks().size() + ", Total price: "
-                + converter.toString(order.getOrderedBooks().stream().mapToDouble(Book::getPrice).sum()));
+        builder.append("Books ordered: ").append(order.getOrderedBooks().size()).append(", Total price: ").append(converter.toString(order.getOrderedBooks().stream().mapToDouble(Book::getPrice).sum()));
         return builder.toString();
     }
 

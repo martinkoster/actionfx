@@ -39,9 +39,9 @@ import com.github.actionfx.core.view.graph.ControlWrapper;
  */
 public class SizeValidator extends AbstractRequiredValidator {
 
-    private long min;
+	private final long min;
 
-    private long max;
+	private final long max;
 
     /**
      * Default constructor.

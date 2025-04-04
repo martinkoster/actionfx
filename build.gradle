@@ -4,12 +4,14 @@ plugins {
     id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
     id "org.sonarqube" version "${sonarQubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
+	id "org.openrewrite.rewrite" version "7.3.0"
+
 }
 
 wrapper {
-    gradleVersion = "7.4.2"
+	gradleVersion = "8.13"
     distributionType = Wrapper.DistributionType.ALL
-    distributionUrl = "https://services.gradle.org/distributions/gradle-7.4.2-bin.zip"
+	distributionUrl = "https://services.gradle.org/distributions/gradle-8.13-bin.zip"
 }
 
 description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection"
@@ -24,13 +26,12 @@ configure(allprojects) { project ->
     apply plugin: 'jacoco'
     apply plugin: "com.github.spotbugs"
 
-    sourceCompatibility = "11" 
-    targetCompatibility = "11"
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
     
     configurations {
 	    published
 	    all*.exclude module: "slf4j-log4j12"
-	    all*.exclude module: "jsr305"
 	    integrationTestImplementation.extendsFrom testImplementation
 	    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
     }
@@ -38,12 +39,9 @@ configure(allprojects) { project ->
       
     repositories {
         mavenCentral()
-        jcenter()
         mavenLocal()
     }
-    
 
-    
 	// In this section you declare additional sourceSets
 	sourceSets {
 	    integrationTest {
@@ -65,19 +63,16 @@ configure(allprojects) { project ->
 	
 	test {
 		useJUnitPlatform()
-		reports {
-			html.enabled = true
-			html.destination = file("${reporting.baseDir}/${name}")
+		reports.html.outputLocation = file("${reporting.baseDir}/${name}") // Anpassung hier
+		testLogging {
+			exceptionFormat = "full"
 		}
-	    testLogging {
-    	    exceptionFormat = "full"
-    	}
     }
 
     tasks.withType(Test) {
        	systemProperties = System.properties
        	systemProperties["user.dir"] = workingDir
-    	reports.html.destination = file("${reporting.baseDir}/${name}")
+		reports.html.outputLocation = file("${reporting.baseDir}/${name}") // Anpassung hier
     	testLogging {
         	events "passed", "skipped", "failed"
     	}
@@ -118,15 +113,14 @@ configure(allprojects) { project ->
 	// Code analysis //
 	///////////////////
     spotbugs {
-        effort = "max"
-        reportLevel = "high"  
-        reportsDir = file("$buildDir/reports/spotbugs")
-    }
+		effort = com.github.spotbugs.snom.Effort.MAX
+		reportsDir = layout.buildDirectory.file("/reports/spotbugs").get().asFile
+		excludeFilter = file("$rootDir/spotbugs-filter.xml")
+	}
     
     spotbugsMain {
         reports {
             html {
-                enabled = true
                 destination = file("$buildDir/reports/spotbugs/spotbugs-main.html")
                 stylesheet = "fancy-hist.xsl"
             }
@@ -169,11 +163,12 @@ configure(allprojects) { project ->
 	test.dependsOn copyJavaDocToDocs
 	
     dependencies {
-	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
- 		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
+		compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
+
+		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
     	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
-    	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
-    }
+		testImplementation group: "org.assertj", name: "assertj-core", version: "${assertJVersion}"
+	}
 }
 
 nexusPublishing {
@@ -229,10 +224,7 @@ task codeCoverageReport(type: JacocoReport) {
     }
 
     reports {
-        xml.enabled true
         xml.destination file("${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
-        html.enabled false
-        csv.enabled false
     }
 }
 
@@ -278,8 +270,15 @@ task incPatchVersion {
 	}
 }
 
+rewrite {
+	activeRecipe("org.openrewrite.staticanalysis.CommonStaticAnalysis")
+	activeRecipe("org.openrewrite.java.RemoveUnusedImports")
+	setExportDatatables(true)
+}
+
 dependencies {
-    implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+	rewrite("org.openrewrite.recipe:rewrite-testing-frameworks:3.5.1")
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
 	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
 }
 

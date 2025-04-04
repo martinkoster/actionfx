@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.test.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
@@ -46,12 +44,13 @@ import javafx.scene.control.SelectionModel;
  */
 public class TestUtils {
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static void assertControlHasUserValue(final View view, final String controlId, final Object value) {
 		final ControlWrapper controlWrapper = getControlWrapper(view, controlId);
 		if (List.class.isAssignableFrom(value.getClass())) {
-			assertThat((List<?>) controlWrapper.getUserValue(), contains(((List<?>) value).toArray()));
+			assertThat((List) controlWrapper.getUserValue()).contains(((List<?>) value).toArray());
 		} else {
-			assertThat(controlWrapper.getUserValue(), equalTo(value));
+			assertThat(controlWrapper.getUserValue()).isEqualTo(value);
 		}
 	}
 

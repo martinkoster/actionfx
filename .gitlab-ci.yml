@@ -1,5 +1,5 @@
-image: adoptopenjdk/openjdk11:jdk-11.0.10_9-ubuntu
-    
+image: ghcr.io/gluonhq/javafx17:latest
+
 stages:
   - build
   - test

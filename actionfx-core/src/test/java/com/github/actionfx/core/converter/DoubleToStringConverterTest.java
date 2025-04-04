@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
@@ -45,9 +43,9 @@ class DoubleToStringConverterTest {
 		final DoubleToStringConverter converter = new DoubleToStringConverter("#,###.##", Locale.GERMANY, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply(Double.valueOf(10000.4356)), equalTo("10.000,44")); // German format with rounding
-		assertThat(converter.apply(Double.valueOf(100)), equalTo("100"));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply(Double.valueOf(10000.4356))).isEqualTo("10.000,44"); // German format with rounding
+		assertThat(converter.apply(Double.valueOf(100))).isEqualTo("100");
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -56,9 +54,9 @@ class DoubleToStringConverterTest {
 		final DoubleToStringConverter converter = new DoubleToStringConverter("#,###.##", Locale.US, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply(Double.valueOf(10000.4356)), equalTo("10,000.44")); // US format with rounding
-		assertThat(converter.apply(Double.valueOf(100)), equalTo("100"));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply(Double.valueOf(10000.4356))).isEqualTo("10,000.44"); // US format with rounding
+		assertThat(converter.apply(Double.valueOf(100))).isEqualTo("100");
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -67,9 +65,9 @@ class DoubleToStringConverterTest {
 		final DoubleToStringConverter converter = new DoubleToStringConverter(null, Locale.US, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply(Double.valueOf(10000.435)), equalTo("10,000.435")); // US format
-		assertThat(converter.apply(Double.valueOf(100)), equalTo("100"));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply(Double.valueOf(10000.435))).isEqualTo("10,000.435"); // US format
+		assertThat(converter.apply(Double.valueOf(100))).isEqualTo("100");
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -78,7 +76,7 @@ class DoubleToStringConverterTest {
 		final DoubleToStringConverter converter = new DoubleToStringConverter("#,###.##", Locale.GERMANY, false);
 
 		// WHEN and THEN
-		assertThat(converter.apply(null), equalTo("0"));
+		assertThat(converter.apply(null)).isEqualTo("0");
 	}
 
 }

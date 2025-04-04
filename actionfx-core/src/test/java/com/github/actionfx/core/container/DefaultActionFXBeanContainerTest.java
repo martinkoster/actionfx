@@ -23,14 +23,7 @@
  */
 package com.github.actionfx.core.container;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -94,11 +87,11 @@ class DefaultActionFXBeanContainerTest {
         final TestView view2 = container.getBean("beanId");
 
         // THEN
-        assertThat(view1, notNullValue());
-        assertThat(view1.isInitializeInvoked(), equalTo(true));
-        assertThat(view2, notNullValue());
-        assertThat(view2.isInitializeInvoked(), equalTo(true));
-        assertThat(view1, sameInstance(view2)); // consecutive calls to getBean yield the same instance
+        assertThat(view1).isNotNull();
+        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2).isNotNull();
+        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
     }
 
     @Test
@@ -112,11 +105,11 @@ class DefaultActionFXBeanContainerTest {
         final TestView view2 = container.getBean(TestView.class);
 
         // THEN
-        assertThat(view1, notNullValue());
-        assertThat(view1.isInitializeInvoked(), equalTo(true));
-        assertThat(view2, notNullValue());
-        assertThat(view2.isInitializeInvoked(), equalTo(true));
-        assertThat(view1, sameInstance(view2)); // consecutive calls to getBean yield the same instance
+        assertThat(view1).isNotNull();
+        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2).isNotNull();
+        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
     }
 
     @Test
@@ -131,12 +124,12 @@ class DefaultActionFXBeanContainerTest {
         final TestView view2 = container.getBean(TestView.class);
 
         // THEN
-        assertThat(view1, notNullValue());
-        assertThat(view1.isInitializeInvoked(), equalTo(true));
-        assertThat(view2, notNullValue());
-        assertThat(view2.isInitializeInvoked(), equalTo(true));
-        assertThat(view1, sameInstance(view2)); // consecutive calls to getBean yield the same instance
-        assertThat(view1, instanceOf(DerivedFromTestView.class));
+        assertThat(view1).isNotNull();
+        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2).isNotNull();
+        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
+        assertThat(view1).isInstanceOf(DerivedFromTestView.class);
     }
 
     @Test
@@ -146,7 +139,7 @@ class DefaultActionFXBeanContainerTest {
         container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
         // WHEN and THEN
-        assertThat(container.getBean("someNonExistingId"), nullValue());
+        assertThat((Object) container.getBean("someNonExistingId")).isNull();
     }
 
     @Test
@@ -156,7 +149,7 @@ class DefaultActionFXBeanContainerTest {
         container.addBeanDefinition("beanId", TestView.class, true, true, TestView::new);
 
         // WHEN and THEN
-        assertThat(container.getBean(String.class), nullValue());
+        assertThat((Object) container.getBean(String.class)).isNull();
     }
 
     @Test
@@ -170,11 +163,11 @@ class DefaultActionFXBeanContainerTest {
         final TestView view2 = container.getBean("beanId");
 
         // THEN
-        assertThat(view1, notNullValue());
-        assertThat(view1.isInitializeInvoked(), equalTo(true));
-        assertThat(view2, notNullValue());
-        assertThat(view2.isInitializeInvoked(), equalTo(true));
-        assertThat(view1, not(sameInstance(view2))); // consecutive calls to getBean yield the different instance
+        assertThat(view1).isNotNull();
+        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2).isNotNull();
+        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1).isNotSameAs(view2); // consecutive calls to getBean yield the different instance
     }
 
     @Test
@@ -188,11 +181,11 @@ class DefaultActionFXBeanContainerTest {
         final TestView view2 = container.getBean(TestView.class);
 
         // THEN
-        assertThat(view1, notNullValue());
-        assertThat(view1.isInitializeInvoked(), equalTo(true));
-        assertThat(view2, notNullValue());
-        assertThat(view2.isInitializeInvoked(), equalTo(true));
-        assertThat(view1, not(sameInstance(view2))); // consecutive calls to getBean yield the different instances
+        assertThat(view1).isNotNull();
+        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2).isNotNull();
+        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1).isNotSameAs(view2); // consecutive calls to getBean yield the different instances
     }
 
     @Test
@@ -208,19 +201,19 @@ class DefaultActionFXBeanContainerTest {
         final MainController mainControllerById = container.getBean("mainController");
         final MainController mainControllerByClassName = container.getBean(MainController.class);
 
-        assertThat(view, notNullValue());
-        assertThat(mainControllerById, notNullValue());
-        assertThat(mainControllerByClassName, notNullValue());
-        assertThat(mainControllerById, sameInstance(mainControllerByClassName));
-        assertThat(view, instanceOf(FxmlView.class));
+        assertThat(view).isNotNull();
+        assertThat(mainControllerById).isNotNull();
+        assertThat(mainControllerByClassName).isNotNull();
+        assertThat(mainControllerById).isSameAs(mainControllerByClassName);
+        assertThat(view).isInstanceOf(FxmlView.class);
         final FxmlView fxmlView = (FxmlView) view;
-        assertThat(fxmlView.getController(), sameInstance(mainControllerById));
+        assertThat(fxmlView.getController()).isSameAs(mainControllerById);
 
         // check that non-lazy controllers are instantiated
-        assertThat(NonLazilyInitializedController.isConstructed(), equalTo(true));
+        assertThat(NonLazilyInitializedController.isConstructed()).isEqualTo(true);
 
         // check that lazy controllers are not instantiated
-        assertThat(LazilyInitializedController.isConstructed(), equalTo(false));
+        assertThat(LazilyInitializedController.isConstructed()).isEqualTo(false);
     }
 
     @Test
@@ -235,14 +228,14 @@ class DefaultActionFXBeanContainerTest {
         final ModelWithDefaultConstructor model = container.getBean(ModelWithDefaultConstructor.class);
 
         // THEN (verify all annotated fields are resolved)
-        assertThat(controller.getMainView(), notNullValue());
-        assertThat(controller.getMainView(), sameInstance(view)); // view is a singleton!
-        assertThat(controller.getModel(), notNullValue());
-        assertThat(controller.getModel(), sameInstance(model)); // type is a singleton!
+        assertThat(controller.getMainView()).isNotNull();
+        assertThat(controller.getMainView()).isSameAs(view); // view is a singleton!
+        assertThat(controller.getModel()).isNotNull();
+        assertThat(controller.getModel()).isSameAs(model); // type is a singleton!
 
         // check, that @Inject-annotated field in abstract base class is resolved
-        assertThat(controller.getBaseModel(), notNullValue());
-        assertThat(controller.getBaseModel(), sameInstance(model)); // type is still a singleton!
+        assertThat(controller.getBaseModel()).isNotNull();
+        assertThat(controller.getBaseModel()).isSameAs(model); // type is still a singleton!
 
     }
 
@@ -255,8 +248,8 @@ class DefaultActionFXBeanContainerTest {
         final ResourceBundle bundle = container.resolveResourceBundle(MultilingualViewController.class, Locale.GERMANY);
 
         // THEN
-        assertThat(bundle, notNullValue());
-        assertThat(bundle.getString("label.text"), equalTo("Hallo Welt"));
+        assertThat(bundle).isNotNull();
+        assertThat(bundle.getString("label.text")).isEqualTo("Hallo Welt");
     }
 
     @Test
@@ -268,7 +261,7 @@ class DefaultActionFXBeanContainerTest {
         final ResourceBundle bundle = container.resolveResourceBundle(SampleViewController.class, Locale.GERMANY);
 
         // THEN
-        assertThat(bundle, nullValue());
+        assertThat(bundle).isNull();
     }
 
     @Test
@@ -280,7 +273,7 @@ class DefaultActionFXBeanContainerTest {
         final ResourceBundle bundle = container.resolveResourceBundle(String.class, Locale.GERMANY);
 
         // THEN
-        assertThat(bundle, nullValue());
+        assertThat(bundle).isNull();
     }
 
     @Test
@@ -293,7 +286,7 @@ class DefaultActionFXBeanContainerTest {
         final TestController controller = container.getBean("testController");
 
         // THEN
-        assertThat(controller, notNullValue());
+        assertThat(controller).isNotNull();
     }
 
     @Test
@@ -306,7 +299,7 @@ class DefaultActionFXBeanContainerTest {
                 () -> container.addControllerBeanDefinition(NonController.class));
 
         // THEN
-        assertThat(ex.getMessage(), containsString("is not annotated by @AFXController!"));
+        assertThat(ex.getMessage()).contains("is not annotated by @AFXController!");
     }
 
     @Test
@@ -333,22 +326,15 @@ class DefaultActionFXBeanContainerTest {
         beanContainer.addActionFXBeans(ActionFX.getInstance());
 
         // THEN
-        assertThat(beanContainer.getBean(BeanContainerFacade.ACTIONFX_EXTENSION_BEANNAME),
-                instanceOf(ActionFXExtensionsBean.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.CONTROLLER_INSTANCE_POSTPROCESSOR_BEANNAME),
-                instanceOf(ControllerInstancePostProcessor.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.BEAN_DEFINITION_POSTPROCESSOR_BEANNAME),
-                instanceOf(BeanDefinitionPostProcessor.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.EVENT_BUS_BEANNAME),
-                instanceOf(PriorityAwareEventBus.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.LOCALE_PROPERTY_BEANNAME),
-                instanceOf(SimpleObjectProperty.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.LOCALE_BEANNAME), instanceOf(Locale.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.ACTIONFX_BEANNAME), instanceOf(ActionFX.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME),
-                instanceOf(DialogController.class));
-        assertThat(beanContainer.getBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME),
-                instanceOf(ConversionService.class));
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.ACTIONFX_EXTENSION_BEANNAME)).isInstanceOf(ActionFXExtensionsBean.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.CONTROLLER_INSTANCE_POSTPROCESSOR_BEANNAME)).isInstanceOf(ControllerInstancePostProcessor.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.BEAN_DEFINITION_POSTPROCESSOR_BEANNAME)).isInstanceOf(BeanDefinitionPostProcessor.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.EVENT_BUS_BEANNAME)).isInstanceOf(PriorityAwareEventBus.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.LOCALE_PROPERTY_BEANNAME)).isInstanceOf(SimpleObjectProperty.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.LOCALE_BEANNAME)).isInstanceOf(Locale.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.ACTIONFX_BEANNAME)).isInstanceOf(ActionFX.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.DIALOG_CONTROLLER_BEANNAME)).isInstanceOf(DialogController.class);
+        assertThat((Object) beanContainer.getBean(BeanContainerFacade.CONVERSION_SERVICE_BEANNAME)).isInstanceOf(ConversionService.class);
     }
 
     public static class NonController {

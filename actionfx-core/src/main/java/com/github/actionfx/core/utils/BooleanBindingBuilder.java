@@ -66,11 +66,11 @@ public class BooleanBindingBuilder {
         AT_LEAST_ONE_MATCH
     }
 
-    private List<PredicateElement<?>> predicateElements = new ArrayList<>();
+    private final List<PredicateElement<?>> predicateElements = new ArrayList<>();
 
     // flag that determines, whether the result of the entire predicate chain shall
     // be negated or not
-    private boolean negateChainResult = false;
+    private boolean negateChainResult;
 
     protected BooleanBindingBuilder() {
         // can not be instantiated directly
@@ -306,8 +306,10 @@ public class BooleanBindingBuilder {
         case OR:
             combined = currentResult || element.evaluatePredicate();
             break;
-        default:
         case AND:
+            combined = currentResult && element.evaluatePredicate();
+            break;
+            default:
             combined = currentResult && element.evaluatePredicate();
         }
         return combined;
@@ -343,7 +345,7 @@ public class BooleanBindingBuilder {
         private MatchingOp matchingOp;
 
         // optionally negate the computed result
-        private boolean negateResult = false;
+        private boolean negateResult;
 
         private BooleanBindingBuilder parentBuilder;
 
@@ -443,7 +445,7 @@ public class BooleanBindingBuilder {
         protected MatchingOp matchingOp;
 
         // optionally negate the computed result
-        protected boolean negateResult = false;
+        protected boolean negateResult;
 
         public PredicateElement(final BooleanOp booleanOp, final Predicate<T> predicate, final MatchingOp matchingOp,
                 final Function<T, Observable> observableExtractorFunction, final T[] testables,
@@ -467,8 +469,10 @@ public class BooleanBindingBuilder {
             case AT_LEAST_ONE_MATCH:
                 result = Arrays.asList(testables).stream().anyMatch(predicate);
                 break;
+                case ALL_MATCH:
+                    result = Arrays.asList(testables).stream().allMatch(predicate);
+                    break;
             default:
-            case ALL_MATCH:
                 result = Arrays.asList(testables).stream().allMatch(predicate);
             }
             return negateResult ? !result : result;

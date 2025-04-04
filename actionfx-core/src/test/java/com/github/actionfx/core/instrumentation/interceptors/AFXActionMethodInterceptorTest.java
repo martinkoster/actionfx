@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.instrumentation.interceptors;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
@@ -87,8 +84,8 @@ class AFXActionMethodInterceptorTest {
 
 		// THEN (check that view of controller two is part of new stage that is
 		// different from the primary stage)
-		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
-		assertThat(viewOfControllerTwo.getWindow(), not(sameInstance(primaryStage)));
+		assertThat(viewOfControllerTwo.getWindow()).isNotNull();
+		assertThat(viewOfControllerTwo.getWindow()).isNotSameAs(primaryStage);
 	}
 
 	@Test
@@ -110,8 +107,8 @@ class AFXActionMethodInterceptorTest {
 		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is identical to the primary stage)
-		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
-		assertThat(viewOfControllerTwo.getWindow(), sameInstance(primaryStage));
+		assertThat(viewOfControllerTwo.getWindow()).isNotNull();
+		assertThat(viewOfControllerTwo.getWindow()).isSameAs(primaryStage);
 	}
 
 	@Test
@@ -134,8 +131,8 @@ class AFXActionMethodInterceptorTest {
 		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is identical to the popup)
-		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
-		assertThat(viewOfControllerTwo.getWindow(), sameInstance(popup));
+		assertThat(viewOfControllerTwo.getWindow()).isNotNull();
+		assertThat(viewOfControllerTwo.getWindow()).isSameAs(popup);
 	}
 
 	@Test
@@ -157,12 +154,12 @@ class AFXActionMethodInterceptorTest {
 		AFXActionMethodInterceptor.interceptAFXAction(afxAction, callable, controllerOne);
 
 		// THEN (check that view of controller two is identical to the primary stage)
-		assertThat(viewOfControllerTwo.getWindow(), notNullValue());
-		assertThat(viewOfControllerTwo.getWindow(), sameInstance(primaryStage));
+		assertThat(viewOfControllerTwo.getWindow()).isNotNull();
+		assertThat(viewOfControllerTwo.getWindow()).isSameAs(primaryStage);
 
 		// assert that the center content of the border pane is the content of
 		// "viewOfControllerTwo"
-		assertThat(controllerOne.getMainBorderPane().getCenter(), sameInstance(viewOfControllerTwo.getRootNode()));
+		assertThat(controllerOne.getMainBorderPane().getCenter()).isSameAs(viewOfControllerTwo.getRootNode());
 	}
 
 	private static AFXShowView findAnnotation(final Method method) {

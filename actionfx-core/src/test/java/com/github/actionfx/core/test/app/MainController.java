@@ -23,7 +23,7 @@
  */
 package com.github.actionfx.core.test.app;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.actionfx.core.annotation.AFXController;
 import com.github.actionfx.core.view.FxmlView;

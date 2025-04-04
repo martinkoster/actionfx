@@ -40,9 +40,9 @@ import javafx.scene.control.Control;
  */
 public abstract class AbstractRequiredValidator implements Validator {
 
-    private String message;
+	private final String message;
 
-    private boolean required;
+	private final boolean required;
 
     protected AbstractRequiredValidator(final String message, final boolean required) {
         this.message = message;

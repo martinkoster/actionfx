@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.events;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -99,7 +97,7 @@ class SimplePriorityAwareEventBusTest {
 
 		// THEN
 		verify(baseTypeConsumer, times(1)).accept(ArgumentMatchers.eq(derivedType));
-		assertThat(actual, sameInstance(ex));
+		assertThat(actual).isSameAs(ex);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -140,7 +138,7 @@ class SimplePriorityAwareEventBusTest {
 		eventBus.publish(derivedType);
 
 		// THEN
-		assertThat(invocationOrder, contains(1, 2, 3));
+		assertThat(invocationOrder).containsExactly(1, 2, 3);
 	}
 
 	public static class BaseType {

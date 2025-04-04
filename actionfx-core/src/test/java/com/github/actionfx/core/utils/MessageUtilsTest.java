@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -45,7 +44,7 @@ class MessageUtilsTest {
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
 
 		// WHEN
-		assertThat(MessageUtils.getMessage(resourceBundle, "label.text", "Default Text"), equalTo("Hello World"));
+		assertThat(MessageUtils.getMessage(resourceBundle, "label.text", "Default Text")).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -54,13 +53,13 @@ class MessageUtilsTest {
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
 
 		// WHEN and THEN
-		assertThat(MessageUtils.getMessage(resourceBundle, "fantasy.key", "Default Text"), equalTo("Default Text"));
+		assertThat(MessageUtils.getMessage(resourceBundle, "fantasy.key", "Default Text")).isEqualTo("Default Text");
 	}
 
 	@Test
 	void testGetMessage_resourceBundleIsNull() {
 		// WHEN and THEN
-		assertThat(MessageUtils.getMessage(null, "fantasy.key", "Default Text"), equalTo("Default Text"));
+		assertThat(MessageUtils.getMessage(null, "fantasy.key", "Default Text")).isEqualTo("Default Text");
 	}
 
 	@Test
@@ -69,7 +68,7 @@ class MessageUtilsTest {
 		final ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.TestResources", Locale.US);
 
 		// WHEN and THEN
-		assertThat(MessageUtils.getMessage(resourceBundle, null, "Default Text"), equalTo("Default Text"));
+		assertThat(MessageUtils.getMessage(resourceBundle, null, "Default Text")).isEqualTo("Default Text");
 	}
 
 }

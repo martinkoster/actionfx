@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
@@ -54,11 +51,11 @@ class ValidationMessageTest {
         // GIVEN
         final ValidationMessage msg = new ValidationMessage(null, null, null);
 
-        // WHEN and THEN
-        assertThat(msg.getStatus(), equalTo(ValidationStatus.ERROR));
-        assertThat(msg.getText(), equalTo(""));
-        assertThat(msg.getTarget(), nullValue());
-        assertThat(msg.isApplyValidationResultDecoration(), equalTo(true));
+		// WHEN and THEN
+		assertThat(msg.getStatus()).isEqualTo(ValidationStatus.ERROR);
+		assertThat(msg.getText()).isEqualTo("");
+		assertThat(msg.getTarget()).isNull();
+		assertThat(msg.isApplyValidationResultDecoration()).isEqualTo(true);
     }
 
     @Test
@@ -71,13 +68,13 @@ class ValidationMessageTest {
         final ValidationMessage msg3 = new ValidationMessage(ValidationStatus.ERROR, "ERROR1", tf1);
         final ValidationMessage msg4 = new ValidationMessage(ValidationStatus.INFO, "ERROR1", tf1);
 
-        // WHEN and THEN
-        assertThat(msg1.equals(msg1), equalTo(true));
-        assertThat(msg1.equals(msg3), equalTo(true));
+		// WHEN and THEN
+		assertThat(msg1.equals(msg1)).isEqualTo(true);
+		assertThat(msg1.equals(msg3)).isEqualTo(true);
 
-        assertThat(msg1.equals(msg2), equalTo(false));
-        assertThat(msg1.equals(msg4), equalTo(false));
-        assertThat(msg2.equals(msg3), equalTo(false));
+		assertThat(msg1.equals(msg2)).isEqualTo(false);
+		assertThat(msg1.equals(msg4)).isEqualTo(false);
+		assertThat(msg2.equals(msg3)).isEqualTo(false);
     }
 
     @Test
@@ -89,8 +86,8 @@ class ValidationMessageTest {
         final ValidationMessage msg2 = new ValidationMessage(ValidationStatus.ERROR, "ERROR1", tf2);
         final ValidationMessage msg3 = new ValidationMessage(ValidationStatus.ERROR, "ERROR1", tf1);
 
-        // WHEN and THEN
-        assertThat(msg1.hashCode(), equalTo(msg3.hashCode()));
+		// WHEN and THEN
+		assertThat(msg1.hashCode()).isEqualTo(msg3.hashCode());
         assertNotEquals(msg1.hashCode(), msg2.hashCode());
     }
 
@@ -112,9 +109,8 @@ class ValidationMessageTest {
         // WHEN
         list.sort(new ValidationMessageComparator());
 
-        // THEN
-        assertThat(list.stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-                contains("OK", "INFO", "WARNING", "", "ERROR1", "ERROR2", "ERROR3"));
+		// THEN
+		assertThat(list.stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("OK", "INFO", "WARNING", "", "ERROR1", "ERROR2", "ERROR3");
     }
 
 }

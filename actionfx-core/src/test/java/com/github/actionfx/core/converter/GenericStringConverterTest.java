@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -62,7 +60,7 @@ class GenericStringConverterTest {
 				fromStringConverter);
 
 		// WHEN and THEN
-		assertThat(converter.fromString("hello world"), equalTo(Integer.valueOf(42)));
+		assertThat(converter.fromString("hello world")).isEqualTo(Integer.valueOf(42));
 	}
 
 	@Test
@@ -72,7 +70,7 @@ class GenericStringConverterTest {
 				fromStringConverter);
 
 		// WHEN and THEN
-		assertThat(converter.toString(Integer.valueOf(42)), equalTo("hello world"));
+		assertThat(converter.toString(Integer.valueOf(42))).isEqualTo("hello world");
 	}
 
 	@Test
@@ -81,7 +79,7 @@ class GenericStringConverterTest {
 		final GenericStringConverter<Integer> converter = new GenericStringConverter<>(null, null);
 
 		// WHEN and THEN
-		assertThat(converter.fromString("hello world"), nullValue());
+		assertThat(converter.fromString("hello world")).isNull();
 	}
 
 	@Test
@@ -90,7 +88,7 @@ class GenericStringConverterTest {
 		final GenericStringConverter<Integer> converter = new GenericStringConverter<>(null, null);
 
 		// WHEN and THEN
-		assertThat(converter.toString(Integer.valueOf(42)), equalTo("42"));
+		assertThat(converter.toString(Integer.valueOf(42))).isEqualTo("42");
 	}
 
 }

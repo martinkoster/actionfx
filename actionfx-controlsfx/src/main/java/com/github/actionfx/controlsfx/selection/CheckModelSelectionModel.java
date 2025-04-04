@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.controlsfx.control.CheckModel;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -51,6 +52,7 @@ public class CheckModelSelectionModel<T> extends MultipleSelectionModel<T> imple
 
 	private final ObservableList<T> selectedItems = FXCollections.observableArrayList();
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Holding a reference to CheckModel  and ObservableList is fully intended here.")
 	public CheckModelSelectionModel(final CheckModel<T> checkModel, final ObservableList<T> items) {
 		this.checkModel = checkModel;
 		this.items = items;
@@ -63,16 +65,18 @@ public class CheckModelSelectionModel<T> extends MultipleSelectionModel<T> imple
 			setSelectedIndex(checkedItems.size() - 1);
 		}
 		for (int i = 0; i < checkedItems.size(); i++) {
-			this.selectedIndices.add(Integer.valueOf(i));
+			this.selectedIndices.add(i);
 
 		}
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Returning the original ObservableList is fully intended here.")
 	@Override
 	public ObservableList<Integer> getSelectedIndices() {
 		return this.selectedIndices;
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Returning the original ObservableList is fully intended here.")
 	@Override
 	public ObservableList<T> getSelectedItems() {
 		return this.selectedItems;

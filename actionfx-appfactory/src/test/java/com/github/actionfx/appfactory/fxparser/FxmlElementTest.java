@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.appfactory.fxparser;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,7 +57,7 @@ class FxmlElementTest {
 				.collect(Collectors.toList());
 
 		// THEN
-		assertThat(names, contains("root", "child1", "child2", "child3"));
+		assertThat(names).containsExactly("root", "child1", "child2", "child3");
 	}
 
 	@Test
@@ -72,7 +69,7 @@ class FxmlElementTest {
 		final Class<?> borderPaneClass = element.asResolvedClass();
 
 		// THEN
-		assertThat(borderPaneClass, equalTo(BorderPane.class));
+		assertThat(borderPaneClass).isEqualTo(BorderPane.class);
 	}
 
 	@Test
@@ -81,6 +78,6 @@ class FxmlElementTest {
 		final FxmlElement element = new FxmlElement(null, "BorderPane", null);
 
 		// WHEN and THEN
-		assertThat(element.asResolvedClass(), nullValue());
+		assertThat(element.asResolvedClass()).isNull();
 	}
 }

@@ -28,7 +28,7 @@ package com.github.actionfx.core.annotation;
  *
  * @author koster
  */
-public class ValidationHelper {
+public final class ValidationHelper {
 
     private ValidationHelper() {
         // class can not be instantiated

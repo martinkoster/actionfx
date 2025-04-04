@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,7 +47,7 @@ class DateToStringConverterTest {
 		final Date date = new Date(1630835160000l);
 
 		// THEN
-		assertThat(converter.apply(date), equalTo(sdf.format(date)));
+		assertThat(converter.apply(date)).isEqualTo(sdf.format(date));
 	}
 
 }

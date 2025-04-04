@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.appfactory.config;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,17 +51,14 @@ class MainAppFactoryConfigTest {
 
         config.setUseSpring(false);
 
-        // WHEN and THEN
-        assertThat(config.getAbsoluteProjectRootDirectory(), equalTo(rootFolder));
-        assertThat(config.getControllerPackageName(), equalTo("com.github.testproject.controller"));
-        assertThat(config.getAbsoluteSourceRootDirectory(),
-                equalTo(Path.of(rootFolder, "src", "main", "java").toString()));
-        assertThat(config.getAbsoluteResourceRootDirectory(),
-                equalTo(Path.of(rootFolder, "src", "main", "resources").toString()));
-        assertThat(config.getAbsoluteFxmlRootDirectory(),
-                equalTo(Path.of(rootFolder, "src", "main", "resources", "fxml").toString()));
-        assertThat(config.getAbsoluteMainControllerDirectory(), equalTo(Path
-                .of(config.getAbsoluteSourceRootDirectory(), "com", "github", "testproject", "controller").toString()));
+		// WHEN and THEN
+		assertThat(config.getAbsoluteProjectRootDirectory()).isEqualTo(rootFolder);
+		assertThat(config.getControllerPackageName()).isEqualTo("com.github.testproject.controller");
+		assertThat(config.getAbsoluteSourceRootDirectory()).isEqualTo(Path.of(rootFolder, "src", "main", "java").toString());
+		assertThat(config.getAbsoluteResourceRootDirectory()).isEqualTo(Path.of(rootFolder, "src", "main", "resources").toString());
+		assertThat(config.getAbsoluteFxmlRootDirectory()).isEqualTo(Path.of(rootFolder, "src", "main", "resources", "fxml").toString());
+		assertThat(config.getAbsoluteMainControllerDirectory()).isEqualTo(Path
+				.of(config.getAbsoluteSourceRootDirectory(), "com", "github", "testproject", "controller").toString());
     }
 
 }

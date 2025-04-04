@@ -30,7 +30,8 @@ dependencies {
 		
 		implementation group: "ch.qos.logback", name: "logback-classic", version: "${logbackVersion}"
 		
-        testImplementation project(":actionfx-testing")
+        implementation group: "org.assertj", name: "assertj-core", version: "3.27.3"
+    testImplementation project(":actionfx-testing")
 
 		testImplementation group: "org.springframework.boot", name: "spring-boot-starter-test", version: "${springBootVersion}"
 		testImplementation group: "org.springframework", name: "spring-test", version: "${springVersion}"

@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.collections;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
@@ -50,8 +49,8 @@ class ObservableListAdapterTest {
 		final ObservableListAdapter<String> adapter = new ObservableListAdapter<>(list);
 
 		// THEN
-		assertThat(adapter.getWrappedOriginal(), sameInstance(list));
-		assertThat(adapter.getModifiableList(), sameInstance(list));
+		assertThat(adapter.getWrappedOriginal()).isSameAs(list);
+		assertThat(adapter.getModifiableList()).isSameAs(list);
 	}
 
 	@Test
@@ -64,8 +63,8 @@ class ObservableListAdapterTest {
 		final ObservableListAdapter<String> adapter = new ObservableListAdapter<>(filteredList);
 
 		// THEN
-		assertThat(adapter.getWrappedOriginal(), sameInstance(filteredList));
-		assertThat(adapter.getModifiableList(), sameInstance(list));
+		assertThat(adapter.getWrappedOriginal()).isSameAs(filteredList);
+		assertThat(adapter.getModifiableList()).isSameAs(list);
 	}
 
 	@Test
@@ -78,8 +77,8 @@ class ObservableListAdapterTest {
 		final ObservableListAdapter<String> adapter = new ObservableListAdapter<>(sortedList);
 
 		// THEN
-		assertThat(adapter.getWrappedOriginal(), sameInstance(sortedList));
-		assertThat(adapter.getModifiableList(), sameInstance(list));
+		assertThat(adapter.getWrappedOriginal()).isSameAs(sortedList);
+		assertThat(adapter.getModifiableList()).isSameAs(list);
 	}
 
 	@Test
@@ -93,8 +92,8 @@ class ObservableListAdapterTest {
 		final ObservableListAdapter<String> adapter = new ObservableListAdapter<>(sortedList);
 
 		// THEN
-		assertThat(adapter.getWrappedOriginal(), sameInstance(sortedList));
-		assertThat(adapter.getModifiableList(), sameInstance(list));
+		assertThat(adapter.getWrappedOriginal()).isSameAs(sortedList);
+		assertThat(adapter.getModifiableList()).isSameAs(list);
 	}
 
 }

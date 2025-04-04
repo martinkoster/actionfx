@@ -64,9 +64,9 @@ public abstract class AbstractView implements View {
 
 	protected int posY = -1;
 
-	protected boolean maximized = false;
+	protected boolean maximized;
 
-	protected boolean modalDialogue = false;
+	protected boolean modalDialogue;
 
 	protected String icon;
 
@@ -297,7 +297,7 @@ public abstract class AbstractView implements View {
 	 */
 	private boolean isHeadlessMode() {
 		final String property = System.getProperty("monocle.platform");
-		return property != null && property.equals("Headless");
+		return "Headless".equals(property);
 	}
 
 	public String getWindowTitle() {

@@ -37,7 +37,7 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
  * @author koster
  *
  */
-public class ViewBuilder<T extends AbstractView> {
+public final class ViewBuilder<T extends AbstractView> {
 
     // the instance under construction.
     private T view;
@@ -154,10 +154,6 @@ public class ViewBuilder<T extends AbstractView> {
         for (final AFXNestedView nestedView : nestedViews) {
             // get view to attach
             final View viewToAttach = actionFX.getView(nestedView.refViewId());
-            if (viewToAttach == null) {
-                throw new IllegalStateException("Nested view with viewId='" + nestedView.refViewId()
-                        + "' does not exist, can not embed it into this view '" + view.getId() + "'!");
-            }
             final NodeWrapper wrappedRootNode = NodeWrapper.of(view.getRootNode());
             final NodeWrapper target = wrappedRootNode.lookup(nestedView.attachToNodeWithId());
             if (target == null) {

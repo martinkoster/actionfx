@@ -37,7 +37,7 @@ import io.github.classgraph.ScanResult;
  * @author koster
  *
  */
-public class ClassPathScanningUtils {
+public final class ClassPathScanningUtils {
 
 	private ClassPathScanningUtils() {
 		// class can not be instantiated

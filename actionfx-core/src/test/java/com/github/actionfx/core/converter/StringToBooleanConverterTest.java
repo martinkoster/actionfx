@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,17 +40,17 @@ class StringToBooleanConverterTest {
         // GIVEN
         final StringToBooleanConverter converter = new StringToBooleanConverter(true);
 
-        // WHEN and THEN
-        assertThat(converter.apply("true"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("TRUE"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("TRue"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("on"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("yes"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("si"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("sì"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("oui"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("ja"), equalTo(Boolean.TRUE));
-        assertThat(converter.apply("1"), equalTo(Boolean.TRUE));
+		// WHEN and THEN
+		assertThat(converter.apply("true")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("TRUE")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("TRue")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("on")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("yes")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("si")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("sì")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("oui")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("ja")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.apply("1")).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -60,15 +58,15 @@ class StringToBooleanConverterTest {
         // GIVEN
         final StringToBooleanConverter converter = new StringToBooleanConverter(true);
 
-        // WHEN and THEN
-        assertThat(converter.apply("false"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("FALSE"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("FalSE"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("off"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("no"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("non"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("nein"), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("0"), equalTo(Boolean.FALSE));
+		// WHEN and THEN
+		assertThat(converter.apply("false")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("FALSE")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("FalSE")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("off")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("no")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("non")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("nein")).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("0")).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -76,9 +74,9 @@ class StringToBooleanConverterTest {
         // GIVEN
         final StringToBooleanConverter converter = new StringToBooleanConverter(false);
 
-        // WHEN and THEN
-        assertThat(converter.apply(null), equalTo(Boolean.FALSE));
-        assertThat(converter.apply("invalid"), equalTo(Boolean.FALSE));
+		// WHEN and THEN
+		assertThat(converter.apply(null)).isEqualTo(Boolean.FALSE);
+		assertThat(converter.apply("invalid")).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -86,8 +84,8 @@ class StringToBooleanConverterTest {
         // GIVEN
         final StringToBooleanConverter converter = new StringToBooleanConverter(false);
 
-        // WHEN and THEN
-        assertThat(converter.apply("invalid"), equalTo(Boolean.FALSE));
+		// WHEN and THEN
+		assertThat(converter.apply("invalid")).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -95,8 +93,8 @@ class StringToBooleanConverterTest {
         // GIVEN
         final StringToBooleanConverter converter = new StringToBooleanConverter(true);
 
-        // WHEN and THEN
-        assertThat(converter.apply(null), nullValue());
+		// WHEN and THEN
+		assertThat(converter.apply(null)).isNull();
     }
 
 }

@@ -29,8 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +49,7 @@ import org.apache.commons.lang3.ClassUtils;
  * @author koster
  *
  */
-public class ReflectionUtils {
+public final class ReflectionUtils {
 
     private static final MethodFilter PUBLIC_METHOD_WITH_RESULT_PREDICATE = publicMethodWithReturnTypePredicate();
 
@@ -168,17 +166,15 @@ public class ReflectionUtils {
      * @return the field value
      */
     public static Object getFieldValue(final Field field, final Object instance) {
-        return AccessController.doPrivileged((PrivilegedAction<?>) () -> {
-            final boolean wasAccessible = field.canAccess(instance);
-            try {
-                field.setAccessible(true); // NOSONAR
-                return field.get(instance);
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new IllegalStateException("Cannot get value from field: " + field, ex);
-            } finally {
-                field.setAccessible(wasAccessible);
-            }
-        });
+        final boolean wasAccessible = field.canAccess(instance);
+        try {
+            field.setAccessible(true); // NOSONAR
+            return field.get(instance);
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            throw new IllegalStateException("Cannot get value from field: " + field, ex);
+        } finally {
+            field.setAccessible(wasAccessible);
+        }
     }
 
     /**
@@ -241,7 +237,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Constructs the {@code property-getter}-method name for the supplied {@link field}.
+     * Constructs the {@code property-getter}-method name for the supplied {@code field}.
      * <p>
      * The name of the property-getter for a field with name "field" is derived as {@code fieldProperty}.
      *
@@ -264,18 +260,15 @@ public class ReflectionUtils {
      *            the value to set as field value
      */
     public static void setFieldValue(final Field field, final Object instance, final Object value) {
-        AccessController.doPrivileged((PrivilegedAction<?>) () -> {
-            final boolean wasAccessible = field.canAccess(instance);
-            try {
-                field.setAccessible(true); // NOSONAR
-                field.set(instance, value); // NOSONAR
-                return null; // return nothing...
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new IllegalStateException("Cannot set field: " + field + " with value " + value, ex);
-            } finally {
-                field.setAccessible(wasAccessible);
-            }
-        });
+        final boolean wasAccessible = field.canAccess(instance);
+        try {
+            field.setAccessible(true); // NOSONAR
+            field.set(instance, value); // NOSONAR
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            throw new IllegalStateException("Cannot set field: " + field + " with value " + value, ex);
+        } finally {
+            field.setAccessible(wasAccessible);
+        }
     }
 
     /**
@@ -414,21 +407,19 @@ public class ReflectionUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T invokeMethod(final Method method, final Object instance, final Object... arguments) {
-        return AccessController.doPrivileged((PrivilegedAction<T>) () -> {
-            final boolean wasAccessible = method.canAccess(instance);
-            try {
-                method.setAccessible(true); // NOSONAR
-                if (arguments.length == 0) {
-                    return (T) method.invoke(instance);
-                } else {
-                    return (T) method.invoke(instance, arguments);
-                }
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                throw new IllegalStateException("Problem invoking method '" + method.getName() + "'!", ex);
-            } finally {
-                method.setAccessible(wasAccessible);
+        final boolean wasAccessible = method.canAccess(instance);
+        try {
+            method.setAccessible(true); // NOSONAR
+            if (arguments.length == 0) {
+                return (T) method.invoke(instance);
+            } else {
+                return (T) method.invoke(instance, arguments);
             }
-        });
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            throw new IllegalStateException("Problem invoking method '" + method.getName() + "'!", ex);
+        } finally {
+            method.setAccessible(wasAccessible);
+        }
     }
 
     /**

@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.spring;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
@@ -68,7 +67,7 @@ class InternationalizationIntegrationTest {
 		final I18NController controller = ActionFX.getInstance().getBean("i18NController");
 
 		// THEN
-		assertThat(controller.textLabel.getText(), equalTo("Hallo Welt"));
+		assertThat(controller.textLabel.getText()).isEqualTo("Hallo Welt");
 	}
 
 }

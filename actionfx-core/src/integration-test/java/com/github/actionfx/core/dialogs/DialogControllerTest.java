@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.dialogs;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -105,18 +102,18 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 
 		// AND WHEN
 		fxRobot.clickOn("OK");
 
 		// AND THEN
-		assertThat(returnValue.get(), equalTo(Boolean.TRUE));
+		assertThat(returnValue.get()).isEqualTo(Boolean.TRUE);
 	}
 
 	@Test
@@ -129,18 +126,18 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 
 		// AND WHEN
 		fxRobot.clickOn("Cancel");
 
 		// AND THEN
-		assertThat(returnValue.get(), equalTo(Boolean.FALSE));
+		assertThat(returnValue.get()).isEqualTo(Boolean.FALSE);
 	}
 
 	@Test
@@ -156,12 +153,12 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 
 		// close dialog again
 		fxRobot.clickOn("OK");
@@ -180,12 +177,12 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 
 		// close dialog again
 		fxRobot.clickOn("OK");
@@ -204,12 +201,12 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 
 		// close dialog again
 		fxRobot.clickOn("OK");
@@ -326,12 +323,12 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 		FxAssert.verifyThat(".text-field", TextInputControlMatchers.hasText(""));
 
 		// close dialog again
@@ -348,17 +345,17 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 		FxAssert.verifyThat(".text-field", TextInputControlMatchers.hasText("Default Value"));
 
 		// close dialog again
 		fxRobot.clickOn("OK");
-		assertThat(returnValue.get(), equalTo("Default Value"));
+		assertThat(returnValue.get()).isEqualTo("Default Value");
 	}
 
 	@Test
@@ -371,17 +368,17 @@ class DialogControllerTest {
 
 		// THEN
 		final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-		assertThat(actualAlertDialog, notNullValue());
+		assertThat(actualAlertDialog).isNotNull();
 
 		final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-		assertThat(actualAlertDialog.getTitle(), equalTo("Title"));
-		assertThat(dialogPane.getHeaderText(), equalTo("HeaderText"));
-		assertThat(dialogPane.getContentText(), equalTo("ContentText"));
+		assertThat(actualAlertDialog.getTitle()).isEqualTo("Title");
+		assertThat(dialogPane.getHeaderText()).isEqualTo("HeaderText");
+		assertThat(dialogPane.getContentText()).isEqualTo("ContentText");
 		FxAssert.verifyThat(".text-field", TextInputControlMatchers.hasText("Default Value"));
 
 		// close dialog again
 		fxRobot.clickOn("Cancel");
-		assertThat(returnValue.get(), nullValue());
+		assertThat(returnValue.get()).isNull();
 	}
 
 	/**
@@ -390,9 +387,8 @@ class DialogControllerTest {
 	private <T> void setupDialog(final Supplier<T> dialogCallback) throws Exception {
 		final Button openDialogButton = new Button("Open Dialog");
 		openDialogButton.setId("openDialog");
-		openDialogButton.setOnAction(event -> {
-			returnValue.set(dialogCallback.get());
-		});
+		openDialogButton.setOnAction(event ->
+			returnValue.set(dialogCallback.get()));
 		final AnchorPane root = new AnchorPane(openDialogButton);
 		root.setPrefSize(500, 500);
 		FxToolkit.setupSceneRoot(() -> root);
@@ -419,7 +415,7 @@ class DialogControllerTest {
 		final List<Window> allWindows = new ArrayList<>(fxRobot.robotContext().getWindowFinder().listWindows());
 		Collections.reverse(allWindows);
 
-		return (javafx.stage.Stage) allWindows.stream().filter(window -> window instanceof javafx.stage.Stage)
+		return (javafx.stage.Stage) allWindows.stream().filter(Stage.class::isInstance)
 				.filter(window -> ((javafx.stage.Stage) window).getModality() == Modality.APPLICATION_MODAL).findFirst()
 				.orElse(null);
 	}

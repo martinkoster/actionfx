@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -48,7 +45,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.ERROR);
 	}
 
 	@Test
@@ -58,7 +55,7 @@ class ValidationResultTest {
 				.addInfoMessage("Info message", null).addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.WARNING));
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.WARNING);
 	}
 
 	@Test
@@ -68,7 +65,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.INFO));
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.INFO);
 	}
 
 	@Test
@@ -77,7 +74,7 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder().addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.OK));
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.OK);
 	}
 
 	@Test
@@ -86,7 +83,7 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder();
 
 		// WHEN and THEN
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.OK));
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.OK);
 	}
 
 	@Test
@@ -101,10 +98,8 @@ class ValidationResultTest {
 		final ValidationResult combined = ValidationResult.from(Arrays.asList(vr1, vr2, vr3));
 
 		// THEN
-		assertThat(combined.getMessages().stream().map(ValidationMessage::getStatus).collect(Collectors.toList()),
-				contains(ValidationStatus.ERROR, ValidationStatus.WARNING, ValidationStatus.INFO, ValidationStatus.OK));
-		assertThat(combined.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-				contains("Error message", "Warning message", "Info message", "OK message"));
+		assertThat(combined.getMessages().stream().map(ValidationMessage::getStatus).collect(Collectors.toList())).containsExactly(ValidationStatus.ERROR, ValidationStatus.WARNING, ValidationStatus.INFO, ValidationStatus.OK);
+		assertThat(combined.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Error message", "Warning message", "Info message", "OK message");
 	}
 
 	@Test
@@ -115,8 +110,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getErrors().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-				contains("Error message"));
+		assertThat(vr.getErrors().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Error message");
 	}
 
 	@Test
@@ -127,8 +121,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getWarnings().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-				contains("Warning message"));
+		assertThat(vr.getWarnings().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Warning message");
 	}
 
 	@Test
@@ -139,8 +132,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getInfos().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-				contains("Info message"));
+		assertThat(vr.getInfos().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Info message");
 	}
 
 	@Test
@@ -149,7 +141,7 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder();
 
 		// WHEN and THEN
-		assertThat(vr.getMessages(), hasSize(0));
+		assertThat(vr.getMessages()).hasSize(0);
 	}
 
 	@Test
@@ -163,11 +155,11 @@ class ValidationResultTest {
 		vr.overrideApplyValidationResultDecoration(true);
 
 		// THEN
-		assertThat(vr.getMessages(), hasSize(4));
-		assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration(), equalTo(false));
-		assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration(), equalTo(true));
-		assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration(), equalTo(true));
-		assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration(), equalTo(false));
+		assertThat(vr.getMessages()).hasSize(4);
+		assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration()).isEqualTo(false);
+		assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration()).isEqualTo(true);
+		assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration()).isEqualTo(true);
+		assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration()).isEqualTo(false);
 	}
 
 	@Test
@@ -181,11 +173,11 @@ class ValidationResultTest {
 		vr.overrideApplyValidationResultDecoration(false);
 
 		// THEN
-		assertThat(vr.getMessages(), hasSize(4));
-		assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration(), equalTo(false));
-		assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration(), equalTo(false));
-		assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration(), equalTo(false));
-		assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration(), equalTo(false));
+		assertThat(vr.getMessages()).hasSize(4);
+		assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration()).isEqualTo(false);
+		assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration()).isEqualTo(false);
+		assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration()).isEqualTo(false);
+		assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration()).isEqualTo(false);
 	}
 
 	@Test
@@ -194,8 +186,8 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder().addErrorMessageIf("Error message", null, true);
 
 		// THEN
-		assertThat(vr.getMessages(), hasSize(1));
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThat(vr.getMessages()).hasSize(1);
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.ERROR);
 	}
 
 	@Test
@@ -204,8 +196,8 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder().addErrorMessageIf("Error message", null, false);
 
 		// THEN
-		assertThat(vr.getMessages(), hasSize(0));
-		assertThat(vr.getStatus(), equalTo(ValidationStatus.OK));
+		assertThat(vr.getMessages()).hasSize(0);
+		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.OK);
 	}
 
 }

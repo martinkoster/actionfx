@@ -23,14 +23,7 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
@@ -82,8 +75,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 				() -> postProcessor.postProcess(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Control with id='singleSelectionTable' and type 'javafx.scene.control.TableView' does not support an 'onAction' property!"));
+		assertThat(ex.getMessage()).contains("Control with id='singleSelectionTable' and type 'javafx.scene.control.TableView' does not support an 'onAction' property!");
 	}
 
 	@Test
@@ -98,10 +90,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 		controller.textField.setText("Hello World"); // triggers listener
 
 		// THEN (all 3 annotated methods are invoked)
-		assertThat(controller.invocations,
-				contains("onTextFieldValueChange('Hello World')",
-						"onTextFieldValueChangeWithNewAndOldValue('Hello World', '', ObservableValue)",
-						"onTextFieldValueChangeWithAnnotatedArguments('', 'Hello World', ObservableValue)"));
+		assertThat(controller.invocations).containsExactly("onTextFieldValueChange('Hello World')", "onTextFieldValueChangeWithNewAndOldValue('Hello World', '', ObservableValue)", "onTextFieldValueChangeWithAnnotatedArguments('', 'Hello World', ObservableValue)");
 	}
 
 	@Test
@@ -115,14 +104,14 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN (text field is empty, so action button is inactive
-		assertThat(controller.actionButtonTextField.isDisabled(), equalTo(true));
+		assertThat(controller.actionButtonTextField.isDisabled()).isEqualTo(true);
 
 		// and WHEN
 		controller.textField.setText("Hello World");
 
 		// and THEN (button is activated, because text field now holds a non-empty user
 		// value)
-		assertThat(controller.actionButtonTextField.isDisabled(), equalTo(false));
+		assertThat(controller.actionButtonTextField.isDisabled()).isEqualTo(false);
 	}
 
 	@Test
@@ -141,7 +130,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 		controller.textField.setText("Hello World"); // triggers listener
 
 		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onTextFieldValueChange('Hello World')"));
+		assertThat(controller.invocations).containsExactly("onTextFieldValueChange('Hello World')");
 	}
 
 	@Test
@@ -157,7 +146,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 		controller.choiceBox.setValue("Hello World"); // triggers listener
 
 		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onChoiceBoxValueChange('Hello World')"));
+		assertThat(controller.invocations).containsExactly("onChoiceBoxValueChange('Hello World')");
 	}
 
 	@Test
@@ -173,7 +162,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 		controller.comboBox.setValue("Hello World"); // triggers listener
 
 		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onComboBoxValueChange('Hello World')"));
+		assertThat(controller.invocations).containsExactly("onComboBoxValueChange('Hello World')");
 	}
 
 	@Test
@@ -188,10 +177,8 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN
-		assertThat(controller.singleSelectionTable.getSelectionModel().getSelectionMode(),
-				equalTo(SelectionMode.SINGLE));
-		assertThat(controller.multiSelectionTable.getSelectionModel().getSelectionMode(),
-				equalTo(SelectionMode.MULTIPLE));
+		assertThat(controller.singleSelectionTable.getSelectionModel().getSelectionMode()).isEqualTo(SelectionMode.SINGLE);
+		assertThat(controller.multiSelectionTable.getSelectionModel().getSelectionMode()).isEqualTo(SelectionMode.MULTIPLE);
 	}
 
 	@Test
@@ -206,10 +193,10 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN
-		assertThat(controller.singleSelectionTable.getItems(), instanceOf(FilteredList.class));
-		assertThat(controller.multiSelectionTable.getItems(), instanceOf(SortedList.class));
+		assertThat(controller.singleSelectionTable.getItems()).isInstanceOf(FilteredList.class);
+		assertThat(controller.multiSelectionTable.getItems()).isInstanceOf(SortedList.class);
 		final SortedList<String> sortedList = (SortedList<String>) controller.multiSelectionTable.getItems();
-		assertThat(sortedList.getSource(), instanceOf(FilteredList.class));
+		assertThat(sortedList.getSource()).isInstanceOf(FilteredList.class);
 	}
 
 	@Test
@@ -224,13 +211,13 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN
-		assertThat(controller.actionButton.getOnAction(), notNullValue());
+		assertThat(controller.actionButton.getOnAction()).isNotNull();
 
 		// and WHEN (fire action)
 		Event.fireEvent(controller.actionButton, new ActionEvent());
 
 		// and THEN (invocation was performed)
-		assertThat(controller.invocations, contains("onActionButtonClicked()"));
+		assertThat(controller.invocations).containsExactly("onActionButtonClicked()");
 	}
 
 	@Test
@@ -245,14 +232,14 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN
-		assertThat(controller.actionWithSubmissionButton.getOnAction(), notNullValue());
+		assertThat(controller.actionWithSubmissionButton.getOnAction()).isNotNull();
 
 		// and WHEN (fire action)
 		Event.fireEvent(controller.actionWithSubmissionButton, new ActionEvent());
 
 		// and THEN (invocation was performed, with control user value injected into
 		// method)
-		assertThat(controller.invocations, contains("onActionWithSubmissionButtonClicked(ActionEvent, 'Hello World')"));
+		assertThat(controller.invocations).containsExactly("onActionWithSubmissionButtonClicked(ActionEvent, 'Hello World')");
 	}
 
 	@Test
@@ -273,8 +260,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 		controller.singleSelectionTable.getSelectionModel().select("Item 2");
 
 		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onSelectValueInSingleSelectionTable('Item 2')",
-				"onSelectValueInSingleSelectionTableWithList([Item 2])"));
+		assertThat(controller.invocations).containsExactly("onSelectValueInSingleSelectionTable('Item 2')", "onSelectValueInSingleSelectionTableWithList([Item 2])");
 	}
 
 	@Test
@@ -295,9 +281,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 		controller.multiSelectionTable.getSelectionModel().selectAll();
 
 		// THEN (only 1 method invocation is invoked)
-		assertThat(controller.invocations, contains("onSelectValueInMultiSelectionTable('Item 1','Item 2','Item 3')",
-				"onSelectValueInMultiSelectionTableWithFullArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)",
-				"onSelectValueInMultiSelectionTableWithAnnotatedArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)"));
+		assertThat(controller.invocations).containsExactly("onSelectValueInMultiSelectionTable('Item 1','Item 2','Item 3')", "onSelectValueInMultiSelectionTableWithFullArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)", "onSelectValueInMultiSelectionTableWithAnnotatedArguments([Item 1,Item 2,Item 3],[Item 1,Item 2,Item 3],[],'null',change)");
 	}
 
 	@Test
@@ -313,7 +297,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 
 		// THEN (verify that dataLoadedSelectionTable has the items loaded from the
 		// method "loadData")
-		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+		assertThat(controller.dataLoadedSelectionTable.getItems()).containsExactly("Loaded 1", "Loaded 2", "Loaded 3");
 	}
 
 	@Test
@@ -328,14 +312,14 @@ class ControllerInstancePostProcessorIntegrationTest {
 
 		// THEN (initially, data is empty, because the data loading flag is set to false
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedSelectionTable.getItems(), hasSize(0));
+		assertThat(controller.asyncDataLoadedSelectionTable.getItems()).hasSize(0);
 
 		// and WHEN (we switch the loading flag to "true")
 		controller.loadDataForTableViewActivated.set(true);
 
 		// and THEN
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.dataLoadedSelectionTable.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+		assertThat(controller.dataLoadedSelectionTable.getItems()).containsExactly("Loaded 1", "Loaded 2", "Loaded 3");
 	}
 
 	@Test
@@ -350,8 +334,8 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN
-		assertThat(controller.dataLoadedTreeView.getRoot(), notNullValue());
-		assertThat(controller.dataLoadedTreeView.getRoot().getValue(), equalTo("root"));
+		assertThat(controller.dataLoadedTreeView.getRoot()).isNotNull();
+		assertThat(controller.dataLoadedTreeView.getRoot().getValue()).isEqualTo("root");
 	}
 
 	@Test
@@ -367,15 +351,15 @@ class ControllerInstancePostProcessorIntegrationTest {
 		// THEN (initially, root value is empty, because the data loading flag is set to
 		// false
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedTreeView.getRoot(), nullValue());
+		assertThat(controller.asyncDataLoadedTreeView.getRoot()).isNull();
 
 		// and WHEN (we switch the loading flag to "true")
 		controller.loadDataForTreeViewActivated.set(true);
 
 		// and THEN
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedTreeView.getRoot(), notNullValue());
-		assertThat(controller.asyncDataLoadedTreeView.getRoot().getValue(), equalTo("root"));
+		assertThat(controller.asyncDataLoadedTreeView.getRoot()).isNotNull();
+		assertThat(controller.asyncDataLoadedTreeView.getRoot().getValue()).isEqualTo("root");
 	}
 
 }

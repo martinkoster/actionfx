@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.appfactory.text;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,7 @@ import com.github.actionfx.appfactory.utils.FileUtils;
  * @author koster
  *
  */
-public class TestUtils {
+public final class TestUtils {
 
 	private TestUtils() {
 		// class can not be instantiated
@@ -58,13 +57,12 @@ public class TestUtils {
 
 	public static void assertFileExists(final String absoluteFilePath) {
 		final Path path = Path.of(absoluteFilePath);
-		assertThat(Files.exists(path), equalTo(true));
+		assertThat(Files.exists(path)).isEqualTo(true);
 	}
 
 	public static void assertFileContentIdentical(final String actualFileAbsolutePath,
 			final String expectedFileClasspath) {
 		assertFileExists(actualFileAbsolutePath);
-		assertThat(FileUtils.readFromFile(actualFileAbsolutePath, StandardCharsets.UTF_8),
-				equalTo(FileUtils.readFromClasspath(expectedFileClasspath, StandardCharsets.UTF_8)));
+		assertThat(FileUtils.readFromFile(actualFileAbsolutePath, StandardCharsets.UTF_8)).isEqualTo(FileUtils.readFromClasspath(expectedFileClasspath, StandardCharsets.UTF_8));
 	}
 }

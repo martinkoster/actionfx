@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -46,7 +43,7 @@ class ConstructorBasedInstantiationSupplierTest {
 				ClassWithDefaultConstructor.class);
 
 		// WHEN and THEN
-		assertThat(supplier.get(), notNullValue());
+		assertThat(supplier.get()).isNotNull();
 	}
 
 	@Test
@@ -54,7 +51,7 @@ class ConstructorBasedInstantiationSupplierTest {
 		// WHEN and THEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> new ConstructorBasedInstantiationSupplier<>(ClassWithoutDefaultConstructor.class));
-		assertThat(ex.getMessage(), containsString("Unable to locate a matching constructor in class"));
+		assertThat(ex.getMessage()).contains("Unable to locate a matching constructor in class");
 	}
 
 	@Test
@@ -67,8 +64,8 @@ class ConstructorBasedInstantiationSupplierTest {
 		final ClassWithMultipleConstructor instance = supplier.get();
 
 		// THEN
-		assertThat(instance, notNullValue());
-		assertThat(instance.getConstructorInvoked(), equalTo("ClassWithMultipleConstructor(42, Hello World, 1000)"));
+		assertThat(instance).isNotNull();
+		assertThat(instance.getConstructorInvoked()).isEqualTo("ClassWithMultipleConstructor(42, Hello World, 1000)");
 	}
 
 	@Test
@@ -81,9 +78,8 @@ class ConstructorBasedInstantiationSupplierTest {
 		final ClassWithMultipleConstructor instance = supplier.get();
 
 		// THEN
-		assertThat(instance, notNullValue());
-		assertThat(instance.getConstructorInvoked(),
-				equalTo("ClassWithMultipleConstructorWithNumVal(42, Hello World, 500)"));
+		assertThat(instance).isNotNull();
+		assertThat(instance.getConstructorInvoked()).isEqualTo("ClassWithMultipleConstructorWithNumVal(42, Hello World, 500)");
 	}
 
 	@Test
@@ -96,8 +92,8 @@ class ConstructorBasedInstantiationSupplierTest {
 		final ClassWithMultipleConstructor instance = supplier.get();
 
 		// THEN
-		assertThat(instance, notNullValue());
-		assertThat(instance.getConstructorInvoked(), equalTo("ClassWithMultipleConstructor(42, Hello World)"));
+		assertThat(instance).isNotNull();
+		assertThat(instance.getConstructorInvoked()).isEqualTo("ClassWithMultipleConstructor(42, Hello World)");
 	}
 
 	@Test
@@ -106,7 +102,7 @@ class ConstructorBasedInstantiationSupplierTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> new ConstructorBasedInstantiationSupplier<>(ClassWithoutDefaultConstructor.class,
 						Integer.valueOf(42)));
-		assertThat(ex.getMessage(), containsString("Unable to locate a matching constructor in class"));
+		assertThat(ex.getMessage()).contains("Unable to locate a matching constructor in class");
 	}
 
 	public static class ClassWithDefaultConstructor {

@@ -23,11 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -72,8 +68,8 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.getLocaleProperty(), equalTo(Locale.getDefault()));
+		// WHEN and THEN
+		assertThat(service.getLocaleProperty()).isEqualTo(Locale.getDefault());
     }
 
     @Test
@@ -82,8 +78,8 @@ class ConversionServiceTest {
         final ActionFX actionFX = ActionFX.builder().locale(Locale.UK).build();
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.getLocaleProperty(), equalTo(Locale.UK));
+		// WHEN and THEN
+		assertThat(service.getLocaleProperty()).isEqualTo(Locale.UK);
         actionFX.reset(); // destroy ActionFX instance again, so other test methods are not impacted
     }
 
@@ -93,10 +89,10 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
         final File file = Files.createTempFile("junit", "-tmp").toFile();
 
-        // WHEN
-        assertThat(service.convert(file, String.class), equalTo(file.getAbsolutePath()));
-        assertThat(service.convert(file, URI.class), equalTo(file.toURI()));
-        assertThat(service.convert(file, Path.class), equalTo(file.toPath()));
+		// WHEN
+		assertThat(service.convert(file, String.class)).isEqualTo(file.getAbsolutePath());
+		assertThat(service.convert(file, URI.class)).isEqualTo(file.toURI());
+		assertThat(service.convert(file, Path.class)).isEqualTo(file.toPath());
     }
 
     @Test
@@ -105,10 +101,10 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
         final File file = Files.createTempFile("junit", "-tmp").toFile();
 
-        // WHEN
-        assertThat(service.convert(file.toPath(), String.class), equalTo(file.getAbsolutePath()));
-        assertThat(service.convert(file.toPath(), URI.class), equalTo(file.toURI()));
-        assertThat(service.convert(file.toPath(), File.class), equalTo(file));
+		// WHEN
+		assertThat(service.convert(file.toPath(), String.class)).isEqualTo(file.getAbsolutePath());
+		assertThat(service.convert(file.toPath(), URI.class)).isEqualTo(file.toURI());
+		assertThat(service.convert(file.toPath(), File.class)).isEqualTo(file);
     }
 
     @Test
@@ -117,10 +113,10 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
         final File file = Files.createTempFile("junit", "-tmp").toFile();
 
-        // WHEN
-        assertThat(service.convert(file.toURI(), String.class), equalTo(file.toURI().toString()));
-        assertThat(service.convert(file.toURI(), Path.class), equalTo(file.toPath()));
-        assertThat(service.convert(file.toURI(), File.class), equalTo(file));
+		// WHEN
+		assertThat(service.convert(file.toURI(), String.class)).isEqualTo(file.toURI().toString());
+		assertThat(service.convert(file.toURI(), Path.class)).isEqualTo(file.toPath());
+		assertThat(service.convert(file.toURI(), File.class)).isEqualTo(file);
     }
 
     @Test
@@ -129,10 +125,10 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
         final File file = Files.createTempFile("junit", "-tmp").toFile();
 
-        // WHEN
-        assertThat(service.convert(file.toURI().toString(), URI.class), equalTo(file.toURI()));
-        assertThat(service.convert(file.getAbsolutePath(), Path.class), equalTo(file.toPath()));
-        assertThat(service.convert(file.getAbsolutePath(), File.class), equalTo(file));
+		// WHEN
+		assertThat(service.convert(file.toURI().toString(), URI.class)).isEqualTo(file.toURI());
+		assertThat(service.convert(file.getAbsolutePath(), Path.class)).isEqualTo(file.toPath());
+		assertThat(service.convert(file.getAbsolutePath(), File.class)).isEqualTo(file);
     }
 
     @Test
@@ -141,12 +137,12 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
         final String number = "124";
 
-        // WHEN and THEN
-        assertThat(service.convert(number, Integer.class), equalTo(Integer.valueOf(number)));
-        assertThat(service.convert(number, Float.class), equalTo(Float.valueOf(number)));
-        assertThat(service.convert(number, Double.class), equalTo(Double.valueOf(number)));
-        assertThat(service.convert(number, Short.class), equalTo(Short.valueOf(number)));
-        assertThat(service.convert(number, Byte.class), equalTo(Byte.valueOf(number)));
+		// WHEN and THEN
+		assertThat(service.convert(number, Integer.class)).isEqualTo(Integer.valueOf(number));
+		assertThat(service.convert(number, Float.class)).isEqualTo(Float.valueOf(number));
+		assertThat(service.convert(number, Double.class)).isEqualTo(Double.valueOf(number));
+		assertThat(service.convert(number, Short.class)).isEqualTo(Short.valueOf(number));
+		assertThat(service.convert(number, Byte.class)).isEqualTo(Byte.valueOf(number));
     }
 
     @Test
@@ -155,12 +151,12 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
         final String number = "124";
 
-        // WHEN and THEN
-        assertThat(service.convert(Integer.valueOf(number), String.class), equalTo("124"));
-        assertThat(service.convert(Float.valueOf(number), String.class), equalTo("124"));
-        assertThat(service.convert(Double.valueOf(number), String.class), equalTo("124"));
-        assertThat(service.convert(Short.valueOf(number), String.class), equalTo("124"));
-        assertThat(service.convert(Byte.valueOf(number), String.class), equalTo("124"));
+		// WHEN and THEN
+		assertThat(service.convert(Integer.valueOf(number), String.class)).isEqualTo("124");
+		assertThat(service.convert(Float.valueOf(number), String.class)).isEqualTo("124");
+		assertThat(service.convert(Double.valueOf(number), String.class)).isEqualTo("124");
+		assertThat(service.convert(Short.valueOf(number), String.class)).isEqualTo("124");
+		assertThat(service.convert(Byte.valueOf(number), String.class)).isEqualTo("124");
     }
 
     @Test
@@ -172,8 +168,7 @@ class ConversionServiceTest {
         // WHEN
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.convert(file, Integer.class));
-        assertThat(ex.getMessage(),
-                equalTo("Unable to convert type 'class java.io.File' to type 'class java.lang.Integer'!"));
+		assertThat(ex.getMessage()).isEqualTo("Unable to convert type 'class java.io.File' to type 'class java.lang.Integer'!");
     }
 
     @Test
@@ -184,8 +179,8 @@ class ConversionServiceTest {
         // WHEN
         final Object object = service.convert("Hello World", Object.class);
 
-        // THEN
-        assertThat(object, equalTo("Hello World"));
+		// THEN
+		assertThat(object).isEqualTo("Hello World");
     }
 
     @Test
@@ -196,8 +191,8 @@ class ConversionServiceTest {
         // WHEN
         final Object object = service.convert(null, Integer.class);
 
-        // THEN
-        assertThat(object, nullValue());
+		// THEN
+		assertThat(object).isNull();
     }
 
     @Test
@@ -209,8 +204,8 @@ class ConversionServiceTest {
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> service.convert(null, int.class));
 
-        // THEN
-        assertThat(ex.getMessage(), equalTo("Can not convert 'null' to target type 'int' as it is a primitive!"));
+		// THEN
+		assertThat(ex.getMessage()).isEqualTo("Can not convert 'null' to target type 'int' as it is a primitive!");
     }
 
     @Test
@@ -219,13 +214,11 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.GERMANY));
         final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-        // WHEN and THEN
-        assertThat(service.convert(42000.0, String.class, "#,###.00"), equalTo("42.000,00"));
-        assertThat(service.convert(42000.0f, String.class, "#,###.00"), equalTo("42.000,00"));
-        assertThat(service.convert("05.09.2021 11:46:00", Date.class, "dd.MM.yyyy HH:mm:ss"),
-                equalTo(sdf.parse("05.09.2021 11:46:00")));
-        assertThat(service.convert(sdf.parse("05.09.2021 11:46:00"), String.class, "dd.MM.yyyy HH:mm:ss"),
-                equalTo("05.09.2021 11:46:00"));
+		// WHEN and THEN
+		assertThat(service.convert(42000.0, String.class, "#,###.00")).isEqualTo("42.000,00");
+		assertThat(service.convert(42000.0f, String.class, "#,###.00")).isEqualTo("42.000,00");
+		assertThat(service.convert("05.09.2021 11:46:00", Date.class, "dd.MM.yyyy HH:mm:ss")).isEqualTo(sdf.parse("05.09.2021 11:46:00"));
+		assertThat(service.convert(sdf.parse("05.09.2021 11:46:00"), String.class, "dd.MM.yyyy HH:mm:ss")).isEqualTo("05.09.2021 11:46:00");
     }
 
     @Test
@@ -234,15 +227,14 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService(new SimpleObjectProperty<>(Locale.GERMANY));
         final ZonedDateTime time = ZonedDateTime.parse("2022-01-01T10:15:30+01:00[Europe/Berlin]");
 
-        // WHEN and THEN
-        assertThat(service.convert(time, DayOfWeek.class), equalTo(DayOfWeek.SATURDAY));
-        assertThat(service.convert(time, Month.class), equalTo(Month.JANUARY));
-        assertThat(service.convert(time, MonthDay.class), equalTo(MonthDay.of(1, 1)));
-        assertThat(service.convert(time, Year.class), equalTo(Year.of(2022)));
-        assertThat(service.convert(time, YearMonth.class), equalTo(YearMonth.of(2022, 1)));
-        assertThat(service.convert(time, String.class, "dd.MM.yyyy HH:mm"), equalTo("01.01.2022 10:15"));
-        assertThat(service.convert("2022-01-01T10:15:30+01:00", Instant.class, "yyyy-MM-dd'T'HH:mm:ssxxx"),
-                equalTo(time.toInstant()));
+		// WHEN and THEN
+		assertThat(service.convert(time, DayOfWeek.class)).isEqualTo(DayOfWeek.SATURDAY);
+		assertThat(service.convert(time, Month.class)).isEqualTo(Month.JANUARY);
+		assertThat(service.convert(time, MonthDay.class)).isEqualTo(MonthDay.of(1, 1));
+		assertThat(service.convert(time, Year.class)).isEqualTo(Year.of(2022));
+		assertThat(service.convert(time, YearMonth.class)).isEqualTo(YearMonth.of(2022, 1));
+		assertThat(service.convert(time, String.class, "dd.MM.yyyy HH:mm")).isEqualTo("01.01.2022 10:15");
+		assertThat(service.convert("2022-01-01T10:15:30+01:00", Instant.class, "yyyy-MM-dd'T'HH:mm:ssxxx")).isEqualTo(time.toInstant());
     }
 
     @Test
@@ -252,11 +244,10 @@ class ConversionServiceTest {
         final ZonedDateTime javaTime = ZonedDateTime.parse("2022-01-01T10:15:30+01:00[Europe/Berlin]");
         final Date date = Date.from(javaTime.toInstant());
 
-        // WHEN and THEN
-        assertThat(service.convert(javaTime, Date.class), equalTo(date));
-        assertThat(service.convert(date, Instant.class), equalTo(date.toInstant()));
-        assertThat(service.convert(date, ZonedDateTime.class),
-                equalTo(ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())));
+		// WHEN and THEN
+		assertThat(service.convert(javaTime, Date.class)).isEqualTo(date);
+		assertThat(service.convert(date, Instant.class)).isEqualTo(date.toInstant());
+		assertThat(service.convert(date, ZonedDateTime.class)).isEqualTo(ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
     }
 
     @Test
@@ -264,22 +255,22 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.canConvert(File.class, String.class), equalTo(true));
-        assertThat(service.canConvert(Path.class, String.class), equalTo(true));
-        assertThat(service.canConvert(URI.class, String.class), equalTo(true));
-        assertThat(service.canConvert(String.class, File.class), equalTo(true));
-        assertThat(service.canConvert(Path.class, File.class), equalTo(true));
-        assertThat(service.canConvert(URI.class, File.class), equalTo(true));
-        assertThat(service.canConvert(File.class, Path.class), equalTo(true));
-        assertThat(service.canConvert(String.class, Path.class), equalTo(true));
-        assertThat(service.canConvert(URI.class, Path.class), equalTo(true));
-        assertThat(service.canConvert(File.class, URI.class), equalTo(true));
-        assertThat(service.canConvert(Path.class, URI.class), equalTo(true));
-        assertThat(service.canConvert(String.class, URI.class), equalTo(true));
+		// WHEN and THEN
+		assertThat(service.canConvert(File.class, String.class)).isEqualTo(true);
+		assertThat(service.canConvert(Path.class, String.class)).isEqualTo(true);
+		assertThat(service.canConvert(URI.class, String.class)).isEqualTo(true);
+		assertThat(service.canConvert(String.class, File.class)).isEqualTo(true);
+		assertThat(service.canConvert(Path.class, File.class)).isEqualTo(true);
+		assertThat(service.canConvert(URI.class, File.class)).isEqualTo(true);
+		assertThat(service.canConvert(File.class, Path.class)).isEqualTo(true);
+		assertThat(service.canConvert(String.class, Path.class)).isEqualTo(true);
+		assertThat(service.canConvert(URI.class, Path.class)).isEqualTo(true);
+		assertThat(service.canConvert(File.class, URI.class)).isEqualTo(true);
+		assertThat(service.canConvert(Path.class, URI.class)).isEqualTo(true);
+		assertThat(service.canConvert(String.class, URI.class)).isEqualTo(true);
 
-        assertThat(service.canConvert(File.class, File.class), equalTo(true));
-        assertThat(service.canConvert(File.class, Object.class), equalTo(true));
+		assertThat(service.canConvert(File.class, File.class)).isEqualTo(true);
+		assertThat(service.canConvert(File.class, Object.class)).isEqualTo(true);
     }
 
     @Test
@@ -287,9 +278,9 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.canConvert(File.class, Integer.class), equalTo(false));
-        assertThat(service.canConvert(Double.class, Path.class), equalTo(false));
+		// WHEN and THEN
+		assertThat(service.canConvert(File.class, Integer.class)).isEqualTo(false);
+		assertThat(service.canConvert(Double.class, Path.class)).isEqualTo(false);
     }
 
     @Test
@@ -297,11 +288,11 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN
-        assertThat(service.canConvert((String) null, String.class, null), equalTo(true));
-        assertThat(service.canConvert("Hello there", String.class, null), equalTo(true));
-        assertThat(service.canConvert("31.12.2022", LocalDate.class, "dd.MM.yyyy"), equalTo(true));
-        assertThat(service.canConvert("3.0", Double.class, "#.#"), equalTo(true));
+		// WHEN
+		assertThat(service.canConvert((String) null, String.class, null)).isEqualTo(true);
+		assertThat(service.canConvert("Hello there", String.class, null)).isEqualTo(true);
+		assertThat(service.canConvert("31.12.2022", LocalDate.class, "dd.MM.yyyy")).isEqualTo(true);
+		assertThat(service.canConvert("3.0", Double.class, "#.#")).isEqualTo(true);
     }
 
     @Test
@@ -309,9 +300,9 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN
-        assertThat(service.canConvert("1.1.22", LocalDate.class, "dd.MM.yyyy"), equalTo(false));
-        assertThat(service.canConvert("Hello World", List.class, null), equalTo(false));
+		// WHEN
+		assertThat(service.canConvert("1.1.22", LocalDate.class, "dd.MM.yyyy")).isEqualTo(false);
+		assertThat(service.canConvert("Hello World", List.class, null)).isEqualTo(false);
     }
 
     @Test
@@ -323,9 +314,9 @@ class ConversionServiceTest {
         // WHEN
         final StringConverter<File> converter = service.createStringConverter(File.class);
 
-        // THEN
-        assertThat(converter.fromString(file.getAbsolutePath()), equalTo(file));
-        assertThat(converter.toString(file), equalTo(file.getAbsolutePath()));
+		// THEN
+		assertThat(converter.fromString(file.getAbsolutePath())).isEqualTo(file);
+		assertThat(converter.toString(file)).isEqualTo(file.getAbsolutePath());
     }
 
     @Test
@@ -337,10 +328,10 @@ class ConversionServiceTest {
         final BidirectionalConverter<Integer, Double> converter = service.createBidirectionalConverter(Integer.class,
                 Double.class);
 
-        // THEN
-        assertThat(converter, notNullValue());
-        assertThat(converter.to(Integer.valueOf(42)), equalTo(Double.valueOf(42.0)));
-        assertThat(converter.from(Double.valueOf(42.0)), equalTo(Integer.valueOf(42)));
+		// THEN
+		assertThat(converter).isNotNull();
+		assertThat(converter.to(Integer.valueOf(42))).isEqualTo(Double.valueOf(42.0));
+		assertThat(converter.from(Double.valueOf(42.0))).isEqualTo(Integer.valueOf(42));
     }
 
     @Test
@@ -348,15 +339,11 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.createConverter(String.class, Double.class, null),
-                instanceOf(StringToDoubleConverter.class));
-        assertThat(service.createConverter(String.class, Number.class, null),
-                instanceOf(StringToNumberConverter.class));
-        assertThat(service.createConverter(Double.class, String.class, null),
-                instanceOf(DoubleToStringConverter.class));
-        assertThat(service.createConverter(Number.class, String.class, null),
-                instanceOf(ObjectToStringConverter.class));
+		// WHEN and THEN
+		assertThat(service.createConverter(String.class, Double.class, null)).isInstanceOf(StringToDoubleConverter.class);
+		assertThat(service.createConverter(String.class, Number.class, null)).isInstanceOf(StringToNumberConverter.class);
+		assertThat(service.createConverter(Double.class, String.class, null)).isInstanceOf(DoubleToStringConverter.class);
+		assertThat(service.createConverter(Number.class, String.class, null)).isInstanceOf(ObjectToStringConverter.class);
     }
 
     @Test
@@ -364,19 +351,19 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.convert("true", boolean.class), equalTo(true));
-        assertThat(service.convert("true", Boolean.class), equalTo(Boolean.TRUE));
-        assertThat(service.convert("yes", Boolean.class), equalTo(Boolean.TRUE));
-        assertThat(service.convert("ja", Boolean.class), equalTo(Boolean.TRUE));
-        assertThat(service.convert("oui", Boolean.class), equalTo(Boolean.TRUE));
-        assertThat(service.convert("si", Boolean.class), equalTo(Boolean.TRUE));
+		// WHEN and THEN
+		assertThat(service.convert("true", boolean.class)).isEqualTo(true);
+		assertThat(service.convert("true", Boolean.class)).isEqualTo(Boolean.TRUE);
+		assertThat(service.convert("yes", Boolean.class)).isEqualTo(Boolean.TRUE);
+		assertThat(service.convert("ja", Boolean.class)).isEqualTo(Boolean.TRUE);
+		assertThat(service.convert("oui", Boolean.class)).isEqualTo(Boolean.TRUE);
+		assertThat(service.convert("si", Boolean.class)).isEqualTo(Boolean.TRUE);
 
-        assertThat(service.convert("false", boolean.class), equalTo(false));
-        assertThat(service.convert("false", Boolean.class), equalTo(Boolean.FALSE));
-        assertThat(service.convert("no", Boolean.class), equalTo(Boolean.FALSE));
-        assertThat(service.convert("nein", Boolean.class), equalTo(Boolean.FALSE));
-        assertThat(service.convert("non", Boolean.class), equalTo(Boolean.FALSE));
+		assertThat(service.convert("false", boolean.class)).isEqualTo(false);
+		assertThat(service.convert("false", Boolean.class)).isEqualTo(Boolean.FALSE);
+		assertThat(service.convert("no", Boolean.class)).isEqualTo(Boolean.FALSE);
+		assertThat(service.convert("nein", Boolean.class)).isEqualTo(Boolean.FALSE);
+		assertThat(service.convert("non", Boolean.class)).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -384,9 +371,9 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.convert("VALUEA", TestEnum.class), equalTo(TestEnum.VALUEA));
-        assertThat(service.convert("VALUEB", TestEnum.class), equalTo(TestEnum.VALUEB));
+		// WHEN and THEN
+		assertThat(service.convert("VALUEA", TestEnum.class)).isEqualTo(TestEnum.VALUEA);
+		assertThat(service.convert("VALUEB", TestEnum.class)).isEqualTo(TestEnum.VALUEB);
     }
 
     @Test
@@ -394,12 +381,12 @@ class ConversionServiceTest {
         // GIVEN
         final ConversionService service = new ConversionService();
 
-        // WHEN and THEN
-        assertThat(service.convert("UTF-8", Charset.class), equalTo(StandardCharsets.UTF_8));
-        assertThat(service.convert("utf8", Charset.class), equalTo(StandardCharsets.UTF_8));
+		// WHEN and THEN
+		assertThat(service.convert("UTF-8", Charset.class)).isEqualTo(StandardCharsets.UTF_8);
+		assertThat(service.convert("utf8", Charset.class)).isEqualTo(StandardCharsets.UTF_8);
     }
 
-    public static enum TestEnum {
+	public enum TestEnum {
         VALUEA,
         VALUEB,
     }

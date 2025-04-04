@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.view;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,17 +49,17 @@ class ViewBuilderTest {
                 .modalDialogue(false).windowTitle("Title").stylesheets(new String[] { "cssClass1", "cssClass2" })
                 .getView();
 
-        // THEN
-        assertThat(view.getId(), equalTo("testId"));
-        assertThat(view.getWidth(), equalTo(100));
-        assertThat(view.getHeight(), equalTo(50));
-        assertThat(view.getIcon(), equalTo("icon.png"));
-        assertThat(view.getPosX(), equalTo(10));
-        assertThat(view.getPosY(), equalTo(20));
-        assertThat(view.isMaximized(), equalTo(true));
-        assertThat(view.isModalDialogue(), equalTo(false));
-        assertThat(view.getWindowTitle(), equalTo("Title"));
-        assertThat(view.getStylesheets(), hasItems(equalTo("cssClass1"), equalTo("cssClass2")));
+		// THEN
+		assertThat(view.getId()).isEqualTo("testId");
+		assertThat(view.getWidth()).isEqualTo(100);
+		assertThat(view.getHeight()).isEqualTo(50);
+		assertThat(view.getIcon()).isEqualTo("icon.png");
+		assertThat(view.getPosX()).isEqualTo(10);
+		assertThat(view.getPosY()).isEqualTo(20);
+		assertThat(view.isMaximized()).isEqualTo(true);
+		assertThat(view.isModalDialogue()).isEqualTo(false);
+		assertThat(view.getWindowTitle()).isEqualTo("Title");
+		assertThat(view.getStylesheets()).containsExactly("cssClass1", "cssClass2");
     }
 
     @Test
@@ -73,17 +71,17 @@ class ViewBuilderTest {
                 .modalDialogue(false).windowTitle("Title").stylesheets(new String[] { "cssClass1", "cssClass2" })
                 .getView();
 
-        // THEN
-        assertThat(view.getId(), equalTo("testId"));
-        assertThat(view.getWidth(), equalTo(100));
-        assertThat(view.getHeight(), equalTo(50));
-        assertThat(view.getIcon(), equalTo("icon.png"));
-        assertThat(view.getPosX(), equalTo(10));
-        assertThat(view.getPosY(), equalTo(20));
-        assertThat(view.isMaximized(), equalTo(true));
-        assertThat(view.isModalDialogue(), equalTo(false));
-        assertThat(view.getWindowTitle(), equalTo("Title"));
-        assertThat(view.getStylesheets(), hasItems(equalTo("cssClass1"), equalTo("cssClass2")));
+		// THEN
+		assertThat(view.getId()).isEqualTo("testId");
+		assertThat(view.getWidth()).isEqualTo(100);
+		assertThat(view.getHeight()).isEqualTo(50);
+		assertThat(view.getIcon()).isEqualTo("icon.png");
+		assertThat(view.getPosX()).isEqualTo(10);
+		assertThat(view.getPosY()).isEqualTo(20);
+		assertThat(view.isMaximized()).isEqualTo(true);
+		assertThat(view.isModalDialogue()).isEqualTo(false);
+		assertThat(view.getWindowTitle()).isEqualTo("Title");
+		assertThat(view.getStylesheets()).containsExactly("cssClass1", "cssClass2");
     }
 
 }

@@ -23,13 +23,7 @@
  */
 package com.github.actionfx.core;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -92,24 +86,24 @@ class ActionFXTest {
 	@Test
 	void testBuilder_minimal_withConfigurationClass_sampleApp() {
 		// WHEN
-		assertThat(ActionFX.isConfigured(), equalTo(false));
-		assertThat(ActionFX.isInitialized(), equalTo(false));
+		assertThat(ActionFX.isConfigured()).isEqualTo(false);
+		assertThat(ActionFX.isInitialized()).isEqualTo(false);
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// THEN
-		assertThat(ActionFX.isConfigured(), equalTo(true));
-		assertThat(ActionFX.isInitialized(), equalTo(false));
-		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
-		assertThat(actionFX.getEnhancer(), instanceOf(ActionFXByteBuddyEnhancer.class));
-		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
-		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
-		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.getDefault()));
-		assertThat(actionFX.getValidationGlobalMode(), equalTo(ValidationMode.MANUAL));
-		assertThat(actionFX.isValidationApplyResultDecoration(), equalTo(false));
-		assertThat(actionFX.isValidationApplyRequiredDecoration(), equalTo(false));
-		assertThat(actionFX.getValidationStartTimeoutMs(), equalTo(500));
-		assertThat(actionFX, equalTo(ActionFX.getInstance()));
+		assertThat(ActionFX.isConfigured()).isEqualTo(true);
+		assertThat(ActionFX.isInitialized()).isEqualTo(false);
+		assertThat(actionFX.getEnhancementStrategy()).isEqualTo(EnhancementStrategy.SUBCLASSING);
+		assertThat(actionFX.getEnhancer()).isInstanceOf(ActionFXByteBuddyEnhancer.class);
+		assertThat(actionFX.getMainViewId()).isEqualTo("mainView");
+		assertThat(actionFX.getScanPackage()).isEqualTo(SampleApp.class.getPackage().getName());
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
+		assertThat(actionFX.getObservableLocale().getValue()).isEqualTo(Locale.getDefault());
+		assertThat(actionFX.getValidationGlobalMode()).isEqualTo(ValidationMode.MANUAL);
+		assertThat(actionFX.isValidationApplyResultDecoration()).isEqualTo(false);
+		assertThat(actionFX.isValidationApplyRequiredDecoration()).isEqualTo(false);
+		assertThat(actionFX.getValidationStartTimeoutMs()).isEqualTo(500);
+		assertThat(actionFX).isEqualTo(ActionFX.getInstance());
 	}
 
 	@Test
@@ -120,7 +114,7 @@ class ActionFXTest {
 		// WHEN and THEN
 		final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
 				() -> builder.configurationClass(AppClassWithoutAFXApplicationAnnotation.class));
-		assertThat(ex.getMessage(), containsString("or its super-classes are not annotated with @AFXApplication"));
+		assertThat(ex.getMessage()).contains("or its super-classes are not annotated with @AFXApplication");
 	}
 
 	@Test
@@ -136,17 +130,17 @@ class ActionFXTest {
 				.validationStartTimeoutMs(500).build();
 
 		// THEN
-		assertThat(actionFX.getEnhancementStrategy(), equalTo(EnhancementStrategy.SUBCLASSING));
-		assertThat(actionFX.getEnhancer(), equalTo(enhancer));
-		assertThat(actionFX.getMainViewId(), equalTo("mainView"));
-		assertThat(actionFX.getScanPackage(), equalTo(SampleApp.class.getPackage().getName()));
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
-		assertThat(actionFX.getObservableLocale().getValue(), equalTo(Locale.US));
-		assertThat(actionFX.getValidationGlobalMode(), equalTo(ValidationMode.MANUAL));
-		assertThat(actionFX.isValidationApplyResultDecoration(), equalTo(false));
-		assertThat(actionFX.isValidationApplyRequiredDecoration(), equalTo(false));
-		assertThat(actionFX.getValidationStartTimeoutMs(), equalTo(500));
-		assertThat(actionFX, equalTo(ActionFX.getInstance()));
+		assertThat(actionFX.getEnhancementStrategy()).isEqualTo(EnhancementStrategy.SUBCLASSING);
+		assertThat(actionFX.getEnhancer()).isEqualTo(enhancer);
+		assertThat(actionFX.getMainViewId()).isEqualTo("mainView");
+		assertThat(actionFX.getScanPackage()).isEqualTo(SampleApp.class.getPackage().getName());
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
+		assertThat(actionFX.getObservableLocale().getValue()).isEqualTo(Locale.US);
+		assertThat(actionFX.getValidationGlobalMode()).isEqualTo(ValidationMode.MANUAL);
+		assertThat(actionFX.isValidationApplyResultDecoration()).isEqualTo(false);
+		assertThat(actionFX.isValidationApplyRequiredDecoration()).isEqualTo(false);
+		assertThat(actionFX.getValidationStartTimeoutMs()).isEqualTo(500);
+		assertThat(actionFX).isEqualTo(ActionFX.getInstance());
 	}
 
 	@Test
@@ -163,7 +157,7 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().build();
 
 		// WHEN and THEN (
-		assertThat(actionFX, notNullValue());
+		assertThat(actionFX).isNotNull();
 		assertThrows(IllegalStateException.class, ActionFX::builder);
 	}
 
@@ -177,8 +171,8 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().uncaughtExceptionHandler(handler).build();
 
 		// THEN
-		assertThat(actionFX, notNullValue());
-		assertThat(Thread.getDefaultUncaughtExceptionHandler(), sameInstance(handler));
+		assertThat(actionFX).isNotNull();
+		assertThat(Thread.getDefaultUncaughtExceptionHandler()).isSameAs(handler);
 
 	}
 
@@ -194,10 +188,9 @@ class ActionFXTest {
 				.beanExtension(customBeanExtension).build();
 
 		// THEN
-		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
-		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
-				contains(customControllerExtension));
-		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(), contains(customBeanExtension));
+		assertThat(actionFX.actionFXExtensionsBean).isNotNull();
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions()).containsExactly(customControllerExtension);
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions()).containsExactly(customBeanExtension);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -208,11 +201,11 @@ class ActionFXTest {
 				.beanExtension(CustomBeanExtension.class).build();
 
 		// THEN
-		assertThat(actionFX.actionFXExtensionsBean, notNullValue());
-		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions(),
-				contains(instanceOf(CustomControllerExtension.class)));
-		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions(),
-				contains(instanceOf(CustomBeanExtension.class)));
+		assertThat(actionFX.actionFXExtensionsBean).isNotNull();
+		assertThat(actionFX.actionFXExtensionsBean.getCustomControllerExtensions())
+				.anyMatch(ActionFXTest.CustomControllerExtension.class::isInstance);
+		assertThat(actionFX.actionFXExtensionsBean.getCustomBeanExtensions())
+				.anyMatch(ActionFXTest.CustomBeanExtension.class::isInstance);
 	}
 
 	@Test
@@ -221,7 +214,7 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().beanContainerClass(CustomBeanContainer.class).build();
 
 		// THEN
-		assertThat(actionFX.getBeanContainer(), instanceOf(CustomBeanContainer.class));
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(CustomBeanContainer.class);
 	}
 
 	@Test
@@ -231,7 +224,7 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().beanContainer(container).build();
 
 		// THEN
-		assertThat(actionFX.getBeanContainer(), sameInstance(container));
+		assertThat(actionFX.getBeanContainer()).isSameAs(container);
 	}
 
 	@Test
@@ -240,7 +233,7 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
 
 		// THEN
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
 	}
 
 	@Test
@@ -249,30 +242,30 @@ class ActionFXTest {
 		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
 
 		// THEN
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
 	}
 
 	@Test
 	void testScanForActionFXComponents_usingDefaultBeanContainer() {
 		// GIVEN
-		assertThat(ActionFX.isConfigured(), equalTo(false));
-		assertThat(ActionFX.isInitialized(), equalTo(false));
+		assertThat(ActionFX.isConfigured()).isEqualTo(false);
+		assertThat(ActionFX.isInitialized()).isEqualTo(false);
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
 		// WHEN
 		actionFX.scanForActionFXComponents();
 
 		// THEN
-		assertThat(ActionFX.isConfigured(), equalTo(true));
-		assertThat(ActionFX.isInitialized(), equalTo(true));
+		assertThat(ActionFX.isConfigured()).isEqualTo(true);
+		assertThat(ActionFX.isInitialized()).isEqualTo(true);
 		final View view = actionFX.getView("mainView");
 		final MainController mainControllerById = actionFX.getBean("mainController");
 		final MainController mainControllerByClassName = actionFX.getBean(MainController.class);
 
-		assertThat(view, notNullValue());
-		assertThat(mainControllerById, notNullValue());
-		assertThat(mainControllerByClassName, notNullValue());
-		assertThat(mainControllerById, sameInstance(mainControllerByClassName));
+		assertThat(view).isNotNull();
+		assertThat(mainControllerById).isNotNull();
+		assertThat(mainControllerByClassName).isNotNull();
+		assertThat(mainControllerById).isSameAs(mainControllerByClassName);
 	}
 
 	@Test
@@ -289,7 +282,7 @@ class ActionFXTest {
 		// THEN (custom container has be asked to populate container with the
 		// rootPackage of SampleApp)
 		verify(customBeanContainer).runComponentScan(rootPackageCaptor.capture());
-		assertThat(rootPackageCaptor.getValue(), equalTo(SampleApp.class.getPackageName()));
+		assertThat(rootPackageCaptor.getValue()).isEqualTo(SampleApp.class.getPackageName());
 	}
 
 	@Test
@@ -301,7 +294,7 @@ class ActionFXTest {
 		actionFX.scanForActionFXComponents();
 
 		// THEN (another call to scanComponents results in an exception)
-		assertThrows(IllegalStateException.class, () -> actionFX.scanForActionFXComponents());
+		assertThrows(IllegalStateException.class, actionFX::scanForActionFXComponents);
 	}
 
 	@Test
@@ -315,7 +308,7 @@ class ActionFXTest {
 				() -> actionFX.getView("fantasyView"));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("There is no view with ID='fantasyView'"));
+		assertThat(ex.getMessage()).contains("There is no view with ID='fantasyView'");
 	}
 
 	@Test
@@ -341,7 +334,7 @@ class ActionFXTest {
 		actionFX.addController(TestController.class);
 
 		// THEN
-		assertThat(actionFX.getBean(TestController.class), notNullValue());
+		assertThat(actionFX.getBean(TestController.class)).isNotNull();
 	}
 
 	@Test
@@ -355,7 +348,7 @@ class ActionFXTest {
 				() -> actionFX.getView("mainController"));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("Bean with ID='mainController' is not of type"));
+		assertThat(ex.getMessage()).contains("Bean with ID='mainController' is not of type");
 	}
 
 	@Test
@@ -368,7 +361,7 @@ class ActionFXTest {
 		final ConversionService service = actionFX.getConversionService();
 
 		// THEN
-		assertThat(service, notNullValue());
+		assertThat(service).isNotNull();
 	}
 
 	@Test
@@ -381,8 +374,8 @@ class ActionFXTest {
 		final PriorityAwareEventBus eventBus = actionFX.getEventBus();
 
 		// THEN
-		assertThat(eventBus, notNullValue());
-		assertThat(eventBus, instanceOf(SimplePriorityAwareEventBus.class));
+		assertThat(eventBus).isNotNull();
+		assertThat(eventBus).isInstanceOf(SimplePriorityAwareEventBus.class);
 	}
 
 	@Test
@@ -398,7 +391,7 @@ class ActionFXTest {
 		final View view = actionFX.getView(controller);
 
 		// THEN
-		assertThat(view, sameInstance(mockView));
+		assertThat(view).isSameAs(mockView);
 	}
 
 	@Test
@@ -532,7 +525,7 @@ class ActionFXTest {
 				ArgumentMatchers.anyString())).thenReturn(Boolean.TRUE);
 
 		// WHEN
-		assertThat(actionFX.showConfirmationDialog("Title", "HeaderText", "ContentText"), equalTo(Boolean.TRUE));
+		assertThat(actionFX.showConfirmationDialog("Title", "HeaderText", "ContentText")).isEqualTo(Boolean.TRUE);
 
 		// THEN
 		verify(controller).showConfirmationDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
@@ -602,7 +595,7 @@ class ActionFXTest {
 				ArgumentMatchers.any(Window.class))).thenReturn(selectedFolder);
 
 		// WHEN
-		assertThat(actionFX.showDirectoryChooserDialog("Title", initialFolder, owner), equalTo(selectedFolder));
+		assertThat(actionFX.showDirectoryChooserDialog("Title", initialFolder, owner)).isEqualTo(selectedFolder);
 
 		// THEN
 		verify(controller).showDirectoryChooserDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
@@ -626,8 +619,7 @@ class ActionFXTest {
 				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
 
 		// WHEN
-		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, "initial.txt", filter, owner),
-				equalTo(selectedFile));
+		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, "initial.txt", filter, owner)).isEqualTo(selectedFile);
 
 		// THEN
 		verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
@@ -649,7 +641,7 @@ class ActionFXTest {
 				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
 
 		// WHEN
-		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, owner), equalTo(selectedFile));
+		assertThat(actionFX.showFileOpenDialog("Title", initialFolder, owner)).isEqualTo(selectedFile);
 
 		// THEN
 		verify(controller).showFileOpenDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
@@ -671,7 +663,7 @@ class ActionFXTest {
 				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
 
 		// WHEN
-		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, owner), equalTo(selectedFile));
+		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, owner)).isEqualTo(selectedFile);
 
 		// THEN
 		verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
@@ -695,8 +687,7 @@ class ActionFXTest {
 				ArgumentMatchers.any(Window.class))).thenReturn(selectedFile);
 
 		// WHEN
-		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, "initial.txt", filter, owner),
-				equalTo(selectedFile));
+		assertThat(actionFX.showFileSaveDialog("Title", initialFolder, "initial.txt", filter, owner)).isEqualTo(selectedFile);
 
 		// THEN
 		verify(controller).showFileSaveDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq(initialFolder),
@@ -715,7 +706,7 @@ class ActionFXTest {
 				ArgumentMatchers.anyString())).thenReturn("Text");
 
 		// WHEN
-		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText"), equalTo("Text"));
+		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText")).isEqualTo("Text");
 
 		// THEN
 		verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),
@@ -734,7 +725,7 @@ class ActionFXTest {
 				ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn("Text");
 
 		// WHEN
-		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText", "DefaultText"), equalTo("Text"));
+		assertThat(actionFX.showTextInputDialog("Title", "HeaderText", "ContentText", "DefaultText")).isEqualTo("Text");
 
 		// THEN
 		verify(controller).showTextInputDialog(ArgumentMatchers.eq("Title"), ArgumentMatchers.eq("HeaderText"),

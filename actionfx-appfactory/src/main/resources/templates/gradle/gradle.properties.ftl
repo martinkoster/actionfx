@@ -5,26 +5,26 @@ version							= 0.0.1
 actionFXVersion					= ${actionFXVersion}
 
 # Gradle Plugin Versions
-spotbugsVersion                 = 4.4.0
-spotbugsAnnotationVersion       = 4.2.0
+spotbugsVersion                 = 6.1.5
+spotbugsAnnotationVersion       = 4.9.3
 javafxPluginVersion             = 0.0.13
 
 # 3rd Party Dependencies
-javafxVersion                   = 18.0.1
-javaAnnotationApiVersion        = 1.3.2
+javafxVersion                   = 20.0.2
 
 # 3rd party Library Dependencies
-controlsfxVersion               = 11.1.2
+controlsfxVersion               = 11.2.2
 
 <#if useSpring>
-    springVersion                    = 5.3.27
-    springBootVersion                = 2.7.10
-    springDepManagementVersion       = 1.0.11.RELEASE
+    springVersion                    = 6.2.5
+    springBootVersion                = 3.4.4
+    springDepManagementVersion       = 1.1.7
 </#if>
 
 # Test and Analysis Dependency Versions
 junitJupiterVersion				= 5.8.2
 hamcrestVersion					= 2.2
+assertJVersion                  = 3.27.3
 mockitoVersion					= 4.5.1
 testFxVersion					= 4.0.16-alpha
 testfxMonocleVerion				= jdk-12.0.1+2

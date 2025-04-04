@@ -54,7 +54,7 @@ public class ControllerFactory {
 
     private final ControllerFactoryConfig factoryConfig;
 
-    private Consumer<String> logConsumer;
+	private final Consumer<String> logConsumer;
 
     public ControllerFactory(final ControllerFactoryConfig factoryConfig, final Consumer<String> logConsumer) {
         this.factoryConfig = factoryConfig;
@@ -119,7 +119,7 @@ public class ControllerFactory {
 
     private List<FxmlNode> createFxmlNodes(final FxmlDocument fxmlDocument) {
         return fxmlDocument.getIdNodesMap().entrySet().stream()
-                .map(entry -> new FxmlNode(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+                .map(entry -> new FxmlNode(entry.getKey(), entry.getValue())).toList();
     }
 
     private List<ActionMethod> createActionMethods(final FxmlDocument fxmlDocument) {
@@ -128,14 +128,14 @@ public class ControllerFactory {
         // Methods that have an "onAction" property set
         actionMethods.addAll(
                 fxmlDocument.getFxmlElementsAsStream().filter(elem -> !StringUtils.isBlank(elem.getOnActionProperty()))
-                        .map(elem -> mapToActionMethod(elem, false)).collect(Collectors.toList()));
+                        .map(elem -> mapToActionMethod(elem, false)).toList());
 
         // Methods that have no "onAction" property set, but have the property itself +
         // ID
         actionMethods.addAll(fxmlDocument.getFxmlElementsAsStream()
                 .filter(elem -> !StringUtils.isBlank(elem.getId()) && StringUtils.isBlank(elem.getOnActionProperty())
                         && supportsOnAction(elem))
-                .map(elem -> mapToActionMethod(elem, true)).collect(Collectors.toList()));
+                .map(elem -> mapToActionMethod(elem, true)).toList());
 
         // make method names unique
         return actionMethods.stream().distinct().collect(Collectors.toList());
@@ -182,7 +182,7 @@ public class ControllerFactory {
     /**
      * Checks, whether the given {@code fxmlElement} has an "onAction" property.
      *
-     * @param node
+     * @param fxmlElement
      *            the node type to check
      * @return {@code true}, if the node type supports the "onAction" property, {@code false} otherwise.
      */
@@ -193,7 +193,7 @@ public class ControllerFactory {
 
     private FxmlDocument readFxmlDocument(final String fxmlFile) {
         final FxmlParser parser = new FxmlParser();
-        try (FileInputStream fileInputStream = new FileInputStream(new File(fxmlFile))) {
+        try (FileInputStream fileInputStream = new FileInputStream(fxmlFile)) {
             return parser.parseFxml(fileInputStream);
         } catch (final IOException e) {
             throw new IllegalStateException("Cannot read file " + fxmlFile + "!", e);
@@ -235,7 +235,10 @@ public class ControllerFactory {
      * @return the classpath location to the {@code fxmlFile}
      */
     private String deriveFxmlClasspathLocation(final String fxmlFile) {
-        String classpathLocation;
+        if (fxmlFile == null) {
+            throw new IllegalArgumentException("Argument 'fxmlFile' must not be null");
+        }
+        String classpathLocation = null;
         final int resourceIdx = fxmlFile.indexOf(MainAppFactoryConfig.DEFAULT_RESOURCES_DIR);
         final int relativeFxmlIdx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
         if (resourceIdx >= 0) {
@@ -244,15 +247,26 @@ public class ControllerFactory {
             classpathLocation = fxmlFile
                     .substring(relativeFxmlIdx + factoryConfig.getRelativeFXMLResourcesDirectory().length());
         } else {
-            classpathLocation = Path.of(fxmlFile).getFileName().toString();
+            final Path fileName = Path.of(fxmlFile).getFileName();
+            if (fileName == null) {
+                throw new IllegalArgumentException("Argument 'fxmlFile' does not point to a valid file.");
+            }
+            classpathLocation = fileName.toString();
         }
         classpathLocation = classpathLocation.replace('\\', '/');
         return classpathLocation.startsWith("/") ? classpathLocation : "/" + classpathLocation;
     }
 
     private String getFilenameWithoutExtension(final String fxmlFile) {
+        if (fxmlFile == null) {
+            throw new IllegalArgumentException("Argument 'fxmlFile' must not be null");
+        }
         final Path fxmlPath = Path.of(fxmlFile);
-        final String filename = fxmlPath.getFileName().toString();
+        final Path fileName = fxmlPath.getFileName();
+        if (fileName == null) {
+            throw new IllegalArgumentException("Argument 'fxmlFile' does not point to a valid file.");
+        }
+        final String filename = fileName.toString();
         return filename.substring(0, filename.lastIndexOf("."));
     }
 

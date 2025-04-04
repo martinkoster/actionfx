@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.appfactory.utils;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -107,8 +105,8 @@ class FileUtilsTest {
         final IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> FileUtils.copyClasspathFile("/fantasyfile", absoluteFolderPath));
 
-        // THEN
-        assertThat(ex.getMessage(), containsString("Unable to create input stream from location"));
+		// THEN
+		assertThat(ex.getMessage()).contains("Unable to create input stream from location");
         Files.delete(tmpPath);
     }
 
@@ -121,8 +119,8 @@ class FileUtilsTest {
         // WHEN
         final String content = FileUtils.readFromFile(tmpPath.toString() + "/hello.txt", StandardCharsets.UTF_8);
 
-        // THEN
-        assertThat(content, equalTo("Hello World!"));
+		// THEN
+		assertThat(content).isEqualTo("Hello World!");
         Files.delete(Path.of(tmpPath.toString() + "/hello.txt"));
         Files.delete(tmpPath);
     }
@@ -133,8 +131,8 @@ class FileUtilsTest {
         final IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> FileUtils.readFromFile("/fantasyfile", StandardCharsets.UTF_8));
 
-        // THEN
-        assertThat(ex.getMessage(), containsString("Unable to read file content from location"));
+		// THEN
+		assertThat(ex.getMessage()).contains("Unable to read file content from location");
     }
 
     @Test
@@ -142,8 +140,8 @@ class FileUtilsTest {
         // WHEN
         final String content = FileUtils.readFromClasspath("/files/hello.txt", StandardCharsets.UTF_8);
 
-        // THEN
-        assertThat(content, equalTo("Hello World!"));
+		// THEN
+		assertThat(content).isEqualTo("Hello World!");
     }
 
     @Test
@@ -152,8 +150,8 @@ class FileUtilsTest {
         final IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> FileUtils.readFromClasspath("/fantasyfile", StandardCharsets.UTF_8));
 
-        // THEN
-        assertThat(ex.getMessage(), containsString("Unable to create input stream from location"));
+		// THEN
+		assertThat(ex.getMessage()).contains("Unable to create input stream from location");
     }
 
     @Test
@@ -164,8 +162,8 @@ class FileUtilsTest {
         // WHEN
         final String content = FileUtils.readFromInputStream(inputStream, StandardCharsets.UTF_8);
 
-        // THEN
-        assertThat(content, equalTo("Hello World!"));
+		// THEN
+		assertThat(content).isEqualTo("Hello World!");
 
     }
 
@@ -209,8 +207,8 @@ class FileUtilsTest {
         FileUtils.copyClasspathFile("/files/hello.txt", tmpPath.toString());
         final File file = new File(Path.of(tmpPath.toString(), "hello.txt").toString());
 
-        // WHEN and THEN
-        assertThat(FileUtils.makeExecutable(file.getAbsolutePath()), equalTo(true));
-        assertThat(file.canExecute(), equalTo(true));
+		// WHEN and THEN
+		assertThat(FileUtils.makeExecutable(file.getAbsolutePath())).isEqualTo(true);
+		assertThat(file.canExecute()).isEqualTo(true);
     }
 }

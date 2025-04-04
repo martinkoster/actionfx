@@ -36,7 +36,7 @@ import com.github.actionfx.core.utils.ExceptionUtils;
  * @param <T>
  *            the type to be instantiated
  */
-public class ConstructorBasedInstantiationSupplier<T> extends AbstractInstantiationSupplier<T> {
+public final class ConstructorBasedInstantiationSupplier<T> extends AbstractInstantiationSupplier<T> {
 
     private final Class<T> clazz;
 

@@ -40,9 +40,9 @@ import freemarker.template.TemplateExceptionHandler;
  * @author koster
  *
  */
-public class FreemarkerConfiguration {
+public final class FreemarkerConfiguration {
 
-    private static FreemarkerConfiguration instance = null;
+    private static FreemarkerConfiguration instance;
 
     private final Configuration configuration;
 
@@ -58,7 +58,7 @@ public class FreemarkerConfiguration {
      *
      * @return the freemarker configuration instance
      */
-    public static FreemarkerConfiguration getInstance() {
+    public static synchronized FreemarkerConfiguration getInstance() {
         if (instance == null) {
             instance = new FreemarkerConfiguration();
         }

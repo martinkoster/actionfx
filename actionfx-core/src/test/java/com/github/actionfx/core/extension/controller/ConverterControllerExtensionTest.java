@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +54,7 @@ class ConverterControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(controller.comboBox.getConverter(), instanceOf(MovieStringConverter.class));
+		assertThat(controller.comboBox.getConverter()).isInstanceOf(MovieStringConverter.class);
 
 	}
 

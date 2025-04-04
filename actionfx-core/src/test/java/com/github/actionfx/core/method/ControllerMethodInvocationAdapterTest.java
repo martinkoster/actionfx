@@ -23,13 +23,7 @@
  */
 package com.github.actionfx.core.method;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -106,9 +100,9 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
-		assertThat(instance.getInvokedArguments(), hasSize(0));
-		assertThat(result, nullValue());
+		assertThat(instance.isExecuted()).isEqualTo(true);
+		assertThat(instance.getInvokedArguments()).hasSize(0);
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -121,9 +115,9 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
-		assertThat(instance.getInvokedArguments(), hasSize(0));
-		assertThat(result, equalTo(Integer.valueOf(42)));
+		assertThat(instance.isExecuted()).isEqualTo(true);
+		assertThat(instance.getInvokedArguments()).hasSize(0);
+		assertThat(result).isEqualTo(Integer.valueOf(42));
 	}
 
 	@Test
@@ -137,9 +131,9 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
-		assertThat(instance.getInvokedArguments(), contains("Type-based Value 1", Integer.valueOf(4711)));
-		assertThat(result, nullValue());
+		assertThat(instance.isExecuted()).isEqualTo(true);
+		assertThat(instance.getInvokedArguments()).containsExactly("Type-based Value 1", Integer.valueOf(4711));
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -152,10 +146,10 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
+		assertThat(instance.isExecuted()).isEqualTo(true);
 		// first "old", then "new"
-		assertThat(instance.getInvokedArguments(), contains(Integer.valueOf(100), Integer.valueOf(1000)));
-		assertThat(result, nullValue());
+		assertThat(instance.getInvokedArguments()).containsExactly(Integer.valueOf(100), Integer.valueOf(1000));
+		assertThat(result).isNull();
 
 	}
 
@@ -169,10 +163,10 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
+		assertThat(instance.isExecuted()).isEqualTo(true);
 		// first "new", then "old"
-		assertThat(instance.getInvokedArguments(), contains(Integer.valueOf(1000), Integer.valueOf(100)));
-		assertThat(result, nullValue());
+		assertThat(instance.getInvokedArguments()).containsExactly(Integer.valueOf(1000), Integer.valueOf(100));
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -185,10 +179,10 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
+		assertThat(instance.isExecuted()).isEqualTo(true);
 		// check that the string arguments have taken in order (and not repeated)
-		assertThat(instance.getInvokedArguments(), contains("Type-based Value 1", "Type-based Value 2"));
-		assertThat(result, nullValue());
+		assertThat(instance.getInvokedArguments()).containsExactly("Type-based Value 1", "Type-based Value 2");
+		assertThat(result).isNull();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -202,11 +196,11 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
+		assertThat(instance.isExecuted()).isEqualTo(true);
 		// first "new", then "old"
-		assertThat(instance.getInvokedArguments(), hasSize(1)); // the list of invoked arguments now contains a list
-		assertThat((List<String>) instance.getInvokedArguments().get(0), contains("selected"));
-		assertThat(result, nullValue());
+		assertThat(instance.getInvokedArguments()).hasSize(1); // the list of invoked arguments now contains a list
+		assertThat((List<String>) instance.getInvokedArguments().get(0)).containsExactly("selected");
+		assertThat(result).isNull();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -221,13 +215,13 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
+		assertThat(instance.isExecuted()).isEqualTo(true);
 		// first "new", then "old"
-		assertThat(instance.getInvokedArguments(), hasSize(3)); // the list of invoked arguments now contains 3 lists
-		assertThat((List<String>) instance.getInvokedArguments().get(0), contains("selected"));
-		assertThat((List<String>) instance.getInvokedArguments().get(1), contains("added"));
-		assertThat((List<String>) instance.getInvokedArguments().get(2), contains("removed"));
-		assertThat(result, nullValue());
+		assertThat(instance.getInvokedArguments()).hasSize(3); // the list of invoked arguments now contains 3 lists
+		assertThat((List<String>) instance.getInvokedArguments().get(0)).containsExactly("selected");
+		assertThat((List<String>) instance.getInvokedArguments().get(1)).containsExactly("added");
+		assertThat((List<String>) instance.getInvokedArguments().get(2)).containsExactly("removed");
+		assertThat(result).isNull();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -242,13 +236,13 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
+		assertThat(instance.isExecuted()).isEqualTo(true);
 		// first "new", then "old"
-		assertThat(instance.getInvokedArguments(), hasSize(3)); // the list of invoked arguments now contains 3 lists
-		assertThat((List<String>) instance.getInvokedArguments().get(0), contains("removed"));
-		assertThat((List<String>) instance.getInvokedArguments().get(1), contains("added"));
-		assertThat((List<String>) instance.getInvokedArguments().get(2), contains("selected"));
-		assertThat(result, nullValue());
+		assertThat(instance.getInvokedArguments()).hasSize(3); // the list of invoked arguments now contains 3 lists
+		assertThat((List<String>) instance.getInvokedArguments().get(0)).containsExactly("removed");
+		assertThat((List<String>) instance.getInvokedArguments().get(1)).containsExactly("added");
+		assertThat((List<String>) instance.getInvokedArguments().get(2)).containsExactly("selected");
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -262,7 +256,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
-		assertThat(result.get(), equalTo(42));
+		assertThat(result.get()).isEqualTo(42);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -277,12 +271,12 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted(), equalTo(true));
-		assertThat(instance.getInvokedArguments(), hasSize(2));
-		assertThat(instance.getInvokedArguments().get(0), equalTo("Hello World"));
-		assertThat(instance.getInvokedArguments().get(1), instanceOf(List.class));
-		assertThat((List<String>) instance.getInvokedArguments().get(1), contains("List Item 2", "List Item 3"));
-		assertThat(result, nullValue());
+		assertThat(instance.isExecuted()).isEqualTo(true);
+		assertThat(instance.getInvokedArguments()).hasSize(2);
+		assertThat(instance.getInvokedArguments().get(0)).isEqualTo("Hello World");
+		assertThat(instance.getInvokedArguments().get(1)).isInstanceOf(List.class);
+		assertThat((List<String>) instance.getInvokedArguments().get(1)).containsExactly("List Item 2", "List Item 3");
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -290,7 +284,7 @@ class ControllerMethodInvocationAdapterTest {
 		// WHEN and THEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> methodInvocationAdapterWithoutView("voidMethodWithInjectedControlArguments"));
-		assertThat(ex.getMessage(), containsString("There is no view associated with controller of type"));
+		assertThat(ex.getMessage()).contains("There is no view associated with controller of type");
 	}
 
 	@Test
@@ -298,8 +292,7 @@ class ControllerMethodInvocationAdapterTest {
 		// WHEN and THEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> methodInvocationAdapter("voidMethodWithUnknownControlIdArguments"));
-		assertThat(ex.getMessage(), containsString(
-				"There is no node with ID='someUnknownControl' inside the view associated with controller"));
+		assertThat(ex.getMessage()).contains("There is no node with ID='someUnknownControl' inside the view associated with controller");
 	}
 
 	@Test
@@ -307,8 +300,8 @@ class ControllerMethodInvocationAdapterTest {
 		// WHEN and THEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> methodInvocationAdapter("voidMethodWithTypeIsNotControl"));
-		assertThat(ex.getMessage(), containsString("Node with ID='vbox' inside the view hosted by controller"));
-		assertThat(ex.getMessage(), containsString("is not a javafx.scene.control.Control!"));
+		assertThat(ex.getMessage()).contains("Node with ID='vbox' inside the view hosted by controller");
+		assertThat(ex.getMessage()).contains("is not a javafx.scene.control.Control!");
 	}
 
 	@Test
@@ -316,9 +309,8 @@ class ControllerMethodInvocationAdapterTest {
 		// WHEN and THEN
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> methodInvocationAdapter("voidMethodWithInjectedControlArgumentsOfIncompatibleType"));
-		assertThat(ex.getMessage(), containsString("Value retrieved for control with ID='textField'"));
-		assertThat(ex.getMessage(),
-				containsString(" is not compatible with the method argument of type 'interface java.util.List'!"));
+		assertThat(ex.getMessage()).contains("Value retrieved for control with ID='textField'");
+		assertThat(ex.getMessage()).contains(" is not compatible with the method argument of type 'interface java.util.List'!");
 	}
 
 	@Test
@@ -338,8 +330,8 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
-		assertThat(result, equalTo("Hello World"));
+		assertThat(instance.executed).isEqualTo(true);
+		assertThat(result).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -359,8 +351,8 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(false));
-		assertThat(result, nullValue());
+		assertThat(instance.executed).isEqualTo(false);
+		assertThat(result).isNull();
 	}
 
 	@Test
@@ -381,8 +373,8 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
-		assertThat(result, equalTo("Hello World"));
+		assertThat(instance.executed).isEqualTo(true);
+		assertThat(result).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -403,8 +395,8 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
-		assertThat(result, equalTo("Hello World"));
+		assertThat(instance.executed).isEqualTo(true);
+		assertThat(result).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -426,8 +418,8 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.eq("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
-		assertThat(result.get(), equalTo("Hello World"));
+		assertThat(instance.executed).isEqualTo(true);
+		assertThat(result.get()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -449,8 +441,8 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(false));
-		assertThat(result.get(), nullValue());
+		assertThat(instance.executed).isEqualTo(false);
+		assertThat(result.get()).isNull();
 	}
 
 	@Test
@@ -468,9 +460,9 @@ class ControllerMethodInvocationAdapterTest {
 		final File result = adapter.invoke();
 
 		// THEN
-		assertThat(result, equalTo(file));
+		assertThat(result).isEqualTo(file);
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
+		assertThat(instance.executed).isEqualTo(true);
 	}
 
 	@Test
@@ -487,9 +479,9 @@ class ControllerMethodInvocationAdapterTest {
 		final File result = adapter.invoke();
 
 		// THEN
-		assertThat(result, nullValue());
+		assertThat(result).isNull();
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(false));
+		assertThat(instance.executed).isEqualTo(false);
 	}
 
 	@Test
@@ -507,9 +499,9 @@ class ControllerMethodInvocationAdapterTest {
 		final File result = adapter.invoke();
 
 		// THEN
-		assertThat(result, equalTo(file));
+		assertThat(result).isEqualTo(file);
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
+		assertThat(instance.executed).isEqualTo(true);
 	}
 
 	@Test
@@ -527,9 +519,9 @@ class ControllerMethodInvocationAdapterTest {
 		final File result = adapter.invoke();
 
 		// THEN
-		assertThat(result, equalTo(file));
+		assertThat(result).isEqualTo(file);
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
+		assertThat(instance.executed).isEqualTo(true);
 	}
 
 	@Test
@@ -546,9 +538,9 @@ class ControllerMethodInvocationAdapterTest {
 		final String result = adapter.invoke();
 
 		// THEN
-		assertThat(result, equalTo("Hello World"));
+		assertThat(result).isEqualTo("Hello World");
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed, equalTo(true));
+		assertThat(instance.executed).isEqualTo(true);
 	}
 
 	private static ControllerMethodInvocationAdapter methodInvocationAdapter(final String methodName) {
@@ -607,7 +599,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		private final List<Object> invokedArguments = new ArrayList<>();
 
-		private boolean executed = false;
+		private boolean executed;
 
 		public void voidMethod() {
 			setExecuted();

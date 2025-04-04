@@ -26,9 +26,9 @@
  */
 package com.github.actionfx.core.decoration;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import com.github.actionfx.core.validation.ValidationMessage;
 
@@ -41,7 +41,7 @@ import javafx.scene.control.Control;
  * <img src="StyleClassValidationDecoration.png" alt="Screenshot of
  * StyleClassValidationDecoration">
  */
-public class StyleClassValidationDecoration extends AbstractValidationDecoration {
+public final class StyleClassValidationDecoration extends AbstractValidationDecoration {
 
 	private final String errorClass;
 
@@ -101,7 +101,7 @@ public class StyleClassValidationDecoration extends AbstractValidationDecoration
 			validationClass = infoClass;
 			break;
 		}
-		return Arrays.asList(new StyleClassDecoration(validationClass));
+		return List.of(new StyleClassDecoration(validationClass));
 	}
 
 	@Override

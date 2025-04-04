@@ -163,14 +163,15 @@ public class FormBindingControllerExtension extends AbstractAnnotatedFieldContro
 
     private boolean isRequiredValidationOnly(final AFXFormMapping fm) {
         return fm.required() && !fm.past() && !fm.pastOrPresent() && !fm.future() && !fm.futureOrPresent()
-                && "".equals(fm.regExp()) && fm.minVal() == Double.MIN_VALUE && fm.maxVal() == Double.MAX_VALUE
+                && "".equals(fm.regExp()) && Double.compare(fm.minVal(), Double.MIN_VALUE) == 0
+                && Double.compare(fm.maxVal(), Double.MAX_VALUE) == 0
                 && fm.minSize() == Long.MIN_VALUE && fm.maxSize() == Long.MAX_VALUE
                 && fm.expectedBoolean() == BooleanValue.UNDEFINED;
     }
 
     private void addMinMaxValidator(final List<Validator> validatorList, final AFXFormMapping fm,
             final String validationMessage) {
-        if (fm.minVal() != Double.MIN_VALUE || fm.maxVal() != Double.MAX_VALUE) {
+        if (Double.compare(fm.minVal(), Double.MIN_VALUE) != 0 || Double.compare(fm.maxVal(), Double.MAX_VALUE) != 0) {
             validatorList.add(new MinMaxValidator(validationMessage, fm.minVal(), fm.maxVal(),
                     fm.formatPattern(), fm.required()));
         }

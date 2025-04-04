@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +54,7 @@ class EnableMultiSelectionControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(controller.tableView.getSelectionModel().getSelectionMode(), equalTo(SelectionMode.MULTIPLE));
+		assertThat(controller.tableView.getSelectionModel().getSelectionMode()).isEqualTo(SelectionMode.MULTIPLE);
 	}
 
 	public class ControllerWithTableView {

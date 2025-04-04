@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.appfactory.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -78,7 +77,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-        assertThat(runGradleWrapper(tmpFolder, "assemble"), equalTo(0));
+		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
     }
 
     @Test
@@ -100,7 +99,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-        assertThat(runGradleWrapper(tmpFolder, "assemble"), equalTo(0));
+		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
     }
 
     @Test
@@ -124,7 +123,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-        assertThat(runGradleWrapper(tmpFolder, "assemble"), equalTo(0));
+		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
     }
 
     @Test
@@ -151,7 +150,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-        assertThat(runGradleWrapper(tmpFolder, "assemble"), equalTo(0));
+		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
     }
 
     private static int runGradleWrapper(final Path projectDir, final String gradleTask) {

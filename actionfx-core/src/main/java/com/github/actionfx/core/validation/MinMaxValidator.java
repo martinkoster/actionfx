@@ -38,11 +38,11 @@ import com.github.actionfx.core.view.graph.ControlWrapper;
  */
 public class MinMaxValidator extends AbstractRequiredValidator {
 
-    private double min;
+	private final double min;
 
-    private double max;
+	private final double max;
 
-    private String formatPattern;
+	private final String formatPattern;
 
     /**
      * Default constructor.
@@ -73,7 +73,7 @@ public class MinMaxValidator extends AbstractRequiredValidator {
         final Double value = getValue(controlWrapper, controlProperty);
         // value is allowed to be null - if not, then you need to use the "required=true" attribute
         return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value == null && !canConvert(value, Double.class, formatPattern)
+                value == null && !canConvert(null, Double.class, formatPattern)
                         || value != null && (value < min || value > max));
     }
 
@@ -84,7 +84,7 @@ public class MinMaxValidator extends AbstractRequiredValidator {
         }
         if (Collection.class.isAssignableFrom(value.getClass())) {
             final Collection<?> collection = (Collection<?>) value;
-            return Double.valueOf(collection.size());
+            return (double) collection.size();
         }
         // Convert to Double, if necessary
         return convert(value, Double.class, formatPattern);

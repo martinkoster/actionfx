@@ -55,15 +55,15 @@ public class TemporalValidator extends AbstractRequiredValidator {
 
     private static final List<String> TIME_COMPONENT_CHARACTERS = new ArrayList<>();
 
-    private boolean past;
+	private final boolean past;
 
-    private boolean pastOrPresent;
+	private final boolean pastOrPresent;
 
-    private boolean future;
+	private final boolean future;
 
-    private boolean futureOrPresent;
+	private final boolean futureOrPresent;
 
-    private String formatPattern;
+	private final String formatPattern;
 
     static {
         registerTypesWithTimeComponent();

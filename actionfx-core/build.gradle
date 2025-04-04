@@ -15,18 +15,19 @@ dependencies {
             version = "${javafxVersion}"
             modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web', 'javafx.swing' ]
         }
-		
-		api group: "javax.annotation", name: "javax.annotation-api", version: "${javaxAnnotationVersion}"
-		api group: "javax.inject", name: "javax.inject", version: "${javaxInjectVersion}"
+
+	api group: "jakarta.annotation", name: "jakarta.annotation-api", version: "${jakartaAnnotationVersion}"
+	api group: "jakarta.inject", name: "jakarta.inject-api", version: "${jakartaInjectVersion}"
 		api group: "io.github.classgraph", name: "classgraph", version: "${classgraphVersion}"
 		api group: "org.apache.commons", name: "commons-lang3", version: "${commonsLangVersion}"
 		api group: "commons-beanutils", name: "commons-beanutils", version: "${commonsBeanUtilsVersion}"		
 		api group: "net.bytebuddy", name: "byte-buddy", version: "${byteBuddyVersion}"
 		api group: "net.bytebuddy", name: "byte-buddy-agent", version: "${byteBuddyVersion}"
 
-		implementation group: "ch.qos.logback", name: "logback-classic", version: "${logbackVersion}" 
+	implementation group: "ch.qos.logback", name: "logback-classic", version: "${logbackVersion}"
 
-        testImplementation project(":actionfx-testing")
+	implementation group: "org.assertj", name: "assertj-core", version: "3.27.3"
+	testImplementation project(":actionfx-testing")
         testImplementation group: "org.testfx", name: "openjfx-monocle", version: "${testfxMonocleVerion}"
     	testImplementation group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
     	testImplementation group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
@@ -34,11 +35,13 @@ dependencies {
 		testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
 		testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
 
+	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
+
 }
 
 test {    
 		forkEvery = 1
-    	maxParallelForks = 5       
+	maxParallelForks = 10
 }
 
 integrationTest {    

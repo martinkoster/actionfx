@@ -69,11 +69,10 @@ public enum ControlProperties {
      */
     USER_VALUE_OBSERVABLE(2);
 
-    private int order;
+    private final int order;
 
-    private ControlProperties(final int order) {
+    ControlProperties(final int order) {
         this.order = order;
-
     }
 
     public int getOrder() {

@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Predicate;
@@ -85,16 +84,16 @@ class BooleanBindingBuilderTest {
                 .testables(new ControlWrapper[] { ControlWrapper.of(textField1), ControlWrapper.of(textField2) })
                 .observableExtractorFunction(ControlWrapper::getUserValueAsObservable).finishPredicate().build();
 
-        // THEN (no value set, so binding is false)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// THEN (no value set, so binding is false)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN
         textField1.setText("Hello");
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and THEN (now all fields in the binding have a value)
         textField2.setText("World");
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -107,16 +106,16 @@ class BooleanBindingBuilderTest {
                 .testables(new Observable[] { textField1.textProperty(), textField2.textProperty() })
                 .finishPredicate().build();
 
-        // THEN (no value set, so binding is false)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// THEN (no value set, so binding is false)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN
         textField1.setText("Hello");
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and THEN (now all fields in the binding have a value)
         textField2.setText("World");
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -129,14 +128,14 @@ class BooleanBindingBuilderTest {
                 .testables(new ControlWrapper[] { ControlWrapper.of(textField1), ControlWrapper.of(textField2) })
                 .observableExtractorFunction(ControlWrapper::getUserValueAsObservable).finishPredicate().build();
 
-        // THEN (no value set, so binding is false)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// THEN (no value set, so binding is false)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN
         textField1.setText("Hello");
 
-        // and THEN (at least one value is supplied)
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		// and THEN (at least one value is supplied)
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -150,15 +149,15 @@ class BooleanBindingBuilderTest {
                 .observableExtractorFunction(ControlWrapper::getUserValueAsObservable).negateResult(true)
                 .finishPredicate().build();
 
-        // THEN (no value set, value is negated, so binding is true)
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		// THEN (no value set, value is negated, so binding is true)
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
 
         // and WHEN
         textField1.setText("Hello");
 
-        // and THEN (at least one value is supplied, value is negated, so binding is
-        // false)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// and THEN (at least one value is supplied, value is negated, so binding is
+		// false)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
     }
 
     @Test
@@ -177,20 +176,20 @@ class BooleanBindingBuilderTest {
                 .observableExtractorFunction(ControlWrapper::getUserValueAsObservable).finishPredicate()
                 .build();
 
-        // THEN (no predicate fulfilled)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// THEN (no predicate fulfilled)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN (predicate 1 is fulfilled)
         textField1.setText("Hello");
 
-        // and THEN (value is still false, as predicate 2 is not yet fulfilled)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// and THEN (value is still false, as predicate 2 is not yet fulfilled)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN (we are going to fulfill predicate 2 step-by-step)
         textField3.setText("World");
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE)); // all needs to be fulfilled,so still false
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE); // all needs to be fulfilled,so still false
         textField4.setText("Whazzuuuup");
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE)); // predicate 2 is now fulfilled
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE); // predicate 2 is now fulfilled
     }
 
     @Test
@@ -210,21 +209,21 @@ class BooleanBindingBuilderTest {
                 .negateChainResult(true)
                 .build();
 
-        // THEN (no predicate fulfilled, but negated)
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		// THEN (no predicate fulfilled, but negated)
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
 
         // and WHEN (predicate 1 is fulfilled, but negated)
         textField1.setText("Hello");
 
-        // and THEN (value is still true, as predicate 2 is not yet fulfilled)
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		// and THEN (value is still true, as predicate 2 is not yet fulfilled)
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
 
         // and WHEN (we are going to fulfill predicate 2 step-by-step)
         textField3.setText("World");
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE)); // all needs to be fulfilled,so still true because
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE); // all needs to be fulfilled,so still true because
                                                                // negated
         textField4.setText("Whazzuuuup");
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE)); // predicate 2 is now fulfilled, but negated
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE); // predicate 2 is now fulfilled, but negated
                                                                 // -> so "false"
     }
 
@@ -244,14 +243,14 @@ class BooleanBindingBuilderTest {
                 .observableExtractorFunction(ControlWrapper::getUserValueAsObservable).finishPredicate()
                 .build();
 
-        // THEN (no predicate fulfilled)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// THEN (no predicate fulfilled)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN (predicate 1 is fulfilled)
         textField1.setText("Hello");
 
-        // and THEN (value is true, as predicate 2 is ORed with predicate 1)
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		// and THEN (value is true, as predicate 2 is ORed with predicate 1)
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -270,15 +269,15 @@ class BooleanBindingBuilderTest {
                 .observableExtractorFunction(ControlWrapper::getUserValueAsObservable).finishPredicate()
                 .build();
 
-        // THEN (no predicate fulfilled)
-        assertThat(binding.getValue(), equalTo(Boolean.FALSE));
+		// THEN (no predicate fulfilled)
+		assertThat(binding.getValue()).isEqualTo(Boolean.FALSE);
 
         // and WHEN (predicate 2 is fulfilled)
         textField3.setText("Hello");
         textField4.setText("World");
 
-        // and THEN (value is true, as predicate 2 is ORed with predicate 1)
-        assertThat(binding.getValue(), equalTo(Boolean.TRUE));
+		// and THEN (value is true, as predicate 2 is ORed with predicate 1)
+		assertThat(binding.getValue()).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -291,8 +290,8 @@ class BooleanBindingBuilderTest {
                 .testables(new Observable[] { textField1.textProperty(), textField2.textProperty() });
 
         // THEN (no value set, so binding is false)
-        final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> builder.finishPredicate());
-        assertThat(ex.getMessage(), equalTo("No predicate has been supplied"));
+        final IllegalStateException ex = assertThrows(IllegalStateException.class, builder::finishPredicate);
+		assertThat(ex.getMessage()).isEqualTo("No predicate has been supplied");
     }
 
     @Test
@@ -305,8 +304,8 @@ class BooleanBindingBuilderTest {
                 .testables(null);
 
         // THEN (no value set, so binding is false)
-        final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> builder.finishPredicate());
-        assertThat(ex.getMessage(), equalTo("No testables have been supplied"));
+        final IllegalStateException ex = assertThrows(IllegalStateException.class, builder::finishPredicate);
+		assertThat(ex.getMessage()).isEqualTo("No testables have been supplied");
     }
 
     @Test
@@ -320,8 +319,8 @@ class BooleanBindingBuilderTest {
                 .testables(new ControlWrapper[0]);
 
         // THEN (no value set, so binding is false)
-        final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> builder.finishPredicate());
-        assertThat(ex.getMessage(), equalTo("No testables have been supplied"));
+        final IllegalStateException ex = assertThrows(IllegalStateException.class, builder::finishPredicate);
+		assertThat(ex.getMessage()).isEqualTo("No testables have been supplied");
     }
 
     @Test
@@ -334,9 +333,8 @@ class BooleanBindingBuilderTest {
                 .testables(new ControlWrapper[] { ControlWrapper.of(textField1), ControlWrapper.of(textField2) });
 
         // THEN (no value set, so binding is false)
-        final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> builder.finishPredicate());
-        assertThat(ex.getMessage(), equalTo(
-                "No observableExtractorFunction supplied while testable is not of type javafx.beans.Observable"));
+        final IllegalStateException ex = assertThrows(IllegalStateException.class, builder::finishPredicate);
+		assertThat(ex.getMessage()).isEqualTo("No observableExtractorFunction supplied while testable is not of type javafx.beans.Observable");
     }
 
     @Test
@@ -350,8 +348,7 @@ class BooleanBindingBuilderTest {
                 .testables(new ControlWrapper[] { ControlWrapper.of(textField1), ControlWrapper.of(textField2) });
 
         // THEN (no value set, so binding is false)
-        final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> builder.finishPredicate());
-        assertThat(ex.getMessage(), equalTo(
-                "No matchingOp has been supplied"));
+        final IllegalStateException ex = assertThrows(IllegalStateException.class, builder::finishPredicate);
+		assertThat(ex.getMessage()).isEqualTo("No matchingOp has been supplied");
     }
 }

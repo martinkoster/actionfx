@@ -4,12 +4,12 @@ This module contains JUnit 5 test extensions for testing JavaFX- and ActionFX co
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
-[actionfx-testing](README.md) | This module contains JUnit 5 classes for unit- and integration testing of JavaFX and ActionFX components. This is achieved by JUnit 5 extensions [FxThreadForAllMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java) and [FxThreadForEachMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java) to run tests inside the JavaFX thread. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-testing/index.html) 
+[actionfx-testing](README.md) | This module contains JUnit 5 classes for unit- and integration testing of JavaFX and ActionFX components. This is achieved by JUnit 5 extensions [FxThreadForAllMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForAllMonocleExtension.java) and [FxThreadForEachMonocleExtension](src/main/java/com/github/actionfx/testing/junit5/FxThreadForEachMonocleExtension.java) to run tests inside the JavaFX thread. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.1/actionfx-testing/index.html) 
 
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-testing", version: "1.6.0"
+implementation group: "com.github.martinkoster", name: "actionfx-testing", version: "1.6.1"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-testing", versi
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-testing</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
 </dependency>
 ```
 
