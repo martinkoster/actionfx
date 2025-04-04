@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Upgraded external dependencies to recent versions (commons-lang3, commons-beanutils, bytebuddy, SonarQube Plugin)
 - Replaced JavaEE javax.* packages by corresponding Jakarta packages
 - Migrated all JUnit tests from using Hamcrest Matcher to AssertJ.
+- Added support for Spring Boot 3.4.4 (AFXAutoConfiguration is no longer configured via spring.factories)
 
 ### Bugfixes
 
