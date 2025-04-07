@@ -38,7 +38,7 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew assemble --info
+          ./gradlew assemble
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew check --info
+          ./gradlew check
 
       - name: Upload unit test artifacts
         uses: actions/upload-artifact@v4
@@ -100,16 +100,11 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get install -y libxtst6 libgtk2.0-0
-
       - name: Run integration tests
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew integrationTest --info
+          ./gradlew integrationTest
 
       - name: Upload integration test artifacts
         uses: actions/upload-artifact@v4
@@ -142,13 +137,13 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew codeCoverageReport -x test --info
+          ./gradlew codeCoverageReport -x test
 
       - name: Run SonarQube
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew sonarqube -x test --info
+          ./gradlew sonarqube -x test
 
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v4
@@ -181,8 +176,8 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew copyJavaDocToDocs -x test --info &
-          ./gradlew gitPublishPush -x test --info
+          ./gradlew copyJavaDocToDocs -x test &
+          ./gradlew gitPublishPush -x test
         env:
           GRGIT_USER: ${{ secrets.GRGIT_USER }}
           GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
@@ -207,4 +202,4 @@ jobs:
           echo "signingPassword=${{ secrets.SIGNING_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Release to Maven Central
-        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test --info
+        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test
