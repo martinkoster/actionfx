@@ -2,15 +2,13 @@ plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java-library"
     id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
-    id "org.sonarqube" version "${sonarQubePlugin}"
+	id "org.sonarqube" version "${sonarqubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
 	id "org.openrewrite.rewrite" version "7.3.0"
-
 }
 
 wrapper {
 	gradleVersion = "8.13"
-    distributionType = Wrapper.DistributionType.ALL
 	distributionUrl = "https://services.gradle.org/distributions/gradle-8.13-bin.zip"
 }
 
@@ -243,12 +241,16 @@ tasks.register('codeCoverageReport', JacocoReport) {
 	}
 }
 
-sonarqube {
-  properties {
-    property "sonar.projectKey", "martinkoster_actionfx"
-    property "sonar.organization", "martinkoster"
-    property "sonar.host.url", "https://sonarcloud.io"
-	  property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
+sonar {
+	def branchName = System.getenv("CI_COMMIT_REF_NAME")
+	properties {
+		property "sonar.projectKey", "martinkoster_actionfx"
+		property "sonar.organization", "martinkoster"
+		property "sonar.host.url", "https://sonarcloud.io"
+		property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
+		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
+		property "sonar.branch.name", branchName
+		property "sonar.qualitygate.wait", true
   }
 }
 
