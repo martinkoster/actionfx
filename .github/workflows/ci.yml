@@ -1,0 +1,143 @@
+name: ActionFX CI Build- and Release Management
+
+on:
+  push:
+    branches: [ '**' ]  # Trigger on all branches
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/gluonhq/javafx17:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .gradle/wrapper
+            .gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set Gradle user home
+        run: echo "GRADLE_USER_HOME=${GITHUB_WORKSPACE}/.gradle" >> $GITHUB_ENV
+
+      - name: Assemble project
+        run: ./gradlew assemble
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    container: ghcr.io/gluonhq/javafx17:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run unit tests
+        run: ./gradlew check
+
+      - name: Upload unit test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  integration-test:
+    needs: build
+    runs-on: ubuntu-latest
+    container: ghcr.io/gluonhq/javafx17:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y libxtst6 libgtk2.0-0
+
+      - name: Run integration tests
+        run: ./gradlew integrationTest
+
+      - name: Upload integration test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  code-quality:
+    needs: [ unit-test, integration-test ]
+    runs-on: ubuntu-latest
+    container: ghcr.io/gluonhq/javafx17:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate code coverage report
+        run: ./gradlew codeCoverageReport -x test
+
+      - name: Run SonarQube
+        run: ./gradlew sonarqube -x test
+
+      - name: Upload quality artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  publish-javadoc:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    container: ghcr.io/gluonhq/javafx17:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish Javadoc
+        run: |
+          ./gradlew copyJavaDocToDocs -x test
+          ./gradlew gitPublishPush -x test
+        env:
+          GRGIT_USER: ${{ secrets.GRGIT_USER }}
+          GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
+
+  release-to-maven-central:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    container: ghcr.io/gluonhq/javafx17:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Signing Key
+        run: |
+          echo "signingKey=${{ secrets.SIGNING_KEY }}" >> $GITHUB_ENV
+          echo "signingPassword=${{ secrets.SIGNING_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Release to Maven Central
+        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test
