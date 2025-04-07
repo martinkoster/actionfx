@@ -38,7 +38,7 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew assemble
+          ./gradlew assemble --no-daemon
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew check
+          ./gradlew check --no-daemon
 
       - name: Upload unit test artifacts
         uses: actions/upload-artifact@v4
@@ -104,7 +104,7 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew integrationTest
+          ./gradlew integrationTest --no-daemon
 
       - name: Upload integration test artifacts
         uses: actions/upload-artifact@v4
@@ -137,13 +137,13 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew codeCoverageReport -x test
+          ./gradlew codeCoverageReport -x test --no-daemon
 
       - name: Run SonarQube
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew sonarqube -x test
+          ./gradlew sonar -x test --no-daemon
 
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v4
@@ -174,10 +174,7 @@ jobs:
 
       - name: Publish Javadoc
         run: |
-          export DISPLAY=:90
-          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew copyJavaDocToDocs -x test &
-          ./gradlew gitPublishPush -x test
+          ./gradlew copyJavaDocToDocs gitPublishPush -x test --no-daemon
         env:
           GRGIT_USER: ${{ secrets.GRGIT_USER }}
           GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
@@ -202,4 +199,4 @@ jobs:
           echo "signingPassword=${{ secrets.SIGNING_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Release to Maven Central
-        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test
+        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test --no-daemon
