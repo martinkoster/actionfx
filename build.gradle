@@ -63,10 +63,15 @@ configure(allprojects) { project ->
 	
 	test {
 		useJUnitPlatform()
+		jacoco {
+			destinationFile = layout.buildDirectory.file("jacoco/UTest.exec").get().asFile
+			enabled = true
+		}
 		reports {
 			html.required.set(true)
 			html.outputLocation.set(file("${reporting.baseDir}/${name}"))
 		}
+
 		testLogging {
 			exceptionFormat = "full"
 		}
@@ -95,6 +100,10 @@ configure(allprojects) { project ->
 		}
 		afterTest { test, result ->
 			println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
+		}
+		jacoco {
+			destinationFile = layout.buildDirectory.file("jacoco/CTest.exec").get().asFile
+			enabled = true
 		}
 	}
 
@@ -220,6 +229,7 @@ gitPublish {
 ////////////////////////
 
 tasks.register('codeCoverageReport', JacocoReport) {
+	dependsOn test, integrationTest
 	executionData fileTree(project.rootDir.absolutePath).include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
 
 	subprojects.each {
@@ -227,23 +237,18 @@ tasks.register('codeCoverageReport', JacocoReport) {
 	}
 	reports {
 		xml.required.set(true)
-		xml.outputLocation.set(layout.buildDirectory.file("/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"))
+		xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
 		html.required.set(true)
 		csv.required.set(false)
 	}
 }
-
-codeCoverageReport.dependsOn {
-	    subprojects*.test
-}
-
 
 sonarqube {
   properties {
     property "sonar.projectKey", "martinkoster_actionfx"
     property "sonar.organization", "martinkoster"
     property "sonar.host.url", "https://sonarcloud.io"
-    property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+	  property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
   }
 }
 
