@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/gluonhq/javafx17:latest
+    container: gluonhq/javafx17:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +43,7 @@ jobs:
   unit-test:
     needs: build
     runs-on: ubuntu-latest
-    container: ghcr.io/gluonhq/javafx17:latest
+    container: gluonhq/javafx17:latest
     steps:
       - uses: actions/checkout@v4
       - name: Run unit tests
@@ -65,7 +65,7 @@ jobs:
   integration-test:
     needs: build
     runs-on: ubuntu-latest
-    container: ghcr.io/gluonhq/javafx17:latest
+    container: gluonhq/javafx17:latest
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -92,7 +92,7 @@ jobs:
   code-quality:
     needs: [ unit-test, integration-test ]
     runs-on: ubuntu-latest
-    container: ghcr.io/gluonhq/javafx17:latest
+    container: gluonhq/javafx17:latest
     steps:
       - uses: actions/checkout@v4
       - name: Generate code coverage report
@@ -117,7 +117,7 @@ jobs:
   publish-javadoc:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    container: ghcr.io/gluonhq/javafx17:latest
+    container: gluonhq/javafx17:latest
     steps:
       - uses: actions/checkout@v4
       - name: Publish Javadoc
@@ -131,7 +131,7 @@ jobs:
   release-to-maven-central:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    container: ghcr.io/gluonhq/javafx17:latest
+    container: gluonhq/javafx17:latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup Signing Key
