@@ -140,6 +140,8 @@ jobs:
           ./gradlew codeCoverageReport -x test --no-daemon
 
       - name: Run SonarQube
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
