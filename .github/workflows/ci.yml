@@ -37,8 +37,8 @@ jobs:
       - name: Assemble project
         run: |
           export DISPLAY=:90
-          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
-          ./gradlew assemble
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew assemble --info
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -70,8 +70,8 @@ jobs:
       - name: Run unit tests
         run: |
           export DISPLAY=:90
-          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
-          ./gradlew check
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew check --info
 
       - name: Upload unit test artifacts
         uses: actions/upload-artifact@v4
@@ -108,8 +108,8 @@ jobs:
       - name: Run integration tests
         run: |
           export DISPLAY=:90
-          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
-          ./gradlew integrationTest
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew integrationTest --info
 
       - name: Upload integration test artifacts
         uses: actions/upload-artifact@v4
@@ -141,14 +141,14 @@ jobs:
       - name: Generate code coverage report
         run: |
           export DISPLAY=:90
-          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
-          ./gradlew codeCoverageReport -x test
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew codeCoverageReport -x test --info
 
       - name: Run SonarQube
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew sonarqube -x test
+          ./gradlew sonarqube -x test --info
 
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v4
@@ -180,9 +180,9 @@ jobs:
       - name: Publish Javadoc
         run: |
           export DISPLAY=:90
-          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
-          ./gradlew copyJavaDocToDocs -x test
-          ./gradlew gitPublishPush -x test
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew copyJavaDocToDocs -x test --info &
+          ./gradlew gitPublishPush -x test --info
         env:
           GRGIT_USER: ${{ secrets.GRGIT_USER }}
           GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
@@ -207,4 +207,4 @@ jobs:
           echo "signingPassword=${{ secrets.SIGNING_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Release to Maven Central
-        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test
+        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test --info
