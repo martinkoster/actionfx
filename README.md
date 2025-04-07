@@ -1,6 +1,6 @@
 # ActionFX
 
-[![CI Pipeline Status](https://github.com/martinkoster/actionfx/actions/workflows/ci.yml/badge.svg)](https://github.com/martinkoster/actionfx/actions/workflows/ci.yml/badge.svg)
+[![CI Pipeline Status](https://github.com/martinkoster/actionfx/actions/workflows/ci.yml/badge.svg)](https://github.com/martinkoster/actionfx/actions/workflows/ci.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=martinkoster_actionfx&metric=coverage)](https://sonarcloud.io/dashboard?id=martinkoster_actionfx)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=martinkoster_actionfx&metric=alert_status)](https://sonarcloud.io/dashboard?id=martinkoster_actionfx)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=martinkoster_actionfx&metric=bugs)](https://sonarcloud.io/dashboard?id=martinkoster_actionfx)

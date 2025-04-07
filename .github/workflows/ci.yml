@@ -7,9 +7,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: gluonhq/javafx17:latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Set up Gradle cache
         uses: actions/cache@v4
@@ -25,7 +35,10 @@ jobs:
         run: echo "GRADLE_USER_HOME=${GITHUB_WORKSPACE}/.gradle" >> $GITHUB_ENV
 
       - name: Assemble project
-        run: ./gradlew assemble
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
+          ./gradlew assemble
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -43,11 +56,22 @@ jobs:
   unit-test:
     needs: build
     runs-on: ubuntu-latest
-    container: gluonhq/javafx17:latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
       - name: Run unit tests
-        run: ./gradlew check
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
+          ./gradlew check
 
       - name: Upload unit test artifacts
         uses: actions/upload-artifact@v4
@@ -65,16 +89,27 @@ jobs:
   integration-test:
     needs: build
     runs-on: ubuntu-latest
-    container: gluonhq/javafx17:latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
       - name: Install dependencies
         run: |
           apt-get update
           apt-get install -y libxtst6 libgtk2.0-0
 
       - name: Run integration tests
-        run: ./gradlew integrationTest
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
+          ./gradlew integrationTest
 
       - name: Upload integration test artifacts
         uses: actions/upload-artifact@v4
@@ -92,14 +127,28 @@ jobs:
   code-quality:
     needs: [ unit-test, integration-test ]
     runs-on: ubuntu-latest
-    container: gluonhq/javafx17:latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
       - name: Generate code coverage report
-        run: ./gradlew codeCoverageReport -x test
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
+          ./gradlew codeCoverageReport -x test
 
       - name: Run SonarQube
-        run: ./gradlew sonarqube -x test
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew sonarqube -x test
 
       - name: Upload quality artifacts
         uses: actions/upload-artifact@v4
@@ -117,11 +166,21 @@ jobs:
   publish-javadoc:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    container: gluonhq/javafx17:latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
       - name: Publish Javadoc
         run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 
           ./gradlew copyJavaDocToDocs -x test
           ./gradlew gitPublishPush -x test
         env:
@@ -131,9 +190,17 @@ jobs:
   release-to-maven-central:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    container: gluonhq/javafx17:latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
       - name: Setup Signing Key
         run: |
           echo "signingKey=${{ secrets.SIGNING_KEY }}" >> $GITHUB_ENV
