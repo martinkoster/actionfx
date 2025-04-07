@@ -63,7 +63,10 @@ configure(allprojects) { project ->
 	
 	test {
 		useJUnitPlatform()
-		reports.html.outputLocation = file("${reporting.baseDir}/${name}") // Anpassung hier
+		reports {
+			html.required.set(true)
+			html.outputLocation.set(file("${reporting.baseDir}/${name}"))
+		}
 		testLogging {
 			exceptionFormat = "full"
 		}
@@ -72,27 +75,27 @@ configure(allprojects) { project ->
     tasks.withType(Test) {
        	systemProperties = System.properties
        	systemProperties["user.dir"] = workingDir
-		reports.html.outputLocation = file("${reporting.baseDir}/${name}") // Anpassung hier
+		reports.html.outputLocation.set(file("${reporting.baseDir}/${name}"))
     	testLogging {
         	events "passed", "skipped", "failed"
     	}
     }
-    
-	task integrationTest(type: Test) {
+
+	tasks.register('integrationTest', Test) {
 		useJUnitPlatform()
-	    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-	    classpath = sourceSets.integrationTest.runtimeClasspath
-	    outputs.upToDateWhen { false }
-	    // test includes
-	    if ( project.hasProperty("tests.include") ) {
-	    	include project.property("tests.include")
-	    }
+		testClassesDirs = sourceSets.integrationTest.output.classesDirs
+		classpath = sourceSets.integrationTest.runtimeClasspath
+		outputs.upToDateWhen { false }
+		// test includes
+		if (project.hasProperty("tests.include")) {
+			include project.property("tests.include")
+		}
 		testLogging {
-        	exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    	}
-    	afterTest { test, result ->
-        	println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
-    	}
+			exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+		}
+		afterTest { test, result ->
+			println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
+		}
 	}
 
 	////////////////////
@@ -155,9 +158,9 @@ configure(allprojects) { project ->
     }
 	
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
-	task copyJavaDocToDocs(type: Copy) {
-	    from "$buildDir/docs/javadoc"
-	    into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
+	tasks.register('copyJavaDocToDocs', Copy) {
+		from "$buildDir/docs/javadoc"
+		into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
 	}
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
@@ -216,16 +219,18 @@ gitPublish {
 // Code Quality		  //
 ////////////////////////
 
-task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+tasks.register('codeCoverageReport', JacocoReport) {
+	executionData fileTree(project.rootDir.absolutePath).include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
 
-    subprojects.each {
-        sourceSets it.sourceSets.main
-    }
-
-    reports {
-        xml.destination file("${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
-    }
+	subprojects.each {
+		sourceSets it.sourceSets.main
+	}
+	reports {
+		xml.required.set(true)
+		xml.outputLocation.set(layout.buildDirectory.file("/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"))
+		html.required.set(true)
+		csv.required.set(false)
+	}
 }
 
 codeCoverageReport.dependsOn {
@@ -246,27 +251,27 @@ sonarqube {
 // Tasks for incrementing the version number in gradle.properties and README files
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-task incMajorVersion {
+tasks.register('incMajorVersion') {
 	doLast {
-	    def versionTokens = project.version.split("\\.")
-	    def newVersion = (Integer.parseInt(versionTokens[0]) + 1) + ".0.0"
-	    setVersionTo(newVersion)
+		def versionTokens = project.version.split("\\.")
+		def newVersion = (Integer.parseInt(versionTokens[0]) + 1) + ".0.0"
+		setVersionTo(newVersion)
 	}
 }
 
-task incMinorVersion {
+tasks.register('incMinorVersion') {
 	doLast {
-	    def versionTokens = project.version.split("\\.")
-	    def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
-	    setVersionTo(newVersion)
+		def versionTokens = project.version.split("\\.")
+		def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
+		setVersionTo(newVersion)
 	}
 }
 
-task incPatchVersion {
+tasks.register('incPatchVersion') {
 	doLast {
-	    def versionTokens = project.version.split("\\.")
-	    def newVersion = versionTokens[0] + "." + versionTokens[1] + "." + (Integer.parseInt(versionTokens[2]) + 1)
-	    setVersionTo(newVersion)
+		def versionTokens = project.version.split("\\.")
+		def newVersion = versionTokens[0] + "." + versionTokens[1] + "." + (Integer.parseInt(versionTokens[2]) + 1)
+		setVersionTo(newVersion)
 	}
 }
 
