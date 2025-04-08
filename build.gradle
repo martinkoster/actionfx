@@ -184,13 +184,13 @@ configure(allprojects) { project ->
 		dependsOn test, integrationTest
 		executionData.setFrom(
 				fileTree(project.rootDir) {
-					include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
+					include("${layout.buildDirectory.get().getAsFile().path}/jacoco/*.exec")
 				}
 		)
 		// Only run this task if .exec files exist
 		onlyIf {
 			def files = fileTree(project.rootDir) {
-				include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
+				include("${layout.buildDirectory.get().getAsFile().path}/jacoco/*.exec")
 			}
 			if (files.empty) {
 				println "No JaCoCo .exec files found — skipping codeCoverageReport"
