@@ -230,7 +230,21 @@ gitPublish {
 ////////////////////////
 
 tasks.register('codeCoverageReport', JacocoReport) {
-	executionData fileTree(project.rootDir.absolutePath).include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
+	executionData.setFrom(
+			fileTree(project.rootDir) {
+				include("**/build/jacoco/*.exec")
+			}
+	)
+	// Only run this task if .exec files exist
+	onlyIf {
+		def files = fileTree(project.rootDir) {
+			include("**/build/jacoco/*.exec")
+		}
+		if (files.empty) {
+			println "No JaCoCo .exec files found — skipping codeCoverageReport"
+		}
+		!files.empty
+	}
 	reports {
 		xml.required.set(true)
 		xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
