@@ -230,7 +230,6 @@ gitPublish {
 ////////////////////////
 
 tasks.register('codeCoverageReport', JacocoReport) {
-	dependsOn test, integrationTest
 	executionData fileTree(project.rootDir.absolutePath).include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
 	reports {
 		xml.required.set(true)
