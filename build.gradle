@@ -232,10 +232,6 @@ gitPublish {
 tasks.register('codeCoverageReport', JacocoReport) {
 	dependsOn test, integrationTest
 	executionData fileTree(project.rootDir.absolutePath).include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
-
-	subprojects.each {
-		sourceSets it.sourceSets.main
-	}
 	reports {
 		xml.required.set(true)
 		xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
@@ -253,10 +249,15 @@ sonar {
 		property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
 		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
 		property "sonar.branch.name", branchName
+		if (branchName != "master") {
+			property "sonar.newCode.referenceBranch", "none"
+		}
 		property "sonar.qualitygate.wait", true
 		property "sonar.branch.target", "none"
-  }
+		properties["sonar.tests"] += "src/integration-test/java"
+	}
 }
+tasks['sonar'].dependsOn codeCoverageReport
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Tasks for incrementing the version number in gradle.properties and README files
