@@ -1,3 +1,6 @@
+import com.github.spotbugs.snom.Effort
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java-library"
@@ -21,7 +24,7 @@ configure(allprojects) { project ->
  	apply plugin: "java-library"
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: 'jacoco'
+	apply plugin: "jacoco"
     apply plugin: "com.github.spotbugs"
 
 	sourceCompatibility = JavaVersion.VERSION_17
@@ -75,14 +78,14 @@ configure(allprojects) { project ->
 		}
     }
 
-    tasks.withType(Test) {
-       	systemProperties = System.properties
-       	systemProperties["user.dir"] = workingDir
+	tasks.withType(Test).configureEach {
+		systemProperties = System.properties
+		systemProperties["user.dir"] = workingDir
 		reports.html.outputLocation.set(file("${reporting.baseDir}/${name}"))
-    	testLogging {
-        	events "passed", "skipped", "failed"
-    	}
-    }
+		testLogging {
+			events "passed", "skipped", "failed"
+		}
+	}
 
 	tasks.register('integrationTest', Test) {
 		useJUnitPlatform()
@@ -94,13 +97,13 @@ configure(allprojects) { project ->
 			include project.property("tests.include")
 		}
 		testLogging {
-			exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+			exceptionFormat = TestExceptionFormat.FULL
 		}
 		afterTest { test, result ->
 			println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
 		}
 		jacoco {
-			destinationFile = layout.buildDirectory.file("jacoco/CTest.exec").get().asFile
+			destinationFile = layout.buildDirectory.file("jacoco/ITest.exec").get().asFile
 			enabled = true
 		}
 	}
@@ -123,7 +126,7 @@ configure(allprojects) { project ->
 	// Code analysis //
 	///////////////////
     spotbugs {
-		effort = com.github.spotbugs.snom.Effort.MAX
+		effort = Effort.MAX
 		reportsDir = layout.buildDirectory.file("/reports/spotbugs").get().asFile
 		excludeFilter = file("$rootDir/spotbugs-filter.xml")
 	}
@@ -150,7 +153,7 @@ configure(allprojects) { project ->
     javadoc {
         description = "Generates project-level javadoc for use in -javadoc jar"
 
-        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.memberLevel = JavadocMemberLevel.PROTECTED
         options.author = true
         options.header = project.name
         options.addStringOption("Xdoclint:none", "-quiet")
@@ -242,7 +245,7 @@ tasks.register('codeCoverageReport', JacocoReport) {
 }
 
 sonar {
-	def branchName = System.getenv("CI_COMMIT_REF_NAME")
+	def branchName = System.getenv("GITHUB_REF_NAME")
 	properties {
 		property "sonar.projectKey", "martinkoster_actionfx"
 		property "sonar.organization", "martinkoster"
@@ -251,6 +254,7 @@ sonar {
 		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
 		property "sonar.branch.name", branchName
 		property "sonar.qualitygate.wait", true
+		property "sonar.branch.target", "none"
   }
 }
 
