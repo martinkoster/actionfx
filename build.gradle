@@ -178,11 +178,10 @@ configure(allprojects) { project ->
 	////////////////////////
 	// Code Quality		  //
 	////////////////////////
-
 	tasks.register('codeCoverageReport', JacocoReport) {
 		executionData.setFrom(
 				fileTree(project.rootDir) {
-					include("**/build/jacoco/*.exec")
+					include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
 				}
 		)
 		// Only run this task if .exec files exist
@@ -202,7 +201,6 @@ configure(allprojects) { project ->
 			csv.required.set(false)
 		}
 	}
-
 
 	dependencies {
 		compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
