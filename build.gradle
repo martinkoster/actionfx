@@ -8,6 +8,7 @@ plugins {
 	id "org.sonarqube" version "${sonarqubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
 	id "org.openrewrite.rewrite" version "7.3.0"
+	id 'project-report'
 }
 
 wrapper {
@@ -24,7 +25,8 @@ configure(allprojects) { project ->
  	apply plugin: "java-library"
     apply plugin: "eclipse"
     apply plugin: "idea"
-	apply plugin: "jacoco"
+	apply plugin: 'jacoco'
+	apply plugin: 'project-report'
     apply plugin: "com.github.spotbugs"
 
 	sourceCompatibility = JavaVersion.VERSION_17
@@ -179,6 +181,7 @@ configure(allprojects) { project ->
 	// Code Quality		  //
 	////////////////////////
 	tasks.register('codeCoverageReport', JacocoReport) {
+		dependsOn test, integrationTest
 		executionData.setFrom(
 				fileTree(project.rootDir) {
 					include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
@@ -187,7 +190,7 @@ configure(allprojects) { project ->
 		// Only run this task if .exec files exist
 		onlyIf {
 			def files = fileTree(project.rootDir) {
-				include("**/build/jacoco/*.exec")
+				include("${layout.buildDirectory.get().getAsFile().path}/**/build/jacoco/*.exec")
 			}
 			if (files.empty) {
 				println "No JaCoCo .exec files found — skipping codeCoverageReport"
