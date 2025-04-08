@@ -133,6 +133,18 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Download Unit Test Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-test-artifacts
+          path: ./
+
+      - name: Download Integration Test Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: integration-test-artifacts
+          path: ./
+
       - name: Generate code coverage report
         run: |
           export DISPLAY=:90
