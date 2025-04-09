@@ -152,7 +152,38 @@ configure(allprojects) { project ->
         ignoreFailures = true
     }
 
-    javadoc {
+	////////////////////////
+	// Code Quality		  //
+	////////////////////////
+	tasks.register('codeCoverageReport', JacocoReport) {
+		executionData.setFrom(
+				fileTree("${layout.buildDirectory.get().getAsFile().path}") {
+					include("jacoco/*.exec")
+				}
+		)
+		// Only run this task if .exec files exist
+		onlyIf {
+			def files = fileTree("${layout.buildDirectory.get().getAsFile().path}") {
+				include("jacoco/*.exec")
+			}
+			if (files.empty) {
+				println "No JaCoCo .exec files found — skipping codeCoverageReport"
+			}
+			!files.empty
+		}
+		reports {
+			xml.required.set(true)
+			xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
+			html.required.set(true)
+			csv.required.set(false)
+		}
+		doFirst {
+			println "Jacoco .exec files to be processed:"
+			executionData.each { println " - $it" }
+		}
+	}
+
+	javadoc {
         description = "Generates project-level javadoc for use in -javadoc jar"
 
 		options.memberLevel = JavadocMemberLevel.PROTECTED
@@ -227,42 +258,13 @@ gitPublish {
 	}
 }
 
-////////////////////////
-// Code Quality		  //
-////////////////////////
-tasks.register('codeCoverageReport', JacocoReport) {
-	executionData.setFrom(
-			fileTree(project.rootDir) {
-				include("**/build/jacoco/*.exec")
-			}
-	)
-	// Only run this task if .exec files exist
-	onlyIf {
-		def files = fileTree(project.rootDir) {
-			include("**/build/jacoco/*.exec")
-		}
-		if (files.empty) {
-			println "No JaCoCo .exec files found — skipping codeCoverageReport"
-		}
-		!files.empty
-	}
-	reports {
-		xml.required.set(true)
-		xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
-		html.required.set(true)
-		csv.required.set(false)
-	}
-	doFirst {
-		println "Jacoco .exec files to be processed:"
-		executionData.each { println " - $it" }
-	}
-}
-
 sonar {
 	def branchName = System.getenv("GITHUB_REF_NAME")
 	def coverageReports = fileTree(project.rootDir) {
 		include("**/jacoco/coverage.xml")
 	}.files*.absolutePath.join(",")
+	def allSourceDirs = subprojects.collect { "${it.projectDir}/src/main/java" }.join(",")
+	def allClassDirs = subprojects.collect { "${it.buildDir}/classes/java/main" }.join(",")
 
 	println "Found JaCoCo coverage XMLs: $coverageReports"
 
@@ -278,10 +280,11 @@ sonar {
 		}
 		property "sonar.qualitygate.wait", true
 		property "sonar.branch.target", "none"
+		property "sonar.sources", allSourceDirs
+		property "sonar.java.binaries", allClassDirs
 		properties["sonar.tests"] += "src/integration-test/java"
 	}
 }
-tasks['sonar'].dependsOn codeCoverageReport
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Tasks for incrementing the version number in gradle.properties and README files
