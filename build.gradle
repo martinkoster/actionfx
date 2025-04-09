@@ -184,13 +184,13 @@ configure(allprojects) { project ->
 		dependsOn test, integrationTest
 		executionData.setFrom(
 				fileTree(project.rootDir) {
-					include("**/build/jacoco/*.exec")
+					include("/build/jacoco/*.exec")
 				}
 		)
 		// Only run this task if .exec files exist
 		onlyIf {
 			def files = fileTree(project.rootDir) {
-				include("**/build/jacoco/*.exec")
+				include("/build/jacoco/*.exec")
 			}
 			if (files.empty) {
 				println "No JaCoCo .exec files found — skipping codeCoverageReport"
@@ -257,16 +257,6 @@ gitPublish {
 	preserve {
 		include 'docs/**'
 	}
-}
-
-////////////////////////
-// Code Quality		  //
-////////////////////////
-tasks.register('codeCoverageReport') {
-	doFirst {
-		println "Skipping codeCoverageReport in root project"
-	}
-	enabled = false
 }
 
 sonar {
