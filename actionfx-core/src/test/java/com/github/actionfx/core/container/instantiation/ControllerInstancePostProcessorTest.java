@@ -89,7 +89,7 @@ class ControllerInstancePostProcessorTest {
 
         // WHEN and THEN
         assertThat(postProcessor.getUnmodifiableControllerExtensions().stream().map(Consumer::getClass)
-                .toList()).allMatch(extension -> Arrays.asList(expectedExtension).contains(extension));
+                .toList()).isNotEmpty().allMatch(extension -> Arrays.asList(expectedExtension).contains(extension));
     }
 
     @SuppressWarnings("unchecked")

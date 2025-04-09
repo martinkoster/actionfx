@@ -61,41 +61,41 @@ class NumberToNumberConverterTest {
 	@Test
 	void testConvertToInteger() {
 		final NumberToNumberConverter<Number, Integer> converter = NumberToNumberConverter.to(Integer.class);
-		assertThat(converter.convert(BigInteger.valueOf(-1))).isEqualTo(Integer.valueOf(Integer.valueOf(-1)));
-		assertThat(converter.convert(BigInteger.valueOf(0))).isEqualTo(Integer.valueOf(Integer.valueOf(0)));
-		assertThat(converter.convert(BigInteger.valueOf(1))).isEqualTo(Integer.valueOf(Integer.valueOf(1)));
-		assertThat(converter.convert(BigInteger.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
-		assertThat(converter.convert(BigInteger.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
-		assertThat(converter.convert(BigInteger.valueOf(Integer.MIN_VALUE))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
-		assertThat(converter.convert(BigInteger.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(converter.convert(BigInteger.valueOf(-1))).isEqualTo(-1);
+		assertThat(converter.convert(BigInteger.valueOf(0))).isEqualTo(0);
+		assertThat(converter.convert(BigInteger.valueOf(1))).isEqualTo(1);
+		assertThat(converter.convert(BigInteger.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.MAX_VALUE);
+		assertThat(converter.convert(BigInteger.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.MIN_VALUE);
+		assertThat(converter.convert(BigInteger.valueOf(Integer.MIN_VALUE))).isEqualTo(Integer.MIN_VALUE);
+		assertThat(converter.convert(BigInteger.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.MAX_VALUE);
 
-		assertThat(converter.convert(Long.valueOf(-1))).isEqualTo(Integer.valueOf(Integer.valueOf(-1)));
-		assertThat(converter.convert(Long.valueOf(0))).isEqualTo(Integer.valueOf(Integer.valueOf(0)));
-		assertThat(converter.convert(Long.valueOf(1))).isEqualTo(Integer.valueOf(Integer.valueOf(1)));
-		assertThat(converter.convert(Long.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(converter.convert(Long.valueOf(-1))).isEqualTo(-1);
+		assertThat(converter.convert(Long.valueOf(0))).isEqualTo(0);
+		assertThat(converter.convert(Long.valueOf(1))).isEqualTo(1);
+		assertThat(converter.convert(Long.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.MAX_VALUE);
 		assertThat(converter.convert(Long.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
-		assertThat(converter.convert(Long.valueOf(Integer.MIN_VALUE))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
-		assertThat(converter.convert(Long.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(converter.convert(Long.valueOf(Integer.MIN_VALUE))).isEqualTo(Integer.MIN_VALUE);
+		assertThat(converter.convert(Long.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.MAX_VALUE);
 
-		assertThat(converter.convert(Integer.valueOf(-1))).isEqualTo(Integer.valueOf(Integer.valueOf(-1)));
-		assertThat(converter.convert(Integer.valueOf(0))).isEqualTo(Integer.valueOf(Integer.valueOf(0)));
-		assertThat(converter.convert(Integer.valueOf(1))).isEqualTo(Integer.valueOf(Integer.valueOf(1)));
-		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(converter.convert(Integer.valueOf(-1))).isEqualTo(-1);
+		assertThat(converter.convert(Integer.valueOf(0))).isEqualTo(0);
+		assertThat(converter.convert(Integer.valueOf(1))).isEqualTo(1);
+		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.MAX_VALUE);
 		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
-		assertThat(converter.convert(Integer.valueOf(Integer.MIN_VALUE))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
-		assertThat(converter.convert(Integer.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(converter.convert(Integer.valueOf(Integer.MIN_VALUE))).isEqualTo(Integer.MIN_VALUE);
+		assertThat(converter.convert(Integer.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.MAX_VALUE);
 
-		assertThat(converter.convert(Short.valueOf((short) -1))).isEqualTo(Integer.valueOf(Integer.valueOf(-1)));
-		assertThat(converter.convert(Short.valueOf((short) 0))).isEqualTo(Integer.valueOf(Integer.valueOf(0)));
-		assertThat(converter.convert(Short.valueOf((short) 1))).isEqualTo(Integer.valueOf(Integer.valueOf(1)));
+		assertThat(converter.convert(Short.valueOf((short) -1))).isEqualTo(Integer.valueOf(-1));
+		assertThat(converter.convert(Short.valueOf((short) 0))).isEqualTo(Integer.valueOf(0));
+		assertThat(converter.convert(Short.valueOf((short) 1))).isEqualTo(Integer.valueOf(1));
 		assertThat(converter.convert(Short.valueOf(Short.MAX_VALUE))).isEqualTo(Integer.valueOf(Short.MAX_VALUE));
 		assertThat(converter.convert(Short.valueOf((short) (Short.MAX_VALUE + 1)))).isEqualTo(Integer.valueOf(Short.MIN_VALUE));
 		assertThat(converter.convert(Short.valueOf(Short.MIN_VALUE))).isEqualTo(Integer.valueOf(Short.MIN_VALUE));
 		assertThat(converter.convert(Short.valueOf((short) (Short.MIN_VALUE - 1)))).isEqualTo(Integer.valueOf(Short.MAX_VALUE));
 
-		assertThat(converter.convert(Byte.valueOf((byte) -1))).isEqualTo(Integer.valueOf(Integer.valueOf(-1)));
-		assertThat(converter.convert(Byte.valueOf((byte) 0))).isEqualTo(Integer.valueOf(Integer.valueOf(0)));
-		assertThat(converter.convert(Byte.valueOf((byte) 1))).isEqualTo(Integer.valueOf(Integer.valueOf(1)));
+		assertThat(converter.convert(Byte.valueOf((byte) -1))).isEqualTo(Integer.valueOf(-1));
+		assertThat(converter.convert(Byte.valueOf((byte) 0))).isEqualTo(Integer.valueOf(0));
+		assertThat(converter.convert(Byte.valueOf((byte) 1))).isEqualTo(Integer.valueOf(1));
 		assertThat(converter.convert(Byte.valueOf(Byte.MAX_VALUE))).isEqualTo(Integer.valueOf(Byte.MAX_VALUE));
 		assertThat(converter.convert(Byte.valueOf((byte) (Byte.MAX_VALUE + 1)))).isEqualTo(Integer.valueOf(Byte.MIN_VALUE));
 		assertThat(converter.convert(Byte.valueOf(Byte.MIN_VALUE))).isEqualTo(Integer.valueOf(Byte.MIN_VALUE));
@@ -111,25 +111,25 @@ class NumberToNumberConverterTest {
 	@Test
 	void testConvertToLong() {
 		final NumberToNumberConverter<Number, Long> converter = NumberToNumberConverter.to(Long.class);
-		assertThat(converter.convert(BigInteger.valueOf(-1))).isEqualTo(Long.valueOf(Long.valueOf(-1)));
-		assertThat(converter.convert(BigInteger.valueOf(0))).isEqualTo(Long.valueOf(Long.valueOf(0)));
-		assertThat(converter.convert(BigInteger.valueOf(1))).isEqualTo(Long.valueOf(Long.valueOf(1)));
-		assertThat(converter.convert(BigInteger.valueOf(Long.MAX_VALUE))).isEqualTo(Long.valueOf(Long.MAX_VALUE));
-		assertThat(converter.convert(BigInteger.valueOf(Long.MAX_VALUE + 1))).isEqualTo(Long.valueOf(Long.MIN_VALUE));
-		assertThat(converter.convert(BigInteger.valueOf(Long.MIN_VALUE))).isEqualTo(Long.valueOf(Long.MIN_VALUE));
-		assertThat(converter.convert(BigInteger.valueOf(Long.MIN_VALUE - 1))).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(converter.convert(BigInteger.valueOf(-1))).isEqualTo(Long.valueOf(-1));
+		assertThat(converter.convert(BigInteger.valueOf(0))).isEqualTo(Long.valueOf(0));
+		assertThat(converter.convert(BigInteger.valueOf(1))).isEqualTo(Long.valueOf(1));
+		assertThat(converter.convert(BigInteger.valueOf(Long.MAX_VALUE))).isEqualTo(Long.MAX_VALUE);
+		assertThat(converter.convert(BigInteger.valueOf(Long.MAX_VALUE + 1))).isEqualTo(Long.MIN_VALUE);
+		assertThat(converter.convert(BigInteger.valueOf(Long.MIN_VALUE))).isEqualTo(Long.MIN_VALUE);
+		assertThat(converter.convert(BigInteger.valueOf(Long.MIN_VALUE - 1))).isEqualTo(Long.MAX_VALUE);
 
-		assertThat(converter.convert(Long.valueOf(-1))).isEqualTo(Long.valueOf(Long.valueOf(-1)));
-		assertThat(converter.convert(Long.valueOf(0))).isEqualTo(Long.valueOf(Long.valueOf(0)));
-		assertThat(converter.convert(Long.valueOf(1))).isEqualTo(Long.valueOf(Long.valueOf(1)));
-		assertThat(converter.convert(Long.valueOf(Long.MAX_VALUE))).isEqualTo(Long.valueOf(Long.MAX_VALUE));
-		assertThat(converter.convert(Long.valueOf(Long.MAX_VALUE + 1))).isEqualTo(Long.valueOf(Long.MIN_VALUE));
-		assertThat(converter.convert(Long.valueOf(Long.MIN_VALUE))).isEqualTo(Long.valueOf(Long.MIN_VALUE));
-		assertThat(converter.convert(Long.valueOf(Long.MIN_VALUE - 1))).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(converter.convert(Long.valueOf(-1))).isEqualTo(Long.valueOf(-1));
+		assertThat(converter.convert(Long.valueOf(0))).isEqualTo(Long.valueOf(0));
+		assertThat(converter.convert(Long.valueOf(1))).isEqualTo(Long.valueOf(1));
+		assertThat(converter.convert(Long.valueOf(Long.MAX_VALUE))).isEqualTo(Long.MAX_VALUE);
+		assertThat(converter.convert(Long.valueOf(Long.MAX_VALUE + 1))).isEqualTo(Long.MIN_VALUE);
+		assertThat(converter.convert(Long.valueOf(Long.MIN_VALUE))).isEqualTo(Long.MIN_VALUE);
+		assertThat(converter.convert(Long.valueOf(Long.MIN_VALUE - 1))).isEqualTo(Long.MAX_VALUE);
 
-		assertThat(converter.convert(Integer.valueOf(-1))).isEqualTo(Long.valueOf(Integer.valueOf(-1)));
-		assertThat(converter.convert(Integer.valueOf(0))).isEqualTo(Long.valueOf(Integer.valueOf(0)));
-		assertThat(converter.convert(Integer.valueOf(1))).isEqualTo(Long.valueOf(Integer.valueOf(1)));
+		assertThat(converter.convert(Integer.valueOf(-1))).isEqualTo(Long.valueOf(-1));
+		assertThat(converter.convert(Integer.valueOf(0))).isEqualTo(Long.valueOf(0));
+		assertThat(converter.convert(Integer.valueOf(1))).isEqualTo(Long.valueOf(1));
 		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE))).isEqualTo(Long.valueOf(Integer.MAX_VALUE));
 		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Long.valueOf(Integer.MIN_VALUE));
 		assertThat(converter.convert(Integer.valueOf(Integer.MIN_VALUE))).isEqualTo(Long.valueOf(Integer.MIN_VALUE));
