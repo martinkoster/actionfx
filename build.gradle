@@ -155,31 +155,16 @@ configure(allprojects) { project ->
 	////////////////////////
 	// Code Quality		  //
 	////////////////////////
-	tasks.register('codeCoverageReport', JacocoReport) {
+	jacocoTestReport {
 		executionData.setFrom(
 				fileTree("${layout.buildDirectory.get().getAsFile().path}") {
 					include("jacoco/*.exec")
-				}
-		)
-		// Only run this task if .exec files exist
-		onlyIf {
-			def files = fileTree("${layout.buildDirectory.get().getAsFile().path}") {
-				include("jacoco/*.exec")
-			}
-			if (files.empty) {
-				println "No JaCoCo .exec files found — skipping codeCoverageReport"
-			}
-			!files.empty
-		}
+				})
 		reports {
 			xml.required.set(true)
 			xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
 			html.required.set(true)
 			csv.required.set(false)
-		}
-		doFirst {
-			println "Jacoco .exec files to be processed:"
-			executionData.each { println " - $it" }
 		}
 	}
 
@@ -260,29 +245,21 @@ gitPublish {
 
 sonar {
 	def branchName = System.getenv("GITHUB_REF_NAME")
-	def coverageReports = fileTree(project.rootDir) {
-		include("**/jacoco/coverage.xml")
-	}.files*.absolutePath.join(",")
-	def allSourceDirs = subprojects.collect { "${it.projectDir}/src/main/java" }.join(",")
-	def allClassDirs = subprojects.collect { "${it.buildDir}/classes/java/main" }.join(",")
-
-	println "Found JaCoCo coverage XMLs: $coverageReports"
-
 	properties {
+		if (branchName != "master" && !(branchName ==~ "/release-.*/")) {
+			property "sonar.newCode.referenceBranch", "master"
+		}
 		property "sonar.projectKey", "martinkoster_actionfx"
 		property "sonar.organization", "martinkoster"
 		property "sonar.host.url", "https://sonarcloud.io"
-		property "sonar.coverage.jacoco.xmlReportPaths", coverageReports
+		properties["sonar.tests"] += "src/integration-test/java"
+		property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
 		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
 		property "sonar.branch.name", branchName
-		if (branchName != "master") {
-			property "sonar.newCode.referenceBranch", "none"
-		}
+		property "sonar.host.url", sonarHostUrl
 		property "sonar.qualitygate.wait", true
 		property "sonar.branch.target", "none"
-		property "sonar.sources", allSourceDirs
-		property "sonar.java.binaries", allClassDirs
-		properties["sonar.tests"] += "src/integration-test/java"
+		property "sonar.exclusions", "**/Application*, **/config/*, **/generated/*"
 	}
 }
 
