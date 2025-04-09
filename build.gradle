@@ -260,11 +260,14 @@ tasks.register('codeCoverageReport', JacocoReport) {
 
 sonar {
 	def branchName = System.getenv("GITHUB_REF_NAME")
+	def coverageReports = fileTree(project.rootDir) {
+		include("**/jacoco/coverage.xml")
+	}.files*.absolutePath.join(",")
 	properties {
 		property "sonar.projectKey", "martinkoster_actionfx"
 		property "sonar.organization", "martinkoster"
 		property "sonar.host.url", "https://sonarcloud.io"
-		property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
+		property "sonar.coverage.jacoco.xmlReportPaths", coverageReports
 		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
 		property "sonar.branch.name", branchName
 		if (branchName != "master") {
