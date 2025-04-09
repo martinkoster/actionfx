@@ -246,8 +246,8 @@ gitPublish {
 sonar {
 	def branchName = System.getenv("GITHUB_REF_NAME")
 	properties {
-		if (branchName != "master" && !(branchName ==~ "/release-.*/")) {
-			property "sonar.newCode.referenceBranch", "master"
+		if (branchName != "master") {
+			property "sonar.newCode.referenceBranch", "none"
 		}
 		property "sonar.projectKey", "martinkoster_actionfx"
 		property "sonar.organization", "martinkoster"
@@ -256,7 +256,6 @@ sonar {
 		property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
 		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
 		property "sonar.branch.name", branchName
-		property "sonar.host.url", sonarHostUrl
 		property "sonar.qualitygate.wait", true
 		property "sonar.branch.target", "none"
 		property "sonar.exclusions", "**/Application*, **/config/*, **/generated/*"
