@@ -263,6 +263,9 @@ sonar {
 	def coverageReports = fileTree(project.rootDir) {
 		include("**/jacoco/coverage.xml")
 	}.files*.absolutePath.join(",")
+
+	println "Found JaCoCo coverage XMLs: $coverageReports"
+
 	properties {
 		property "sonar.projectKey", "martinkoster_actionfx"
 		property "sonar.organization", "martinkoster"
