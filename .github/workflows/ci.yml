@@ -151,7 +151,7 @@ jobs:
         run: |
           export DISPLAY=:90
           Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          ./gradlew codeCoverageReport sonar -x test --no-daemon
+          ./gradlew codeCoverageReport sonar -x test -x integrationTest --no-daemon
 
       - name: Upload quality artifacts
         if: always()

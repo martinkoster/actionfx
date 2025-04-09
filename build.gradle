@@ -184,7 +184,7 @@ configure(allprojects) { project ->
 		dependsOn test, integrationTest
 		executionData.setFrom(
 				fileTree(project.rootDir) {
-					include("${layout.buildDirectory.get().getAsFile().path}/jacoco/*.exec")
+					include("**/build/jacoco/*.exec")
 				}
 		)
 		// Only run this task if .exec files exist
@@ -202,6 +202,10 @@ configure(allprojects) { project ->
 			xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
 			html.required.set(true)
 			csv.required.set(false)
+		}
+		doFirst {
+			println "Jacoco .exec files to be processed:"
+			executionData.each { println " - $it" }
 		}
 	}
 
