@@ -247,7 +247,7 @@ sonar {
 	def branchName = System.getenv("GITHUB_REF_NAME")
 	properties {
 		if (branchName != "master") {
-			property "sonar.newCode.referenceBranch", "none"
+			property "sonar.newCode.referenceBranch", "master"
 		}
 		property "sonar.projectKey", "martinkoster_actionfx"
 		property "sonar.organization", "martinkoster"
@@ -257,7 +257,6 @@ sonar {
 		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
 		property "sonar.branch.name", branchName
 		property "sonar.qualitygate.wait", true
-		property "sonar.branch.target", "none"
 		property "sonar.exclusions", "**/Application*, **/config/*, **/generated/*"
 	}
 }
