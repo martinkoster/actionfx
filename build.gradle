@@ -177,27 +177,6 @@ configure(allprojects) { project ->
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
 
-	dependencies {
-		compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
-
-		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
-    	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
-		testImplementation group: "org.assertj", name: "assertj-core", version: "${assertJVersion}"
-	}
-}
-
-nexusPublishing {
-    repositories {
-		sonatype {
-		    stagingProfileId = "3f386b79449aa"
-		    nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
-		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
-		}
-    }
-} 
-
-configure(subprojects) { project ->
-
 	////////////////////////
 	// Code Quality		  //
 	////////////////////////
@@ -229,6 +208,27 @@ configure(subprojects) { project ->
 			executionData.each { println " - $it" }
 		}
 	}
+
+	dependencies {
+		compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
+
+		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
+    	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
+		testImplementation group: "org.assertj", name: "assertj-core", version: "${assertJVersion}"
+	}
+}
+
+nexusPublishing {
+    repositories {
+		sonatype {
+		    stagingProfileId = "3f386b79449aa"
+		    nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+		    snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+		}
+    }
+} 
+
+configure(subprojects) { project ->
 
 	initializeSonatypeStagingRepository {
         shouldRunAfter(tasks.withType(Sign))
@@ -262,6 +262,12 @@ gitPublish {
 ////////////////////////
 // Code Quality		  //
 ////////////////////////
+tasks.register('codeCoverageReport') {
+	doFirst {
+		println "Skipping codeCoverageReport in root project"
+	}
+	enabled = false
+}
 
 sonar {
 	def branchName = System.getenv("GITHUB_REF_NAME")
