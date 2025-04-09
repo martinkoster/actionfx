@@ -190,7 +190,7 @@ configure(allprojects) { project ->
 		// Only run this task if .exec files exist
 		onlyIf {
 			def files = fileTree(project.rootDir) {
-				include("${layout.buildDirectory.get().getAsFile().path}/jacoco/*.exec")
+				include("**/build/jacoco/*.exec")
 			}
 			if (files.empty) {
 				println "No JaCoCo .exec files found — skipping codeCoverageReport"
