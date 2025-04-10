@@ -44,12 +44,12 @@ class NestedExpressionTest {
 
 	@Test
 	void testHasNext() {
-		assertThat(expr(null).iterator().hasNext()).isEqualTo(false);
-		assertThat(expr("").iterator().hasNext()).isEqualTo(false);
-		assertThat(expr("field").iterator().hasNext()).isEqualTo(true);
-		assertThat(expr("field[0]").iterator().hasNext()).isEqualTo(true);
-		assertThat(expr("field(map.key)").iterator().hasNext()).isEqualTo(true);
-		assertThat(expr("field.anotherfield").iterator().hasNext()).isEqualTo(true);
+        assertThat(expr(null).iterator().hasNext()).isFalse();
+        assertThat(expr("").iterator().hasNext()).isFalse();
+        assertThat(expr("field").iterator().hasNext()).isTrue();
+        assertThat(expr("field[0]").iterator().hasNext()).isTrue();
+        assertThat(expr("field(map.key)").iterator().hasNext()).isTrue();
+        assertThat(expr("field.anotherfield").iterator().hasNext()).isTrue();
 	}
 
 	@Test
@@ -76,7 +76,7 @@ class NestedExpressionTest {
 		// THEN
 		assertThat(se).isNotNull();
 		assertThat(se.getValue()).isEqualTo("field[0]");
-		assertThat(se.isIndexed()).isEqualTo(true);
+        assertThat(se.isIndexed()).isTrue();
 	}
 
 	@Test
@@ -90,7 +90,7 @@ class NestedExpressionTest {
 		// THEN
 		assertThat(se).isNotNull();
 		assertThat(se.getValue()).isEqualTo("field(map.key)");
-		assertThat(se.isMapped()).isEqualTo(true);
+        assertThat(se.isMapped()).isTrue();
 	}
 
 	@Test

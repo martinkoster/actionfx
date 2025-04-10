@@ -740,7 +740,7 @@ class ControlsFXControlWrapperTest {
 		if (expectedValue != null && List.class.isAssignableFrom(expectedValue.getClass())) {
 			final List expectedValueList = (List) expectedValue;
 			if (expectedValueList.isEmpty()) {
-				assertThat(((List) actualValue).isEmpty()).isEqualTo(true);
+				assertThat(((List) actualValue).isEmpty()).isTrue();
 			} else {
 				assertThat((List<Object>) actualValue).containsExactly(expectedValueList.toArray());
 			}

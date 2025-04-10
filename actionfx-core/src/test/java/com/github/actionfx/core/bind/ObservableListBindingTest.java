@@ -61,7 +61,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(true);
+		assertThat(binding.isBound()).isTrue();
 		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 2");
 		listView.getSelectionModel().select("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 1", "Choice 2");
@@ -81,7 +81,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(true);
+		assertThat(binding.isBound()).isTrue();
 		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 2", "Choice 1");
@@ -102,7 +102,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(true);
+		assertThat(binding.isBound()).isTrue();
 		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 2");
 		listView.getSelectionModel().select("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 1", "Choice 2");
@@ -120,7 +120,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(true);
+		assertThat(binding.isBound()).isTrue();
 		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 2", "Choice 1");
@@ -140,7 +140,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(false);
+		assertThat(binding.isBound()).isFalse();
 		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 2");
 		listView.getSelectionModel().select("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 2"); // no change, as it is not bound
@@ -159,7 +159,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(false);
+		assertThat(binding.isBound()).isFalse();
 		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 2"); // no change, as it is not bound
@@ -178,7 +178,7 @@ class ObservableListBindingTest {
 
 		// THEN
 		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
-		assertThat(binding.isBound()).isEqualTo(false);
+		assertThat(binding.isBound()).isFalse();
 		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
 		assertThat(bindingSource).containsExactly("Choice 2"); // no change, as it is not bound

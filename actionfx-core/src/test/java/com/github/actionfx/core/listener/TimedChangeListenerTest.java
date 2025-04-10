@@ -63,7 +63,7 @@ class TimedChangeListenerTest {
 		// thread and executes the actual wrapped listener inside the JavaFX thread...we
 		// will wait here until it is completed.
 		WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
-		assertThat(listenerExecuted.get()).isEqualTo(true);
+        assertThat(listenerExecuted.get()).isTrue();
 	}
 
 	@Test
@@ -100,7 +100,7 @@ class TimedChangeListenerTest {
 		// THEN
 		// we are now in the Fx-thread and timeout is set to 0, so the wrapped listener
 		// is directly executed.
-		assertThat(listenerExecuted.get()).isEqualTo(true);
+        assertThat(listenerExecuted.get()).isTrue();
 	}
 
 	@Test
@@ -118,7 +118,7 @@ class TimedChangeListenerTest {
 		// THEN
 		// the fireListenerProperty is set to false, so the wrapped listener is not
 		// executed
-		assertThat(listenerExecuted.get()).isEqualTo(false);
+        assertThat(listenerExecuted.get()).isFalse();
 	}
 
 }

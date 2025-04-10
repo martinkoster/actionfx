@@ -110,7 +110,7 @@ class FromFileOpenDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(File.class);
 		assertThat(result).isEqualTo(file);
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+        assertThat(resolver.continueMethodInvocation()).isTrue();
 		final ArgumentCaptor<ExtensionFilter> filterCaptor = ArgumentCaptor.forClass(ExtensionFilter.class);
 		verify(dialogController, times(1)).showFileOpenDialog(eq("Open Music File"), isNull(), isNull(),
 				filterCaptor.capture(), eq(owner));
@@ -136,7 +136,7 @@ class FromFileOpenDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(Path.class);
 		assertThat(result).isEqualTo(file.toPath());
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+        assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -156,7 +156,7 @@ class FromFileOpenDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(URI.class);
 		assertThat(result).isEqualTo(file.toURI());
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+        assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -176,7 +176,7 @@ class FromFileOpenDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(String.class);
 		assertThat(result).isEqualTo(file.getAbsolutePath());
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+        assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -194,7 +194,7 @@ class FromFileOpenDialogParameterResolverTest {
 
 		// THEN
 		assertThat(result).isNull();
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(false);
+        assertThat(resolver.continueMethodInvocation()).isFalse();
 	}
 
 	public class ClassWithMethods {

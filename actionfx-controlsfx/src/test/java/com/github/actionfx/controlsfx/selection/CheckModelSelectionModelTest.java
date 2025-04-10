@@ -238,9 +238,9 @@ class CheckModelSelectionModelTest {
 		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(2);
 
 		// WHEN and THEN
-		assertThat(wrapper.isSelected(2)).isEqualTo(true);
-		assertThat(wrapper.isSelected(0)).isEqualTo(false);
-		assertThat(wrapper.isSelected(1)).isEqualTo(false);
+        assertThat(wrapper.isSelected(2)).isTrue();
+        assertThat(wrapper.isSelected(0)).isFalse();
+        assertThat(wrapper.isSelected(1)).isFalse();
 	}
 
 	@Test
@@ -254,7 +254,7 @@ class CheckModelSelectionModelTest {
 		assertThat(wrapper.getSelectedIndices()).hasSize(1);
 		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(2);
 		assertThat(wrapper.getSelectedIndex()).isEqualTo(2);
-		assertThat(wrapper.isSelected(2)).isEqualTo(true);
+        assertThat(wrapper.isSelected(2)).isTrue();
 	}
 
 	@Test

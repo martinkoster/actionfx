@@ -292,11 +292,11 @@ class ObservableListSelectionModelTest {
 		final ObservableListSelectionModel<String> model = selectionModel(selected, items);
 
 		// WHEN and THEN
-		assertThat(model.isSelected(0)).isEqualTo(true);
-		assertThat(model.isSelected(1)).isEqualTo(true);
-		assertThat(model.isSelected(2)).isEqualTo(false);
-		assertThat(model.isSelected(3)).isEqualTo(false);
-		assertThat(model.isSelected(4)).isEqualTo(false);
+        assertThat(model.isSelected(0)).isTrue();
+        assertThat(model.isSelected(1)).isTrue();
+        assertThat(model.isSelected(2)).isFalse();
+        assertThat(model.isSelected(3)).isFalse();
+        assertThat(model.isSelected(4)).isFalse();
 	}
 
 	@Test
@@ -307,7 +307,7 @@ class ObservableListSelectionModelTest {
 		final ObservableListSelectionModel<String> model = selectionModel(selected, items);
 
 		// WHEN and THEN
-		assertThat(model.isEmpty()).isEqualTo(false);
+        assertThat(model.isEmpty()).isFalse();
 	}
 
 	@Test
@@ -318,7 +318,7 @@ class ObservableListSelectionModelTest {
 		final ObservableListSelectionModel<String> model = selectionModel(selected, items);
 
 		// WHEN and THEN
-		assertThat(model.isEmpty()).isEqualTo(true);
+        assertThat(model.isEmpty()).isTrue();
 	}
 
 	@Test

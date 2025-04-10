@@ -91,7 +91,7 @@ class FromTextInputDialogParameterResolverTest {
 		// THEN
 		assertThat(result).isNotNull();
 		assertThat(result).isEqualTo("music.wav");
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+        assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -110,7 +110,7 @@ class FromTextInputDialogParameterResolverTest {
 
 		// THEN
 		assertThat(result).isNull();
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(false);
+        assertThat(resolver.continueMethodInvocation()).isFalse();
 	}
 
 	public class ClassWithMethods {

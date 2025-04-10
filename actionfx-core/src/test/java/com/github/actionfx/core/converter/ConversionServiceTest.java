@@ -256,21 +256,21 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
 
 		// WHEN and THEN
-		assertThat(service.canConvert(File.class, String.class)).isEqualTo(true);
-		assertThat(service.canConvert(Path.class, String.class)).isEqualTo(true);
-		assertThat(service.canConvert(URI.class, String.class)).isEqualTo(true);
-		assertThat(service.canConvert(String.class, File.class)).isEqualTo(true);
-		assertThat(service.canConvert(Path.class, File.class)).isEqualTo(true);
-		assertThat(service.canConvert(URI.class, File.class)).isEqualTo(true);
-		assertThat(service.canConvert(File.class, Path.class)).isEqualTo(true);
-		assertThat(service.canConvert(String.class, Path.class)).isEqualTo(true);
-		assertThat(service.canConvert(URI.class, Path.class)).isEqualTo(true);
-		assertThat(service.canConvert(File.class, URI.class)).isEqualTo(true);
-		assertThat(service.canConvert(Path.class, URI.class)).isEqualTo(true);
-		assertThat(service.canConvert(String.class, URI.class)).isEqualTo(true);
+        assertThat(service.canConvert(File.class, String.class)).isTrue();
+        assertThat(service.canConvert(Path.class, String.class)).isTrue();
+        assertThat(service.canConvert(URI.class, String.class)).isTrue();
+        assertThat(service.canConvert(String.class, File.class)).isTrue();
+        assertThat(service.canConvert(Path.class, File.class)).isTrue();
+        assertThat(service.canConvert(URI.class, File.class)).isTrue();
+        assertThat(service.canConvert(File.class, Path.class)).isTrue();
+        assertThat(service.canConvert(String.class, Path.class)).isTrue();
+        assertThat(service.canConvert(URI.class, Path.class)).isTrue();
+        assertThat(service.canConvert(File.class, URI.class)).isTrue();
+        assertThat(service.canConvert(Path.class, URI.class)).isTrue();
+        assertThat(service.canConvert(String.class, URI.class)).isTrue();
 
-		assertThat(service.canConvert(File.class, File.class)).isEqualTo(true);
-		assertThat(service.canConvert(File.class, Object.class)).isEqualTo(true);
+        assertThat(service.canConvert(File.class, File.class)).isTrue();
+        assertThat(service.canConvert(File.class, Object.class)).isTrue();
     }
 
     @Test
@@ -279,8 +279,8 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
 
 		// WHEN and THEN
-		assertThat(service.canConvert(File.class, Integer.class)).isEqualTo(false);
-		assertThat(service.canConvert(Double.class, Path.class)).isEqualTo(false);
+        assertThat(service.canConvert(File.class, Integer.class)).isFalse();
+        assertThat(service.canConvert(Double.class, Path.class)).isFalse();
     }
 
     @Test
@@ -289,10 +289,10 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
 
 		// WHEN
-		assertThat(service.canConvert((String) null, String.class, null)).isEqualTo(true);
-		assertThat(service.canConvert("Hello there", String.class, null)).isEqualTo(true);
-		assertThat(service.canConvert("31.12.2022", LocalDate.class, "dd.MM.yyyy")).isEqualTo(true);
-		assertThat(service.canConvert("3.0", Double.class, "#.#")).isEqualTo(true);
+        assertThat(service.canConvert((String) null, String.class, null)).isTrue();
+        assertThat(service.canConvert("Hello there", String.class, null)).isTrue();
+        assertThat(service.canConvert("31.12.2022", LocalDate.class, "dd.MM.yyyy")).isTrue();
+        assertThat(service.canConvert("3.0", Double.class, "#.#")).isTrue();
     }
 
     @Test
@@ -301,8 +301,8 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
 
 		// WHEN
-		assertThat(service.canConvert("1.1.22", LocalDate.class, "dd.MM.yyyy")).isEqualTo(false);
-		assertThat(service.canConvert("Hello World", List.class, null)).isEqualTo(false);
+        assertThat(service.canConvert("1.1.22", LocalDate.class, "dd.MM.yyyy")).isFalse();
+        assertThat(service.canConvert("Hello World", List.class, null)).isFalse();
     }
 
     @Test
@@ -352,14 +352,14 @@ class ConversionServiceTest {
         final ConversionService service = new ConversionService();
 
 		// WHEN and THEN
-		assertThat(service.convert("true", boolean.class)).isEqualTo(true);
+        assertThat(service.convert("true", boolean.class)).isTrue();
 		assertThat(service.convert("true", Boolean.class)).isEqualTo(Boolean.TRUE);
 		assertThat(service.convert("yes", Boolean.class)).isEqualTo(Boolean.TRUE);
 		assertThat(service.convert("ja", Boolean.class)).isEqualTo(Boolean.TRUE);
 		assertThat(service.convert("oui", Boolean.class)).isEqualTo(Boolean.TRUE);
 		assertThat(service.convert("si", Boolean.class)).isEqualTo(Boolean.TRUE);
 
-		assertThat(service.convert("false", boolean.class)).isEqualTo(false);
+        assertThat(service.convert("false", boolean.class)).isFalse();
 		assertThat(service.convert("false", Boolean.class)).isEqualTo(Boolean.FALSE);
 		assertThat(service.convert("no", Boolean.class)).isEqualTo(Boolean.FALSE);
 		assertThat(service.convert("nein", Boolean.class)).isEqualTo(Boolean.FALSE);

@@ -86,13 +86,13 @@ class ActionFXTest {
 	@Test
 	void testBuilder_minimal_withConfigurationClass_sampleApp() {
 		// WHEN
-		assertThat(ActionFX.isConfigured()).isEqualTo(false);
-		assertThat(ActionFX.isInitialized()).isEqualTo(false);
+		assertThat(ActionFX.isConfigured()).isFalse();
+		assertThat(ActionFX.isInitialized()).isFalse();
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).build();
 
 		// THEN
-		assertThat(ActionFX.isConfigured()).isEqualTo(true);
-		assertThat(ActionFX.isInitialized()).isEqualTo(false);
+		assertThat(ActionFX.isConfigured()).isTrue();
+		assertThat(ActionFX.isInitialized()).isFalse();
 		assertThat(actionFX.getEnhancementStrategy()).isEqualTo(EnhancementStrategy.SUBCLASSING);
 		assertThat(actionFX.getEnhancer()).isInstanceOf(ActionFXByteBuddyEnhancer.class);
 		assertThat(actionFX.getMainViewId()).isEqualTo("mainView");
@@ -100,8 +100,8 @@ class ActionFXTest {
 		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
 		assertThat(actionFX.getObservableLocale().getValue()).isEqualTo(Locale.getDefault());
 		assertThat(actionFX.getValidationGlobalMode()).isEqualTo(ValidationMode.MANUAL);
-		assertThat(actionFX.isValidationApplyResultDecoration()).isEqualTo(false);
-		assertThat(actionFX.isValidationApplyRequiredDecoration()).isEqualTo(false);
+		assertThat(actionFX.isValidationApplyResultDecoration()).isFalse();
+		assertThat(actionFX.isValidationApplyRequiredDecoration()).isFalse();
 		assertThat(actionFX.getValidationStartTimeoutMs()).isEqualTo(500);
 		assertThat(actionFX).isEqualTo(ActionFX.getInstance());
 	}
@@ -137,8 +137,8 @@ class ActionFXTest {
 		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
 		assertThat(actionFX.getObservableLocale().getValue()).isEqualTo(Locale.US);
 		assertThat(actionFX.getValidationGlobalMode()).isEqualTo(ValidationMode.MANUAL);
-		assertThat(actionFX.isValidationApplyResultDecoration()).isEqualTo(false);
-		assertThat(actionFX.isValidationApplyRequiredDecoration()).isEqualTo(false);
+		assertThat(actionFX.isValidationApplyResultDecoration()).isFalse();
+		assertThat(actionFX.isValidationApplyRequiredDecoration()).isFalse();
 		assertThat(actionFX.getValidationStartTimeoutMs()).isEqualTo(500);
 		assertThat(actionFX).isEqualTo(ActionFX.getInstance());
 	}
@@ -248,16 +248,16 @@ class ActionFXTest {
 	@Test
 	void testScanForActionFXComponents_usingDefaultBeanContainer() {
 		// GIVEN
-		assertThat(ActionFX.isConfigured()).isEqualTo(false);
-		assertThat(ActionFX.isInitialized()).isEqualTo(false);
+		assertThat(ActionFX.isConfigured()).isFalse();
+		assertThat(ActionFX.isInitialized()).isFalse();
 		final ActionFX actionFX = ActionFX.builder().configurationClass(SampleApp.class).locale(Locale.US).build();
 
 		// WHEN
 		actionFX.scanForActionFXComponents();
 
 		// THEN
-		assertThat(ActionFX.isConfigured()).isEqualTo(true);
-		assertThat(ActionFX.isInitialized()).isEqualTo(true);
+		assertThat(ActionFX.isConfigured()).isTrue();
+		assertThat(ActionFX.isInitialized()).isTrue();
 		final View view = actionFX.getView("mainView");
 		final MainController mainControllerById = actionFX.getBean("mainController");
 		final MainController mainControllerByClassName = actionFX.getBean(MainController.class);

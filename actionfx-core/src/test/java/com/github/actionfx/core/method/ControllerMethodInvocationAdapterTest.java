@@ -100,7 +100,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		assertThat(instance.getInvokedArguments()).hasSize(0);
 		assertThat(result).isNull();
 	}
@@ -115,7 +115,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		assertThat(instance.getInvokedArguments()).hasSize(0);
 		assertThat(result).isEqualTo(Integer.valueOf(42));
 	}
@@ -131,7 +131,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		assertThat(instance.getInvokedArguments()).containsExactly("Type-based Value 1", Integer.valueOf(4711));
 		assertThat(result).isNull();
 	}
@@ -146,7 +146,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		// first "old", then "new"
 		assertThat(instance.getInvokedArguments()).containsExactly(Integer.valueOf(100), Integer.valueOf(1000));
 		assertThat(result).isNull();
@@ -163,7 +163,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		// first "new", then "old"
 		assertThat(instance.getInvokedArguments()).containsExactly(Integer.valueOf(1000), Integer.valueOf(100));
 		assertThat(result).isNull();
@@ -179,7 +179,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		// check that the string arguments have taken in order (and not repeated)
 		assertThat(instance.getInvokedArguments()).containsExactly("Type-based Value 1", "Type-based Value 2");
 		assertThat(result).isNull();
@@ -196,7 +196,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		// first "new", then "old"
 		assertThat(instance.getInvokedArguments()).hasSize(1); // the list of invoked arguments now contains a list
 		assertThat((List<String>) instance.getInvokedArguments().get(0)).containsExactly("selected");
@@ -215,7 +215,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		// first "new", then "old"
 		assertThat(instance.getInvokedArguments()).hasSize(3); // the list of invoked arguments now contains 3 lists
 		assertThat((List<String>) instance.getInvokedArguments().get(0)).containsExactly("selected");
@@ -236,7 +236,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		// first "new", then "old"
 		assertThat(instance.getInvokedArguments()).hasSize(3); // the list of invoked arguments now contains 3 lists
 		assertThat((List<String>) instance.getInvokedArguments().get(0)).containsExactly("removed");
@@ -271,7 +271,7 @@ class ControllerMethodInvocationAdapterTest {
 
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.isExecuted()).isEqualTo(true);
+        assertThat(instance.isExecuted()).isTrue();
 		assertThat(instance.getInvokedArguments()).hasSize(2);
 		assertThat(instance.getInvokedArguments().get(0)).isEqualTo("Hello World");
 		assertThat(instance.getInvokedArguments().get(1)).isInstanceOf(List.class);
@@ -330,7 +330,7 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 		assertThat(result).isEqualTo("Hello World");
 	}
 
@@ -351,7 +351,7 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(false);
+        assertThat(instance.executed).isFalse();
 		assertThat(result).isNull();
 	}
 
@@ -373,7 +373,7 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 		assertThat(result).isEqualTo("Hello World");
 	}
 
@@ -395,7 +395,7 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 		assertThat(result).isEqualTo("Hello World");
 	}
 
@@ -418,7 +418,7 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.eq("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 		assertThat(result.get()).isEqualTo("Hello World");
 	}
 
@@ -441,7 +441,7 @@ class ControllerMethodInvocationAdapterTest {
 		verify(dialogController, times(1)).showConfirmationDialog(ArgumentMatchers.eq("Title"),
 				ArgumentMatchers.endsWith("Header"), ArgumentMatchers.eq("Content"));
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(false);
+        assertThat(instance.executed).isFalse();
 		assertThat(result.get()).isNull();
 	}
 
@@ -462,7 +462,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		assertThat(result).isEqualTo(file);
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 	}
 
 	@Test
@@ -481,7 +481,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		assertThat(result).isNull();
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(false);
+        assertThat(instance.executed).isFalse();
 	}
 
 	@Test
@@ -501,7 +501,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		assertThat(result).isEqualTo(file);
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 	}
 
 	@Test
@@ -521,7 +521,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		assertThat(result).isEqualTo(file);
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 	}
 
 	@Test
@@ -540,7 +540,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		assertThat(result).isEqualTo("Hello World");
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
-		assertThat(instance.executed).isEqualTo(true);
+        assertThat(instance.executed).isTrue();
 	}
 
 	private static ControllerMethodInvocationAdapter methodInvocationAdapter(final String methodName) {

@@ -88,9 +88,9 @@ class DefaultActionFXBeanContainerTest {
 
         // THEN
         assertThat(view1).isNotNull();
-        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1.isInitializeInvoked()).isTrue();
         assertThat(view2).isNotNull();
-        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2.isInitializeInvoked()).isTrue();
         assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
     }
 
@@ -106,9 +106,9 @@ class DefaultActionFXBeanContainerTest {
 
         // THEN
         assertThat(view1).isNotNull();
-        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1.isInitializeInvoked()).isTrue();
         assertThat(view2).isNotNull();
-        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2.isInitializeInvoked()).isTrue();
         assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
     }
 
@@ -125,9 +125,9 @@ class DefaultActionFXBeanContainerTest {
 
         // THEN
         assertThat(view1).isNotNull();
-        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1.isInitializeInvoked()).isTrue();
         assertThat(view2).isNotNull();
-        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2.isInitializeInvoked()).isTrue();
         assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
         assertThat(view1).isInstanceOf(DerivedFromTestView.class);
     }
@@ -164,9 +164,9 @@ class DefaultActionFXBeanContainerTest {
 
         // THEN
         assertThat(view1).isNotNull();
-        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1.isInitializeInvoked()).isTrue();
         assertThat(view2).isNotNull();
-        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2.isInitializeInvoked()).isTrue();
         assertThat(view1).isNotSameAs(view2); // consecutive calls to getBean yield the different instance
     }
 
@@ -182,9 +182,9 @@ class DefaultActionFXBeanContainerTest {
 
         // THEN
         assertThat(view1).isNotNull();
-        assertThat(view1.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view1.isInitializeInvoked()).isTrue();
         assertThat(view2).isNotNull();
-        assertThat(view2.isInitializeInvoked()).isEqualTo(true);
+        assertThat(view2.isInitializeInvoked()).isTrue();
         assertThat(view1).isNotSameAs(view2); // consecutive calls to getBean yield the different instances
     }
 
@@ -210,10 +210,10 @@ class DefaultActionFXBeanContainerTest {
         assertThat(fxmlView.getController()).isSameAs(mainControllerById);
 
         // check that non-lazy controllers are instantiated
-        assertThat(NonLazilyInitializedController.isConstructed()).isEqualTo(true);
+        assertThat(NonLazilyInitializedController.isConstructed()).isTrue();
 
         // check that lazy controllers are not instantiated
-        assertThat(LazilyInitializedController.isConstructed()).isEqualTo(false);
+        assertThat(LazilyInitializedController.isConstructed()).isFalse();
     }
 
     @Test

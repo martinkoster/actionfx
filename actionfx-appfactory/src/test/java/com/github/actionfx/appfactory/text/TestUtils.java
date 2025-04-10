@@ -57,7 +57,7 @@ public final class TestUtils {
 
 	public static void assertFileExists(final String absoluteFilePath) {
 		final Path path = Path.of(absoluteFilePath);
-		assertThat(Files.exists(path)).isEqualTo(true);
+		assertThat(Files.exists(path)).isTrue();
 	}
 
 	public static void assertFileContentIdentical(final String actualFileAbsolutePath,

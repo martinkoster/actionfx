@@ -208,7 +208,7 @@ class FileUtilsTest {
         final File file = new File(Path.of(tmpPath.toString(), "hello.txt").toString());
 
 		// WHEN and THEN
-		assertThat(FileUtils.makeExecutable(file.getAbsolutePath())).isEqualTo(true);
-		assertThat(file.canExecute()).isEqualTo(true);
+		assertThat(FileUtils.makeExecutable(file.getAbsolutePath())).isTrue();
+		assertThat(file.canExecute()).isTrue();
     }
 }

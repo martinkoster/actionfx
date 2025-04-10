@@ -156,10 +156,10 @@ class ValidationResultTest {
 
 		// THEN
 		assertThat(vr.getMessages()).hasSize(4);
-		assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration()).isEqualTo(false);
-		assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration()).isEqualTo(true);
-		assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration()).isEqualTo(true);
-		assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration()).isEqualTo(false);
+        assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration()).isFalse();
+        assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration()).isTrue();
+        assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration()).isTrue();
+        assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration()).isFalse();
 	}
 
 	@Test
@@ -174,10 +174,10 @@ class ValidationResultTest {
 
 		// THEN
 		assertThat(vr.getMessages()).hasSize(4);
-		assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration()).isEqualTo(false);
-		assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration()).isEqualTo(false);
-		assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration()).isEqualTo(false);
-		assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration()).isEqualTo(false);
+        assertThat(vr.getMessages().get(0).isApplyValidationResultDecoration()).isFalse();
+        assertThat(vr.getMessages().get(1).isApplyValidationResultDecoration()).isFalse();
+        assertThat(vr.getMessages().get(2).isApplyValidationResultDecoration()).isFalse();
+        assertThat(vr.getMessages().get(3).isApplyValidationResultDecoration()).isFalse();
 	}
 
 	@Test

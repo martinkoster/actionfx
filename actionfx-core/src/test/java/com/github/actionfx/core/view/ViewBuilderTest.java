@@ -56,8 +56,8 @@ class ViewBuilderTest {
 		assertThat(view.getIcon()).isEqualTo("icon.png");
 		assertThat(view.getPosX()).isEqualTo(10);
 		assertThat(view.getPosY()).isEqualTo(20);
-		assertThat(view.isMaximized()).isEqualTo(true);
-		assertThat(view.isModalDialogue()).isEqualTo(false);
+        assertThat(view.isMaximized()).isTrue();
+        assertThat(view.isModalDialogue()).isFalse();
 		assertThat(view.getWindowTitle()).isEqualTo("Title");
 		assertThat(view.getStylesheets()).containsExactly("cssClass1", "cssClass2");
     }
@@ -78,8 +78,8 @@ class ViewBuilderTest {
 		assertThat(view.getIcon()).isEqualTo("icon.png");
 		assertThat(view.getPosX()).isEqualTo(10);
 		assertThat(view.getPosY()).isEqualTo(20);
-		assertThat(view.isMaximized()).isEqualTo(true);
-		assertThat(view.isModalDialogue()).isEqualTo(false);
+        assertThat(view.isMaximized()).isTrue();
+        assertThat(view.isModalDialogue()).isFalse();
 		assertThat(view.getWindowTitle()).isEqualTo("Title");
 		assertThat(view.getStylesheets()).containsExactly("cssClass1", "cssClass2");
     }

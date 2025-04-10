@@ -37,13 +37,13 @@ class FxThreadForEachMonocleExtensionTest {
 
 	@Test
 	void testExecutionIsNotInsideJavaFxThread() {
-		assertThat(Platform.isFxApplicationThread()).isEqualTo(false);
+        assertThat(Platform.isFxApplicationThread()).isFalse();
 	}
 
 	@Test
 	@TestInFxThread
 	void testExecutionIsInsideJavaFxThread() {
-		assertThat(Platform.isFxApplicationThread()).isEqualTo(true);
+        assertThat(Platform.isFxApplicationThread()).isTrue();
 	}
 
 }

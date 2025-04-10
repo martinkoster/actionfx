@@ -82,22 +82,22 @@ class NodeWrapperTest {
 
 	@Test
 	void testIsParent() {
-		assertThat(wrapperWithAnchorPane().isParent()).isEqualTo(true);
-		assertThat(wrapperWithCanvas().isParent()).isEqualTo(false);
+		assertThat(wrapperWithAnchorPane().isParent()).isTrue();
+		assertThat(wrapperWithCanvas().isParent()).isFalse();
 	}
 
 	@Test
 	void testIsLeafNode() {
-		assertThat(wrapperWithAnchorPane().isLeafNode()).isEqualTo(false);
-		assertThat(wrapperWithTabPane().isLeafNode()).isEqualTo(false);
-		assertThat(wrapperWithTab().isLeafNode()).isEqualTo(false);
-		assertThat(wrapperWithCanvas().isLeafNode()).isEqualTo(true);
+		assertThat(wrapperWithAnchorPane().isLeafNode()).isFalse();
+		assertThat(wrapperWithTabPane().isLeafNode()).isFalse();
+		assertThat(wrapperWithTab().isLeafNode()).isFalse();
+		assertThat(wrapperWithCanvas().isLeafNode()).isTrue();
 	}
 
 	@Test
 	void testIsControl() {
-		assertThat(wrapperWithScrollPane().isControl()).isEqualTo(true);
-		assertThat(wrapperWithAnchorPane().isControl()).isEqualTo(false);
+		assertThat(wrapperWithScrollPane().isControl()).isTrue();
+		assertThat(wrapperWithAnchorPane().isControl()).isFalse();
 	}
 
 	@Test
@@ -170,18 +170,18 @@ class NodeWrapperTest {
 
 	@Test
 	void testSupportsMultipleChildren() {
-		assertThat(wrapperWithAnchorPane().supportsMultipleChildren()).isEqualTo(true);
-		assertThat(wrapperWithVBox().supportsMultipleChildren()).isEqualTo(true);
-		assertThat(wrapperWithSplitPane().supportsMultipleChildren()).isEqualTo(true);
-		assertThat(wrapperWithScrollPane().supportsMultipleChildren()).isEqualTo(false); // single child only
+		assertThat(wrapperWithAnchorPane().supportsMultipleChildren()).isTrue();
+		assertThat(wrapperWithVBox().supportsMultipleChildren()).isTrue();
+		assertThat(wrapperWithSplitPane().supportsMultipleChildren()).isTrue();
+		assertThat(wrapperWithScrollPane().supportsMultipleChildren()).isFalse(); // single child only
 	}
 
 	@Test
 	void testSupportsSingleChild() {
-		assertThat(wrapperWithAnchorPane().supportsSingleChild()).isEqualTo(false);
-		assertThat(wrapperWithVBox().supportsSingleChild()).isEqualTo(false);
-		assertThat(wrapperWithSplitPane().supportsSingleChild()).isEqualTo(false);
-		assertThat(wrapperWithScrollPane().supportsSingleChild()).isEqualTo(true); // single child only
+		assertThat(wrapperWithAnchorPane().supportsSingleChild()).isFalse();
+		assertThat(wrapperWithVBox().supportsSingleChild()).isFalse();
+		assertThat(wrapperWithSplitPane().supportsSingleChild()).isFalse();
+		assertThat(wrapperWithScrollPane().supportsSingleChild()).isTrue(); // single child only
 	}
 
 	@Test

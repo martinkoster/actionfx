@@ -201,7 +201,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "indexedProperty", 1);
 
 		// WHEN and THEN
-		assertThat(property.isIndexed()).isEqualTo(true);
+        assertThat(property.isIndexed()).isTrue();
 	}
 
 	@Test
@@ -210,7 +210,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "mappedProperty", "hello");
 
 		// WHEN and THEN
-		assertThat(property.isMapped()).isEqualTo(true);
+        assertThat(property.isMapped()).isTrue();
 	}
 
 	@Test
@@ -219,7 +219,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fieldProperty");
 
 		// WHEN and THEN
-		assertThat(property.isIndexed()).isEqualTo(false);
+        assertThat(property.isIndexed()).isFalse();
 	}
 
 	@Test
@@ -228,7 +228,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fieldProperty");
 
 		// WHEN and THEN
-		assertThat(property.isMapped()).isEqualTo(false);
+        assertThat(property.isMapped()).isFalse();
 	}
 
 	@Test
@@ -237,7 +237,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.isReadable()).isEqualTo(true);
+        assertThat(property.isReadable()).isTrue();
 	}
 
 	@Test
@@ -246,7 +246,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fantasyProperty");
 
 		// WHEN and THEN
-		assertThat(property.isReadable()).isEqualTo(false);
+        assertThat(property.isReadable()).isFalse();
 	}
 
 	@Test
@@ -255,7 +255,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.isWritable()).isEqualTo(true);
+        assertThat(property.isWritable()).isTrue();
 	}
 
 	@Test
@@ -264,7 +264,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fantasyProperty");
 
 		// WHEN and THEN
-		assertThat(property.isWritable()).isEqualTo(false);
+        assertThat(property.isWritable()).isFalse();
 	}
 
 	@Test
@@ -273,7 +273,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.hasFxProperty()).isEqualTo(true);
+        assertThat(property.hasFxProperty()).isTrue();
 	}
 
 	@Test
@@ -282,7 +282,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaBeanProperty");
 
 		// WHEN and THEN
-		assertThat(property.hasFxProperty()).isEqualTo(false);
+        assertThat(property.hasFxProperty()).isFalse();
 	}
 
 	@Test

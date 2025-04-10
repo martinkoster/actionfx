@@ -104,14 +104,14 @@ class ControllerInstancePostProcessorIntegrationTest {
 		postProcessor.postProcess(controller);
 
 		// THEN (text field is empty, so action button is inactive
-		assertThat(controller.actionButtonTextField.isDisabled()).isEqualTo(true);
+        assertThat(controller.actionButtonTextField.isDisabled()).isTrue();
 
 		// and WHEN
 		controller.textField.setText("Hello World");
 
 		// and THEN (button is activated, because text field now holds a non-empty user
 		// value)
-		assertThat(controller.actionButtonTextField.isDisabled()).isEqualTo(false);
+        assertThat(controller.actionButtonTextField.isDisabled()).isFalse();
 	}
 
 	@Test

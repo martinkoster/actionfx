@@ -189,6 +189,9 @@ public final class ReflectionUtils {
      */
     public static Object getFieldValueByGetter(final Field field, final Object instance) {
         final Method method = findMethod(instance.getClass(), getterMethodName(field));
+        if (method == null) {
+            throw new IllegalStateException("Getter method not found for field '" + field.getName() + "' in class '" + field.getDeclaringClass().getCanonicalName() + "'");
+        }
         return invokeMethod(method, instance);
     }
 
@@ -207,6 +210,9 @@ public final class ReflectionUtils {
      */
     public static Object getFieldValueByPropertyGetter(final Field field, final Object instance) {
         final Method method = findMethod(instance.getClass(), propertyGetterMethodName(field));
+        if (method == null) {
+            throw new IllegalStateException("Property-Getter method not found for field '" + field.getName() + "' in class '" + field.getDeclaringClass().getCanonicalName() + "'");
+        }
         return invokeMethod(method, instance);
     }
 
@@ -283,6 +289,9 @@ public final class ReflectionUtils {
      */
     public static void setFieldValueBySetter(final Field field, final Object instance, final Object value) {
         final Method method = findMethod(instance.getClass(), setterMethodName(field));
+        if (method == null) {
+            throw new IllegalStateException("Setter method not found for field '" + field.getName() + "' in class '" + field.getDeclaringClass().getCanonicalName() + "'");
+        }
         invokeMethod(method, instance, value);
     }
 

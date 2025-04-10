@@ -1314,7 +1314,7 @@ class ControlWrapperTest {
         textField.setText("Change Value");
 
         // THEN
-        assertThat(changeListenerFired.get()).isEqualTo(true);
+        assertThat(changeListenerFired.get()).isTrue();
 
         // and GIVEN
         changeListenerFired.set(false);
@@ -1326,7 +1326,7 @@ class ControlWrapperTest {
         textField.setText("Change value again");
 
         // and THEN ( the listener is not fired, because it is removed already)
-        assertThat(changeListenerFired.get()).isEqualTo(false);
+        assertThat(changeListenerFired.get()).isFalse();
     }
 
     @Test
@@ -1342,7 +1342,7 @@ class ControlWrapperTest {
         choiceBox.getItems().add("Choice 4");
 
         // THEN
-        assertThat(changeListenerFired.get()).isEqualTo(true);
+        assertThat(changeListenerFired.get()).isTrue();
 
         // and GIVEN
         changeListenerFired.set(false);
@@ -1354,7 +1354,7 @@ class ControlWrapperTest {
         choiceBox.getItems().add("Choice 5");
 
         // and THEN ( the listener is not fired, because it is removed already)
-        assertThat(changeListenerFired.get()).isEqualTo(false);
+        assertThat(changeListenerFired.get()).isFalse();
     }
 
     @Test
@@ -1370,7 +1370,7 @@ class ControlWrapperTest {
         choiceBox.getSelectionModel().select("Choice 2");
 
         // THEN
-        assertThat(changeListenerFired.get()).isEqualTo(true);
+        assertThat(changeListenerFired.get()).isTrue();
 
         // and GIVEN
         changeListenerFired.set(false);
@@ -1382,7 +1382,7 @@ class ControlWrapperTest {
         choiceBox.getSelectionModel().select("Choice 1");
 
         // and THEN ( the listener is not fired, because it is removed already)
-        assertThat(changeListenerFired.get()).isEqualTo(false);
+        assertThat(changeListenerFired.get()).isFalse();
     }
 
     @Test
@@ -1398,7 +1398,7 @@ class ControlWrapperTest {
         listView.getSelectionModel().selectAll();
 
         // THEN
-        assertThat(changeListenerFired.get()).isEqualTo(true);
+        assertThat(changeListenerFired.get()).isTrue();
 
         // and GIVEN
         changeListenerFired.set(false);
@@ -1410,7 +1410,7 @@ class ControlWrapperTest {
         listView.getSelectionModel().clearSelection();
 
         // and THEN ( the listener is not fired, because it is removed already)
-        assertThat(changeListenerFired.get()).isEqualTo(false);
+        assertThat(changeListenerFired.get()).isFalse();
     }
 
     @Test
@@ -1813,36 +1813,36 @@ class ControlWrapperTest {
     @Test
     void testHasValue_userValue_isPresent() {
         // WHEN and THEN
-        assertThat(ControlWrapperProvider.textArea("Hello there").hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isEqualTo(true);
-        assertThat(ControlWrapperProvider.tableView(false, "Item 1").hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isEqualTo(true);
-        assertThat(ControlWrapperProvider.checkBox(false).hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isEqualTo(true);
+        assertThat(ControlWrapperProvider.textArea("Hello there").hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isTrue();
+        assertThat(ControlWrapperProvider.tableView(false, "Item 1").hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isTrue();
+        assertThat(ControlWrapperProvider.checkBox(false).hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isTrue();
     }
 
     @Test
     void testHasValue_userValue_isNotPresent() {
         // WHEN and THEN
-        assertThat(ControlWrapperProvider.textArea(null).hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isEqualTo(false);
-        assertThat(ControlWrapperProvider.textArea("   ").hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isEqualTo(false);
-        assertThat(ControlWrapperProvider.tableView(false).hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isEqualTo(false);
+        assertThat(ControlWrapperProvider.textArea(null).hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isFalse();
+        assertThat(ControlWrapperProvider.textArea("   ").hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isFalse();
+        assertThat(ControlWrapperProvider.tableView(false).hasValue(ControlProperties.USER_VALUE_OBSERVABLE)).isFalse();
     }
 
     @Test
     void testHasValue_singleValue_isPresent() {
         // WHEN and THEN
-        assertThat(ControlWrapperProvider.textArea("Hello there").hasValue(ControlProperties.SINGLE_VALUE_PROPERTY)).isEqualTo(true);
+        assertThat(ControlWrapperProvider.textArea("Hello there").hasValue(ControlProperties.SINGLE_VALUE_PROPERTY)).isTrue();
     }
 
     @Test
     void testHasValue_singleValue_isNotPresent() {
         // WHEN and THEN
-        assertThat(ControlWrapperProvider.textArea(null).hasValue(ControlProperties.SINGLE_VALUE_PROPERTY)).isEqualTo(false);
-        assertThat(ControlWrapperProvider.textArea("    ").hasValue(ControlProperties.SINGLE_VALUE_PROPERTY)).isEqualTo(false);
+        assertThat(ControlWrapperProvider.textArea(null).hasValue(ControlProperties.SINGLE_VALUE_PROPERTY)).isFalse();
+        assertThat(ControlWrapperProvider.textArea("    ").hasValue(ControlProperties.SINGLE_VALUE_PROPERTY)).isFalse();
     }
 
     @Test
     void testHasValue_items_isPresent() {
         // WHEN and THEN
-        assertThat(ControlWrapperProvider.listView(false).hasValue(ControlProperties.ITEMS_OBSERVABLE_LIST)).isEqualTo(true);
+        assertThat(ControlWrapperProvider.listView(false).hasValue(ControlProperties.ITEMS_OBSERVABLE_LIST)).isTrue();
     }
 
     @Test
@@ -1851,7 +1851,7 @@ class ControlWrapperTest {
         final ControlWrapper wrapper = ControlWrapperProvider.listView(false);
         final ListView<String> listView = wrapper.getWrapped();
         listView.getItems().clear();
-        assertThat(wrapper.hasValue(ControlProperties.ITEMS_OBSERVABLE_LIST)).isEqualTo(false);
+        assertThat(wrapper.hasValue(ControlProperties.ITEMS_OBSERVABLE_LIST)).isFalse();
     }
 
     private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {
@@ -1910,7 +1910,7 @@ class ControlWrapperTest {
         if (expectedValue != null && List.class.isAssignableFrom(expectedValue.getClass())) {
             final List expectedValueList = (List) expectedValue;
             if (expectedValueList.isEmpty()) {
-                assertThat(((List) actualValue).isEmpty()).isEqualTo(true);
+                assertThat(((List) actualValue).isEmpty()).isTrue();
             } else {
                 assertThat((List<Object>) actualValue).containsExactly(expectedValueList.toArray());
             }
@@ -1924,19 +1924,19 @@ class ControlWrapperTest {
     }
 
     private static void assertUserValueSet(final ControlWrapper wrapper) {
-        assertThat(wrapper.hasUserValueSet()).isEqualTo(true);
+        assertThat(wrapper.hasUserValueSet()).isTrue();
     }
 
     private static void assertUserValueNotSet(final ControlWrapper wrapper) {
-        assertThat(wrapper.hasUserValueSet()).isEqualTo(false);
+        assertThat(wrapper.hasUserValueSet()).isFalse();
     }
 
     private static void assertValueOrValuesSet(final ControlWrapper wrapper) {
-        assertThat(wrapper.hasValueOrItemsSet()).isEqualTo(true);
+        assertThat(wrapper.hasValueOrItemsSet()).isTrue();
     }
 
     private static void assertValueOrValuesNotSet(final ControlWrapper wrapper) {
-        assertThat(wrapper.hasValueOrItemsSet()).isEqualTo(false);
+        assertThat(wrapper.hasValueOrItemsSet()).isFalse();
     }
 
     /**

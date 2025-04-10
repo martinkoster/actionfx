@@ -55,7 +55,7 @@ class ValidationMessageTest {
 		assertThat(msg.getStatus()).isEqualTo(ValidationStatus.ERROR);
 		assertThat(msg.getText()).isEqualTo("");
 		assertThat(msg.getTarget()).isNull();
-		assertThat(msg.isApplyValidationResultDecoration()).isEqualTo(true);
+        assertThat(msg.isApplyValidationResultDecoration()).isTrue();
     }
 
     @Test
@@ -69,12 +69,12 @@ class ValidationMessageTest {
         final ValidationMessage msg4 = new ValidationMessage(ValidationStatus.INFO, "ERROR1", tf1);
 
 		// WHEN and THEN
-		assertThat(msg1.equals(msg1)).isEqualTo(true);
-		assertThat(msg1.equals(msg3)).isEqualTo(true);
+        assertThat(msg1.equals(msg1)).isTrue();
+        assertThat(msg1.equals(msg3)).isTrue();
 
-		assertThat(msg1.equals(msg2)).isEqualTo(false);
-		assertThat(msg1.equals(msg4)).isEqualTo(false);
-		assertThat(msg2.equals(msg3)).isEqualTo(false);
+        assertThat(msg1.equals(msg2)).isFalse();
+        assertThat(msg1.equals(msg4)).isFalse();
+        assertThat(msg2.equals(msg3)).isFalse();
     }
 
     @Test

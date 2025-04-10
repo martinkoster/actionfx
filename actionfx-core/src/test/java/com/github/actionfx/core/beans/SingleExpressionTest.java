@@ -69,20 +69,20 @@ class SingleExpressionTest {
 
 	@Test
 	void testIsIndexed() {
-		assertThat(expr(null).isIndexed()).isEqualTo(false);
-		assertThat(expr("").isIndexed()).isEqualTo(false);
-		assertThat(expr("field").isIndexed()).isEqualTo(false);
-		assertThat(expr("field[2]").isIndexed()).isEqualTo(true);
-		assertThat(expr("field(map.key)").isIndexed()).isEqualTo(false);
+		assertThat(expr(null).isIndexed()).isFalse();
+		assertThat(expr("").isIndexed()).isFalse();
+		assertThat(expr("field").isIndexed()).isFalse();
+		assertThat(expr("field[2]").isIndexed()).isTrue();
+		assertThat(expr("field(map.key)").isIndexed()).isFalse();
 	}
 
 	@Test
 	void testIsMapped() {
-		assertThat(expr(null).isMapped()).isEqualTo(false);
-		assertThat(expr("").isMapped()).isEqualTo(false);
-		assertThat(expr("field").isMapped()).isEqualTo(false);
-		assertThat(expr("field[2]").isMapped()).isEqualTo(false);
-		assertThat(expr("field(map.key)").isMapped()).isEqualTo(true);
+		assertThat(expr(null).isMapped()).isFalse();
+		assertThat(expr("").isMapped()).isFalse();
+		assertThat(expr("field").isMapped()).isFalse();
+		assertThat(expr("field[2]").isMapped()).isFalse();
+		assertThat(expr("field(map.key)").isMapped()).isTrue();
 	}
 
 	private static SingleExpression expr(final String value) {

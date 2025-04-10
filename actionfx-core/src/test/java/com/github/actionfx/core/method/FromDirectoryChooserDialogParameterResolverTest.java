@@ -105,7 +105,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(File.class);
 		assertThat(result).isEqualTo(file);
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -126,7 +126,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(Path.class);
 		assertThat(result).isEqualTo(file.toPath());
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -147,7 +147,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(URI.class);
 		assertThat(result).isEqualTo(file.toURI());
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -168,7 +168,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		assertThat(result).isNotNull();
 		assertThat(result).isInstanceOf(String.class);
 		assertThat(result).isEqualTo(file.getAbsolutePath());
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(true);
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -187,7 +187,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 
 		// THEN
 		assertThat(result).isNull();
-		assertThat(resolver.continueMethodInvocation()).isEqualTo(false);
+		assertThat(resolver.continueMethodInvocation()).isFalse();
 	}
 
 	public class ClassWithMethods {

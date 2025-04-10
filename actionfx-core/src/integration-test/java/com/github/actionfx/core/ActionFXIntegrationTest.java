@@ -317,27 +317,27 @@ class ActionFXIntegrationTest {
 		final ControllerWithNestedviewOnField controller = actionFX.getBean(ControllerWithNestedviewOnField.class);
 
 		// WHEN
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isEqualTo(true);
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isEqualTo(true);
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isTrue();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isTrue();
 		assertThat(controller.mainBorderPane.getTop()).isNotNull();
 		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
 
 		actionFX.undockNestedView("borderPaneTopView");
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isEqualTo(false);
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isEqualTo(true);
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isFalse();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isTrue();
 		assertThat(controller.mainBorderPane.getTop()).isNull();
 		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
 
 		actionFX.undockNestedView("borderPaneCenterView");
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isEqualTo(false);
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isEqualTo(false);
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isFalse();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isFalse();
 		assertThat(controller.mainBorderPane.getTop()).isNull();
 		assertThat(controller.mainBorderPane.getCenter()).isNull();
 
 		actionFX.dockNestedView("borderPaneTopView");
 		actionFX.dockNestedView("borderPaneCenterView");
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isEqualTo(true);
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isEqualTo(true);
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isTrue();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isTrue();
 		assertThat(controller.mainBorderPane.getTop()).isNotNull();
 		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
 

@@ -122,7 +122,7 @@ class AnnotationUtilsTest {
 				PostConstruct.class);
 
 		// THEN
-		assertThat(instance.isIninitialized1Invoked()).isEqualTo(true);
+		assertThat(instance.isIninitialized1Invoked()).isTrue();
 	}
 
 	@Test
@@ -135,8 +135,8 @@ class AnnotationUtilsTest {
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, instance, PostConstruct.class);
 
 		// THEN
-		assertThat(instance.isIninitialized1Invoked()).isEqualTo(true);
-		assertThat(instance.isIninitialized2Invoked()).isEqualTo(true);
+		assertThat(instance.isIninitialized1Invoked()).isTrue();
+		assertThat(instance.isIninitialized2Invoked()).isTrue();
 	}
 
 	@Test

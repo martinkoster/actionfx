@@ -38,12 +38,12 @@ class TestInFxThreadAtClassLevelTest {
 
 	@Test
 	void testMethod1_inFxThread() {
-		assertThat(Platform.isFxApplicationThread()).isEqualTo(true);
+		assertThat(Platform.isFxApplicationThread()).isTrue();
 	}
 
 	@Test
 	void testmethod2_inFxThread() {
-		assertThat(Platform.isFxApplicationThread()).isEqualTo(true);
+		assertThat(Platform.isFxApplicationThread()).isTrue();
 	}
 
 }

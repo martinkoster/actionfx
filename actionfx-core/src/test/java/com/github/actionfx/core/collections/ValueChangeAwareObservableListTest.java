@@ -148,9 +148,9 @@ class ValueChangeAwareObservableListTest {
 			assertThat(svc.getNewValue()).isEqualTo(newValue);
 			assertThat(svc.getFrom()).isEqualTo(expIndex);
 			assertThat(svc.getTo()).isEqualTo(expIndex + 1);
-			assertThat(svc.wasUpdated()).isEqualTo(true);
-			assertThat(svc.wasAdded()).isEqualTo(false);
-			assertThat(svc.wasRemoved()).isEqualTo(false);
+			assertThat(svc.wasUpdated()).isTrue();
+			assertThat(svc.wasAdded()).isFalse();
+			assertThat(svc.wasRemoved()).isFalse();
 		} else {
 			fail("SingleValueChange did not contain any change!");
 		}
@@ -246,15 +246,15 @@ class ValueChangeAwareObservableListTest {
 	@Test
 	void testIsEmpty() {
 		// WHEN and THEN
-		assertThat(list.isEmpty()).isEqualTo(false);
-		assertThat(new ValueChangeAwareObservableList<>(Collections.emptyList()).isEmpty()).isEqualTo(true);
+		assertThat(list.isEmpty()).isFalse();
+		assertThat(new ValueChangeAwareObservableList<>(Collections.emptyList()).isEmpty()).isTrue();
 	}
 
 	@Test
 	void testContains() {
 		// WHEN and THEN
-		assertThat(list.contains("two")).isEqualTo(true);
-		assertThat(list.contains("four")).isEqualTo(false);
+		assertThat(list.contains("two")).isTrue();
+		assertThat(list.contains("four")).isFalse();
 	}
 
 	@Test
@@ -316,8 +316,8 @@ class ValueChangeAwareObservableListTest {
 	@Test
 	void containsAll() {
 		// WHEN
-		assertThat(list.containsAll(Arrays.asList("one", "two", "three"))).isEqualTo(true);
-		assertThat(list.containsAll(Arrays.asList("one", "four"))).isEqualTo(false);
+		assertThat(list.containsAll(Arrays.asList("one", "two", "three"))).isTrue();
+		assertThat(list.containsAll(Arrays.asList("one", "four"))).isFalse();
 	}
 
 	@Test
@@ -421,8 +421,8 @@ class ValueChangeAwareObservableListTest {
 	@Test
 	void testEquals() {
 		// WHEN and THEN
-		assertThat(list.equals(Arrays.asList("one", "two", "three"))).isEqualTo(true);
-		assertThat(list.equals(Arrays.asList("one", "two"))).isEqualTo(false);
+		assertThat(list.equals(Arrays.asList("one", "two", "three"))).isTrue();
+		assertThat(list.equals(Arrays.asList("one", "two"))).isFalse();
 	}
 
 	@Test

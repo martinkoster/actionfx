@@ -88,8 +88,8 @@ class ControllerInstantiationSupplierTest {
 		assertThat(fxmlView.getIcon()).isEqualTo("icon.png");
 		assertThat(fxmlView.getPosX()).isEqualTo(10);
 		assertThat(fxmlView.getPosY()).isEqualTo(20);
-		assertThat(fxmlView.isMaximized()).isEqualTo(true);
-		assertThat(fxmlView.isModalDialogue()).isEqualTo(false);
+		assertThat(fxmlView.isMaximized()).isTrue();
+		assertThat(fxmlView.isModalDialogue()).isFalse();
 		assertThat(fxmlView.getWindowTitle()).isEqualTo("Hello World");
 		assertThat(fxmlView.getStylesheets())
 				.anyMatch(phrase -> phrase.contains("cssClass1"))

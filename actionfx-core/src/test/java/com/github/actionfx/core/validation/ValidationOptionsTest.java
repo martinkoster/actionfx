@@ -55,9 +55,9 @@ class ValidationOptionsTest {
 
 		// THEN
 		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.ONCHANGE);
-		assertThat(options.isRequired()).isEqualTo(true);
+		assertThat(options.isRequired()).isTrue();
 		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(300);
-		assertThat(options.isApplyValidationResultDecorations()).isEqualTo(false);
+		assertThat(options.isApplyValidationResultDecorations()).isFalse();
 	}
 
 	@Test
@@ -72,9 +72,9 @@ class ValidationOptionsTest {
 
 		// THEN
 		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.ONCHANGE);
-		assertThat(options.isRequired()).isEqualTo(true);
+		assertThat(options.isRequired()).isTrue();
 		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(300);
-		assertThat(options.isApplyValidationResultDecorations()).isEqualTo(false);
+		assertThat(options.isApplyValidationResultDecorations()).isFalse();
 	}
 
 	@Test
@@ -91,9 +91,9 @@ class ValidationOptionsTest {
 
 		// THEN
 		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.ONCHANGE);
-		assertThat(options.isRequired()).isEqualTo(true);
+		assertThat(options.isRequired()).isTrue();
 		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(300);
-		assertThat(options.isApplyValidationResultDecorations()).isEqualTo(false);
+		assertThat(options.isApplyValidationResultDecorations()).isFalse();
 	}
 
 	@Test
@@ -107,8 +107,8 @@ class ValidationOptionsTest {
 
 		// THEN
 		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.MANUAL); // default is manual
-		assertThat(options.isRequired()).isEqualTo(true);
+		assertThat(options.isRequired()).isTrue();
 		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(-1);
-		assertThat(options.isApplyValidationResultDecorations()).isEqualTo(true);
+		assertThat(options.isApplyValidationResultDecorations()).isTrue();
 	}
 }

@@ -153,7 +153,7 @@ class AFXUtilsTest {
 
             // THEN (runnable is immediately executed, because this test runs in the JavaFX
             // thread -> result available)
-            assertThat(booleanProperty.get()).isEqualTo(true);
+            assertThat(booleanProperty.get()).isTrue();
         });
     }
 
@@ -212,19 +212,19 @@ class AFXUtilsTest {
         // create a binding between button's disable state and the list
         AFXUtils.enableNodeWhenListHasElements(button, list);
 
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // add one element to the list
         list.add("test");
 
         // button is now enabled
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // remove elements again
         list.clear();
 
         // button is disabled again
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -240,13 +240,13 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenListHasElements(button, listProperty);
 
         // THEN (list property not yet set, so button is disabled)
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         listProperty.set(list);
 
         // AND THEN (still empty, still disabled)
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         // add one element to the list
@@ -254,7 +254,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is now enabled
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         // remove elements again
@@ -262,7 +262,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is disabled again
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -275,19 +275,19 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenListHasNoElements(button, list);
 
         // button is not disabled, because list has no elements
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // add one element to the list
         list.add("test");
 
         // button is now disabled
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // remove elements again
         list.clear();
 
         // button is enabled again
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -304,7 +304,7 @@ class AFXUtilsTest {
 
         // THEN
         // button is not disabled, because list has no elements
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         listProperty.set(list);
@@ -313,7 +313,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is now disabled
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         // remove elements again
@@ -321,7 +321,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is enabled again
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -334,19 +334,19 @@ class AFXUtilsTest {
         // create a binding between button's disable state and the list
         AFXUtils.enableNodeWhenStringPropertyHasText(button, textField.textProperty());
 
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // set a text
         textField.setText("test");
 
         // button is now enabled
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // remove text again
         textField.setText("");
 
         // button is disabled again
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
     }
 
@@ -360,19 +360,19 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenAllControlsHaveUserValues(button, tf);
 
         // field is empty, button is expected to be empty
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // set text
         tf.setText("hello world");
 
         // button is enabled now
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // remove text again
         tf.setText("");
 
         // and button is expected to be disabled again
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -386,25 +386,25 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenAllControlsHaveUserValues(button, tf, ta);
 
         // field is empty, button is expected to be empty
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // set text in text area
         ta.setText("hello world");
 
         // button is still disbled
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // set text in text field now
         tf.setText("hello from me too");
 
         // now both registered textinputcontrols have values, so button is enabled
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // remove text from the area again
         ta.setText("");
 
         // and button is expected to be disabled again
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -418,13 +418,13 @@ class AFXUtilsTest {
 
         // THEN
         // initial state was "false", so button is expected to be disabled
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         condition.set(true);
 
         // AND THEN
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -438,14 +438,14 @@ class AFXUtilsTest {
 
         // THEN
         // disabled, value is 10, expected is 0
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         property.set(0);
 
         // AND THEN
         // enabled, value is 0, expected is 0
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -459,14 +459,14 @@ class AFXUtilsTest {
 
         // THEN
         // disabled, value is "hello", expected is null
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         property.set(null);
 
         // AND THEN
         // enabled, value is null, expected is null
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -480,14 +480,14 @@ class AFXUtilsTest {
 
         // THEN
         // enabled, value is 10, expected is 0
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         property.set(0);
 
         // AND THEN
         // disabled, value is 0 expected is 0
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -501,14 +501,14 @@ class AFXUtilsTest {
 
         // THEN
         // enabled, value is "hello", expected is null
-        assertThat(button.isDisabled()).isEqualTo(false);
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         property.set(null);
 
         // AND THEN
         // disabled, value is null expected is null
-        assertThat(button.isDisabled()).isEqualTo(true);
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -536,7 +536,7 @@ class AFXUtilsTest {
         // scene now contains the accelerator added for the button
         final ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
         assertThat(accelerators.keySet()).hasSize(1);
-        assertThat(accelerators.containsKey(kcc)).isEqualTo(true);
+        assertThat(accelerators.containsKey(kcc)).isTrue();
     }
 
     @Test
@@ -555,7 +555,7 @@ class AFXUtilsTest {
         // scene now contains the accelerator added for the button
         final ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
         assertThat(accelerators.keySet()).hasSize(1);
-        assertThat(accelerators.containsKey(kcc)).isEqualTo(true);
+        assertThat(accelerators.containsKey(kcc)).isTrue();
     }
 
     @Test

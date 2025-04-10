@@ -396,7 +396,7 @@ class FxmlViewTest {
 		// THEN
 		assertThat(view.getValidationResult().getStatus()).isEqualTo(ValidationStatus.ERROR);
 		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
-		assertThat(ControlWrapper.of(textField).isRequired()).isEqualTo(false);
+		assertThat(ControlWrapper.of(textField).isRequired()).isFalse();
 	}
 
 	@Test
@@ -418,7 +418,7 @@ class FxmlViewTest {
 
 		// THEN
 		assertThat(view.getValidationResult().getStatus()).isEqualTo(ValidationStatus.OK);
-		assertThat(ControlWrapper.of(textField).isRequired()).isEqualTo(true);
+		assertThat(ControlWrapper.of(textField).isRequired()).isTrue();
 		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class);
 	}
 
@@ -443,7 +443,7 @@ class FxmlViewTest {
 		// THEN
 		assertThatValidationStatusIsERROR(view.getValidationResult());
 		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
-		assertThat(ControlWrapper.of(textField).isRequired()).isEqualTo(true);
+		assertThat(ControlWrapper.of(textField).isRequired()).isTrue();
 		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class, GraphicDecoration.class,
 				StyleClassDecoration.class);
 	}

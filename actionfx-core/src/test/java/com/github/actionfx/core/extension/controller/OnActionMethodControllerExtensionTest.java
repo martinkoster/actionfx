@@ -77,7 +77,7 @@ class OnActionMethodControllerExtensionTest {
 		// and THEN (invocation was performed)
 		verify(controller, times(1)).onActionButtonClicked();
 		// execution was inside JavaFX thread
-		assertThat(controller.executedInJavaFxThread).isEqualTo(true);
+        assertThat(controller.executedInJavaFxThread).isTrue();
 	}
 
 	@Test
@@ -124,7 +124,7 @@ class OnActionMethodControllerExtensionTest {
 		// and THEN (invocation was performed)
 		verify(controller, times(1)).onActionButtonClicked();
 		// execution was not inside JavaFX thread
-		assertThat(controller.executedInJavaFxThread).isEqualTo(false);
+        assertThat(controller.executedInJavaFxThread).isFalse();
 	}
 
 	@Test

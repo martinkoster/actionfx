@@ -115,7 +115,7 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		Event.fireEvent(controller.getActionFXButton(), new ActionEvent());
 
 		// THEN
-		assertThat(controller.isActionFired()).isEqualTo(true);
+		assertThat(controller.isActionFired()).isTrue();
 	}
 
 	@Test
