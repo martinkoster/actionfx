@@ -29,7 +29,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.view.View;
 
@@ -67,7 +66,7 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 		final List<BindingTarget> result = view.getViewNodesAsStream()
 				.filter(nodeWrapper -> Control.class.isAssignableFrom(nodeWrapper.getWrappedType()))
 				.map(node -> resolveInternal((Control) node.getWrapped(), bean, view)).flatMap(List::stream)
-				.collect(Collectors.toList());
+				.toList();
 		Collections.sort(result, new BindingTargetComparator());
 		return result;
 	}

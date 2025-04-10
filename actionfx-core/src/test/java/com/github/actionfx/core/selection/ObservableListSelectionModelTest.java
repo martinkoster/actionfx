@@ -162,7 +162,7 @@ class ObservableListSelectionModelTest {
 		assertThat(model.getSelectedItems()).containsExactly("hello");
 		assertThat(model.getSelectedItem()).isEqualTo("hello");
 		assertThat(model.getSelectedIndices()).containsExactly(0);
-		assertThat(model.getSelectedIndex()).isEqualTo(0);
+        assertThat(model.getSelectedIndex()).isZero();
 	}
 
 	@Test
@@ -244,9 +244,9 @@ class ObservableListSelectionModelTest {
 		model.clearSelection(0);
 
 		// THEN
-		assertThat(model.getSelectedItems()).hasSize(0);
+        assertThat(model.getSelectedItems()).isEmpty();
 		assertThat(model.getSelectedItem()).isNull();
-		assertThat(model.getSelectedIndices()).hasSize(0);
+        assertThat(model.getSelectedIndices()).isEmpty();
 		assertThat(model.getSelectedIndex()).isEqualTo(-1);
 	}
 
@@ -264,7 +264,7 @@ class ObservableListSelectionModelTest {
 		assertThat(model.getSelectedItems()).containsExactly("hello");
 		assertThat(model.getSelectedItem()).isEqualTo("hello");
 		assertThat(model.getSelectedIndices()).containsExactly(0);
-		assertThat(model.getSelectedIndex()).isEqualTo(0);
+        assertThat(model.getSelectedIndex()).isZero();
 	}
 
 	@Test
@@ -278,9 +278,9 @@ class ObservableListSelectionModelTest {
 		model.clearSelection();
 
 		// THEN
-		assertThat(model.getSelectedItems()).hasSize(0);
+        assertThat(model.getSelectedItems()).isEmpty();
 		assertThat(model.getSelectedItem()).isNull();
-		assertThat(model.getSelectedIndices()).hasSize(0);
+        assertThat(model.getSelectedIndices()).isEmpty();
 		assertThat(model.getSelectedIndex()).isEqualTo(-1);
 	}
 
@@ -335,7 +335,7 @@ class ObservableListSelectionModelTest {
 		assertThat(model.getSelectedItems()).containsExactly("world", "hello");
 		assertThat(model.getSelectedItem()).isEqualTo("hello");
 		assertThat(model.getSelectedIndices()).containsExactly(1, 0);
-		assertThat(model.getSelectedIndex()).isEqualTo(0);
+        assertThat(model.getSelectedIndex()).isZero();
 
 	}
 
@@ -353,7 +353,7 @@ class ObservableListSelectionModelTest {
 		assertThat(model.getSelectedItems()).containsExactly("hello");
 		assertThat(model.getSelectedItem()).isEqualTo("hello");
 		assertThat(model.getSelectedIndices()).containsExactly(0);
-		assertThat(model.getSelectedIndex()).isEqualTo(0);
+        assertThat(model.getSelectedIndex()).isZero();
 
 	}
 

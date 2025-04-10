@@ -132,7 +132,7 @@ class FormBindingControllerExtensionTest {
 		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("Jane");
 		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
 		assertThat(controller.customerCountryControl.getValue()).isEqualTo("Italy");
-		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).hasSize(0);
+        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).isEmpty();
         assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
     }
 
@@ -182,7 +182,7 @@ class FormBindingControllerExtensionTest {
 		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("Jane");
 		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
 		assertThat(controller.customerCountryControl.getValue()).isEqualTo("Italy");
-		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).hasSize(0);
+        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).isEmpty();
         assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
 		assertThat(controller.localDateTimeTextField.getText()).isEqualTo("10.11.2023 16:09");
     }

@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 
@@ -88,7 +87,7 @@ class AnnotationUtilsTest {
 
 		// THEN
 		assertThat(list).hasSize(3);
-		assertThat(list.stream().map(RepeatableAnnotation::value).collect(Collectors.toList())).containsExactlyInAnyOrder(1, 2, 3);
+        assertThat(list.stream().map(RepeatableAnnotation::value).toList()).containsExactlyInAnyOrder(1, 2, 3);
 	}
 
 	@Test
@@ -99,7 +98,7 @@ class AnnotationUtilsTest {
 
 		// THEN
 		assertThat(list).hasSize(4);
-		assertThat(list.stream().map(RepeatableAnnotation::value).collect(Collectors.toList())).containsExactlyInAnyOrder(1, 2, 3, 4);
+        assertThat(list.stream().map(RepeatableAnnotation::value).toList()).containsExactlyInAnyOrder(1, 2, 3, 4);
 	}
 
 	@Test
@@ -109,7 +108,7 @@ class AnnotationUtilsTest {
 				RepeatableAnnotation.class);
 
 		// THEN
-		assertThat(list).hasSize(0);
+        assertThat(list).isEmpty();
 	}
 
 	@Test
@@ -212,7 +211,7 @@ class AnnotationUtilsTest {
 
 	private void thenAssertFieldsInExactOrder(final Collection<Field> fields, final List<String> exptectedFieldNames) {
 		assertThat(fields).isNotNull();
-		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList())).containsAll(exptectedFieldNames);
+        assertThat(fields.stream().map(Field::getName).toList()).containsAll(exptectedFieldNames);
 	}
 
 	private void thenAssertFieldsInReverseOrder(final Collection<Field> fields,
@@ -220,6 +219,6 @@ class AnnotationUtilsTest {
 		final List<String> reversed = new ArrayList<>(exptectedFieldNames);
 		Collections.reverse(reversed);
 		assertThat(fields).isNotNull();
-		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList())).containsAll(reversed);
+        assertThat(fields.stream().map(Field::getName).toList()).containsAll(reversed);
 	}
 }

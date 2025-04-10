@@ -55,7 +55,7 @@ public class CustomMethodValidator implements Validator {
         final ActionFXMethodInvocation methodInvocation = new ActionFXMethodInvocation(controller,
                 method, currentValue);
         final Object returnValue = methodInvocation.call();
-        return returnValue instanceof ValidationResult ? (ValidationResult) returnValue : null;
+        return returnValue instanceof ValidationResult validationResult ? validationResult : null;
     }
 
 }

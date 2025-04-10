@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -106,7 +105,7 @@ class NestedExpressionTest {
 		}
 
 		// THEN
-		assertThat(seList.stream().map(SingleExpression::getValue).collect(Collectors.toList())).containsExactly("field", "list[4]", "map(map.key)", "elem");
+        assertThat(seList.stream().map(SingleExpression::getValue).toList()).containsExactly("field", "list[4]", "map(map.key)", "elem");
 	}
 
 	@Test
@@ -115,7 +114,7 @@ class NestedExpressionTest {
 		final NestedExpression exp = expr("field.list[4].map(map.key).elem");
 
 		// WHEN
-		final List<String> seList = exp.stream().map(SingleExpression::getValue).collect(Collectors.toList());
+        final List<String> seList = exp.stream().map(SingleExpression::getValue).toList();
 
 		// THEN
 		assertThat(seList).containsExactly("field", "list[4]", "map(map.key)", "elem");

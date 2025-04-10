@@ -312,7 +312,7 @@ class ControllerInstancePostProcessorIntegrationTest {
 
 		// THEN (initially, data is empty, because the data loading flag is set to false
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(controller.asyncDataLoadedSelectionTable.getItems()).hasSize(0);
+        assertThat(controller.asyncDataLoadedSelectionTable.getItems()).isEmpty();
 
 		// and WHEN (we switch the loading flag to "true")
 		controller.loadDataForTableViewActivated.set(true);

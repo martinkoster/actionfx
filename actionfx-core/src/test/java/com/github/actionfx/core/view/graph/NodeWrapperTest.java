@@ -30,7 +30,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -214,7 +213,7 @@ class NodeWrapperTest {
 
 	@Test
 	void testGetChildrenReadOnly_nodeSupportsNoChildren() {
-		assertThat(wrapperWithCanvas().getChildrenReadOnly()).hasSize(0);
+		assertThat(wrapperWithCanvas().getChildrenReadOnly()).isEmpty();
 	}
 
 	@Test
@@ -512,7 +511,7 @@ class NodeWrapperTest {
 
 		// WHEN
 		final List<String> ids = nodeWrapper.getNodesAsStream().map(NodeWrapper::getId).filter(Objects::nonNull)
-				.collect(Collectors.toList());
+				.toList();
 
 		// THEN (check expected visited order of depth-first search)
 		assertThat(ids).containsExactly("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo", "canvas", "vbox", "anchorPane", "gridPane");
@@ -621,7 +620,7 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = ControlWrapperProvider.button();
 
 		// WHEN and THEN
-		assertThat(nodeWrapper.getDecorationChildren()).hasSize(0);
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty();
 	}
 
 	@Test
@@ -630,7 +629,7 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = NodeWrapper.of(new AnchorPane());
 
 		// WHEN and THEN
-		assertThat(nodeWrapper.getDecorationChildren()).hasSize(0);
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty();
 	}
 
 	@Test
@@ -639,7 +638,7 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = NodeWrapper.of(new Tab());
 
 		// WHEN and THEN
-		assertThat(nodeWrapper.getDecorationChildren()).hasSize(0);
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty();
 	}
 
 	@Test
@@ -667,7 +666,7 @@ class NodeWrapperTest {
 		nodeWrapper.decorateWithDecorationNode(decorationNode);
 
 		// THEN
-		assertThat(nodeWrapper.getDecorationChildren()).hasSize(0); // not supported...
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty(); // not supported...
 
 	}
 

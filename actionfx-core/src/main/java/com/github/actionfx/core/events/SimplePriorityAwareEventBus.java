@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.utils.ExceptionUtils;
 import com.github.actionfx.core.utils.ReflectionUtils;
@@ -120,7 +119,7 @@ public class SimplePriorityAwareEventBus implements PriorityAwareEventBus {
 			final Set<Class<?>> superTypes = ReflectionUtils.getAllSuperClassesAndInterfaces(clazz);
 			return superTypes.stream().map(typeSubscriberMap::get).filter(Objects::nonNull).flatMap(Collection::stream)
 					.sorted((c1, c2) -> Integer.compare(c1.getPriority(), c2.getPriority()))
-					.map(PrioritizedConsumer::getConsumer).collect(Collectors.toList());
+                    .map(PrioritizedConsumer::getConsumer).toList();
 		}
 
 		/**

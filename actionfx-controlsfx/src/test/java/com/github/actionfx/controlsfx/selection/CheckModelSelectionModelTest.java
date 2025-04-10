@@ -70,7 +70,7 @@ class CheckModelSelectionModelTest {
 		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
 		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1);
 		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_1);
-		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+        assertThat(wrapper.getSelectedIndex()).isZero();
 	}
 
 	@Test
@@ -96,7 +96,7 @@ class CheckModelSelectionModelTest {
 		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
 		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1);
 		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_1);
-		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+        assertThat(wrapper.getSelectedIndex()).isZero();
 	}
 
 	@Test
@@ -136,7 +136,7 @@ class CheckModelSelectionModelTest {
 		assertThat(wrapper.getSelectedIndices()).containsExactlyInAnyOrder(0);
 		assertThat(wrapper.getSelectedItems()).containsExactlyInAnyOrder(ITEM_1);
 		assertThat(wrapper.getSelectedItem()).isEqualTo(ITEM_1);
-		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+        assertThat(wrapper.getSelectedIndex()).isZero();
 	}
 
 	@Test
@@ -207,8 +207,8 @@ class CheckModelSelectionModelTest {
 		wrapper.clearSelection(0);
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices()).hasSize(0);
-		assertThat(wrapper.getSelectedItems()).hasSize(0);
+        assertThat(wrapper.getSelectedIndices()).isEmpty();
+        assertThat(wrapper.getSelectedItems()).isEmpty();
 		assertThat(wrapper.getSelectedItem()).isNull();
 		assertThat(wrapper.getSelectedIndex()).isEqualTo(-1);
 	}
@@ -224,8 +224,8 @@ class CheckModelSelectionModelTest {
 		wrapper.clearSelection();
 
 		// THEN
-		assertThat(wrapper.getSelectedIndices()).hasSize(0);
-		assertThat(wrapper.getSelectedItems()).hasSize(0);
+        assertThat(wrapper.getSelectedIndices()).isEmpty();
+        assertThat(wrapper.getSelectedItems()).isEmpty();
 		assertThat(wrapper.getSelectedItem()).isNull();
 		assertThat(wrapper.getSelectedIndex()).isEqualTo(-1);
 	}
@@ -268,7 +268,7 @@ class CheckModelSelectionModelTest {
 		// THEN
 		assertThat(wrapper.getSelectedIndices()).containsExactly(1, 0);
 		assertThat(wrapper.getSelectedItems()).containsExactly("item-2", "item-1");
-		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+        assertThat(wrapper.getSelectedIndex()).isZero();
 		assertThat(wrapper.getSelectedItem()).isEqualTo("item-1");
 	}
 
@@ -283,7 +283,7 @@ class CheckModelSelectionModelTest {
 		// THEN
 		assertThat(wrapper.getSelectedIndices()).containsExactly(0);
 		assertThat(wrapper.getSelectedItems()).containsExactly("item-1");
-		assertThat(wrapper.getSelectedIndex()).isEqualTo(0);
+        assertThat(wrapper.getSelectedIndex()).isZero();
 		assertThat(wrapper.getSelectedItem()).isEqualTo("item-1");
 	}
 

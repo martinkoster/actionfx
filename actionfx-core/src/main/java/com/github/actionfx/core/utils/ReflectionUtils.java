@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ClassUtils;
 
@@ -663,7 +662,7 @@ public final class ReflectionUtils {
             // only add methods from super classes, if these are not contained in method
             // list yet (overriden methods are filtered out)
             methodList.addAll(findMethodsByFilter(clazz.getSuperclass(), methodFilter, visited).stream()
-                    .filter(m -> !containsMethodWithSameNameAndSignature(methodList, m)).collect(Collectors.toList()));
+                    .filter(m -> !containsMethodWithSameNameAndSignature(methodList, m)).toList());
         }
         return methodList;
     }

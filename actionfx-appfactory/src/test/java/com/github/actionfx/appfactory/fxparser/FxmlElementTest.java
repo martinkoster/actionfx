@@ -26,7 +26,6 @@ package com.github.actionfx.appfactory.fxparser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +53,7 @@ class FxmlElementTest {
 
 		// WHEN
 		final List<String> names = root.getFxmlElementsAsStream().map(FxmlElement::getName)
-				.collect(Collectors.toList());
+                .toList();
 
 		// THEN
 		assertThat(names).containsExactly("root", "child1", "child2", "child3");

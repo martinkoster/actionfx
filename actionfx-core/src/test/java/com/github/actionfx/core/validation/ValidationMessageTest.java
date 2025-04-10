@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -110,7 +109,7 @@ class ValidationMessageTest {
         list.sort(new ValidationMessageComparator());
 
 		// THEN
-		assertThat(list.stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("OK", "INFO", "WARNING", "", "ERROR1", "ERROR2", "ERROR3");
+        assertThat(list.stream().map(ValidationMessage::getText).toList()).containsExactly("OK", "INFO", "WARNING", "", "ERROR1", "ERROR2", "ERROR3");
     }
 
 }

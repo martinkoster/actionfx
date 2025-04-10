@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -125,7 +124,7 @@ class ParentViewTest {
 
         // WHEN
         final List<String> idList = view.getViewNodesAsStream()
-                .map(wrapper -> wrapper.getWrapped().getClass().getSimpleName()).collect(Collectors.toList());
+                .map(wrapper -> wrapper.getWrapped().getClass().getSimpleName()).toList();
 
         // THEN
         assertThat(idList).containsExactly("ViewClass", "HBox", "Label", "String", "TableView");

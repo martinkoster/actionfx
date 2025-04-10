@@ -188,8 +188,8 @@ public final class DecorationUtils {
 	private static DecorationPane getDecorationPaneInParentHierarchy(final Node target) {
 		Parent p = target.getParent();
 		while (p != null) {
-			if (p instanceof DecorationPane) {
-				return (DecorationPane) p;
+			if (p instanceof DecorationPane decorationPane) {
+				return decorationPane;
 			}
 			p = p.getParent();
 		}

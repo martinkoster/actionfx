@@ -62,7 +62,7 @@ class NumberToNumberConverterTest {
 	void testConvertToInteger() {
 		final NumberToNumberConverter<Number, Integer> converter = NumberToNumberConverter.to(Integer.class);
 		assertThat(converter.convert(BigInteger.valueOf(-1))).isEqualTo(-1);
-		assertThat(converter.convert(BigInteger.valueOf(0))).isEqualTo(0);
+		assertThat(converter.convert(BigInteger.valueOf(0))).isZero();
 		assertThat(converter.convert(BigInteger.valueOf(1))).isEqualTo(1);
 		assertThat(converter.convert(BigInteger.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.MAX_VALUE);
 		assertThat(converter.convert(BigInteger.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.MIN_VALUE);
@@ -70,7 +70,7 @@ class NumberToNumberConverterTest {
 		assertThat(converter.convert(BigInteger.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.MAX_VALUE);
 
 		assertThat(converter.convert(Long.valueOf(-1))).isEqualTo(-1);
-		assertThat(converter.convert(Long.valueOf(0))).isEqualTo(0);
+		assertThat(converter.convert(Long.valueOf(0))).isZero();
 		assertThat(converter.convert(Long.valueOf(1))).isEqualTo(1);
 		assertThat(converter.convert(Long.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.MAX_VALUE);
 		assertThat(converter.convert(Long.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));
@@ -78,7 +78,7 @@ class NumberToNumberConverterTest {
 		assertThat(converter.convert(Long.valueOf(Integer.MIN_VALUE - 1))).isEqualTo(Integer.MAX_VALUE);
 
 		assertThat(converter.convert(Integer.valueOf(-1))).isEqualTo(-1);
-		assertThat(converter.convert(Integer.valueOf(0))).isEqualTo(0);
+		assertThat(converter.convert(Integer.valueOf(0))).isZero();
 		assertThat(converter.convert(Integer.valueOf(1))).isEqualTo(1);
 		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE))).isEqualTo(Integer.MAX_VALUE);
 		assertThat(converter.convert(Integer.valueOf(Integer.MAX_VALUE + 1))).isEqualTo(Integer.valueOf(Integer.MIN_VALUE));

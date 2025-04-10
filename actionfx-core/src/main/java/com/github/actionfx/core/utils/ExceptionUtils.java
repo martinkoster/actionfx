@@ -80,8 +80,8 @@ public final class ExceptionUtils {
 	 *         {@link RuntimeException} already
 	 */
 	public static RuntimeException wrapInRuntimeExceptionIfNecessary(final Throwable throwable) {
-		if (throwable instanceof RuntimeException) {
-			return (RuntimeException) throwable;
+		if (throwable instanceof RuntimeException runtimeException) {
+			return runtimeException;
 		} else {
 			return new NestedThrowableException(throwable);
 		}

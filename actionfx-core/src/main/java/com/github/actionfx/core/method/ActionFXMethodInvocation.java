@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ClassUtils;
 
@@ -201,11 +200,11 @@ public class ActionFXMethodInvocation {
         // ActionEvent parameters
         final List<Parameter> parameterList = new ArrayList<>(Arrays.asList(method.getParameters())).stream().filter(
                 param -> !containsActionFXAnnotations(param.getAnnotations()) && !isActionEventType(param.getType()))
-                .collect(Collectors.toList());
+                .toList();
         // from the arguments, we have to remove the ActionEvent (if present), because
         // we can rely on the correct position
         final List<Object> argumentList = new ArrayList<>(Arrays.asList(arguments)).stream()
-                .filter(arg -> arg == null || !isActionEventType(arg.getClass())).collect(Collectors.toList());
+                .filter(arg -> arg == null || !isActionEventType(arg.getClass())).toList();
         if (parameterList.isEmpty() && argumentList.isEmpty()) {
             // method does not have parameters and no parameters are expected...found the best match
             return true;

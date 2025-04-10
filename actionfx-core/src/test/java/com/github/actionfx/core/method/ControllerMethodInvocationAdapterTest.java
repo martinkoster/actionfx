@@ -101,7 +101,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
         assertThat(instance.isExecuted()).isTrue();
-		assertThat(instance.getInvokedArguments()).hasSize(0);
+        assertThat(instance.getInvokedArguments()).isEmpty();
 		assertThat(result).isNull();
 	}
 
@@ -116,7 +116,7 @@ class ControllerMethodInvocationAdapterTest {
 		// THEN
 		final ClassWithPublicMethods instance = (ClassWithPublicMethods) adapter.getInstance();
         assertThat(instance.isExecuted()).isTrue();
-		assertThat(instance.getInvokedArguments()).hasSize(0);
+        assertThat(instance.getInvokedArguments()).isEmpty();
 		assertThat(result).isEqualTo(Integer.valueOf(42));
 	}
 

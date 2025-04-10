@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -485,7 +484,7 @@ class ReflectionUtilsTest {
 
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {
 		assertThat(methods).isNotNull();
-		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList())).contains(exptectedFieldNames); // hasItems
+        assertThat(methods.stream().map(Field::getName).toList()).contains(exptectedFieldNames); // hasItems
 	}
 
 	private void thenAssertMethodNamesList(final List<Method> methods, final List<String> exptectedMethodNames) {

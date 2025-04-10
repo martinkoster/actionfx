@@ -698,7 +698,7 @@ class ControlsFXControlWrapperTest {
 	}
 
 	private static <V> void assertValuesAreEmpty(final ControlWrapper wrapper) {
-		assertThat(wrapper.getItems()).hasSize(0);
+        assertThat(wrapper.getItems()).isEmpty();
 	}
 
 	private static void assertSupportsSelection(final ControlWrapper wrapper, final boolean expected) {
@@ -728,7 +728,7 @@ class ControlsFXControlWrapperTest {
 	}
 
 	private static <V> void assertSelectedValuesAreEmpty(final ControlWrapper wrapper) {
-		assertThat(wrapper.getSelectedValues()).hasSize(0);
+        assertThat(wrapper.getSelectedValues()).isEmpty();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

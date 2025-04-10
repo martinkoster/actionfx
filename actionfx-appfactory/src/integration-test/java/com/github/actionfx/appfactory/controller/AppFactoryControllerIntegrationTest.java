@@ -77,7 +77,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
+        assertThat(runGradleWrapper(tmpFolder, "assemble")).isZero();
     }
 
     @Test
@@ -99,7 +99,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
+        assertThat(runGradleWrapper(tmpFolder, "assemble")).isZero();
     }
 
     @Test
@@ -123,7 +123,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
+        assertThat(runGradleWrapper(tmpFolder, "assemble")).isZero();
     }
 
     @Test
@@ -150,7 +150,7 @@ class AppFactoryControllerIntegrationTest {
 
         // THEN
         WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
-		assertThat(runGradleWrapper(tmpFolder, "assemble")).isEqualTo(0);
+        assertThat(runGradleWrapper(tmpFolder, "assemble")).isZero();
     }
 
     private static int runGradleWrapper(final Path projectDir, final String gradleTask) {

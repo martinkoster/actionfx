@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -205,7 +204,7 @@ class FxmlViewTest {
 		view.detachView();
 
 		// THEN
-		assertThat(parent.getChildren()).hasSize(0);
+		assertThat(parent.getChildren()).isEmpty();
 	}
 
 	@Test
@@ -215,7 +214,7 @@ class FxmlViewTest {
 		final AnchorPane parent = new AnchorPane();
 		view.attachViewToParent(parent, NodeWrapper.anchorPaneFillingAttacher());
 		view.detachView();
-		assertThat(parent.getChildren()).hasSize(0);
+		assertThat(parent.getChildren()).isEmpty();
 
 		// WHEN
 		view.reattachView();
@@ -241,7 +240,7 @@ class FxmlViewTest {
 	void testLookupNode_nodeIsCached() {
 		// GIVEN
 		final FxmlView view = new FxmlView("testId", "/testfxml/SampleViewWithNodeId.fxml", new TestController());
-		assertThat(view.lookupCache.entrySet()).hasSize(0);
+		assertThat(view.lookupCache.entrySet()).isEmpty();
 
 		// WHEN
 		final NodeWrapper textFieldWrapper = view.lookupNode("textField");
@@ -676,7 +675,7 @@ class FxmlViewTest {
 			final String... messages) {
 		assertThat(validationResult).isNotNull();
 		assertThat(validationResult.getMessages()).hasSize(messages.length);
-		assertThat(validationResult.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactlyInAnyOrder(messages);
+		assertThat(validationResult.getMessages().stream().map(ValidationMessage::getText).toList()).containsExactlyInAnyOrder(messages);
 	}
 
 	private void assertThatValidationStatusIsOK(final ValidationResult validationResult) {
@@ -701,7 +700,7 @@ class FxmlViewTest {
 
 	private void assertThatNodeHasNoDecorations(final Node node) {
 		final List<Decoration> nodeDecorations = DecorationUtils.getDecorations(node);
-		assertThat(nodeDecorations).hasSize(0);
+		assertThat(nodeDecorations).isEmpty();
 	}
 
 	private void givenActionFXSpecifiesValidationMode(final ValidationMode validationMode) {

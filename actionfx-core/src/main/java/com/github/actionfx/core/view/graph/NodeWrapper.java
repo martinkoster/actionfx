@@ -560,7 +560,10 @@ public class NodeWrapper {
 				continue;
 			}
 			if (node.supportsMultipleChildren()) {
-				queue.addAll(node.getChildren().stream().map(NodeWrapper::of).peek(wrapper -> childToParentMap.put(node, wrapper)).toList());
+				queue.addAll(node.getChildren().stream().map(NodeWrapper::of).map(wrapper -> {
+					childToParentMap.put(node, wrapper);
+					return wrapper;
+				}).toList());
 			} else if (node.supportsSingleChild()) {
 				final Property<Object> property = node.getSingleChildProperty();
 				if (property != null && property.getValue() != null) {

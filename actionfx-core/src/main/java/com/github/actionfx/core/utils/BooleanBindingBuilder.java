@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.annotation.BooleanOp;
 
@@ -484,7 +483,7 @@ public class BooleanBindingBuilder {
          * @return observables that trigger the re-evaluation of the predicate
          */
         public List<Observable> getObservables() {
-            return Arrays.asList(testables).stream().map(observableExtractorFunction).collect(Collectors.toList());
+            return Arrays.asList(testables).stream().map(observableExtractorFunction).toList();
         }
 
         /**

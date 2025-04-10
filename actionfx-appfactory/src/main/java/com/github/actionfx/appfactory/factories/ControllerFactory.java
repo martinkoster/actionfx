@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -145,7 +144,7 @@ public class ControllerFactory {
                 .map(elem -> mapToActionMethod(elem, true)).toList());
 
         // make method names unique
-        return actionMethods.stream().distinct().collect(Collectors.toList());
+        return actionMethods.stream().distinct().toList();
     }
 
     /**

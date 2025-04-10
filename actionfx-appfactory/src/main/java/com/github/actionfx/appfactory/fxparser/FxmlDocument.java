@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -85,7 +84,7 @@ public class FxmlDocument {
 	 * @return import statements for nodes to be injected into a controller
 	 */
 	public List<String> getImportStatementsForIdNodes() {
-		return idNodesMap.values().stream().map(imports::get).distinct().collect(Collectors.toList());
+        return idNodesMap.values().stream().map(imports::get).distinct().toList();
 	}
 
 	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")

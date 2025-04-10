@@ -25,8 +25,6 @@ package com.github.actionfx.core.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.stream.Collectors;
-
 /**
  * Util class for asserting {@link ValidationResult} instances.
  *
@@ -43,7 +41,7 @@ public final class ValidationResultUtils {
     }
 
     public static void assertThatMessageWithTextIsPresent(final ValidationResult vr, final String text) {
-		assertThat(vr.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList())).contains(text);
+        assertThat(vr.getMessages().stream().map(ValidationMessage::getText).toList()).contains(text);
     }
 
 }

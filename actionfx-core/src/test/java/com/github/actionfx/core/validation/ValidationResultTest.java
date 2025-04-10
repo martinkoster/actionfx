@@ -26,7 +26,6 @@ package com.github.actionfx.core.validation;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -98,8 +97,8 @@ class ValidationResultTest {
 		final ValidationResult combined = ValidationResult.from(Arrays.asList(vr1, vr2, vr3));
 
 		// THEN
-		assertThat(combined.getMessages().stream().map(ValidationMessage::getStatus).collect(Collectors.toList())).containsExactly(ValidationStatus.ERROR, ValidationStatus.WARNING, ValidationStatus.INFO, ValidationStatus.OK);
-		assertThat(combined.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Error message", "Warning message", "Info message", "OK message");
+        assertThat(combined.getMessages().stream().map(ValidationMessage::getStatus).toList()).containsExactly(ValidationStatus.ERROR, ValidationStatus.WARNING, ValidationStatus.INFO, ValidationStatus.OK);
+        assertThat(combined.getMessages().stream().map(ValidationMessage::getText).toList()).containsExactly("Error message", "Warning message", "Info message", "OK message");
 	}
 
 	@Test
@@ -110,7 +109,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getErrors().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Error message");
+        assertThat(vr.getErrors().stream().map(ValidationMessage::getText).toList()).containsExactly("Error message");
 	}
 
 	@Test
@@ -121,7 +120,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getWarnings().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Warning message");
+        assertThat(vr.getWarnings().stream().map(ValidationMessage::getText).toList()).containsExactly("Warning message");
 	}
 
 	@Test
@@ -132,7 +131,7 @@ class ValidationResultTest {
 				.addOKMessage("OK message", null);
 
 		// WHEN and THEN
-		assertThat(vr.getInfos().stream().map(ValidationMessage::getText).collect(Collectors.toList())).containsExactly("Info message");
+        assertThat(vr.getInfos().stream().map(ValidationMessage::getText).toList()).containsExactly("Info message");
 	}
 
 	@Test
@@ -141,7 +140,7 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder();
 
 		// WHEN and THEN
-		assertThat(vr.getMessages()).hasSize(0);
+        assertThat(vr.getMessages()).isEmpty();
 	}
 
 	@Test
@@ -196,7 +195,7 @@ class ValidationResultTest {
 		final ValidationResult vr = ValidationResult.builder().addErrorMessageIf("Error message", null, false);
 
 		// THEN
-		assertThat(vr.getMessages()).hasSize(0);
+        assertThat(vr.getMessages()).isEmpty();
 		assertThat(vr.getStatus()).isEqualTo(ValidationStatus.OK);
 	}
 

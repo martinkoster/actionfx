@@ -85,7 +85,7 @@ class OnLoadControlDataMethodControllerExtensionTest {
 
 		// THEN (initially, data is empty, because the data loading flag is set to false
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(tableView.getItems()).hasSize(0);
+        assertThat(tableView.getItems()).isEmpty();
 
 		// and WHEN (we switch the loading flag to "true")
 		controller.listenerEnabled.set(true);

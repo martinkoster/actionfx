@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.view.View;
 import com.github.actionfx.core.view.graph.ControlProperties;
@@ -133,7 +132,7 @@ public class MappingBasedBindingTargetResolver extends NameBasedBindindTargetRes
             return disableNameBasedMapping ? Collections.emptyList() : super.resolveInternal(control, bean, view);
         }
         return propertyMappings.stream().map(mapping -> new BindingTarget(control, mapping.getTargetProperty(),
-                bean.getClass(), mapping.getPropertyName(), mapping.getFormatPattern())).collect(Collectors.toList());
+                bean.getClass(), mapping.getPropertyName(), mapping.getFormatPattern())).toList();
     }
 
     /**

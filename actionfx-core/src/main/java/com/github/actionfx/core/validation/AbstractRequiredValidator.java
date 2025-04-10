@@ -147,6 +147,6 @@ public abstract class AbstractRequiredValidator implements Validator {
      * @return {@code true}, if the value is a non-blank string, {@code false} otherwise.
      */
     protected boolean isStringWithValue(final Object value) {
-        return value instanceof String && !StringUtils.isBlank((String) value);
+        return value instanceof String str && !StringUtils.isBlank(str);
     }
 }

@@ -507,10 +507,9 @@ public final class AFXUtils {
      */
     public static ScrollBar getScrollbarComponent(final Control control, final Orientation orientation) {
         for (final Node node : control.lookupAll(".scroll-bar")) {
-            if (node instanceof ScrollBar) {
-                final ScrollBar bar = (ScrollBar) node;
-                if (bar.getOrientation().equals(orientation)) {
-                    return bar;
+            if (node instanceof ScrollBar scrollBar) {
+                if (scrollBar.getOrientation().equals(orientation)) {
+                    return scrollBar;
                 }
             }
         }
