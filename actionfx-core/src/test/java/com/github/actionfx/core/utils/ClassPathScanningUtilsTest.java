@@ -48,8 +48,7 @@ class ClassPathScanningUtilsTest {
 				SomeAnnotation.class);
 
 		// THEN
-		assertThat(classList).hasSize(2);
-		assertThat(classList)
+		assertThat(classList).hasSize(2)
 				.anyMatch(clazz -> clazz.equals(ClassWithSomeAnnotation.class))
 				.anyMatch(clazz -> clazz.equals(AnotherClassWithSomeAnnotation.class));
 	}
