@@ -142,4 +142,19 @@ class ControllerFactoryTest {
         assertThatThrownBy(() -> ControllerFactory.deriveControllerName(null)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be null");
         assertThatThrownBy(() -> ControllerFactory.deriveControllerName("")).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not have an extension");
     }
+
+    @Test
+    void testDeriveFxmlClasspathLocation() {
+        // GIVEN
+        final ControllerFactoryConfig factoryConfig = new ControllerFactoryConfig();
+        factoryConfig.setRelativeFXMLResourcesDirectory("views");
+
+        // WHEN and THEN
+        assertThatThrownBy(() -> ControllerFactory.deriveFxmlClasspathLocation(null, factoryConfig)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be null");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/src/main/resources/someresourcefolder/view.fxml", factoryConfig)).isEqualTo("/someresourcefolder/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/src/main/resources/fxml/view.fxml", factoryConfig)).isEqualTo("/fxml/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/views/view.fxml", factoryConfig)).isEqualTo("/views/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/view.fxml", factoryConfig)).isEqualTo("/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("view.fxml", factoryConfig)).isEqualTo("/view.fxml");
+    }
 }

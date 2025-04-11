@@ -115,7 +115,7 @@ public class ControllerFactory {
         controllerModel.setControllerName(deriveControllerName(fxmlFile));
         controllerModel.setPackageName(factoryConfig.getControllerPackageName());
         controllerModel.getImportStatements().addAll(fxmlDocument.getImportStatementsForIdNodes());
-        controllerModel.setFxmlFile(deriveFxmlClasspathLocation(fxmlFile));
+        controllerModel.setFxmlFile(deriveFxmlClasspathLocation(fxmlFile, factoryConfig));
         controllerModel.setViewId(getViewId());
         controllerModel.setTitle(deriveViewId(fxmlFile));
         controllerModel.getNodes().addAll(createFxmlNodes(fxmlDocument));
@@ -249,7 +249,7 @@ public class ControllerFactory {
      *            the FXML file name
      * @return the classpath location to the {@code fxmlFile}
      */
-    private String deriveFxmlClasspathLocation(final String fxmlFile) {
+    static String deriveFxmlClasspathLocation(final String fxmlFile, ControllerFactoryConfig factoryConfig) {
         if (fxmlFile == null) {
             throw new IllegalArgumentException("Argument 'fxmlFile' must not be null");
         }
@@ -259,8 +259,7 @@ public class ControllerFactory {
         if (resourceIdx >= 0) {
             classpathLocation = fxmlFile.substring(resourceIdx + MainAppFactoryConfig.DEFAULT_RESOURCES_DIR.length());
         } else if (relativeFxmlIdx >= 0) {
-            classpathLocation = fxmlFile
-                    .substring(relativeFxmlIdx + factoryConfig.getRelativeFXMLResourcesDirectory().length());
+            classpathLocation = fxmlFile.substring(relativeFxmlIdx);
         } else {
             final Path fileName = Path.of(fxmlFile).getFileName();
             if (fileName == null) {
