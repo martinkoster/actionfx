@@ -564,6 +564,30 @@ class NodeWrapperTest {
 	}
 
 	@Test
+	void testGetScene_tabInTabPane() {
+		// GIVEN
+		final Tab tab = new Tab();
+		final TabPane tabPane = new TabPane();
+		tabPane.getTabs().add(tab);
+		final Scene scene = new Scene(tabPane);
+
+		// WHEN
+		final Scene nodeScene = NodeWrapper.of(tab).getScene();
+
+		// THEN
+		assertThat(nodeScene).isNotNull().isSameAs(scene);
+	}
+
+	@Test
+	void testGetScene_tabWithoutTabPane() {
+		// GIVEN
+		final Tab tab = new Tab();
+
+		// WHEN and THEN
+		assertThat(NodeWrapper.of(tab).getScene()).isNull();
+	}
+
+	@Test
 	void testLookup_nodeDoesNotExist() {
 		assertThat(wrapperWithHierarchy().lookup("fantasyNode")).isNull();
 	}
