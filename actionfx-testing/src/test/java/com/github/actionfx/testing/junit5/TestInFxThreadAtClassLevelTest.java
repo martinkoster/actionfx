@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.testing.junit5;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,12 +38,12 @@ class TestInFxThreadAtClassLevelTest {
 
 	@Test
 	void testMethod1_inFxThread() {
-		assertThat(Platform.isFxApplicationThread(), equalTo(true));
+		assertThat(Platform.isFxApplicationThread()).isTrue();
 	}
 
 	@Test
 	void testmethod2_inFxThread() {
-		assertThat(Platform.isFxApplicationThread(), equalTo(true));
+		assertThat(Platform.isFxApplicationThread()).isTrue();
 	}
 
 }

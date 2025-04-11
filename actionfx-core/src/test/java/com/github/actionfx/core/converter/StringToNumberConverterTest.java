@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
@@ -50,14 +49,12 @@ class StringToNumberConverterTest {
 		final String aFloat = "" + Float.MAX_VALUE;
 		final String aDouble = "" + Double.MAX_VALUE;
 
-		assertThat(StringToNumberConverter.to(Byte.class).convert(aByte), equalTo(Byte.valueOf(Byte.MAX_VALUE)));
-		assertThat(StringToNumberConverter.to(Short.class).convert(aShort), equalTo(Short.valueOf(Short.MAX_VALUE)));
-		assertThat(StringToNumberConverter.to(Integer.class).convert(anInteger),
-				equalTo(Integer.valueOf(Integer.MAX_VALUE)));
-		assertThat(StringToNumberConverter.to(Long.class).convert(aLong), equalTo(Long.valueOf(Long.MAX_VALUE)));
-		assertThat(StringToNumberConverter.to(Float.class).convert(aFloat), equalTo(Float.valueOf(Float.MAX_VALUE)));
-		assertThat(StringToNumberConverter.to(Double.class).convert(aDouble),
-				equalTo(Double.valueOf(Double.MAX_VALUE)));
+		assertThat(StringToNumberConverter.to(Byte.class).convert(aByte)).isEqualTo(Byte.valueOf(Byte.MAX_VALUE));
+		assertThat(StringToNumberConverter.to(Short.class).convert(aShort)).isEqualTo(Short.valueOf(Short.MAX_VALUE));
+		assertThat(StringToNumberConverter.to(Integer.class).convert(anInteger)).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(StringToNumberConverter.to(Long.class).convert(aLong)).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.to(Float.class).convert(aFloat)).isEqualTo(Float.valueOf(Float.MAX_VALUE));
+		assertThat(StringToNumberConverter.to(Double.class).convert(aDouble)).isEqualTo(Double.valueOf(Double.MAX_VALUE));
 	}
 
 	@Test
@@ -69,18 +66,12 @@ class StringToNumberConverterTest {
 		final String aFloat = "" + Float.MAX_VALUE;
 		final String aDouble = "" + Double.MAX_VALUE;
 
-		assertThat(StringToNumberConverter.to(byte.class).convert(aByte),
-				equalTo(Byte.valueOf(Byte.MAX_VALUE).byteValue()));
-		assertThat(StringToNumberConverter.to(short.class).convert(aShort),
-				equalTo(Short.valueOf(Short.MAX_VALUE).shortValue()));
-		assertThat(StringToNumberConverter.to(int.class).convert(anInteger),
-				equalTo(Integer.valueOf(Integer.MAX_VALUE).intValue()));
-		assertThat(StringToNumberConverter.to(long.class).convert(aLong),
-				equalTo(Long.valueOf(Long.MAX_VALUE).longValue()));
-		assertThat(StringToNumberConverter.to(float.class).convert(aFloat),
-				equalTo(Float.valueOf(Float.MAX_VALUE).floatValue()));
-		assertThat(StringToNumberConverter.to(double.class).convert(aDouble),
-				equalTo(Double.valueOf(Double.MAX_VALUE).doubleValue()));
+		assertThat(StringToNumberConverter.to(byte.class).convert(aByte)).isEqualTo(Byte.MAX_VALUE);
+		assertThat(StringToNumberConverter.to(short.class).convert(aShort)).isEqualTo(Short.MAX_VALUE);
+		assertThat(StringToNumberConverter.to(int.class).convert(anInteger)).isEqualTo(Integer.MAX_VALUE);
+		assertThat(StringToNumberConverter.to(long.class).convert(aLong)).isEqualTo(Long.MAX_VALUE);
+		assertThat(StringToNumberConverter.to(float.class).convert(aFloat)).isEqualTo(Float.MAX_VALUE);
+		assertThat(StringToNumberConverter.to(double.class).convert(aDouble)).isEqualTo(Double.MAX_VALUE);
 	}
 
 	@Test
@@ -93,16 +84,12 @@ class StringToNumberConverterTest {
 		final String aFloat = "" + Float.MAX_VALUE;
 		final String aDouble = "" + Double.MAX_VALUE;
 
-		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class, nf), equalTo(Byte.valueOf(Byte.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class, nf),
-				equalTo(Short.valueOf(Short.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class, nf),
-				equalTo(Integer.valueOf(Integer.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf), equalTo(Long.valueOf(Long.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aFloat, Float.class, nf),
-				equalTo(Float.valueOf(Float.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf),
-				equalTo(Double.valueOf(Double.MAX_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class, nf)).isEqualTo(Byte.valueOf(Byte.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class, nf)).isEqualTo(Short.valueOf(Short.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class, nf)).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf)).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aFloat, Float.class, nf)).isEqualTo(Float.valueOf(Float.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf)).isEqualTo(Double.valueOf(Double.MAX_VALUE));
 	}
 
 	@Test
@@ -114,14 +101,12 @@ class StringToNumberConverterTest {
 		final String aFloat = " " + Float.MAX_VALUE + " ";
 		final String aDouble = " " + Double.MAX_VALUE + " ";
 
-		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class), equalTo(Byte.valueOf(Byte.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class), equalTo(Short.valueOf(Short.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class),
-				equalTo(Integer.valueOf(Integer.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class), equalTo(Long.valueOf(Long.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aFloat, Float.class), equalTo(Float.valueOf(Float.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class),
-				equalTo(Double.valueOf(Double.MAX_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class)).isEqualTo(Byte.valueOf(Byte.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class)).isEqualTo(Short.valueOf(Short.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class)).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class)).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aFloat, Float.class)).isEqualTo(Float.valueOf(Float.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class)).isEqualTo(Double.valueOf(Double.MAX_VALUE));
 	}
 
 	@Test
@@ -134,16 +119,12 @@ class StringToNumberConverterTest {
 		final String aFloat = " " + Float.MAX_VALUE + " ";
 		final String aDouble = " " + Double.MAX_VALUE + " ";
 
-		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class, nf), equalTo(Byte.valueOf(Byte.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class, nf),
-				equalTo(Short.valueOf(Short.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class, nf),
-				equalTo(Integer.valueOf(Integer.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf), equalTo(Long.valueOf(Long.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aFloat, Float.class, nf),
-				equalTo(Float.valueOf(Float.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf),
-				equalTo(Double.valueOf(Double.MAX_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class, nf)).isEqualTo(Byte.valueOf(Byte.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class, nf)).isEqualTo(Short.valueOf(Short.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class, nf)).isEqualTo(Integer.valueOf(Integer.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf)).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aFloat, Float.class, nf)).isEqualTo(Float.valueOf(Float.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf)).isEqualTo(Double.valueOf(Double.MAX_VALUE));
 	}
 
 	@Test
@@ -158,8 +139,7 @@ class StringToNumberConverterTest {
 		assertShortEquals(aShort);
 		assertIntegerEquals(anInteger);
 		assertLongEquals(aLong);
-		assertThat(StringToNumberConverter.to(BigInteger.class).convert("0x" + aReallyBigInt),
-				equalTo(new BigInteger(aReallyBigInt, 16)));
+		assertThat(StringToNumberConverter.to(BigInteger.class).convert("0x" + aReallyBigInt)).isEqualTo(new BigInteger(aReallyBigInt, 16));
 	}
 
 	@Test
@@ -174,15 +154,14 @@ class StringToNumberConverterTest {
 		assertNegativeShortEquals(aShort);
 		assertNegativeIntegerEquals(anInteger);
 		assertNegativeLongEquals(aLong);
-		assertThat(StringToNumberConverter.to(BigInteger.class).convert("-0x" + aReallyBigInt),
-				equalTo(new BigInteger(aReallyBigInt, 16).negate()));
+		assertThat(StringToNumberConverter.to(BigInteger.class).convert("-0x" + aReallyBigInt)).isEqualTo(new BigInteger(aReallyBigInt, 16).negate());
 	}
 
 	@Test
 	void testParseBigDecimalNumber() {
 		final String bigDecimalAsString = "3.14159265358979323846";
 		final Number bigDecimal = StringToNumberConverter.to(BigDecimal.class).convert(bigDecimalAsString);
-		assertThat(bigDecimal, equalTo(new BigDecimal(bigDecimalAsString)));
+		assertThat(bigDecimal).isEqualTo(new BigDecimal(bigDecimalAsString));
 	}
 
 	@Test
@@ -191,7 +170,7 @@ class StringToNumberConverterTest {
 		final NumberFormat numberFormat = NumberFormat.getInstance(Locale.ENGLISH);
 		final Number bigDecimal = StringToNumberConverter.convertNumber(bigDecimalAsString, BigDecimal.class,
 				numberFormat);
-		assertThat(bigDecimal, equalTo(new BigDecimal(bigDecimalAsString)));
+		assertThat(bigDecimal).isEqualTo(new BigDecimal(bigDecimalAsString));
 	}
 
 	@Test
@@ -203,9 +182,8 @@ class StringToNumberConverterTest {
 		assertThrows(IllegalArgumentException.class, () -> StringToNumberConverter.convertNumber(aLong, Short.class));
 		assertThrows(IllegalArgumentException.class, () -> StringToNumberConverter.convertNumber(aLong, Integer.class));
 
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class), equalTo(Long.valueOf(Long.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class),
-				equalTo(Double.valueOf(Double.MAX_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class)).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class)).isEqualTo(Double.valueOf(Double.MAX_VALUE));
 	}
 
 	@Test
@@ -219,9 +197,8 @@ class StringToNumberConverterTest {
 
 		assertThrows(IllegalArgumentException.class, () -> StringToNumberConverter.convertNumber(aLong, Integer.class));
 
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class), equalTo(Long.valueOf(Long.MIN_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class),
-				equalTo(Double.valueOf(Double.MIN_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class)).isEqualTo(Long.valueOf(Long.MIN_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class)).isEqualTo(Double.valueOf(Double.MIN_VALUE));
 	}
 
 	@Test
@@ -239,9 +216,8 @@ class StringToNumberConverterTest {
 		assertThrows(IllegalArgumentException.class,
 				() -> StringToNumberConverter.convertNumber(aLong, Integer.class, nf));
 
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf), equalTo(Long.valueOf(Long.MAX_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf),
-				equalTo(Double.valueOf(Double.MAX_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf)).isEqualTo(Long.valueOf(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf)).isEqualTo(Double.valueOf(Double.MAX_VALUE));
 	}
 
 	@Test
@@ -259,43 +235,40 @@ class StringToNumberConverterTest {
 		assertThrows(IllegalArgumentException.class,
 				() -> StringToNumberConverter.convertNumber(aLong, Integer.class, nf));
 
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf), equalTo(Long.valueOf(Long.MIN_VALUE)));
-		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf),
-				equalTo(Double.valueOf(Double.MIN_VALUE)));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class, nf)).isEqualTo(Long.valueOf(Long.MIN_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aDouble, Double.class, nf)).isEqualTo(Double.valueOf(Double.MIN_VALUE));
 	}
 
 	private void assertLongEquals(final String aLong) {
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class).longValue(), equalTo(Long.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class).longValue()).isEqualTo(Long.MAX_VALUE);
 	}
 
 	private void assertIntegerEquals(final String anInteger) {
-		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class).intValue(),
-				equalTo(Integer.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class).intValue()).isEqualTo(Integer.MAX_VALUE);
 	}
 
 	private void assertShortEquals(final String aShort) {
-		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class).shortValue(), equalTo(Short.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class).shortValue()).isEqualTo(Short.MAX_VALUE);
 	}
 
 	private void assertByteEquals(final String aByte) {
-		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class).byteValue(), equalTo(Byte.MAX_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class).byteValue()).isEqualTo(Byte.MAX_VALUE);
 	}
 
 	private void assertNegativeLongEquals(final String aLong) {
-		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class).longValue(), equalTo(Long.MIN_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aLong, Long.class).longValue()).isEqualTo(Long.MIN_VALUE);
 	}
 
 	private void assertNegativeIntegerEquals(final String anInteger) {
-		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class).intValue(),
-				equalTo(Integer.MIN_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(anInteger, Integer.class).intValue()).isEqualTo(Integer.MIN_VALUE);
 	}
 
 	private void assertNegativeShortEquals(final String aShort) {
-		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class).shortValue(), equalTo(Short.MIN_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aShort, Short.class).shortValue()).isEqualTo(Short.MIN_VALUE);
 	}
 
 	private void assertNegativeByteEquals(final String aByte) {
-		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class).byteValue(), equalTo(Byte.MIN_VALUE));
+		assertThat(StringToNumberConverter.convertNumber(aByte, Byte.class).byteValue()).isEqualTo(Byte.MIN_VALUE);
 	}
 
 }

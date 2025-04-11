@@ -34,9 +34,9 @@ import java.util.Locale;
  */
 public abstract class AbstractJavaTimeConverter<S, T> implements Converter<S, T> {
 
-    protected Locale locale;
-
     protected DateTimeFormatter dateTimeFormatter;
+
+	private final Locale locale;
 
     protected AbstractJavaTimeConverter(final String formatPattern, final Locale locale) {
         this.locale = locale;
@@ -46,4 +46,9 @@ public abstract class AbstractJavaTimeConverter<S, T> implements Converter<S, T>
     public DateTimeFormatter getDateTimeFormatter() {
         return dateTimeFormatter;
     }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
 }

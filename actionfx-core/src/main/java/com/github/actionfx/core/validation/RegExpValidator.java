@@ -37,7 +37,7 @@ import com.github.actionfx.core.view.graph.ControlWrapper;
  */
 public class RegExpValidator extends AbstractRequiredValidator {
 
-    private Pattern pattern;
+	private final Pattern pattern;
 
     public RegExpValidator(final String message, final String regExp, final boolean required) {
         super(message, required);
@@ -49,8 +49,8 @@ public class RegExpValidator extends AbstractRequiredValidator {
             final ControlProperties controlProperty) {
         final Object value = controlWrapper.getValue(controlProperty);
         return ValidationResult.builder().addErrorMessageIf(getMessage(), controlWrapper.getWrapped(),
-                value instanceof String
-                        && !(StringUtils.isBlank((String) value) || pattern.matcher((String) value).matches()));
+                value instanceof String str
+                        && !(StringUtils.isBlank(str) || pattern.matcher(str).matches()));
     }
 
 }

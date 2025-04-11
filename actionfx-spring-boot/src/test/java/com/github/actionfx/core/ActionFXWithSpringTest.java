@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ class ActionFXWithSpringTest {
 		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(true).build();
 
 		// THEN
-		assertThat(actionFX.getBeanContainer(), instanceOf(SpringBeanContainer.class));
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(SpringBeanContainer.class);
 	}
 
 	@Test
@@ -56,6 +55,6 @@ class ActionFXWithSpringTest {
 		final ActionFX actionFX = ActionFX.builder().enableBeanContainerAutodetection(false).build();
 
 		// THEN
-		assertThat(actionFX.getBeanContainer(), instanceOf(DefaultActionFXBeanContainer.class));
+		assertThat(actionFX.getBeanContainer()).isInstanceOf(DefaultActionFXBeanContainer.class);
 	}
 }

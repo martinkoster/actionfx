@@ -23,7 +23,7 @@
  */
 package com.github.actionfx.core.test.app;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Abstract base class for test controller.

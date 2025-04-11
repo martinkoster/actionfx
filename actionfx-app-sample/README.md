@@ -4,7 +4,7 @@ This module contains application sample with and without Spring as bean containe
 
 Module | Description | API Documentation  
 ------ | ----------- | ----------------- 
-[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.0/actionfx-app-sample/index.html) 
+[actionfx-app-sample](README.md) | This module contains small sample applications how to use ActionFX with the default bean container using just the actionfx-core module and how to use it with a Spring bean container. | [Javadoc](https://martinkoster.github.io/actionfx/1.6.1/actionfx-app-sample/index.html) 
 
 This module contains the following demo applications:
 
@@ -25,7 +25,11 @@ The sample application features a simple book store, where you can browse a book
 
 The application itself can be run inside ActionFX default bean container without Spring or alternatively inside a Spring container. 
 
-For this simple application, we can use exactly the same application code. However, it is differently started from within different main application classes (refer to source code samples below). Using the same application code with and without Spring is possible in this case, because we only use Spring's dependency injection mechanism using the annotation `javax.inject.Inject` inside controller classes, which is understood by both ActionFX' default bean container and Spring.
+For this simple application, we can use exactly the same application code. However, it is differently started from
+within different main application classes (refer to source code samples below). Using the same application code with and
+without Spring is possible in this case, because we only use Spring's dependency injection mechanism using the
+annotation `jakarta.inject.Inject` inside controller classes, which is understood by both ActionFX' default bean
+container and Spring.
 
 As a further demo case, the sample application leverages ControlsFX' `org.controlsfx.control.CheckListView` for selecting book categories to display.
 
@@ -1136,6 +1140,7 @@ The most notable functionality inside this controller is:
   ```
   In this method, the validation result is computed and returned after calling method `actionFX.validate(this, false)`
   and the validation messages are displayed in a popup window.
+
   ![Validation App Popup](docs/images/validation-popup.png)
 
 Source Code can be found

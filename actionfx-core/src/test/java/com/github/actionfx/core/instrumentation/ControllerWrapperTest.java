@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.instrumentation;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ResourceBundle;
@@ -65,7 +63,7 @@ class ControllerWrapperTest {
 		wrapper.setView(view);
 
 		// THEN
-		assertThat(wrapper.getView(), sameInstance(view));
+		assertThat(wrapper.getView()).isSameAs(view);
 	}
 
 	@Test
@@ -78,7 +76,7 @@ class ControllerWrapperTest {
 		ControllerWrapper.setViewOn(controller, view);
 
 		// THEN
-		assertThat(ControllerWrapper.getViewFrom(controller), sameInstance(view));
+		assertThat(ControllerWrapper.getViewFrom(controller)).isSameAs(view);
 	}
 
 	@Test
@@ -107,8 +105,7 @@ class ControllerWrapperTest {
 		final Window window = ControllerWrapper.of(controller).getWindow();
 
 		// THEN
-		assertThat(window, notNullValue());
-		assertThat(window, sameInstance(stage));
+		assertThat(window).isNotNull().isSameAs(stage);
 	}
 
 	@Test
@@ -122,7 +119,7 @@ class ControllerWrapperTest {
 		final ResourceBundle bundle = ControllerWrapper.getResourceBundleFrom(controller);
 
 		// THEN
-		assertThat(bundle, sameInstance(resourceBundle));
+		assertThat(bundle).isSameAs(resourceBundle);
 	}
 
 	@Test
@@ -138,8 +135,7 @@ class ControllerWrapperTest {
 		final Scene nodeScene = ControllerWrapper.of(controller).getScene();
 
 		// THEN
-		assertThat(nodeScene, notNullValue());
-		assertThat(nodeScene, sameInstance(scene));
+		assertThat(nodeScene).isNotNull().isSameAs(scene);
 	}
 
 	@AFXController(viewId = "testId", fxml = "/testfxml/SampleView.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {

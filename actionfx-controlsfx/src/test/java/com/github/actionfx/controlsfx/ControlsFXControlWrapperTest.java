@@ -1,11 +1,6 @@
 package com.github.actionfx.controlsfx;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,11 +58,11 @@ class ControlsFXControlWrapperTest {
 		assertSupportsValues(wrapper, false);
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
-		assertThat(((TreeItem<String>) wrapper.getValue()).getValue(), equalTo("hello"));
+		assertThat(((TreeItem<String>) wrapper.getValue()).getValue()).isEqualTo("hello");
 		assertValuesAreEmpty(wrapper);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertThat(((TreeItem<String>) wrapper.getUserValue()).getValue(), equalTo("hello"));
+		assertThat(((TreeItem<String>) wrapper.getUserValue()).getValue()).isEqualTo("hello");
 	}
 
 	@Test
@@ -84,7 +79,7 @@ class ControlsFXControlWrapperTest {
 		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Collections.EMPTY_LIST);
+		assertUserValue(wrapper, Collections.emptyList());
 	}
 
 	@Test
@@ -118,7 +113,7 @@ class ControlsFXControlWrapperTest {
 		assertValues(wrapper, "Item 1", "Item 2", "Item 3");
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertUserValue(wrapper, Collections.EMPTY_LIST);
+		assertUserValue(wrapper, Collections.emptyList());
 	}
 
 	@Test
@@ -443,13 +438,13 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertThat(wrapper.getItems(), hasSize(1));
-		assertThat(wrapper.getItems().get(0), instanceOf(Item.class));
+		assertThat(wrapper.getItems()).hasSize(1);
+		assertThat(wrapper.getItems().get(0)).isInstanceOf(Item.class);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertThat(wrapper.getUserValue(), instanceOf(ObservableList.class));
-		assertThat((ObservableList<?>) wrapper.getItems(), hasSize(1));
-		assertThat(((ObservableList<?>) wrapper.getItems()).get(0), instanceOf(Item.class));
+		assertThat(wrapper.getUserValue()).isInstanceOf(ObservableList.class);
+		assertThat((ObservableList<?>) wrapper.getItems()).hasSize(1);
+		assertThat(((ObservableList<?>) wrapper.getItems()).get(0)).isInstanceOf(Item.class);
 	}
 
 	@Test
@@ -532,10 +527,10 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertThat(wrapper.getItems(), hasSize(2));
+		assertThat(wrapper.getItems()).hasSize(2);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertThat(wrapper.getUserValue(), instanceOf(ObservableList.class));
+		assertThat(wrapper.getUserValue()).isInstanceOf(ObservableList.class);
 	}
 
 	@Test
@@ -549,10 +544,10 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertThat(wrapper.getItems(), hasSize(2));
+		assertThat(wrapper.getItems()).hasSize(2);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertThat(wrapper.getUserValue(), instanceOf(ObservableList.class));
+		assertThat(wrapper.getUserValue()).isInstanceOf(ObservableList.class);
 	}
 
 	@Test
@@ -600,11 +595,11 @@ class ControlsFXControlWrapperTest {
 		assertSupportsSelection(wrapper, false);
 		assertSupportsMultiSelection(wrapper, false);
 		assertValue(wrapper, null);
-		assertThat(wrapper.getItems(), instanceOf(ObservableList.class));
-		assertThat((ObservableList<?>) wrapper.getItems(), hasSize(1));
+		assertThat(wrapper.getItems()).isInstanceOf(ObservableList.class);
+		assertThat((ObservableList<?>) wrapper.getItems()).hasSize(1);
 		assertSelectedValue(wrapper, null);
 		assertSelectedValuesAreEmpty(wrapper);
-		assertThat(wrapper.getUserValue(), instanceOf(ObservableList.class));
+		assertThat(wrapper.getUserValue()).isInstanceOf(ObservableList.class);
 	}
 
 	@Test
@@ -692,46 +687,48 @@ class ControlsFXControlWrapperTest {
 		assertUserValue(wrapper, Arrays.asList(Country.DE));
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <V> void assertValue(final ControlWrapper wrapper, final V expectedValue) {
-		assertThat(wrapper.getValue(), equalTo(expectedValue));
+		assertThat((V) wrapper.getValue()).isEqualTo(expectedValue);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <V> void assertValues(final ControlWrapper wrapper, final V... expectedValues) {
-		assertThat(wrapper.getItems(), contains(expectedValues));
+		assertThat(wrapper.getItems()).containsExactly(expectedValues);
 	}
 
 	private static <V> void assertValuesAreEmpty(final ControlWrapper wrapper) {
-		assertThat(wrapper.getItems(), hasSize(0));
+        assertThat(wrapper.getItems()).isEmpty();
 	}
 
 	private static void assertSupportsSelection(final ControlWrapper wrapper, final boolean expected) {
-		assertThat(wrapper.supportsSelection(), equalTo(expected));
+		assertThat(wrapper.supportsSelection()).isEqualTo(expected);
 	}
 
 	private static void assertSupportsMultiSelection(final ControlWrapper wrapper, final boolean expected) {
-		assertThat(wrapper.supportsMultiSelection(), equalTo(expected));
+		assertThat(wrapper.supportsMultiSelection()).isEqualTo(expected);
 	}
 
 	private static void assertSupportsValue(final ControlWrapper wrapper, final boolean expected) {
-		assertThat(wrapper.supportsValue(), equalTo(expected));
+		assertThat(wrapper.supportsValue()).isEqualTo(expected);
 	}
 
 	private static void assertSupportsValues(final ControlWrapper wrapper, final boolean expected) {
-		assertThat(wrapper.supportsItems(), equalTo(expected));
+		assertThat(wrapper.supportsItems()).isEqualTo(expected);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <V> void assertSelectedValue(final ControlWrapper wrapper, final V expectedValue) {
-		assertThat(wrapper.getSelectedValue(), equalTo(expectedValue));
+		assertThat((V) wrapper.getSelectedValue()).isEqualTo(expectedValue);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <V> void assertSelectedValues(final ControlWrapper wrapper, final V... expectedValues) {
-		assertThat(wrapper.getSelectedValues(), equalTo(Arrays.asList(expectedValues)));
+		assertThat(wrapper.getSelectedValues()).isEqualTo(Arrays.asList(expectedValues));
 	}
 
 	private static <V> void assertSelectedValuesAreEmpty(final ControlWrapper wrapper) {
-		assertThat(wrapper.getSelectedValues(), hasSize(0));
+        assertThat(wrapper.getSelectedValues()).isEmpty();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -743,16 +740,16 @@ class ControlsFXControlWrapperTest {
 		if (expectedValue != null && List.class.isAssignableFrom(expectedValue.getClass())) {
 			final List expectedValueList = (List) expectedValue;
 			if (expectedValueList.isEmpty()) {
-				assertThat(((List) actualValue).isEmpty(), equalTo(true));
+				assertThat(((List) actualValue)).isEmpty();
 			} else {
-				assertThat((List<Object>) actualValue, contains(expectedValueList.toArray()));
+				assertThat((List<Object>) actualValue).containsExactly(expectedValueList.toArray());
 			}
 		} else {
-			assertThat(actualValue, equalTo(expectedValue));
+			assertThat(actualValue).isEqualTo(expectedValue);
 		}
 	}
 
 	private static void assertUserValueIsNotSupported(final ControlWrapper wrapper) {
-		assertThat(wrapper.getUserValue(), nullValue());
+		assertThat(wrapper.getUserValue()).isNull();
 	}
 }

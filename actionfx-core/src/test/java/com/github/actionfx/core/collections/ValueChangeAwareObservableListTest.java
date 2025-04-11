@@ -23,15 +23,7 @@
  */
 package com.github.actionfx.core.collections;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -87,9 +79,8 @@ class ValueChangeAwareObservableListTest {
 	void testAddListenerAndValueChange_listChangeListenerIsFired() {
 		// GIVEN
 		final ObjectProperty<Change<String>> changeProperty = new SimpleObjectProperty<>(null);
-		final ListChangeListener<String> listener = change -> {
+		final ListChangeListener<String> listener = change ->
 			changeProperty.set((Change<String>) change);
-		};
 		list.addListener(listener);
 
 		// WHEN
@@ -103,17 +94,15 @@ class ValueChangeAwareObservableListTest {
 	void testAddListenerValueChange_invalidationListenerIsFired() {
 		// GIVEN
 		final ObjectProperty<Observable> valueProperty = new SimpleObjectProperty<>(null);
-		final InvalidationListener listener = observable -> {
-			valueProperty.set(observable);
-		};
+		final InvalidationListener listener = valueProperty::set;
 		list.addListener(listener);
 
 		// WHEN
 		propertyTwo.set("hello");
 
 		// THEN
-		assertThat(valueProperty.get(), notNullValue());
-		assertThat(valueProperty.get(), sameInstance(propertyTwo));
+		assertThat(valueProperty.get()).isNotNull();
+		assertThat(valueProperty.get()).isSameAs(propertyTwo);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -121,9 +110,8 @@ class ValueChangeAwareObservableListTest {
 	void testRemoveListenerAndValueChange_listChangeListenerIsFired() {
 		// GIVEN
 		final ObjectProperty<Change<String>> changeProperty = new SimpleObjectProperty<>(null);
-		final ListChangeListener<String> listener = change -> {
+		final ListChangeListener<String> listener = change ->
 			changeProperty.set((Change<String>) change);
-		};
 		list.addListener(listener);
 		list.removeListener(listener);
 
@@ -131,16 +119,14 @@ class ValueChangeAwareObservableListTest {
 		propertyThree.set("hello");
 
 		// THEN (listener not fired, it has been removed again)
-		assertThat(changeProperty.get(), nullValue());
+		assertThat(changeProperty.get()).isNull();
 	}
 
 	@Test
 	void testRemoveListenerValueChange_invalidationListenerIsFired() {
 		// GIVEN
 		final ObjectProperty<Observable> valueProperty = new SimpleObjectProperty<>(null);
-		final InvalidationListener listener = observable -> {
-			valueProperty.set(observable);
-		};
+		final InvalidationListener listener = valueProperty::set;
 		list.addListener(listener);
 		list.removeListener(listener);
 
@@ -148,23 +134,23 @@ class ValueChangeAwareObservableListTest {
 		propertyTwo.set("hello");
 
 		// THEN (listener not fired, it has been removed again)
-		assertThat(valueProperty.get(), nullValue());
+		assertThat(valueProperty.get()).isNull();
 	}
 
 	private void assertChange(final Change<String> change, final int expIndex,
 			final ObservableValue<String> expObservable, final String oldValue, final String newValue) {
-		assertThat(change, notNullValue());
-		assertThat(change, instanceOf(SingleValueChange.class));
+		assertThat(change).isNotNull();
+		assertThat(change).isInstanceOf(SingleValueChange.class);
 		final SingleValueChange<String> svc = (SingleValueChange<String>) change;
 		if (svc.next()) {
-			assertThat(svc.getObservableValue(), sameInstance(expObservable));
-			assertThat(svc.getOldValue(), equalTo(oldValue));
-			assertThat(svc.getNewValue(), equalTo(newValue));
-			assertThat(svc.getFrom(), equalTo(expIndex));
-			assertThat(svc.getTo(), equalTo(expIndex + 1));
-			assertThat(svc.wasUpdated(), equalTo(true));
-			assertThat(svc.wasAdded(), equalTo(false));
-			assertThat(svc.wasRemoved(), equalTo(false));
+			assertThat(svc.getObservableValue()).isSameAs(expObservable);
+			assertThat(svc.getOldValue()).isEqualTo(oldValue);
+			assertThat(svc.getNewValue()).isEqualTo(newValue);
+			assertThat(svc.getFrom()).isEqualTo(expIndex);
+			assertThat(svc.getTo()).isEqualTo(expIndex + 1);
+			assertThat(svc.wasUpdated()).isTrue();
+			assertThat(svc.wasAdded()).isFalse();
+			assertThat(svc.wasRemoved()).isFalse();
 		} else {
 			fail("SingleValueChange did not contain any change!");
 		}
@@ -177,7 +163,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.addAll("hello", "world"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -187,7 +173,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.setAll("hello", "world"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -200,7 +186,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.setAll(collection));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -210,7 +196,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.retainAll("hello", "world"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -220,17 +206,17 @@ class ValueChangeAwareObservableListTest {
 				() -> list.remove(0, 2));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
 	void testFiltered() {
 		// WHEN
-		final FilteredList<String> result = list.filtered(str -> str.equals("one"));
+		final FilteredList<String> result = list.filtered("one"::equals);
 
 		// THEN
-		assertThat(result, hasSize(1));
-		assertThat(result.get(0), equalTo("one"));
+		assertThat(result).hasSize(1);
+		assertThat(result.get(0)).isEqualTo("one");
 	}
 
 	@Test
@@ -239,7 +225,7 @@ class ValueChangeAwareObservableListTest {
 		final SortedList<String> result = list.sorted((str1, str2) -> str2.compareTo(str1));
 
 		// THEN
-		assertThat(result, contains("two", "three", "one"));
+		assertThat(result).containsExactly("two", "three", "one");
 	}
 
 	@Test
@@ -248,27 +234,27 @@ class ValueChangeAwareObservableListTest {
 		final SortedList<String> result = list.sorted();
 
 		// THEN
-		assertThat(result, contains("one", "three", "two"));
+		assertThat(result).containsExactly("one", "three", "two");
 	}
 
 	@Test
 	void testsize() {
 		// WHEN and THEN
-		assertThat(list.size(), equalTo(3));
+		assertThat(list.size()).isEqualTo(3); //NOSONAR size is "method under test"
 	}
 
 	@Test
 	void testIsEmpty() {
 		// WHEN and THEN
-		assertThat(list.isEmpty(), equalTo(false));
-		assertThat(new ValueChangeAwareObservableList<>(Collections.emptyList()).isEmpty(), equalTo(true));
+		assertThat(list.isEmpty()).isFalse(); //NOSONAR isEmpty is "method under test"
+		assertThat(new ValueChangeAwareObservableList<>(Collections.emptyList()).isEmpty()).isTrue(); //NOSONAR isEmpty is "method under test"
 	}
 
 	@Test
 	void testContains() {
 		// WHEN and THEN
-		assertThat(list.contains("two"), equalTo(true));
-		assertThat(list.contains("four"), equalTo(false));
+		assertThat(list.contains("two")).isTrue(); //NOSONAR contains is "method under test"
+		assertThat(list.contains("four")).isFalse(); //NOSONAR contains is "method under test"
 	}
 
 	@Test
@@ -277,10 +263,10 @@ class ValueChangeAwareObservableListTest {
 		final Iterator<String> it = list.iterator();
 
 		// THEN
-		assertThat(it, notNullValue());
-		assertThat(it.next(), equalTo("one"));
-		assertThat(it.next(), equalTo("two"));
-		assertThat(it.next(), equalTo("three"));
+		assertThat(it).isNotNull();
+		assertThat(it.next()).isEqualTo("one");
+		assertThat(it.next()).isEqualTo("two");
+		assertThat(it.next()).isEqualTo("three");
 	}
 
 	@Test
@@ -289,10 +275,10 @@ class ValueChangeAwareObservableListTest {
 		final Object[] arr = list.toArray();
 
 		// THEN
-		assertThat(arr.length, equalTo(3));
-		assertThat(arr[0], equalTo("one"));
-		assertThat(arr[1], equalTo("two"));
-		assertThat(arr[2], equalTo("three"));
+		assertThat(arr).hasSize(3);
+		assertThat(arr[0]).isEqualTo("one");
+		assertThat(arr[1]).isEqualTo("two");
+		assertThat(arr[2]).isEqualTo("three");
 	}
 
 	@Test
@@ -301,10 +287,10 @@ class ValueChangeAwareObservableListTest {
 		final String[] arr = list.toArray(new String[3]);
 
 		// THEN
-		assertThat(arr.length, equalTo(3));
-		assertThat(arr[0], equalTo("one"));
-		assertThat(arr[1], equalTo("two"));
-		assertThat(arr[2], equalTo("three"));
+		assertThat(arr).hasSize(3);
+		assertThat(arr[0]).isEqualTo("one");
+		assertThat(arr[1]).isEqualTo("two");
+		assertThat(arr[2]).isEqualTo("three");
 	}
 
 	@Test
@@ -314,7 +300,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.add("hello"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -324,14 +310,14 @@ class ValueChangeAwareObservableListTest {
 				() -> list.remove("hello"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
 	void containsAll() {
 		// WHEN
-		assertThat(list.containsAll(Arrays.asList("one", "two", "three")), equalTo(true));
-		assertThat(list.containsAll(Arrays.asList("one", "four")), equalTo(false));
+		assertThat(list.containsAll(Arrays.asList("one", "two", "three"))).isTrue(); //NOSONAR containsAll is "method under test"
+		assertThat(list.containsAll(Arrays.asList("one", "four"))).isFalse(); //NOSONAR containsAll is "method under test"
 	}
 
 	@Test
@@ -344,7 +330,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.addAll(collection));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -357,7 +343,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.addAll(0, collection));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -370,7 +356,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.removeAll(collection));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -383,7 +369,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.retainAll(collection));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 
 	}
 
@@ -397,7 +383,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.replaceAll(unaryOperator));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -406,10 +392,10 @@ class ValueChangeAwareObservableListTest {
 		final Object[] arr = list.toArray(num -> new String[3]);
 
 		// THEN
-		assertThat(arr.length, equalTo(3));
-		assertThat(arr[0], equalTo("one"));
-		assertThat(arr[1], equalTo("two"));
-		assertThat(arr[2], equalTo("three"));
+		assertThat(arr).hasSize(3);
+		assertThat(arr[0]).isEqualTo("one");
+		assertThat(arr[1]).isEqualTo("two");
+		assertThat(arr[2]).isEqualTo("three");
 	}
 
 	@Test
@@ -420,7 +406,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.sort(comparator));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -429,29 +415,29 @@ class ValueChangeAwareObservableListTest {
 		final UnsupportedOperationException ex = assertThrows(UnsupportedOperationException.class, () -> list.clear());
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
 	void testEquals() {
 		// WHEN and THEN
-		assertThat(list.equals(Arrays.asList("one", "two", "three")), equalTo(true));
-		assertThat(list.equals(Arrays.asList("one", "two")), equalTo(false));
+		assertThat(list.equals(Arrays.asList("one", "two", "three"))).isTrue(); //NOSONAR equals is "method under test"
+		assertThat(list.equals(Arrays.asList("one", "two"))).isFalse(); //NOSONAR equals is "method under test"
 	}
 
 	@Test
 	void testHashCode() {
 		// WHEN and THEN
-		assertThat(list.hashCode(), equalTo(Arrays.asList("one", "two", "three").hashCode()));
-		assertThat(list.hashCode(), not(equalTo(Arrays.asList("one", "two").hashCode())));
+		assertThat(list).hasSameHashCodeAs(Arrays.asList("one", "two", "three"));
+		assertThat(list.hashCode()).isNotEqualTo(Arrays.asList("one", "two").hashCode());
 	}
 
 	@Test
 	void testGet() {
 		// WHEN and THEN
-		assertThat(list.get(0), equalTo("one"));
-		assertThat(list.get(1), equalTo("two"));
-		assertThat(list.get(2), equalTo("three"));
+		assertThat(list.get(0)).isEqualTo("one");
+		assertThat(list.get(1)).isEqualTo("two");
+		assertThat(list.get(2)).isEqualTo("three");
 	}
 
 	@Test
@@ -461,7 +447,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.set(0, "hello"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -471,7 +457,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.add(0, "hello"));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -482,7 +468,7 @@ class ValueChangeAwareObservableListTest {
 				() -> list.removeIf(predicate));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
@@ -491,21 +477,21 @@ class ValueChangeAwareObservableListTest {
 				() -> list.remove(0));
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("The list is immutable!"));
+		assertThat(ex.getMessage()).isEqualTo("The list is immutable!");
 	}
 
 	@Test
 	void testIndexOf() {
 		// WHEN and THEN
-		assertThat(list.indexOf("two"), equalTo(1));
-		assertThat(list.indexOf("four"), equalTo(-1));
+		assertThat(list.indexOf("two")).isEqualTo(1);
+		assertThat(list.indexOf("four")).isEqualTo(-1);
 	}
 
 	@Test
 	void testLastIndexOf() {
 		// WHEN and THEN
-		assertThat(list.lastIndexOf("two"), equalTo(1));
-		assertThat(list.lastIndexOf("four"), equalTo(-1));
+		assertThat(list.lastIndexOf("two")).isEqualTo(1);
+		assertThat(list.lastIndexOf("four")).isEqualTo(-1);
 	}
 
 	@Test
@@ -514,10 +500,10 @@ class ValueChangeAwareObservableListTest {
 		final ListIterator<String> it = list.listIterator();
 
 		// THEN
-		assertThat(it, notNullValue());
-		assertThat(it.next(), equalTo("one"));
-		assertThat(it.next(), equalTo("two"));
-		assertThat(it.next(), equalTo("three"));
+		assertThat(it).isNotNull();
+		assertThat(it.next()).isEqualTo("one");
+		assertThat(it.next()).isEqualTo("two");
+		assertThat(it.next()).isEqualTo("three");
 	}
 
 	@Test
@@ -526,29 +512,29 @@ class ValueChangeAwareObservableListTest {
 		final ListIterator<String> it = list.listIterator(1);
 
 		// THEN
-		assertThat(it, notNullValue());
-		assertThat(it.next(), equalTo("two"));
-		assertThat(it.next(), equalTo("three"));
+		assertThat(it).isNotNull();
+		assertThat(it.next()).isEqualTo("two");
+		assertThat(it.next()).isEqualTo("three");
 	}
 
 	@Test
 	void testSubList() {
-		assertThat(list.subList(1, 3), contains("two", "three"));
+		assertThat(list.subList(1, 3)).containsExactly("two", "three");
 	}
 
 	@Test
 	void testSpliterator() {
-		assertThat(list.spliterator(), notNullValue());
+		assertThat(list.spliterator()).isNotNull();
 	}
 
 	@Test
 	void stream() {
-		assertThat(list.stream(), notNullValue());
+		assertThat(list.stream()).isNotNull();
 	}
 
 	@Test
 	void parallelStream() {
-		assertThat(list.parallelStream(), notNullValue());
+		assertThat(list.parallelStream()).isNotNull();
 	}
 
 }

@@ -23,7 +23,7 @@
  */
 package com.github.actionfx.core.test;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Test class carrying a @PostConstruct annotation, which is again derived from
@@ -36,7 +36,7 @@ public class ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation
 		extends ClassWithPostConstructAnnotation {
 
 	@SomeFieldAnnotation("2")
-	private boolean ininitialized2Invoked = false;
+	private boolean ininitialized2Invoked;
 
 	@PostConstruct
 	public void initialize2() {

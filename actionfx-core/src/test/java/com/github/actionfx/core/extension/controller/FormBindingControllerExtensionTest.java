@@ -23,12 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
@@ -108,12 +103,11 @@ class FormBindingControllerExtensionTest {
         // THEN
         controller.modelWithNameBasedBinding.set(model);
 
-        assertThat(controller.customerFirstNameControl.getText(), equalTo("John"));
-        assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
-        assertThat(controller.customerCountryControl.getValue(), equalTo("USA"));
-        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(),
-                contains("Item 1", "Item 2"));
-        assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
+		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("John");
+		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
+		assertThat(controller.customerCountryControl.getValue()).isEqualTo("USA");
+		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).containsExactly("Item 1", "Item 2");
+        assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
 
         // check binding from control side by entering values into controls
         controller.customerFirstNameControl.setText("Joe");
@@ -122,11 +116,11 @@ class FormBindingControllerExtensionTest {
         controller.customerSelectedProductsControl.getSelectionModel().select("Item 3");
         controller.customerTermsAndConditionsControl.setSelected(false);
 
-        assertThat(model.getFirstName(), equalTo("Joe"));
-        assertThat(model.getLastName(), equalTo("Dalton"));
-        assertThat(model.getCountry(), equalTo("France"));
-        assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
-        assertThat(model.isTermsAndConditions(), equalTo(false));
+		assertThat(model.getFirstName()).isEqualTo("Joe");
+		assertThat(model.getLastName()).isEqualTo("Dalton");
+		assertThat(model.getCountry()).isEqualTo("France");
+		assertThat(model.getSelectedProducts()).containsExactly("Item 1", "Item 2", "Item 3");
+        assertThat(model.isTermsAndConditions()).isFalse();
 
         // check binding from model side by changing values in the model
         model.setFirstName("Jane");
@@ -135,11 +129,11 @@ class FormBindingControllerExtensionTest {
         model.getSelectedProducts().clear();
         model.setTermsAndConditions(true);
 
-        assertThat(controller.customerFirstNameControl.getText(), equalTo("Jane"));
-        assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
-        assertThat(controller.customerCountryControl.getValue(), equalTo("Italy"));
-        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(), hasSize(0));
-        assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
+		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("Jane");
+		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
+		assertThat(controller.customerCountryControl.getValue()).isEqualTo("Italy");
+        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).isEmpty();
+        assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
     }
 
     @Test
@@ -154,15 +148,13 @@ class FormBindingControllerExtensionTest {
 
         // THEN
         controller.modelWithMappingBasedBinding.set(model);
-        assertThat(controller.customerFirstNameControl.getText(), equalTo("John"));
-        assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
-        assertThat(controller.customerCountryControl.getValue(), equalTo("USA"));
-        assertThat(controller.customerSelectedProductsControl.getItems(),
-                contains("Item 1", "Item 2", "Item 3", "Item 4", "Item 5"));
-        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(),
-                contains("Item 1", "Item 2"));
-        assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
-        assertThat(controller.localDateTimeTextField.getText(), equalTo("05.09.2021 13:05"));
+		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("John");
+		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
+		assertThat(controller.customerCountryControl.getValue()).isEqualTo("USA");
+		assertThat(controller.customerSelectedProductsControl.getItems()).containsExactly("Item 1", "Item 2", "Item 3", "Item 4", "Item 5");
+		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).containsExactly("Item 1", "Item 2");
+        assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
+		assertThat(controller.localDateTimeTextField.getText()).isEqualTo("05.09.2021 13:05");
 
         // check binding from control side by entering values into controls
         controller.customerFirstNameControl.setText("Joe");
@@ -172,12 +164,12 @@ class FormBindingControllerExtensionTest {
         controller.customerTermsAndConditionsControl.setSelected(false);
         controller.localDateTimeTextField.setText("05.10.2022 15:10");
 
-        assertThat(model.getFirstName(), equalTo("Joe"));
-        assertThat(model.getLastName(), equalTo("Dalton"));
-        assertThat(model.getCountry(), equalTo("France"));
-        assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
-        assertThat(model.isTermsAndConditions(), equalTo(false));
-        assertThat(model.getLocalDateTime(), equalTo(LocalDateTime.of(2022, 10, 5, 15, 10)));
+		assertThat(model.getFirstName()).isEqualTo("Joe");
+		assertThat(model.getLastName()).isEqualTo("Dalton");
+		assertThat(model.getCountry()).isEqualTo("France");
+		assertThat(model.getSelectedProducts()).containsExactly("Item 1", "Item 2", "Item 3");
+        assertThat(model.isTermsAndConditions()).isFalse();
+		assertThat(model.getLocalDateTime()).isEqualTo(LocalDateTime.of(2022, 10, 5, 15, 10));
 
         // check binding from model side by changing values in the model
         model.setFirstName("Jane");
@@ -187,12 +179,12 @@ class FormBindingControllerExtensionTest {
         model.setTermsAndConditions(true);
         model.setLocalDateTime(LocalDateTime.of(2023, 11, 10, 16, 9));
 
-        assertThat(controller.customerFirstNameControl.getText(), equalTo("Jane"));
-        assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
-        assertThat(controller.customerCountryControl.getValue(), equalTo("Italy"));
-        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(), hasSize(0));
-        assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
-        assertThat(controller.localDateTimeTextField.getText(), equalTo("10.11.2023 16:09"));
+		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("Jane");
+		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
+		assertThat(controller.customerCountryControl.getValue()).isEqualTo("Italy");
+        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).isEmpty();
+        assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
+		assertThat(controller.localDateTimeTextField.getText()).isEqualTo("10.11.2023 16:09");
     }
 
     @Test
@@ -246,15 +238,15 @@ class FormBindingControllerExtensionTest {
         assertControlHasNoValidationError(controller._view, controller.customerTermsAndConditionsControl);
         assertControlHasNoValidationError(controller._view, controller.localDateTimeTextField);
 
-        // check values in bound instance
-        assertThat(model.getFirstName(), equalTo("Joe"));
-        assertThat(model.getLastName(), equalTo("Dalton"));
-        assertThat(model.getEmail(), equalTo("joe.dalton@gmail.com"));
-        assertThat(model.getAge(), equalTo(18.0));
-        assertThat(model.getCountry(), equalTo("France"));
-        assertThat(model.getSelectedProducts(), contains("Item 3"));
-        assertThat(model.isTermsAndConditions(), equalTo(true));
-        assertThat(model.getLocalDateTime(), equalTo(LocalDateTime.of(2065, 10, 5, 15, 10)));
+		// check values in bound instance
+		assertThat(model.getFirstName()).isEqualTo("Joe");
+		assertThat(model.getLastName()).isEqualTo("Dalton");
+		assertThat(model.getEmail()).isEqualTo("joe.dalton@gmail.com");
+		assertThat(model.getAge()).isEqualTo(18.0);
+		assertThat(model.getCountry()).isEqualTo("France");
+		assertThat(model.getSelectedProducts()).containsExactly("Item 3");
+        assertThat(model.isTermsAndConditions()).isTrue();
+		assertThat(model.getLocalDateTime()).isEqualTo(LocalDateTime.of(2065, 10, 5, 15, 10));
     }
 
     @Test
@@ -272,21 +264,19 @@ class FormBindingControllerExtensionTest {
 
         // THEN
         controller.modelWithNameBasedBinding.set(model1);
-        assertThat(controller.customerFirstNameControl.getText(), equalTo("John"));
-        assertThat(controller.customerLastNameControl.getText(), equalTo("Doe"));
-        assertThat(controller.customerCountryControl.getValue(), equalTo("USA"));
-        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(),
-                contains("Item 1", "Item 2"));
-        assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(true));
+		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("John");
+		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Doe");
+		assertThat(controller.customerCountryControl.getValue()).isEqualTo("USA");
+		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).containsExactly("Item 1", "Item 2");
+        assertThat(controller.customerTermsAndConditionsControl.isSelected()).isTrue();
 
         // change to a different model
         controller.modelWithNameBasedBinding.set(model2);
-        assertThat(controller.customerFirstNameControl.getText(), equalTo("Joe"));
-        assertThat(controller.customerLastNameControl.getText(), equalTo("Dalton"));
-        assertThat(controller.customerCountryControl.getValue(), equalTo("France"));
-        assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems(),
-                contains("Item 3", "Item 4", "Item 5"));
-        assertThat(controller.customerTermsAndConditionsControl.isSelected(), equalTo(false));
+		assertThat(controller.customerFirstNameControl.getText()).isEqualTo("Joe");
+		assertThat(controller.customerLastNameControl.getText()).isEqualTo("Dalton");
+		assertThat(controller.customerCountryControl.getValue()).isEqualTo("France");
+		assertThat(controller.customerSelectedProductsControl.getSelectionModel().getSelectedItems()).containsExactly("Item 3", "Item 4", "Item 5");
+        assertThat(controller.customerTermsAndConditionsControl.isSelected()).isFalse();
     }
 
     @Test
@@ -298,8 +288,8 @@ class FormBindingControllerExtensionTest {
         // WHEN
         final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
-        // THEN
-        assertThat(ex.getMessage(), containsString("is annotated by @AFXFormBinding, but value is null!"));
+		// THEN
+		assertThat(ex.getMessage()).contains("is annotated by @AFXFormBinding, but value is null!");
     }
 
     @Test
@@ -311,9 +301,8 @@ class FormBindingControllerExtensionTest {
         // WHEN
         final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
-        // THEN
-        assertThat(ex.getMessage(), containsString(
-                "is annotated by @AFXFormBinding, is not of expected type javafx.beans.property.ObjectProperty!"));
+		// THEN
+		assertThat(ex.getMessage()).contains("is annotated by @AFXFormBinding, is not of expected type javafx.beans.property.ObjectProperty!");
     }
 
     private CustomerModel createCustomerModel(final String firstName, final String lastName, final String country,
@@ -331,14 +320,14 @@ class FormBindingControllerExtensionTest {
     private static void assertControlHasValidationError(final View view, final Control control,
             final String expectedValidationMessage) {
         final Optional<ValidationMessage> vmOpt = getValidationMessage(view, control);
-        assertThat(vmOpt.get(), notNullValue());
-        assertThat(vmOpt.get().getStatus(), equalTo(ValidationStatus.ERROR));
-        assertThat(vmOpt.get().getText(), equalTo(expectedValidationMessage));
+		assertThat(vmOpt.get()).isNotNull();
+		assertThat(vmOpt.get().getStatus()).isEqualTo(ValidationStatus.ERROR);
+		assertThat(vmOpt.get().getText()).isEqualTo(expectedValidationMessage);
     }
 
     private static void assertControlHasNoValidationError(final View view, final Control control) {
         final Optional<ValidationMessage> vmOpt = getValidationMessage(view, control);
-        assertThat(vmOpt.isEmpty(), equalTo(true));
+        assertThat(vmOpt).isNotPresent();
     }
 
     private static Optional<ValidationMessage> getValidationMessage(final View view, final Control control) {

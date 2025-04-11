@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.appfactory.config;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,14 +50,11 @@ class ControllerFactoryConfigTest {
         cfg.setRelativeFXMLResourcesDirectory("src/main/resources");
         cfg.setControllerPackageName("com.github.actionfx.appfactory.controller");
 
-        // WHEN and THEN
-        assertThat(cfg.getAbsoluteJavaSourceDirectory().replaceAll("\\\\", "/"),
-                equalTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/java"));
-        assertThat(cfg.getAbsoluteFXMLResourcesDirectory().replaceAll("\\\\", "/"),
-                equalTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/resources"));
-        assertThat(cfg.getAbsoluteControllerDirectory().replaceAll("\\\\", "/"),
-                equalTo(tmpFolder.toString().replaceAll("\\\\", "/")
-                        + "/src/main/java/com/github/actionfx/appfactory/controller"));
+		// WHEN and THEN
+		assertThat(cfg.getAbsoluteJavaSourceDirectory().replaceAll("\\\\", "/")).isEqualTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/java");
+		assertThat(cfg.getAbsoluteFXMLResourcesDirectory().replaceAll("\\\\", "/")).isEqualTo(tmpFolder.toString().replaceAll("\\\\", "/") + "/src/main/resources");
+		assertThat(cfg.getAbsoluteControllerDirectory().replaceAll("\\\\", "/")).isEqualTo(tmpFolder.toString().replaceAll("\\\\", "/")
+				+ "/src/main/java/com/github/actionfx/appfactory/controller");
     }
 
 }

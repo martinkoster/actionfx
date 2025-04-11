@@ -127,4 +127,8 @@ public class ParentView extends AbstractBindingView {
         return super.equals(obj);
     }
 
+    @Override
+    protected final void finalize() { // NOSONAR fix Spotbugs finding "CT_CONSTRUCTOR_THROW"
+        // do nothing - fix Spotbugs finding "CT_CONSTRUCTOR_THROW"
+    }
 }

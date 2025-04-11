@@ -23,7 +23,7 @@
  */
 package com.github.actionfx.core.test;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Test class that has a @PostConstruct annotation
@@ -34,7 +34,7 @@ import javax.annotation.PostConstruct;
 public class ClassWithPostConstructAnnotation {
 
 	@SomeFieldAnnotation("1")
-	private boolean ininitialized1Invoked = false;
+	private boolean ininitialized1Invoked;
 
 	@PostConstruct
 	public void initialize1() {

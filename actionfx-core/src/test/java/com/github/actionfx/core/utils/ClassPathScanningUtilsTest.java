@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
@@ -50,9 +48,9 @@ class ClassPathScanningUtilsTest {
 				SomeAnnotation.class);
 
 		// THEN
-		assertThat(classList.size(), equalTo(2));
-		assertThat(classList,
-				hasItems(equalTo(ClassWithSomeAnnotation.class), equalTo(AnotherClassWithSomeAnnotation.class)));
+		assertThat(classList).hasSize(2)
+				.anyMatch(clazz -> clazz.equals(ClassWithSomeAnnotation.class))
+				.anyMatch(clazz -> clazz.equals(AnotherClassWithSomeAnnotation.class));
 	}
 
 }

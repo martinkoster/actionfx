@@ -35,7 +35,6 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javafx.beans.InvalidationListener;
@@ -79,7 +78,7 @@ public class ValueChangeAwareObservableList<E> implements ObservableList<E> {
 
     public ValueChangeAwareObservableList(final List<ObservableValue<E>> observableValues) {
         this.delegateObservableList = FXCollections.observableArrayList(
-                observableValues.stream().map(ObservableValue::getValue).collect(Collectors.toList()));
+                observableValues.stream().map(ObservableValue::getValue).toList());
         this.observableValues = observableValues;
         valueChangeListener = (observable, oldValue, newValue) -> {
             notifyInvalidationListener(observable);

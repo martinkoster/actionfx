@@ -23,11 +23,7 @@
  */
 package com.github.actionfx.spring.container;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -108,8 +104,7 @@ class SpringBeanContainerTest {
 		verify(registry, times(6)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
 		final List<String> beanNames = beanNameCaptor.getAllValues();
 		final List<BeanDefinition> beanDefinitions = beanDefinitionCaptor.getAllValues();
-		assertThat(beanNames, contains("mainController", "mainView", "prototypeScopedController", "prototypeView",
-				"viewWithButtonController", "viewWithButton"));
+		assertThat(beanNames).containsExactly("mainController", "mainView", "prototypeScopedController", "prototypeView", "viewWithButtonController", "viewWithButton");
 		assertBeanDefinitionFor(beanDefinitions.get(0), MainController.class, true, false);
 		assertBeanDefinitionFor(beanDefinitions.get(1), View.class, true, false);
 		assertBeanDefinitionFor(beanDefinitions.get(2), PrototypeScopedController.class, false, true);
@@ -124,7 +119,7 @@ class SpringBeanContainerTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> container.runComponentScan(SampleApp.class.getPackageName()));
 
-		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+		assertThat(ex.getMessage()).contains("Spring context is not available yet!");
 	}
 
 	@Test
@@ -137,7 +132,7 @@ class SpringBeanContainerTest {
 
 		// THEN
 		verify(registry, times(1)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
-		assertThat(beanNameCaptor.getValue(), equalTo("mainController"));
+		assertThat(beanNameCaptor.getValue()).isEqualTo("mainController");
 		assertBeanDefinitionFor(beanDefinitionCaptor.getValue(), MainController.class, true, true);
 	}
 
@@ -163,9 +158,9 @@ class SpringBeanContainerTest {
 
 		// THEN
 		verify(registry, times(2)).registerBeanDefinition(beanNameCaptor.capture(), beanDefinitionCaptor.capture());
-		assertThat(beanNameCaptor.getAllValues().get(0), equalTo("mainController"));
+		assertThat(beanNameCaptor.getAllValues().get(0)).isEqualTo("mainController");
 		assertBeanDefinitionFor(beanDefinitionCaptor.getAllValues().get(0), MainController.class, true, false);
-		assertThat(beanNameCaptor.getAllValues().get(1), equalTo("mainView"));
+		assertThat(beanNameCaptor.getAllValues().get(1)).isEqualTo("mainView");
 	}
 
 	@Test
@@ -181,7 +176,7 @@ class SpringBeanContainerTest {
 
 		// THEN
 		verify(registry, times(2)).registerBeanDefinition(nameCaptor.capture(), any());
-		assertThat(nameCaptor.getAllValues(), contains("mainController", "mainView"));
+		assertThat(nameCaptor.getAllValues()).containsExactly("mainController", "mainView");
 	}
 
 	@Test
@@ -194,7 +189,7 @@ class SpringBeanContainerTest {
 				() -> container.addControllerBeanDefinition(NonController.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("is not annotated by @AFXController!"));
+		assertThat(ex.getMessage()).contains("is not annotated by @AFXController!");
 	}
 
 	@Test
@@ -205,7 +200,7 @@ class SpringBeanContainerTest {
 		when(appContext.getBean(ArgumentMatchers.eq("mainController"))).thenReturn(controller);
 
 		// WHEN and THEN
-		assertThat(container.getBean("mainController"), sameInstance(controller));
+		assertThat((Object) container.getBean("mainController")).isSameAs(controller);
 		verify(appContext, times(1)).getBean(ArgumentMatchers.eq("mainController"));
 	}
 
@@ -215,7 +210,7 @@ class SpringBeanContainerTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> container.getBean("mainController"));
 
-		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+		assertThat(ex.getMessage()).contains("Spring context is not available yet!");
 	}
 
 	@Test
@@ -226,7 +221,7 @@ class SpringBeanContainerTest {
 		when(appContext.getBean(ArgumentMatchers.eq(MainController.class))).thenReturn(controller);
 
 		// WHEN and THEN
-		assertThat(container.getBean(MainController.class), sameInstance(controller));
+		assertThat((Object) container.getBean(MainController.class)).isSameAs(controller);
 		verify(appContext, times(1)).getBean(ArgumentMatchers.eq(MainController.class));
 	}
 
@@ -236,14 +231,14 @@ class SpringBeanContainerTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> container.getBean(MainController.class));
 
-		assertThat(ex.getMessage(), containsString("Spring context is not available yet!"));
+		assertThat(ex.getMessage()).contains("Spring context is not available yet!");
 	}
 
 	private void assertBeanDefinitionFor(final BeanDefinition definition, final Class<?> beanClass,
 			final boolean singleton, final boolean lazyInit) {
-		assertThat(definition.getBeanClassName(), equalTo(beanClass.getCanonicalName()));
-		assertThat(definition.isSingleton(), equalTo(singleton));
-		assertThat(definition.isLazyInit(), equalTo(lazyInit));
+		assertThat(definition.getBeanClassName()).isEqualTo(beanClass.getCanonicalName());
+		assertThat(definition.isSingleton()).isEqualTo(singleton);
+		assertThat(definition.isLazyInit()).isEqualTo(lazyInit);
 	}
 
 	public static class NonController {

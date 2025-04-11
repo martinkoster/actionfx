@@ -54,9 +54,9 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 
 	private SelectionModelAwareListChangeListener listContentBinding;
 
-	private boolean bindBidirectional;
+	private final boolean bindBidirectional;
 
-	private boolean bound = false;
+	private boolean bound;
 
 	/**
 	 * Constructor accepting the binding source and binding target, where the source
@@ -212,7 +212,7 @@ public class ObservableListBinding<E> extends AbstractBinding<List<E>, Observabl
 	 */
 	private class SelectionModelAwareListChangeListener implements ListChangeListener<E> {
 
-		private boolean updating = false;
+		private boolean updating;
 
 		@Override
 		public void onChanged(final Change<? extends E> change) {

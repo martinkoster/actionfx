@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.spring;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 
@@ -83,18 +80,14 @@ class SpringBeanContainerIntegrationTest implements ApplicationContextAware {
 		final MainController controller = actionFX.getBean("mainController");
 		final PrototypeScopedController prototypeScopedController = actionFX.getBean(PrototypeScopedController.class);
 
-		assertThat(controller, notNullValue());
-		// final View view = container.getBean("mainView");
-		// assertThat(controller.getMainView(), notNullValue());
-		// assertThat(controller.getMainView(), sameInstance(view)); // view is a
-		// singleton!
-		assertThat(controller.getPrototypeScopedController(), notNullValue());
+		assertThat(controller).isNotNull();
+		assertThat(controller.getPrototypeScopedController()).isNotNull();
 		// controller is prototyped! so instances must be different!
-		assertThat(controller.getPrototypeScopedController(), not(sameInstance(prototypeScopedController)));
+		assertThat(controller.getPrototypeScopedController()).isNotSameAs(prototypeScopedController);
 
 		// check, that @Autowired-annotated field in abstract base class is resolved
-		assertThat(controller.getActionFX(), notNullValue());
-		assertThat(controller.getActionFX(), sameInstance(actionFX)); // type is still a singleton!
+		assertThat(controller.getActionFX()).isNotNull();
+		assertThat(controller.getActionFX()).isSameAs(actionFX); // type is still a singleton!
 	}
 
 	@Bean

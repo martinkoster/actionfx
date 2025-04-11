@@ -40,9 +40,9 @@ import javafx.scene.control.Control;
  */
 public abstract class AbstractRequiredValidator implements Validator {
 
-    private String message;
+	private final String message;
 
-    private boolean required;
+	private final boolean required;
 
     protected AbstractRequiredValidator(final String message, final boolean required) {
         this.message = message;
@@ -147,6 +147,6 @@ public abstract class AbstractRequiredValidator implements Validator {
      * @return {@code true}, if the value is a non-blank string, {@code false} otherwise.
      */
     protected boolean isStringWithValue(final Object value) {
-        return value instanceof String && !StringUtils.isBlank((String) value);
+        return value instanceof String str && !StringUtils.isBlank(str);
     }
 }

@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.beans;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
@@ -51,7 +49,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.getValue(model), equalTo("Hello"));
+		assertThat(property.getValue(model)).isEqualTo("Hello");
 	}
 
 	@Test
@@ -61,7 +59,7 @@ class BeanPropertyTest {
 		final BeanProperty<Boolean> property = new BeanProperty<>(Model.class, "javaBeanProperty");
 
 		// WHEN and THEN
-		assertThat(property.getValue(model), equalTo(Boolean.TRUE));
+		assertThat(property.getValue(model)).isEqualTo(Boolean.TRUE);
 	}
 
 	@Test
@@ -71,7 +69,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fieldProperty");
 
 		// WHEN and THEN
-		assertThat(property.getValue(model), equalTo("World"));
+		assertThat(property.getValue(model)).isEqualTo("World");
 	}
 
 	@Test
@@ -84,8 +82,7 @@ class BeanPropertyTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> property.getValue(model));
 
 		// THEN
-		assertThat(ex.getMessage(),
-				containsString("has no getter, no property-getter and can  not be resolved to a field!"));
+		assertThat(ex.getMessage()).contains("has no getter, no property-getter and can  not be resolved to a field!");
 	}
 
 	@Test
@@ -96,7 +93,7 @@ class BeanPropertyTest {
 				"javaFXPropertyWithoutGetterSetter");
 
 		// WHEN and THEN
-		assertThat(property.getValue(model), equalTo("Hello World"));
+		assertThat(property.getValue(model)).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -106,7 +103,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "indexedProperty", 1);
 
 		// WHEN and THEN
-		assertThat(property.getValue(model), equalTo("World"));
+		assertThat(property.getValue(model)).isEqualTo("World");
 	}
 
 	@Test
@@ -116,7 +113,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "mappedProperty", "hello");
 
 		// WHEN and THEN
-		assertThat(property.getValue(model), equalTo("world"));
+		assertThat(property.getValue(model)).isEqualTo("world");
 	}
 
 	@Test
@@ -129,7 +126,7 @@ class BeanPropertyTest {
 		property.setValue(model, "Hello World");
 
 		// THEN
-		assertThat(model.getJavaFXProperty(), equalTo("Hello World"));
+		assertThat(model.getJavaFXProperty()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -142,7 +139,7 @@ class BeanPropertyTest {
 		property.setValue(model, true);
 
 		// THEN
-		assertThat(model.isJavaBeanProperty(), equalTo(Boolean.TRUE));
+		assertThat(model.isJavaBeanProperty()).isEqualTo(Boolean.TRUE);
 	}
 
 	@Test
@@ -155,7 +152,7 @@ class BeanPropertyTest {
 		property.setValue(model, "Hello World");
 
 		// THEN
-		assertThat(model.fieldProperty, equalTo("Hello World"));
+		assertThat(model.fieldProperty).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -169,7 +166,7 @@ class BeanPropertyTest {
 				() -> property.setValue(model, "Hello World"));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("has no setter and can  not be resolved to a field!"));
+		assertThat(ex.getMessage()).contains("has no setter and can  not be resolved to a field!");
 	}
 
 	@Test
@@ -182,7 +179,7 @@ class BeanPropertyTest {
 		property.setValue(model, "Hello World!");
 
 		// THEN
-		assertThat(model.indexedProperty[1], equalTo("Hello World!"));
+		assertThat(model.indexedProperty[1]).isEqualTo("Hello World!");
 	}
 
 	@Test
@@ -195,7 +192,7 @@ class BeanPropertyTest {
 		property.setValue(model, "Hello World!");
 
 		// THEN
-		assertThat(model.mappedProperty.get("hello"), equalTo("Hello World!"));
+		assertThat(model.mappedProperty).containsEntry("hello", "Hello World!");
 	}
 
 	@Test
@@ -204,7 +201,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "indexedProperty", 1);
 
 		// WHEN and THEN
-		assertThat(property.isIndexed(), equalTo(true));
+        assertThat(property.isIndexed()).isTrue();
 	}
 
 	@Test
@@ -213,7 +210,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "mappedProperty", "hello");
 
 		// WHEN and THEN
-		assertThat(property.isMapped(), equalTo(true));
+        assertThat(property.isMapped()).isTrue();
 	}
 
 	@Test
@@ -222,7 +219,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fieldProperty");
 
 		// WHEN and THEN
-		assertThat(property.isIndexed(), equalTo(false));
+        assertThat(property.isIndexed()).isFalse();
 	}
 
 	@Test
@@ -231,7 +228,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fieldProperty");
 
 		// WHEN and THEN
-		assertThat(property.isMapped(), equalTo(false));
+        assertThat(property.isMapped()).isFalse();
 	}
 
 	@Test
@@ -240,7 +237,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.isReadable(), equalTo(true));
+        assertThat(property.isReadable()).isTrue();
 	}
 
 	@Test
@@ -249,7 +246,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fantasyProperty");
 
 		// WHEN and THEN
-		assertThat(property.isReadable(), equalTo(false));
+        assertThat(property.isReadable()).isFalse();
 	}
 
 	@Test
@@ -258,7 +255,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.isWritable(), equalTo(true));
+        assertThat(property.isWritable()).isTrue();
 	}
 
 	@Test
@@ -267,7 +264,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "fantasyProperty");
 
 		// WHEN and THEN
-		assertThat(property.isWritable(), equalTo(false));
+        assertThat(property.isWritable()).isFalse();
 	}
 
 	@Test
@@ -276,7 +273,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.hasFxProperty(), equalTo(true));
+        assertThat(property.hasFxProperty()).isTrue();
 	}
 
 	@Test
@@ -285,7 +282,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaBeanProperty");
 
 		// WHEN and THEN
-		assertThat(property.hasFxProperty(), equalTo(false));
+        assertThat(property.hasFxProperty()).isFalse();
 	}
 
 	@Test
@@ -295,7 +292,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.getFxProperty(model), equalTo(model.javaFXProperty));
+		assertThat(property.getFxProperty(model)).isEqualTo(model.javaFXProperty);
 	}
 
 	@Test
@@ -308,7 +305,7 @@ class BeanPropertyTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> property.getFxProperty(model));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("has no property-getter!"));
+		assertThat(ex.getMessage()).contains("has no property-getter!");
 	}
 
 	@Test
@@ -317,7 +314,7 @@ class BeanPropertyTest {
 		final BeanProperty<String> property = new BeanProperty<>(Model.class, "javaFXProperty");
 
 		// WHEN and THEN
-		assertThat(property.getType(), equalTo(String.class));
+		assertThat(property.getType()).isEqualTo(String.class);
 	}
 
 	@Test
@@ -326,7 +323,7 @@ class BeanPropertyTest {
 		final BeanProperty<Boolean> property = new BeanProperty<>(Model.class, "javaBeanProperty");
 
 		// WHEN and THEN
-		assertThat(property.getType(), equalTo(boolean.class));
+		assertThat(property.getType()).isEqualTo(boolean.class);
 	}
 
 	private Model model() {

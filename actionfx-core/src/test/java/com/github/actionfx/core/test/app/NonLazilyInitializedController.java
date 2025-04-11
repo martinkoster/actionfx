@@ -36,7 +36,7 @@ public class NonLazilyInitializedController {
 
 	// static field that gives feedback whether one instance is already constructed
 	// or not
-	private static boolean constructed = false;
+	private static boolean constructed;
 
 	public NonLazilyInitializedController() {
 		constructed = true;

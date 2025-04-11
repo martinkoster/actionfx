@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,9 +51,11 @@ import com.github.actionfx.core.view.graph.NodeWrapper;
  */
 public class ControllerFactory {
 
+    public static final String CONTROLLER_SUFFIX = "Controller";
+    public static final String VIEW_SUFFIX = "View";
     private final ControllerFactoryConfig factoryConfig;
 
-    private Consumer<String> logConsumer;
+	private final Consumer<String> logConsumer;
 
     public ControllerFactory(final ControllerFactoryConfig factoryConfig, final Consumer<String> logConsumer) {
         this.factoryConfig = factoryConfig;
@@ -62,15 +63,19 @@ public class ControllerFactory {
     }
 
     public void produce() {
-        final String fxmlFile = factoryConfig.getAbsoluteFxmlFilePath();
-        final FxmlDocument fxmlDocument = readFxmlDocument(fxmlFile);
-        final ControllerModel controllerModel = createControllerModel(fxmlDocument, fxmlFile);
-        createControllerDirectory();
+        String fxmlFile = factoryConfig.getAbsoluteFxmlFilePath();
         if (!factoryConfig.getAbsoluteFxmlFilePath().contains(factoryConfig.getAbsoluteFXMLResourcesDirectory())) {
             // copy FXML file to project resource
             createFxmlResourcesDirectory();
-            copyFxmlFileToResourcesDirectory(fxmlFile);
+
+            // FXML is relocated into the project directory structure
+            fxmlFile = copyFxmlFileToResourcesDirectory(fxmlFile);
         }
+
+        final FxmlDocument fxmlDocument = readFxmlDocument(fxmlFile);
+        createControllerDirectory();
+        final ControllerModel controllerModel = createControllerModel(fxmlDocument, fxmlFile);
+
         final Path controllerPath = Path.of(factoryConfig.getAbsoluteControllerDirectory(),
                 controllerModel.getControllerName() + ".java");
         createController(controllerModel, controllerPath.toFile());
@@ -98,10 +103,11 @@ public class ControllerFactory {
                 + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
     }
 
-    private void copyFxmlFileToResourcesDirectory(final String fxmlFile) {
+    private String copyFxmlFileToResourcesDirectory(final String fxmlFile) {
         FileUtils.copyFile(fxmlFile, factoryConfig.getAbsoluteFXMLResourcesDirectory());
         logConsumer.accept("Copied FXML file from '" + fxmlFile + "' to '"
                 + factoryConfig.getAbsoluteFXMLResourcesDirectory() + "'");
+        return factoryConfig.getAbsoluteFXMLResourcesDirectory() + "/" + Path.of(fxmlFile).getFileName();
     }
 
     private ControllerModel createControllerModel(final FxmlDocument fxmlDocument, final String fxmlFile) {
@@ -109,7 +115,7 @@ public class ControllerFactory {
         controllerModel.setControllerName(deriveControllerName(fxmlFile));
         controllerModel.setPackageName(factoryConfig.getControllerPackageName());
         controllerModel.getImportStatements().addAll(fxmlDocument.getImportStatementsForIdNodes());
-        controllerModel.setFxmlFile(deriveFxmlClasspathLocation(fxmlFile));
+        controllerModel.setFxmlFile(deriveFxmlClasspathLocation(fxmlFile, factoryConfig));
         controllerModel.setViewId(getViewId());
         controllerModel.setTitle(deriveViewId(fxmlFile));
         controllerModel.getNodes().addAll(createFxmlNodes(fxmlDocument));
@@ -119,7 +125,7 @@ public class ControllerFactory {
 
     private List<FxmlNode> createFxmlNodes(final FxmlDocument fxmlDocument) {
         return fxmlDocument.getIdNodesMap().entrySet().stream()
-                .map(entry -> new FxmlNode(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+                .map(entry -> new FxmlNode(entry.getKey(), entry.getValue())).toList();
     }
 
     private List<ActionMethod> createActionMethods(final FxmlDocument fxmlDocument) {
@@ -128,17 +134,17 @@ public class ControllerFactory {
         // Methods that have an "onAction" property set
         actionMethods.addAll(
                 fxmlDocument.getFxmlElementsAsStream().filter(elem -> !StringUtils.isBlank(elem.getOnActionProperty()))
-                        .map(elem -> mapToActionMethod(elem, false)).collect(Collectors.toList()));
+                        .map(elem -> mapToActionMethod(elem, false)).toList());
 
         // Methods that have no "onAction" property set, but have the property itself +
         // ID
         actionMethods.addAll(fxmlDocument.getFxmlElementsAsStream()
                 .filter(elem -> !StringUtils.isBlank(elem.getId()) && StringUtils.isBlank(elem.getOnActionProperty())
                         && supportsOnAction(elem))
-                .map(elem -> mapToActionMethod(elem, true)).collect(Collectors.toList()));
+                .map(elem -> mapToActionMethod(elem, true)).toList());
 
         // make method names unique
-        return actionMethods.stream().distinct().collect(Collectors.toList());
+        return actionMethods.stream().distinct().toList();
     }
 
     /**
@@ -182,7 +188,7 @@ public class ControllerFactory {
     /**
      * Checks, whether the given {@code fxmlElement} has an "onAction" property.
      *
-     * @param node
+     * @param fxmlElement
      *            the node type to check
      * @return {@code true}, if the node type supports the "onAction" property, {@code false} otherwise.
      */
@@ -193,7 +199,7 @@ public class ControllerFactory {
 
     private FxmlDocument readFxmlDocument(final String fxmlFile) {
         final FxmlParser parser = new FxmlParser();
-        try (FileInputStream fileInputStream = new FileInputStream(new File(fxmlFile))) {
+        try (FileInputStream fileInputStream = new FileInputStream(fxmlFile)) {
             return parser.parseFxml(fileInputStream);
         } catch (final IOException e) {
             throw new IllegalStateException("Cannot read file " + fxmlFile + "!", e);
@@ -207,11 +213,20 @@ public class ControllerFactory {
      *            the FXML file name
      * @return the derived controller name
      */
-    private String deriveControllerName(final String fxmlFile) {
+    static String deriveControllerName(final String fxmlFile) {
         final String nameWithoutExtension = getFilenameWithoutExtension(fxmlFile);
-        return nameWithoutExtension.endsWith("View")
-                ? nameWithoutExtension.substring(0, nameWithoutExtension.indexOf("View")) + "Controller"
-                : nameWithoutExtension;
+        return nameWithoutExtension.endsWith(VIEW_SUFFIX)
+                ? deriveControllerNameByViewNameEndingWithView(nameWithoutExtension)
+                : deriveControllerNameByViewName(nameWithoutExtension);
+    }
+
+    private static String deriveControllerNameByViewName(final String nameWithoutExtension) {
+        return nameWithoutExtension.length() == 1 ? nameWithoutExtension.substring(0, 1).toUpperCase() + CONTROLLER_SUFFIX :
+                nameWithoutExtension.substring(0, 1).toUpperCase() + nameWithoutExtension.substring(1) + CONTROLLER_SUFFIX;
+    }
+
+    private static String deriveControllerNameByViewNameEndingWithView(final String nameWithoutExtension) {
+        return nameWithoutExtension.substring(0, nameWithoutExtension.indexOf(VIEW_SUFFIX)) + CONTROLLER_SUFFIX;
     }
 
     /**
@@ -234,25 +249,41 @@ public class ControllerFactory {
      *            the FXML file name
      * @return the classpath location to the {@code fxmlFile}
      */
-    private String deriveFxmlClasspathLocation(final String fxmlFile) {
-        String classpathLocation;
+    static String deriveFxmlClasspathLocation(final String fxmlFile, ControllerFactoryConfig factoryConfig) {
+        if (fxmlFile == null) {
+            throw new IllegalArgumentException("Argument 'fxmlFile' must not be null");
+        }
+        String classpathLocation = null;
         final int resourceIdx = fxmlFile.indexOf(MainAppFactoryConfig.DEFAULT_RESOURCES_DIR);
         final int relativeFxmlIdx = fxmlFile.indexOf(factoryConfig.getRelativeFXMLResourcesDirectory());
         if (resourceIdx >= 0) {
             classpathLocation = fxmlFile.substring(resourceIdx + MainAppFactoryConfig.DEFAULT_RESOURCES_DIR.length());
         } else if (relativeFxmlIdx >= 0) {
-            classpathLocation = fxmlFile
-                    .substring(relativeFxmlIdx + factoryConfig.getRelativeFXMLResourcesDirectory().length());
+            classpathLocation = fxmlFile.substring(relativeFxmlIdx);
         } else {
-            classpathLocation = Path.of(fxmlFile).getFileName().toString();
+            final Path fileName = Path.of(fxmlFile).getFileName();
+            if (fileName == null) {
+                throw new IllegalArgumentException("Argument 'fxmlFile' does not point to a valid file.");
+            }
+            classpathLocation = fileName.toString();
         }
         classpathLocation = classpathLocation.replace('\\', '/');
         return classpathLocation.startsWith("/") ? classpathLocation : "/" + classpathLocation;
     }
 
-    private String getFilenameWithoutExtension(final String fxmlFile) {
+    private static String getFilenameWithoutExtension(final String fxmlFile) {
+        if (fxmlFile == null) {
+            throw new IllegalArgumentException("Argument 'fxmlFile' must not be null");
+        }
         final Path fxmlPath = Path.of(fxmlFile);
-        final String filename = fxmlPath.getFileName().toString();
+        final Path fileName = fxmlPath.getFileName();
+        if (fileName == null) {
+            throw new IllegalArgumentException("Argument '" + fxmlFile + "' does not point to a valid file.");
+        }
+        final String filename = fileName.toString();
+        if (filename.indexOf(".") <= 0) {
+            throw new IllegalArgumentException("Argument '" + fxmlFile + "' does not have an extension.");
+        }
         return filename.substring(0, filename.lastIndexOf("."));
     }
 

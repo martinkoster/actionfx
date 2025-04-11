@@ -23,14 +23,8 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Field;
@@ -39,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +62,7 @@ class ReflectionUtilsTest {
 				.instantiateClass(ClassWithDefaultConstructor.class);
 
 		// THEN
-		assertThat(instance, notNullValue());
+		assertThat(instance).isNotNull();
 	}
 
 	@Test
@@ -79,7 +72,7 @@ class ReflectionUtilsTest {
 				new Object[0]);
 
 		// THEN
-		assertThat(instance, notNullValue());
+		assertThat(instance).isNotNull();
 	}
 
 	@Test
@@ -89,7 +82,7 @@ class ReflectionUtilsTest {
 				() -> ReflectionUtils.instantiateClass(ClassWithConstructorArguments.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("Can not invoke default no-arg constructor for class"));
+		assertThat(ex.getMessage()).contains("Can not invoke default no-arg constructor for class");
 	}
 
 	@Test
@@ -99,9 +92,9 @@ class ReflectionUtilsTest {
 				.instantiateClass(ClassWithConstructorArguments.class, "Hello World", Integer.valueOf(42));
 
 		// THEN
-		assertThat(instance, notNullValue());
-		assertThat(instance.getString(), equalTo("Hello World"));
-		assertThat(instance.getInteger(), equalTo(Integer.valueOf(42)));
+		assertThat(instance).isNotNull();
+		assertThat(instance.getString()).isEqualTo("Hello World");
+		assertThat(instance.getInteger()).isEqualTo(Integer.valueOf(42));
 	}
 
 	@Test
@@ -112,7 +105,7 @@ class ReflectionUtilsTest {
 						"Wrong order of arguments"));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("Can not invoke constructor for class"));
+		assertThat(ex.getMessage()).contains("Can not invoke constructor for class");
 
 	}
 
@@ -123,8 +116,7 @@ class ReflectionUtilsTest {
 				.getAllSuperClassesAndInterfaces(ClassWithSuperClassAndInterface.class);
 
 		// THEN
-		assertThat(result, containsInAnyOrder(ClassWithSuperClassAndInterface.class, SuperClassWithInterface.class,
-				Interface1.class, Interface2.class, Interface3.class, Object.class));
+		assertThat(result).containsExactlyInAnyOrder(ClassWithSuperClassAndInterface.class, SuperClassWithInterface.class, Interface1.class, Interface2.class, Interface3.class, Object.class);
 	}
 
 	@Test
@@ -133,8 +125,7 @@ class ReflectionUtilsTest {
 		final ClassWithField instance = new ClassWithField();
 
 		// WHEN and THEN
-		assertThat(ReflectionUtils.getFieldValue(ClassWithField.class.getDeclaredField("field1"), instance),
-				equalTo("Hello"));
+		assertThat(ReflectionUtils.getFieldValue(ClassWithField.class.getDeclaredField("field1"), instance)).isEqualTo("Hello");
 	}
 
 	@Test
@@ -146,7 +137,7 @@ class ReflectionUtilsTest {
 		final String hello = (String) ReflectionUtils.getFieldValueByGetter(helloField, new ClassWithMethods());
 
 		// THEN
-		assertThat(hello, equalTo("Hello"));
+		assertThat(hello).isEqualTo("Hello");
 	}
 
 	@Test
@@ -158,7 +149,7 @@ class ReflectionUtilsTest {
 		final Integer value = (Integer) ReflectionUtils.getFieldValueByGetter(aField, new ClassWithMethods());
 
 		// THEN
-		assertThat(value, equalTo(Integer.valueOf(42)));
+		assertThat(value).isEqualTo(Integer.valueOf(42));
 	}
 
 	@Test
@@ -171,8 +162,20 @@ class ReflectionUtilsTest {
 				new ClassWithMethods());
 
 		// THEN
-		assertThat(invoked, equalTo(false));
+		assertThat(invoked).isFalse();
 	}
+
+	@Test
+	void testGetFieldValueByGetter_noGetterExists() throws NoSuchFieldException, SecurityException {
+		// GIVEN
+		final Field fieldWithoutGetterSetter = ClassWithMethods.class.getDeclaredField("fieldWithoutGetterSetter");
+
+		// WHEN and THEN
+		final ClassWithMethods instance = new ClassWithMethods();
+		assertThatThrownBy(() -> ReflectionUtils.getFieldValueByGetter(fieldWithoutGetterSetter, instance))
+				.isInstanceOf(IllegalStateException.class).hasMessageContaining("Getter method not found");
+	}
+
 
 	@Test
 	void testGetFieldValueByPropertyGetter() throws NoSuchFieldException, SecurityException {
@@ -184,7 +187,18 @@ class ReflectionUtilsTest {
 				.getFieldValueByPropertyGetter(stringField, new ClassWithMethods());
 
 		// THEN
-		assertThat(stringProperty, notNullValue());
+		assertThat(stringProperty).isNotNull();
+	}
+
+	@Test
+	void testGetFieldValueByPropertyGetter_noPropertyGetterExists() throws NoSuchFieldException, SecurityException {
+		// GIVEN
+		final Field fieldWithoutGetterSetter = ClassWithMethods.class.getDeclaredField("fieldWithoutGetterSetter");
+
+		// WHEN and THEN
+		final ClassWithMethods instance = new ClassWithMethods();
+		assertThatThrownBy(() -> ReflectionUtils.getFieldValueByPropertyGetter(fieldWithoutGetterSetter, instance))
+				.isInstanceOf(IllegalStateException.class).hasMessageContaining("Property-Getter method not found");
 	}
 
 	@Test
@@ -196,7 +210,7 @@ class ReflectionUtilsTest {
 		ReflectionUtils.setFieldValue(ClassWithField.class.getDeclaredField("field1"), instance, "Yahoo");
 
 		// THEN
-		assertThat(instance.getField1(), equalTo("Yahoo"));
+		assertThat(instance.getField1()).isEqualTo("Yahoo");
 	}
 
 	@Test
@@ -208,7 +222,18 @@ class ReflectionUtilsTest {
 		ReflectionUtils.setFieldValueBySetter(ClassWithField.class.getDeclaredField("field1"), instance, "Yahoo");
 
 		// THEN
-		assertThat(instance.getField1(), equalTo("Yahoo"));
+		assertThat(instance.getField1()).isEqualTo("Yahoo");
+	}
+
+	@Test
+	void testSetFieldValueBySetter_noSetterExists() throws NoSuchFieldException, SecurityException {
+		// GIVEN
+		final Field fieldWithoutGetterSetter = ClassWithMethods.class.getDeclaredField("fieldWithoutGetterSetter");
+
+		// WHEN and THEN
+		final ClassWithMethods instance = new ClassWithMethods();
+		assertThatThrownBy(() -> ReflectionUtils.setFieldValueBySetter(fieldWithoutGetterSetter, instance, 42))
+				.isInstanceOf(IllegalStateException.class).hasMessageContaining("Setter method not found");
 	}
 
 	@Test
@@ -222,21 +247,21 @@ class ReflectionUtilsTest {
 
 	@Test
 	void testFindField() {
-		assertThat(ReflectionUtils.findField(ClassWithField.class, "field1"), notNullValue());
-		assertThat(ReflectionUtils.findField(DerivedFromClassWithField.class, "field1"), notNullValue());
+		assertThat(ReflectionUtils.findField(ClassWithField.class, "field1")).isNotNull();
+		assertThat(ReflectionUtils.findField(DerivedFromClassWithField.class, "field1")).isNotNull();
 	}
 
 	@Test
 	void testFindFields() {
 		// GIVEN
-		final FieldFilter filter = field -> field.getName().equals("field1");
+		final FieldFilter filter = field -> "field1".equals(field.getName());
 
 		// WHEN
 		final List<Field> fields = ReflectionUtils.findFields(DerivedFromClassWithField.class, filter);
 
 		// THEN
-		assertThat(fields, hasSize(1));
-		assertThat(fields.get(0).getName(), equalTo("field1"));
+		assertThat(fields).hasSize(1);
+		assertThat(fields.get(0).getName()).isEqualTo("field1");
 	}
 
 	@Test
@@ -249,7 +274,7 @@ class ReflectionUtilsTest {
 		ReflectionUtils.invokeMethod(voidMethod, instance);
 
 		// THEN
-		assertThat(instance.isVoidMethodExecuted(), equalTo(true));
+		assertThat(instance.isVoidMethodExecuted()).isTrue();
 	}
 
 	@Test
@@ -259,7 +284,7 @@ class ReflectionUtilsTest {
 		final Method sayHelloMethod = ClassWithMethods.class.getDeclaredMethod("sayHello", String.class);
 
 		// WHEN and THEN
-		assertThat(ReflectionUtils.invokeMethod(sayHelloMethod, instance, "World"), equalTo("Hello World"));
+		assertThat((Object) ReflectionUtils.invokeMethod(sayHelloMethod, instance, "World")).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -288,8 +313,8 @@ class ReflectionUtilsTest {
 		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "voidMethod");
 
 		// THEN
-		assertThat(method, notNullValue());
-		assertThat(method.getName(), equalTo("voidMethod"));
+		assertThat(method).isNotNull();
+		assertThat(method.getName()).isEqualTo("voidMethod");
 	}
 
 	@Test
@@ -298,8 +323,8 @@ class ReflectionUtilsTest {
 		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class, "sayHello", String.class);
 
 		// THEN
-		assertThat(method, notNullValue());
-		assertThat(method.getName(), equalTo("sayHello"));
+		assertThat(method).isNotNull();
+		assertThat(method.getName()).isEqualTo("sayHello");
 	}
 
 	@Test
@@ -308,8 +333,8 @@ class ReflectionUtilsTest {
 		final Method method = ReflectionUtils.findMethod(DerivedFromClassWithField.class, "getField1");
 
 		// THEN
-		assertThat(method, notNullValue());
-		assertThat(method.getName(), equalTo("getField1"));
+		assertThat(method).isNotNull();
+		assertThat(method.getName()).isEqualTo("getField1");
 
 	}
 
@@ -317,90 +342,87 @@ class ReflectionUtilsTest {
 	void testFindMethodByFilter() throws NoSuchMethodException, SecurityException {
 		// WHEN
 		final List<Method> methods = ReflectionUtils.findMethods(DerivedClassOverridingMethod.class,
-				method -> method.getName().equals("method"));
+				method -> "method".equals(method.getName()));
 
 		// THEN (overridden method in base class is not part of the result list)
-		assertThat(methods, hasSize(2));
-		assertThat(methods,
-				containsInAnyOrder(DerivedClassOverridingMethod.class.getMethod("method", String.class, Integer.class),
-						BaseClass.class.getMethod("method", Integer.class)));
+		assertThat(methods).hasSize(2).containsExactlyInAnyOrder(DerivedClassOverridingMethod.class.getMethod("method", String.class, Integer.class), BaseClass.class.getMethod("method", Integer.class));
 	}
 
 	@Test
 	void testIsPrimitiveWrapper() {
 		// WHEN and THEN
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Boolean.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Byte.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Character.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Double.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Float.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Integer.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Long.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Short.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(Void.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Boolean.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Byte.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Character.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Double.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Float.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Integer.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Long.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Short.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(Void.class)).isTrue();
 
-		assertThat(ReflectionUtils.isPrimitiveWrapper(boolean.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(byte.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(char.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(double.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(float.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(int.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(long.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(short.class), equalTo(false));
-		assertThat(ReflectionUtils.isPrimitiveWrapper(void.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveWrapper(boolean.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(byte.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(char.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(double.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(float.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(int.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(long.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(short.class)).isFalse();
+		assertThat(ReflectionUtils.isPrimitiveWrapper(void.class)).isFalse();
 	}
 
 	@Test
 	void testIsPrimitiveOrWrapperWrapper() {
 		// WHEN and THEN
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Boolean.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Byte.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Character.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Double.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Float.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Integer.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Long.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Short.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Void.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Boolean.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Byte.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Character.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Double.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Float.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Integer.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Long.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Short.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(Void.class)).isTrue();
 
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(boolean.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(byte.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(char.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(double.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(float.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(int.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(long.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(short.class), equalTo(true));
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(void.class), equalTo(true));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(boolean.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(byte.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(char.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(double.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(float.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(int.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(long.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(short.class)).isTrue();
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(void.class)).isTrue();
 
-		assertThat(ReflectionUtils.isPrimitiveOrWrapper(String.class), equalTo(false));
+		assertThat(ReflectionUtils.isPrimitiveOrWrapper(String.class)).isFalse();
 	}
 
 	@Test
 	void testResolvePrimitiveIfNecessary() {
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(boolean.class), equalTo(Boolean.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(byte.class), equalTo(Byte.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(char.class), equalTo(Character.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(double.class), equalTo(Double.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(float.class), equalTo(Float.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(int.class), equalTo(Integer.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(long.class), equalTo(Long.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(short.class), equalTo(Short.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(boolean.class)).isEqualTo(Boolean.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(byte.class)).isEqualTo(Byte.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(char.class)).isEqualTo(Character.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(double.class)).isEqualTo(Double.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(float.class)).isEqualTo(Float.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(int.class)).isEqualTo(Integer.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(long.class)).isEqualTo(Long.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(short.class)).isEqualTo(Short.class);
 
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Boolean.class), equalTo(Boolean.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Byte.class), equalTo(Byte.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Character.class), equalTo(Character.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Double.class), equalTo(Double.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Float.class), equalTo(Float.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Integer.class), equalTo(Integer.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Long.class), equalTo(Long.class));
-		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Short.class), equalTo(Short.class));
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Boolean.class)).isEqualTo(Boolean.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Byte.class)).isEqualTo(Byte.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Character.class)).isEqualTo(Character.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Double.class)).isEqualTo(Double.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Float.class)).isEqualTo(Float.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Integer.class)).isEqualTo(Integer.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Long.class)).isEqualTo(Long.class);
+		assertThat(ReflectionUtils.resolvePrimitiveIfNecessary(Short.class)).isEqualTo(Short.class);
 	}
 
 	@Test
 	void testDecapitalizeBeanProperty() {
-		assertThat(ReflectionUtils.decapitalizeBeanProperty("JavaBeanProperty"), equalTo("javaBeanProperty"));
-		assertThat(ReflectionUtils.decapitalizeBeanProperty("JProperty"), equalTo("JProperty"));
+		assertThat(ReflectionUtils.decapitalizeBeanProperty("JavaBeanProperty")).isEqualTo("javaBeanProperty");
+		assertThat(ReflectionUtils.decapitalizeBeanProperty("JProperty")).isEqualTo("JProperty");
 	}
 
 	@Test
@@ -409,8 +431,7 @@ class ReflectionUtilsTest {
 		final Class<?> clazz = ReflectionUtils.resolveClassName("com.github.actionfx.core.utils.ReflectionUtils", null);
 
 		// THEN
-		assertThat(clazz, notNullValue());
-		assertThat(clazz, equalTo(ReflectionUtils.class));
+		assertThat(clazz).isNotNull().isEqualTo(ReflectionUtils.class);
 	}
 
 	@Test
@@ -420,8 +441,7 @@ class ReflectionUtilsTest {
 				ReflectionUtilsTest.class.getClassLoader());
 
 		// THEN
-		assertThat(clazz, notNullValue());
-		assertThat(clazz, equalTo(ReflectionUtils.class));
+		assertThat(clazz).isNotNull().isEqualTo(ReflectionUtils.class);
 	}
 
 	@Test
@@ -430,7 +450,7 @@ class ReflectionUtilsTest {
 		final Class<?> clazz = ReflectionUtils.resolveClassName("com.fantasy.NonExistingClass", null);
 
 		// THEN
-		assertThat(clazz, nullValue());
+		assertThat(clazz).isNull();
 	}
 
 	@Test
@@ -440,13 +460,12 @@ class ReflectionUtilsTest {
 				.resolveClassName("com.github.actionfx.core.utils.ReflectionUtilsTest$ClassWithField", null);
 
 		// THEN
-		assertThat(clazz, notNullValue());
-		assertThat(clazz, equalTo(ClassWithField.class));
+		assertThat(clazz).isNotNull().isEqualTo(ClassWithField.class);
 	}
 
 	@Test
 	void testGetDefaultClassLoader_contextClassLoader() {
-		assertThat(ReflectionUtils.getDefaultClassLoader(), equalTo(Thread.currentThread().getContextClassLoader()));
+		assertThat(ReflectionUtils.getDefaultClassLoader()).isEqualTo(Thread.currentThread().getContextClassLoader());
 	}
 
 	@Test
@@ -456,21 +475,20 @@ class ReflectionUtilsTest {
 		Thread.currentThread().setContextClassLoader(null);
 
 		// WHEN and THEN
-		assertThat(ReflectionUtils.getDefaultClassLoader(), equalTo(ReflectionUtilsTest.class.getClassLoader()));
+		assertThat(ReflectionUtils.getDefaultClassLoader()).isEqualTo(ReflectionUtilsTest.class.getClassLoader());
 
 		// set the context loader back to the current thread
 		Thread.currentThread().setContextClassLoader(cl);
 	}
 
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> methods, final String... exptectedFieldNames) {
-		assertThat(methods, notNullValue());
-		assertThat(methods.stream().map(Field::getName).collect(Collectors.toList()), hasItems(exptectedFieldNames)); // hasItems
+		assertThat(methods).isNotNull();
+        assertThat(methods.stream().map(Field::getName).toList()).contains(exptectedFieldNames); // hasItems
 	}
 
 	private void thenAssertMethodNamesList(final List<Method> methods, final List<String> exptectedMethodNames) {
-		assertThat(methods, notNullValue());
-		assertThat(methods.stream().map(Method::getName).collect(Collectors.toList()),
-				containsInAnyOrder(exptectedMethodNames.toArray()));
+		assertThat(methods).isNotNull();
+		assertThat(methods.stream().map(Method::getName).toList()).containsExactlyInAnyOrderElementsOf(exptectedMethodNames);
 	}
 
 	public static class ClassWithField {
@@ -497,12 +515,15 @@ class ReflectionUtilsTest {
 
 	public static class ClassWithMethods {
 
-		private boolean voidMethodExecuted = false;
+		private boolean voidMethodExecuted;
 
 		private final String hello = "Hello";
 
 		// member field with just one letter
 		private final Integer a = Integer.valueOf(42);
+
+		// member field with no getter and setter
+		private final Integer fieldWithoutGetterSetter = Integer.valueOf(1); // NOSONAR field is required for looking up via reflection
 
 		private StringProperty string;
 

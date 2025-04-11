@@ -18,6 +18,7 @@ dependencies {
 
 	implementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
 	implementation group: "org.junit.platform", name: "junit-platform-commons", version: "${junitJupiterPlatfomCommonsVersion}"
+	implementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
 
 	runtimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
 
@@ -25,6 +26,7 @@ dependencies {
 	api group: "org.testfx", name: "testfx-core", version: "${testFxVersion}"
 	api group: "org.testfx", name: "testfx-junit5", version: "${testFxVersion}"
 
+	implementation group: "org.assertj", name: "assertj-core", version: "3.27.3"
 	testImplementation group: "org.mockito", name: "mockito-core", version: "${mockitoVersion}"
 	testImplementation group: "org.mockito", name: "mockito-junit-jupiter", version: "${mockitoVersion}"
 

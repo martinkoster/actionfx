@@ -29,10 +29,10 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.view.View;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.control.Control;
 
 /**
@@ -63,12 +63,10 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @return the resolved {@link BindingTarget}s
 	 */
 	protected List<BindingTarget> resolveInternal(final Object bean, final View view) {
-		final List<BindingTarget> result = view.getViewNodesAsStream()
+		return view.getViewNodesAsStream()
 				.filter(nodeWrapper -> Control.class.isAssignableFrom(nodeWrapper.getWrappedType()))
 				.map(node -> resolveInternal((Control) node.getWrapped(), bean, view)).flatMap(List::stream)
-				.collect(Collectors.toList());
-		Collections.sort(result, new BindingTargetComparator());
-		return result;
+				.sorted(new BindingTargetComparator()).toList();
 	}
 
 	/**
@@ -92,7 +90,7 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @author koster
 	 *
 	 */
-	private static class CacheKey {
+	private static final class CacheKey {
 
 		private final Class<?> beanClass;
 
@@ -137,6 +135,7 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @author koster
 	 *
 	 */
+	@SuppressFBWarnings(value = "SE_COMPARATOR_SHOULD_BE_SERIALIZABLE", justification = "Making the Comparator serializable does not make sense as compared items BindingTarget are not serializable either (and not planned to be serializable).")
 	private static class BindingTargetComparator implements Comparator<BindingTarget> {
 
 		@Override

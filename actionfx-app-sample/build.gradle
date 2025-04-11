@@ -48,6 +48,6 @@ integrationTest {
     	maxParallelForks = 1       
 }
 
-sonarqube {
+sonar {
     skipProject = true
 }

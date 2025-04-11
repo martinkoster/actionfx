@@ -142,7 +142,7 @@ public interface BeanContainerFacade {
      * Adds a new controller bean definition to the bean container. It is expected that the controller class is
      * annotated by {@link AFXController}.
      *
-     * @param beanClass
+     * @param controllerClass
      *            the controller bean type
      */
     void addControllerBeanDefinition(Class<?> controllerClass);
@@ -201,7 +201,7 @@ public interface BeanContainerFacade {
     default String deriveBeanId(final Class<?> beanClazz) {
         final String className = beanClazz.getSimpleName();
         return className.length() > 1
-                ? className.substring(0, 1).toLowerCase() + className.substring(1, className.length())
+                ? className.substring(0, 1).toLowerCase() + className.substring(1)
                 : className.substring(0, 1).toLowerCase();
     }
 }

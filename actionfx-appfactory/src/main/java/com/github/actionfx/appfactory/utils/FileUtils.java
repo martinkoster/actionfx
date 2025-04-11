@@ -40,7 +40,7 @@ import java.util.zip.ZipInputStream;
  * @author koster
  *
  */
-public class FileUtils {
+public final class FileUtils {
 
     private FileUtils() {
         // can not be instantiated
@@ -71,8 +71,13 @@ public class FileUtils {
      *            the destination folder as absolute folder path
      */
     public static void copyClasspathFile(final String classpathLocation, final String absoluteFolderPath) {
+        final Path classpathLocationPath = Path.of(classpathLocation);
+        final Path fileName = classpathLocationPath.getFileName();
+        if (fileName == null) {
+            throw new IllegalArgumentException("Argument 'classpathLocation' does not point to a valid file.");
+        }
         copyFile(FileUtils.class.getResourceAsStream(classpathLocation), absoluteFolderPath,
-                Path.of(classpathLocation).getFileName().toString());
+                fileName.toString());
     }
 
     /**
@@ -85,9 +90,13 @@ public class FileUtils {
      *            the destination folder as absolute folder path
      */
     public static void copyFile(final String absoluteFilePath, final String absoluteFolderPath) {
-        try (InputStream inputStream = new FileInputStream(new File(absoluteFilePath))) {
-            copyFile(new FileInputStream(new File(absoluteFilePath)), absoluteFolderPath,
-                    Path.of(absoluteFilePath).getFileName().toString());
+        try (InputStream inputStream = new FileInputStream(absoluteFilePath)) {
+            final Path path = Path.of(absoluteFilePath);
+            final Path fileName = path.getFileName();
+            if (fileName == null) {
+                throw new IllegalArgumentException("Argument 'absoluteFilePath' does not point to a valid file.");
+            }
+            copyFile(inputStream, absoluteFolderPath, fileName.toString());
         } catch (final IOException e) {
             throw new IllegalStateException(
                     "Can not copy file '" + absoluteFilePath + "' to folder '" + absoluteFolderPath + "'!", e);
@@ -138,7 +147,7 @@ public class FileUtils {
      * @return the content of the file as string
      */
     public static String readFromFile(final String absoluteFilePath, final Charset charset) {
-        try (InputStream inputStream = new FileInputStream(new File(absoluteFilePath))) {
+        try (InputStream inputStream = new FileInputStream(absoluteFilePath)) {
             assertNonNullInputStream(inputStream, absoluteFilePath);
             return readFromInputStream(inputStream, charset);
         } catch (final IOException e) {

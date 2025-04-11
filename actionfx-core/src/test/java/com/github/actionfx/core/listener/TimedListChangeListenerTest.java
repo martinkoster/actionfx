@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.listener;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +65,7 @@ class TimedListChangeListenerTest {
 		// thread and executes the actual wrapped listener inside the JavaFX thread...we
 		// will wait here until it is completed.
 		WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
-		assertThat(listenerExecuted.get(), equalTo(true));
+		assertThat(listenerExecuted.get()).isTrue();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -87,7 +86,7 @@ class TimedListChangeListenerTest {
 		// the wrapped listener is only executed once, because it was fired 3 times
 		// within the period of 500ms
 		WaitForAsyncUtils.sleep(800, TimeUnit.MILLISECONDS);
-		assertThat(listenerExecuted.get(), equalTo(1));
+		assertThat(listenerExecuted.get()).isEqualTo(1);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,7 +106,7 @@ class TimedListChangeListenerTest {
 		// THEN
 		// we are now in the Fx-thread and timeout is set to 0, so the wrapped listener
 		// is directly executed.
-		assertThat(listenerExecuted.get(), equalTo(true));
+		assertThat(listenerExecuted.get()).isTrue();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -127,7 +126,7 @@ class TimedListChangeListenerTest {
 		// THEN
 		// the fireListenerProperty is set to false, so the wrapped listener is not
 		// executed
-		assertThat(listenerExecuted.get(), equalTo(false));
+		assertThat(listenerExecuted.get()).isFalse();
 	}
 
 }

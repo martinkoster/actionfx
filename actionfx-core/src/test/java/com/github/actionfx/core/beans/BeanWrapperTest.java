@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.beans;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,8 +51,7 @@ class BeanWrapperTest {
 		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement"),
-				sameInstance(nestedElement));
+		assertThat((Object) BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement")).isSameAs(nestedElement);
 	}
 
 	@Test
@@ -66,8 +62,7 @@ class BeanWrapperTest {
 		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement.fieldWithGetter.value"),
-				equalTo("hello"));
+		assertThat((Object) BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement.fieldWithGetter.value")).isEqualTo("hello");
 	}
 
 	@Test
@@ -77,8 +72,8 @@ class BeanWrapperTest {
 		final ClassWithList classWithList = new ClassWithList(list);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithList).getPropertyValue("list[0].value"), equalTo("hello"));
-		assertThat(BeanWrapper.of(classWithList).getPropertyValue("list[1].value"), equalTo("world"));
+		assertThat((Object) BeanWrapper.of(classWithList).getPropertyValue("list[0].value")).isEqualTo("hello");
+		assertThat((Object) BeanWrapper.of(classWithList).getPropertyValue("list[1].value")).isEqualTo("world");
 	}
 
 	@Test
@@ -89,8 +84,8 @@ class BeanWrapperTest {
 		final ClassWithArray classWithArray = new ClassWithArray(array);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithArray).getPropertyValue("array[0].value"), equalTo("hello"));
-		assertThat(BeanWrapper.of(classWithArray).getPropertyValue("array[1].value"), equalTo("world"));
+		assertThat((Object) BeanWrapper.of(classWithArray).getPropertyValue("array[0].value")).isEqualTo("hello");
+		assertThat((Object) BeanWrapper.of(classWithArray).getPropertyValue("array[1].value")).isEqualTo("world");
 	}
 
 	@Test
@@ -102,9 +97,9 @@ class BeanWrapperTest {
 		final ClassWithMap classWithMap = new ClassWithMap(map);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithMap).getPropertyValue("map(hello).value"), equalTo("hello"));
-		assertThat(BeanWrapper.of(classWithMap).getPropertyValue("map(world).value"), equalTo("world"));
-		assertThat(BeanWrapper.of(classWithMap).getPropertyValue("map(notExisting).value"), nullValue());
+		assertThat((Object) BeanWrapper.of(classWithMap).getPropertyValue("map(hello).value")).isEqualTo("hello");
+		assertThat((Object) BeanWrapper.of(classWithMap).getPropertyValue("map(world).value")).isEqualTo("world");
+		assertThat((Object) BeanWrapper.of(classWithMap).getPropertyValue("map(notExisting).value")).isNull();
 	}
 
 	@Test
@@ -113,8 +108,7 @@ class BeanWrapperTest {
 		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement.fieldWithGetter.value"),
-				nullValue());
+		assertThat((Object) BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement.fieldWithGetter.value")).isNull();
 	}
 
 	@Test
@@ -125,8 +119,7 @@ class BeanWrapperTest {
 		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(nestedElement, null);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement.fieldWithoutGetter.value"),
-				equalTo("world"));
+		assertThat((Object) BeanWrapper.of(classWithNestedElement).getPropertyValue("nestedElement.fieldWithoutGetter.value")).isEqualTo("world");
 	}
 
 	@Test
@@ -135,8 +128,7 @@ class BeanWrapperTest {
 		final StringPropertyType stringPropertyType = new StringPropertyType("hello world");
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(stringPropertyType).getFxProperty("value"),
-				sameInstance(stringPropertyType.valueProperty()));
+		assertThat((Object) BeanWrapper.of(stringPropertyType).getFxProperty("value")).isSameAs(stringPropertyType.valueProperty());
 	}
 
 	@Test
@@ -151,10 +143,8 @@ class BeanWrapperTest {
 				nestedElementWithProperties);
 
 		// WHEN and THEN
-		assertThat(
-				BeanWrapper.of(classWithNestedElement)
-						.getFxProperty("nestedElementWithProperties.fieldWithGetter.value"),
-				sameInstance(helloPropertyType.valueProperty()));
+		assertThat((Object) BeanWrapper.of(classWithNestedElement)
+				.getFxProperty("nestedElementWithProperties.fieldWithGetter.value")).isSameAs(helloPropertyType.valueProperty());
 	}
 
 	@Test
@@ -163,8 +153,7 @@ class BeanWrapperTest {
 		final ClassWithNestedElement classWithNestedElement = new ClassWithNestedElement(null, null);
 
 		// WHEN and THEN
-		assertThat(BeanWrapper.of(classWithNestedElement).getFxProperty("nestedElement.fieldWithGetter.value"),
-				nullValue());
+		assertThat((Object) BeanWrapper.of(classWithNestedElement).getFxProperty("nestedElement.fieldWithGetter.value")).isNull();
 	}
 
 	@Test
@@ -179,10 +168,8 @@ class BeanWrapperTest {
 				nestedElementWithProperties);
 
 		// WHEN and THEN
-		assertThat(
-				BeanWrapper.of(classWithNestedElement)
-						.getFxProperty("nestedElementWithProperties.fieldWithoutGetter.value"),
-				sameInstance(worldPropertyType.valueProperty()));
+		assertThat((Object) BeanWrapper.of(classWithNestedElement)
+				.getFxProperty("nestedElementWithProperties.fieldWithoutGetter.value")).isSameAs(worldPropertyType.valueProperty());
 	}
 
 	/**

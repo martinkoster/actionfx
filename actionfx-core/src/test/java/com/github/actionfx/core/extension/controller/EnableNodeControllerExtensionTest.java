@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
@@ -84,10 +83,10 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button1.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button1.isDisabled()).isTrue();
         setValues(controller, "hello", "world", null, null, null, null);
-        assertThat(controller.button1.isDisabled(), equalTo(false));
+        assertThat(controller.button1.isDisabled()).isFalse();
     }
 
     @Test
@@ -99,10 +98,10 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button1.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button1.isDisabled()).isTrue();
         setValues(controller, "hello", null, null, null, null, null);
-        assertThat(controller.button1.isDisabled(), equalTo(true));
+        assertThat(controller.button1.isDisabled()).isTrue();
     }
 
     @Test
@@ -114,10 +113,10 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button3.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button3.isDisabled()).isTrue();
         setValues(controller, "hello", null, null, null, Arrays.asList("item"), null);
-        assertThat(controller.button3.isDisabled(), equalTo(false));
+        assertThat(controller.button3.isDisabled()).isFalse();
     }
 
     @Test
@@ -129,10 +128,10 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button2.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button2.isDisabled()).isTrue();
         setValues(controller, "hello", null, null, null, null, null);
-        assertThat(controller.button2.isDisabled(), equalTo(false));
+        assertThat(controller.button2.isDisabled()).isFalse();
     }
 
     @Test
@@ -144,10 +143,10 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button4.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button4.isDisabled()).isTrue();
         setValues(controller, null, null, null, null, Arrays.asList("item"), null);
-        assertThat(controller.button4.isDisabled(), equalTo(false));
+        assertThat(controller.button4.isDisabled()).isFalse();
     }
 
     @Test
@@ -159,12 +158,12 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button5.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button5.isDisabled()).isTrue();
         setValues(controller, "hello", "world", null, null, null, null);
-        assertThat(controller.button5.isDisabled(), equalTo(true));
+        assertThat(controller.button5.isDisabled()).isTrue();
         setValues(controller, "hello", "world", null, "another value", null, null);
-        assertThat(controller.button5.isDisabled(), equalTo(false));
+        assertThat(controller.button5.isDisabled()).isFalse();
     }
 
     @Test
@@ -176,12 +175,12 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         extension.accept(controller);
 
-        // THEN
-        assertThat(controller.button6.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.button6.isDisabled()).isTrue();
         setValues(controller, "hello", null, null, null, null, null);
-        assertThat(controller.button6.isDisabled(), equalTo(true));
+        assertThat(controller.button6.isDisabled()).isTrue();
         setValues(controller, "hello", null, null, "another value", null, null);
-        assertThat(controller.button6.isDisabled(), equalTo(false));
+        assertThat(controller.button6.isDisabled()).isFalse();
     }
 
     @Test
@@ -193,8 +192,8 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
-        // THEN
-        assertThat(ex.getMessage(), equalTo("Field value of field 'button' is null!"));
+		// THEN
+		assertThat(ex.getMessage()).isEqualTo("Field value of field 'button' is null!");
     }
 
     @Test
@@ -206,8 +205,8 @@ class EnableNodeControllerExtensionTest {
         // WHEN
         final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
-        // THEN
-        assertThat(ex.getMessage(), equalTo("Field value of field 'string' is not of type javafx.scene.Node!"));
+		// THEN
+		assertThat(ex.getMessage()).isEqualTo("Field value of field 'string' is not of type javafx.scene.Node!");
     }
 
     @Test
@@ -227,22 +226,22 @@ class EnableNodeControllerExtensionTest {
         controller.textField1.setText("trigger change 1");
         controller.textField2.setText("trigger change 1");
 
-        // THEN
-        assertThat(controller.enableWhenSingleControlValidButton.isDisabled(), equalTo(true));
-        assertThat(controller.enableWhenAllValidButton.isDisabled(), equalTo(true));
+		// THEN
+        assertThat(controller.enableWhenSingleControlValidButton.isDisabled()).isTrue();
+        assertThat(controller.enableWhenAllValidButton.isDisabled()).isTrue();
 
         // and WHEN
         statusForTextField1.set(ValidationStatus.OK);
         controller.textField1.setText("trigger change 2");
-        assertThat(controller.enableWhenSingleControlValidButton.isDisabled(), equalTo(false)); // textField1 is now valid
-        assertThat(controller.enableWhenAllValidButton.isDisabled(), equalTo(true)); // still disabled
+        assertThat(controller.enableWhenSingleControlValidButton.isDisabled()).isFalse(); // textField1 is now valid
+        assertThat(controller.enableWhenAllValidButton.isDisabled()).isTrue(); // still disabled
 
         statusForTextField2.set(ValidationStatus.OK);
         controller.textField2.setText("trigger change 2");
 
-        // and THEN
-        assertThat(controller.enableWhenSingleControlValidButton.isDisabled(), equalTo(false));
-        assertThat(controller.enableWhenAllValidButton.isDisabled(), equalTo(false)); // now all controls are valid
+		// and THEN
+        assertThat(controller.enableWhenSingleControlValidButton.isDisabled()).isFalse();
+        assertThat(controller.enableWhenAllValidButton.isDisabled()).isFalse(); // now all controls are valid
     }
 
     private void setValues(final ControllerWithControls controller, final String text1, final String text2,

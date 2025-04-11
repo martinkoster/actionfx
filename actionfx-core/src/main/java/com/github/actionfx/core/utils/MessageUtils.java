@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
  * @author koster
  *
  */
-public class MessageUtils {
+public final class MessageUtils {
 
 	/**
 	 * Class can not be instantiated.
@@ -52,7 +52,7 @@ public class MessageUtils {
 	 */
 	public static String getMessage(final ResourceBundle resourceBundle, final String key,
 			final String defaultMessage) {
-		if (resourceBundle == null || key == null || key.trim().equals("")) {
+		if (resourceBundle == null || key == null || "".equals(key.trim())) {
 			return defaultMessage;
 		}
 		return resourceBundle.containsKey(key) ? resourceBundle.getString(key) : defaultMessage;

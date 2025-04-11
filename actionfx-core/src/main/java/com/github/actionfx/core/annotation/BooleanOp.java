@@ -42,5 +42,5 @@ public enum BooleanOp {
 	 * OR-operator that applies a logic "OR" between all attributes in an ActionFX
 	 * annotation.
 	 */
-	OR;
+	OR
 }

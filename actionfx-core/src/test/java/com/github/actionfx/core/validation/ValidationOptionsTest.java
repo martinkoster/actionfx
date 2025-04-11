@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -55,10 +54,10 @@ class ValidationOptionsTest {
 		final ValidationOptions options = ValidationOptions.options().required(true);
 
 		// THEN
-		assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
-		assertThat(options.isRequired(), equalTo(true));
-		assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
-		assertThat(options.isApplyValidationResultDecorations(), equalTo(false));
+		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.ONCHANGE);
+		assertThat(options.isRequired()).isTrue();
+		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(300);
+		assertThat(options.isApplyValidationResultDecorations()).isFalse();
 	}
 
 	@Test
@@ -72,10 +71,10 @@ class ValidationOptionsTest {
 		final ValidationOptions options = ValidationOptions.options().required(true).validationStartTimeoutMs(-1);
 
 		// THEN
-		assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
-		assertThat(options.isRequired(), equalTo(true));
-		assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
-		assertThat(options.isApplyValidationResultDecorations(), equalTo(false));
+		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.ONCHANGE);
+		assertThat(options.isRequired()).isTrue();
+		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(300);
+		assertThat(options.isApplyValidationResultDecorations()).isFalse();
 	}
 
 	@Test
@@ -91,10 +90,10 @@ class ValidationOptionsTest {
 				.applyValidationResultDecorations(false);
 
 		// THEN
-		assertThat(options.getValidationMode(), equalTo(ValidationMode.ONCHANGE));
-		assertThat(options.isRequired(), equalTo(true));
-		assertThat(options.getValidationStartTimeoutMs(), equalTo(300));
-		assertThat(options.isApplyValidationResultDecorations(), equalTo(false));
+		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.ONCHANGE);
+		assertThat(options.isRequired()).isTrue();
+		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(300);
+		assertThat(options.isApplyValidationResultDecorations()).isFalse();
 	}
 
 	@Test
@@ -107,9 +106,9 @@ class ValidationOptionsTest {
 		final ValidationOptions options = ValidationOptions.options().required(true);
 
 		// THEN
-		assertThat(options.getValidationMode(), equalTo(ValidationMode.MANUAL)); // default is manual
-		assertThat(options.isRequired(), equalTo(true));
-		assertThat(options.getValidationStartTimeoutMs(), equalTo(-1));
-		assertThat(options.isApplyValidationResultDecorations(), equalTo(true));
+		assertThat(options.getValidationMode()).isEqualTo(ValidationMode.MANUAL); // default is manual
+		assertThat(options.isRequired()).isTrue();
+		assertThat(options.getValidationStartTimeoutMs()).isEqualTo(-1);
+		assertThat(options.isApplyValidationResultDecorations()).isTrue();
 	}
 }

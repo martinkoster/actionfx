@@ -1,15 +1,19 @@
+import com.github.spotbugs.snom.Effort
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
     id "com.github.spotbugs" version "${spotbugsVersion}"
     id "java-library"
     id "io.github.gradle-nexus.publish-plugin" version "${gradleNexusPublishPlugin}"
-    id "org.sonarqube" version "${sonarQubePlugin}"
+	id "org.sonarqube" version "${sonarqubePlugin}"
     id "org.ajoberstar.git-publish" version "${gradleGitPublishPlugin}"
+	id "org.openrewrite.rewrite" version "7.3.0"
+	id 'project-report'
 }
 
 wrapper {
-    gradleVersion = "7.4.2"
-    distributionType = Wrapper.DistributionType.ALL
-    distributionUrl = "https://services.gradle.org/distributions/gradle-7.4.2-bin.zip"
+	gradleVersion = "8.13"
+	distributionUrl = "https://services.gradle.org/distributions/gradle-8.13-bin.zip"
 }
 
 description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection"
@@ -21,16 +25,16 @@ configure(allprojects) { project ->
  	apply plugin: "java-library"
     apply plugin: "eclipse"
     apply plugin: "idea"
-    apply plugin: 'jacoco'
+	apply plugin: 'jacoco'
+	apply plugin: 'project-report'
     apply plugin: "com.github.spotbugs"
 
-    sourceCompatibility = "11" 
-    targetCompatibility = "11"
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
     
     configurations {
 	    published
 	    all*.exclude module: "slf4j-log4j12"
-	    all*.exclude module: "jsr305"
 	    integrationTestImplementation.extendsFrom testImplementation
 	    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
     }
@@ -38,12 +42,9 @@ configure(allprojects) { project ->
       
     repositories {
         mavenCentral()
-        jcenter()
         mavenLocal()
     }
-    
 
-    
 	// In this section you declare additional sourceSets
 	sourceSets {
 	    integrationTest {
@@ -65,39 +66,48 @@ configure(allprojects) { project ->
 	
 	test {
 		useJUnitPlatform()
-		reports {
-			html.enabled = true
-			html.destination = file("${reporting.baseDir}/${name}")
+		jacoco {
+			destinationFile = layout.buildDirectory.file("jacoco/UTest.exec").get().asFile
+			enabled = true
 		}
-	    testLogging {
-    	    exceptionFormat = "full"
-    	}
+		reports {
+			html.required.set(true)
+			html.outputLocation.set(file("${reporting.baseDir}/${name}"))
+		}
+
+		testLogging {
+			exceptionFormat = "full"
+		}
     }
 
-    tasks.withType(Test) {
-       	systemProperties = System.properties
-       	systemProperties["user.dir"] = workingDir
-    	reports.html.destination = file("${reporting.baseDir}/${name}")
-    	testLogging {
-        	events "passed", "skipped", "failed"
-    	}
-    }
-    
-	task integrationTest(type: Test) {
-		useJUnitPlatform()
-	    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-	    classpath = sourceSets.integrationTest.runtimeClasspath
-	    outputs.upToDateWhen { false }
-	    // test includes
-	    if ( project.hasProperty("tests.include") ) {
-	    	include project.property("tests.include")
-	    }
+	tasks.withType(Test).configureEach {
+		systemProperties = System.properties
+		systemProperties["user.dir"] = workingDir
+		reports.html.outputLocation.set(file("${reporting.baseDir}/${name}"))
 		testLogging {
-        	exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    	}
-    	afterTest { test, result ->
-        	println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
-    	}
+			events "passed", "skipped", "failed"
+		}
+	}
+
+	tasks.register('integrationTest', Test) {
+		useJUnitPlatform()
+		testClassesDirs = sourceSets.integrationTest.output.classesDirs
+		classpath = sourceSets.integrationTest.runtimeClasspath
+		outputs.upToDateWhen { false }
+		// test includes
+		if (project.hasProperty("tests.include")) {
+			include project.property("tests.include")
+		}
+		testLogging {
+			exceptionFormat = TestExceptionFormat.FULL
+		}
+		afterTest { test, result ->
+			println "Executing test ${test.name} [${test.className}] with result: ${result.resultType}"
+		}
+		jacoco {
+			destinationFile = layout.buildDirectory.file("jacoco/ITest.exec").get().asFile
+			enabled = true
+		}
 	}
 
 	////////////////////
@@ -118,15 +128,14 @@ configure(allprojects) { project ->
 	// Code analysis //
 	///////////////////
     spotbugs {
-        effort = "max"
-        reportLevel = "high"  
-        reportsDir = file("$buildDir/reports/spotbugs")
-    }
+		effort = Effort.MAX
+		reportsDir = layout.buildDirectory.file("/reports/spotbugs").get().asFile
+		excludeFilter = file("$rootDir/spotbugs-filter.xml")
+	}
     
     spotbugsMain {
         reports {
             html {
-                enabled = true
                 destination = file("$buildDir/reports/spotbugs/spotbugs-main.html")
                 stylesheet = "fancy-hist.xsl"
             }
@@ -143,10 +152,26 @@ configure(allprojects) { project ->
         ignoreFailures = true
     }
 
-    javadoc {
+	////////////////////////
+	// Code Quality		  //
+	////////////////////////
+	jacocoTestReport {
+		executionData.setFrom(
+				fileTree("${layout.buildDirectory.get().getAsFile().path}") {
+					include("jacoco/*.exec")
+				})
+		reports {
+			xml.required.set(true)
+			xml.outputLocation.set(layout.buildDirectory.file("jacoco/coverage.xml"))
+			html.required.set(true)
+			csv.required.set(false)
+		}
+	}
+
+	javadoc {
         description = "Generates project-level javadoc for use in -javadoc jar"
 
-        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.memberLevel = JavadocMemberLevel.PROTECTED
         options.author = true
         options.header = project.name
         options.addStringOption("Xdoclint:none", "-quiet")
@@ -161,19 +186,20 @@ configure(allprojects) { project ->
     }
 	
 	// Copy Javadoc of the sub-project to the docs folder for versioning und linking in Github
-	task copyJavaDocToDocs(type: Copy) {
-	    from "$buildDir/docs/javadoc"
-	    into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
+	tasks.register('copyJavaDocToDocs', Copy) {
+		from "$buildDir/docs/javadoc"
+		into "${rootProject.projectDir}/build/docs/${version}/${project.name}"
 	}
 	copyJavaDocToDocs.dependsOn javadoc
 	test.dependsOn copyJavaDocToDocs
-	
-    dependencies {
-	    compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
- 		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
+
+	dependencies {
+		compileOnly group: "com.github.spotbugs", name: "spotbugs-annotations", version: "${spotbugsAnnotationVersion}"
+
+		testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${junitJupiterVersion}"
     	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${junitJupiterVersion}"
-    	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${hamcrestVersion}"
-    }
+		testImplementation group: "org.assertj", name: "assertj-core", version: "${assertJVersion}"
+	}
 }
 
 nexusPublishing {
@@ -188,7 +214,7 @@ nexusPublishing {
 
 configure(subprojects) { project ->
 
-    initializeSonatypeStagingRepository {
+	initializeSonatypeStagingRepository {
         shouldRunAfter(tasks.withType(Sign))
     }	
 }
@@ -217,69 +243,61 @@ gitPublish {
 	}
 }
 
-////////////////////////
-// Code Quality		  //
-////////////////////////
-
-task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-
-    subprojects.each {
-        sourceSets it.sourceSets.main
-    }
-
-    reports {
-        xml.enabled true
-        xml.destination file("${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml")
-        html.enabled false
-        csv.enabled false
-    }
-}
-
-codeCoverageReport.dependsOn {
-	    subprojects*.test
-}
-
-
-sonarqube {
-  properties {
-    property "sonar.projectKey", "martinkoster_actionfx"
-    property "sonar.organization", "martinkoster"
-    property "sonar.host.url", "https://sonarcloud.io"
-    property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
-  }
+sonar {
+	def branchName = System.getenv("GITHUB_REF_NAME")
+	properties {
+		if (branchName != "master") {
+			property "sonar.newCode.referenceBranch", "master"
+		}
+		property "sonar.projectKey", "martinkoster_actionfx"
+		property "sonar.organization", "martinkoster"
+		property "sonar.host.url", "https://sonarcloud.io"
+		properties["sonar.tests"] += "src/integration-test/java"
+		property "sonar.coverage.jacoco.xmlReportPaths", fileTree(project.rootDir.absolutePath).include("**/jacoco/coverage.xml")
+		property "sonar.junit.reportPath", "${layout.buildDirectory.get().getAsFile().path}/test-results/xml/"
+		property "sonar.branch.name", branchName
+		property "sonar.qualitygate.wait", true
+		property "sonar.exclusions", "**/Application*, **/config/*, **/generated/*"
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Tasks for incrementing the version number in gradle.properties and README files
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-task incMajorVersion {
+tasks.register('incMajorVersion') {
 	doLast {
-	    def versionTokens = project.version.split("\\.")
-	    def newVersion = (Integer.parseInt(versionTokens[0]) + 1) + ".0.0"
-	    setVersionTo(newVersion)
+		def versionTokens = project.version.split("\\.")
+		def newVersion = (Integer.parseInt(versionTokens[0]) + 1) + ".0.0"
+		setVersionTo(newVersion)
 	}
 }
 
-task incMinorVersion {
+tasks.register('incMinorVersion') {
 	doLast {
-	    def versionTokens = project.version.split("\\.")
-	    def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
-	    setVersionTo(newVersion)
+		def versionTokens = project.version.split("\\.")
+		def newVersion = versionTokens[0] + "." + (Integer.parseInt(versionTokens[1]) + 1) + ".0"
+		setVersionTo(newVersion)
 	}
 }
 
-task incPatchVersion {
+tasks.register('incPatchVersion') {
 	doLast {
-	    def versionTokens = project.version.split("\\.")
-	    def newVersion = versionTokens[0] + "." + versionTokens[1] + "." + (Integer.parseInt(versionTokens[2]) + 1)
-	    setVersionTo(newVersion)
+		def versionTokens = project.version.split("\\.")
+		def newVersion = versionTokens[0] + "." + versionTokens[1] + "." + (Integer.parseInt(versionTokens[2]) + 1)
+		setVersionTo(newVersion)
 	}
+}
+
+rewrite {
+	activeRecipe("org.openrewrite.staticanalysis.CommonStaticAnalysis")
+	activeRecipe("org.openrewrite.java.RemoveUnusedImports")
+	setExportDatatables(true)
 }
 
 dependencies {
-    implementation 'org.junit.platform:junit-platform-commons:1.9.2'
+	rewrite("org.openrewrite.recipe:rewrite-testing-frameworks:3.5.1")
+	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
 	implementation 'org.junit.platform:junit-platform-commons:1.9.2'
 }
 

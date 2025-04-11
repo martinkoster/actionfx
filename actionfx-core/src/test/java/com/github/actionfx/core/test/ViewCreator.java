@@ -36,7 +36,7 @@ import javafx.scene.layout.AnchorPane;
  * @author koster
  *
  */
-public class ViewCreator {
+public final class ViewCreator {
 
     private ViewCreator() {
     }

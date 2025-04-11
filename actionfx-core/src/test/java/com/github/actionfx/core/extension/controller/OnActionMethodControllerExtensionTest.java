@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -72,7 +69,7 @@ class OnActionMethodControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(button.getOnAction(), notNullValue());
+		assertThat(button.getOnAction()).isNotNull();
 
 		// and WHEN (fire action)
 		Event.fireEvent(button, new ActionEvent());
@@ -80,7 +77,7 @@ class OnActionMethodControllerExtensionTest {
 		// and THEN (invocation was performed)
 		verify(controller, times(1)).onActionButtonClicked();
 		// execution was inside JavaFX thread
-		assertThat(controller.executedInJavaFxThread, equalTo(true));
+        assertThat(controller.executedInJavaFxThread).isTrue();
 	}
 
 	@Test
@@ -96,7 +93,7 @@ class OnActionMethodControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(button.getOnAction(), notNullValue());
+		assertThat(button.getOnAction()).isNotNull();
 
 		// and WHEN (fire action)
 		Event.fireEvent(button, new ActionEvent());
@@ -118,16 +115,16 @@ class OnActionMethodControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(button.getOnAction(), notNullValue());
+		assertThat(button.getOnAction()).isNotNull();
 
 		// and WHEN (fire action)
 		Event.fireEvent(button, new ActionEvent());
-		WaitForAsyncUtils.sleep(100, TimeUnit.MILLISECONDS);
+		WaitForAsyncUtils.sleep(1000, TimeUnit.MILLISECONDS);
 
 		// and THEN (invocation was performed)
 		verify(controller, times(1)).onActionButtonClicked();
 		// execution was not inside JavaFX thread
-		assertThat(controller.executedInJavaFxThread, equalTo(false));
+        assertThat(controller.executedInJavaFxThread).isFalse();
 	}
 
 	@Test
@@ -142,15 +139,14 @@ class OnActionMethodControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Control with id='actionButton' and type 'javafx.scene.control.TableView' does not support an 'onAction' property!"));
+		assertThat(ex.getMessage()).contains("Control with id='actionButton' and type 'javafx.scene.control.TableView' does not support an 'onAction' property!");
 	}
 
 	public class ControllerWithAFXOnAction {
 
 		public View _view;
 
-		protected boolean executedInJavaFxThread = false;
+		protected boolean executedInJavaFxThread;
 
 		public ControllerWithAFXOnAction(final View view) {
 			_view = view;

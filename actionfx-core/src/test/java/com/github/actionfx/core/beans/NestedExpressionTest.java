@@ -23,17 +23,13 @@
  */
 package com.github.actionfx.core.beans;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,12 +43,12 @@ class NestedExpressionTest {
 
 	@Test
 	void testHasNext() {
-		assertThat(expr(null).iterator().hasNext(), equalTo(false));
-		assertThat(expr("").iterator().hasNext(), equalTo(false));
-		assertThat(expr("field").iterator().hasNext(), equalTo(true));
-		assertThat(expr("field[0]").iterator().hasNext(), equalTo(true));
-		assertThat(expr("field(map.key)").iterator().hasNext(), equalTo(true));
-		assertThat(expr("field.anotherfield").iterator().hasNext(), equalTo(true));
+        assertThat(expr(null).iterator().hasNext()).isFalse();
+        assertThat(expr("").iterator().hasNext()).isFalse();
+        assertThat(expr("field").iterator().hasNext()).isTrue();
+        assertThat(expr("field[0]").iterator().hasNext()).isTrue();
+        assertThat(expr("field(map.key)").iterator().hasNext()).isTrue();
+        assertThat(expr("field.anotherfield").iterator().hasNext()).isTrue();
 	}
 
 	@Test
@@ -64,8 +60,8 @@ class NestedExpressionTest {
 		final SingleExpression se = exp.iterator().next();
 
 		// THEN
-		assertThat(se, notNullValue());
-		assertThat(se.getValue(), equalTo("field"));
+		assertThat(se).isNotNull();
+		assertThat(se.getValue()).isEqualTo("field");
 	}
 
 	@Test
@@ -77,9 +73,9 @@ class NestedExpressionTest {
 		final SingleExpression se = exp.iterator().next();
 
 		// THEN
-		assertThat(se, notNullValue());
-		assertThat(se.getValue(), equalTo("field[0]"));
-		assertThat(se.isIndexed(), equalTo(true));
+		assertThat(se).isNotNull();
+		assertThat(se.getValue()).isEqualTo("field[0]");
+        assertThat(se.isIndexed()).isTrue();
 	}
 
 	@Test
@@ -91,9 +87,9 @@ class NestedExpressionTest {
 		final SingleExpression se = exp.iterator().next();
 
 		// THEN
-		assertThat(se, notNullValue());
-		assertThat(se.getValue(), equalTo("field(map.key)"));
-		assertThat(se.isMapped(), equalTo(true));
+		assertThat(se).isNotNull();
+		assertThat(se.getValue()).isEqualTo("field(map.key)");
+        assertThat(se.isMapped()).isTrue();
 	}
 
 	@Test
@@ -109,8 +105,7 @@ class NestedExpressionTest {
 		}
 
 		// THEN
-		assertThat(seList.stream().map(SingleExpression::getValue).collect(Collectors.toList()),
-				contains("field", "list[4]", "map(map.key)", "elem"));
+        assertThat(seList.stream().map(SingleExpression::getValue).toList()).containsExactly("field", "list[4]", "map(map.key)", "elem");
 	}
 
 	@Test
@@ -119,10 +114,10 @@ class NestedExpressionTest {
 		final NestedExpression exp = expr("field.list[4].map(map.key).elem");
 
 		// WHEN
-		final List<String> seList = exp.stream().map(SingleExpression::getValue).collect(Collectors.toList());
+        final List<String> seList = exp.stream().map(SingleExpression::getValue).toList();
 
 		// THEN
-		assertThat(seList, contains("field", "list[4]", "map(map.key)", "elem"));
+		assertThat(seList).containsExactly("field", "list[4]", "map(map.key)", "elem");
 	}
 
 	@Test
@@ -132,10 +127,10 @@ class NestedExpressionTest {
 		final Iterator<SingleExpression> it = exp.iterator();
 
 		// WHEN
-		final NoSuchElementException ex = assertThrows(NoSuchElementException.class, () -> it.next());
+		final NoSuchElementException ex = assertThrows(NoSuchElementException.class, it::next);
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("No expressions left"));
+		assertThat(ex.getMessage()).isEqualTo("No expressions left");
 	}
 
 	@Test
@@ -145,10 +140,10 @@ class NestedExpressionTest {
 		final Iterator<SingleExpression> it = exp.iterator();
 
 		// WHEN
-		final NoSuchElementException ex = assertThrows(NoSuchElementException.class, () -> it.next());
+		final NoSuchElementException ex = assertThrows(NoSuchElementException.class, it::next);
 
 		// THEN
-		assertThat(ex.getMessage(), equalTo("No expressions left"));
+		assertThat(ex.getMessage()).isEqualTo("No expressions left");
 	}
 
 	private static NestedExpression expr(final String value) {

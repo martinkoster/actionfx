@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.github.actionfx.core.annotation.BooleanOp;
 
@@ -66,11 +65,11 @@ public class BooleanBindingBuilder {
         AT_LEAST_ONE_MATCH
     }
 
-    private List<PredicateElement<?>> predicateElements = new ArrayList<>();
+    private final List<PredicateElement<?>> predicateElements = new ArrayList<>();
 
     // flag that determines, whether the result of the entire predicate chain shall
     // be negated or not
-    private boolean negateChainResult = false;
+    private boolean negateChainResult;
 
     protected BooleanBindingBuilder() {
         // can not be instantiated directly
@@ -147,8 +146,7 @@ public class BooleanBindingBuilder {
      *         {@link PredicateBuilder#build()}.
      */
     public <T> PredicateBuilder<T> andAllTestablesFulfillPredicate(final Predicate<T> predicate) {
-        final PredicateBuilder<T> b = forPredicate(predicate);
-        b.booleanOp(BooleanOp.AND);
+        final PredicateBuilder<T> b = andForPredicate(predicate);
         b.matchingOp(MatchingOp.ALL_MATCH);
         return b;
     }
@@ -183,8 +181,7 @@ public class BooleanBindingBuilder {
      *         {@link PredicateBuilder#build()}.
      */
     public <T> PredicateBuilder<T> orAllTestablesFulfillPredicate(final Predicate<T> predicate) {
-        final PredicateBuilder<T> b = forPredicate(predicate);
-        b.booleanOp(BooleanOp.OR);
+        final PredicateBuilder<T> b = orForPredicate(predicate);
         b.matchingOp(MatchingOp.ALL_MATCH);
         return b;
     }
@@ -306,8 +303,10 @@ public class BooleanBindingBuilder {
         case OR:
             combined = currentResult || element.evaluatePredicate();
             break;
-        default:
         case AND:
+            combined = currentResult && element.evaluatePredicate();
+            break;
+            default:
             combined = currentResult && element.evaluatePredicate();
         }
         return combined;
@@ -343,7 +342,7 @@ public class BooleanBindingBuilder {
         private MatchingOp matchingOp;
 
         // optionally negate the computed result
-        private boolean negateResult = false;
+        private boolean negateResult;
 
         private BooleanBindingBuilder parentBuilder;
 
@@ -443,7 +442,7 @@ public class BooleanBindingBuilder {
         protected MatchingOp matchingOp;
 
         // optionally negate the computed result
-        protected boolean negateResult = false;
+        protected boolean negateResult;
 
         public PredicateElement(final BooleanOp booleanOp, final Predicate<T> predicate, final MatchingOp matchingOp,
                 final Function<T, Observable> observableExtractorFunction, final T[] testables,
@@ -467,8 +466,10 @@ public class BooleanBindingBuilder {
             case AT_LEAST_ONE_MATCH:
                 result = Arrays.asList(testables).stream().anyMatch(predicate);
                 break;
+                case ALL_MATCH:
+                    result = Arrays.asList(testables).stream().allMatch(predicate);
+                    break;
             default:
-            case ALL_MATCH:
                 result = Arrays.asList(testables).stream().allMatch(predicate);
             }
             return negateResult ? !result : result;
@@ -480,7 +481,7 @@ public class BooleanBindingBuilder {
          * @return observables that trigger the re-evaluation of the predicate
          */
         public List<Observable> getObservables() {
-            return Arrays.asList(testables).stream().map(observableExtractorFunction).collect(Collectors.toList());
+            return Arrays.asList(testables).stream().map(observableExtractorFunction).toList();
         }
 
         /**

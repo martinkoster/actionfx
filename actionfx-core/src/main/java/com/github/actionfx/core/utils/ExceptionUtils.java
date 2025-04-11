@@ -31,7 +31,7 @@ import java.util.Collection;
  * @author koster
  *
  */
-public class ExceptionUtils {
+public final class ExceptionUtils {
 
 	public static final String NULL_VALUE_STRING = "null";
 
@@ -80,8 +80,8 @@ public class ExceptionUtils {
 	 *         {@link RuntimeException} already
 	 */
 	public static RuntimeException wrapInRuntimeExceptionIfNecessary(final Throwable throwable) {
-		if (throwable instanceof RuntimeException) {
-			return (RuntimeException) throwable;
+		if (throwable instanceof RuntimeException runtimeException) {
+			return runtimeException;
 		} else {
 			return new NestedThrowableException(throwable);
 		}

@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.bind;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,13 +60,13 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(true));
-		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(binding.isBound()).isTrue();
+		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 2");
 		listView.getSelectionModel().select("Choice 1");
-		assertThat(bindingSource, contains("Choice 1", "Choice 2"));
+		assertThat(bindingSource).containsExactly("Choice 1", "Choice 2");
 		bindingSource.add("Choice 3");
-		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 1", "Choice 2", "Choice 3"));
+		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 1", "Choice 2", "Choice 3");
 	}
 
 	@Test
@@ -82,13 +80,13 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(true));
-		assertThat(bindingTarget, contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(binding.isBound()).isTrue();
+		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
-		assertThat(bindingSource, contains("Choice 2", "Choice 1"));
+		assertThat(bindingSource).containsExactly("Choice 2", "Choice 1");
 		bindingSource.add("Choice 3");
-		assertThat(bindingTarget, contains("Choice 2", "Choice 1", "Choice 3"));
+		assertThat(bindingTarget).containsExactly("Choice 2", "Choice 1", "Choice 3");
 	}
 
 	@Test
@@ -103,11 +101,11 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(true));
-		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(binding.isBound()).isTrue();
+		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 2");
 		listView.getSelectionModel().select("Choice 1");
-		assertThat(bindingSource, contains("Choice 1", "Choice 2"));
+		assertThat(bindingSource).containsExactly("Choice 1", "Choice 2");
 	}
 
 	@Test
@@ -121,11 +119,11 @@ class ObservableListBindingTest {
 		binding.bind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(true));
-		assertThat(bindingTarget, contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(binding.isBound()).isTrue();
+		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
-		assertThat(bindingSource, contains("Choice 2", "Choice 1"));
+		assertThat(bindingSource).containsExactly("Choice 2", "Choice 1");
 	}
 
 	@Test
@@ -141,11 +139,11 @@ class ObservableListBindingTest {
 		binding.unbind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(false));
-		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(binding.isBound()).isFalse();
+		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 2");
 		listView.getSelectionModel().select("Choice 1");
-		assertThat(bindingSource, contains("Choice 2")); // no change, as it is not bound
+		assertThat(bindingSource).containsExactly("Choice 2"); // no change, as it is not bound
 	}
 
 	@Test
@@ -160,11 +158,11 @@ class ObservableListBindingTest {
 		binding.unbind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.BIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(false));
-		assertThat(bindingTarget, contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.BIDIRECTIONAL);
+		assertThat(binding.isBound()).isFalse();
+		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
-		assertThat(bindingSource, contains("Choice 2")); // no change, as it is not bound
+		assertThat(bindingSource).containsExactly("Choice 2"); // no change, as it is not bound
 	}
 
 	@Test
@@ -179,11 +177,11 @@ class ObservableListBindingTest {
 		binding.unbind();
 
 		// THEN
-		assertThat(binding.getBindingType(), equalTo(BindingType.UNIDIRECTIONAL));
-		assertThat(binding.isBound(), equalTo(false));
-		assertThat(bindingTarget, contains("Choice 2"));
+		assertThat(binding.getBindingType()).isEqualTo(BindingType.UNIDIRECTIONAL);
+		assertThat(binding.isBound()).isFalse();
+		assertThat(bindingTarget).containsExactly("Choice 2");
 		bindingTarget.add("Choice 1");
-		assertThat(bindingSource, contains("Choice 2")); // no change, as it is not bound
+		assertThat(bindingSource).containsExactly("Choice 2"); // no change, as it is not bound
 	}
 
 	private static ListView<String> listView() {

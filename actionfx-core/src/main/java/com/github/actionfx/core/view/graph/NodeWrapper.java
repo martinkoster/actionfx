@@ -24,7 +24,6 @@
 package com.github.actionfx.core.view.graph;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -32,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.actionfx.core.annotation.AFXNestedView;
@@ -269,7 +267,7 @@ public class NodeWrapper {
 		if (supportsMultipleChildren()) {
 			return Collections.unmodifiableList(getChildren());
 		} else if (supportsSingleChild()) {
-			return Collections.unmodifiableList(Arrays.asList((T) getSingleChildProperty().getValue()));
+			return Collections.singletonList((T) getSingleChildProperty().getValue());
 		} else {
 			return Collections.emptyList();
 		}
@@ -330,7 +328,7 @@ public class NodeWrapper {
 	public boolean supportsMultipleChildren() {
 		final Boolean cached = SUPPORTS_MULTIPLE_CHILDREN.get(getWrappedType());
 		if (cached != null) {
-			return cached.booleanValue();
+			return cached;
 		}
 		final Field childField = lookupChildrenField(getWrappedType());
 		if (childField == null) {
@@ -368,7 +366,7 @@ public class NodeWrapper {
 	public boolean supportsSingleChild() {
 		final Boolean cached = SUPPORTS_SINGLE_CHILD.get(getWrappedType());
 		if (cached != null) {
-			return cached.booleanValue();
+			return cached;
 		}
 		final Field childField = lookupChildrenField(getWrappedType());
 		if (childField == null) {
@@ -529,10 +527,8 @@ public class NodeWrapper {
 			}
 		} else if (node.supportsSingleChild()) {
 			final Property<Node> property = node.getSingleChildProperty();
-			if (property != null && property.getValue() != null
-					&& !traverseRecursivelyByDFS(node, NodeWrapper.of(property.getValue()), nodeVisitor)) {
-				return false;
-			}
+			return property == null || property.getValue() == null
+					|| traverseRecursivelyByDFS(node, NodeWrapper.of(property.getValue()), nodeVisitor);
 		}
 		return true;
 	}
@@ -567,7 +563,7 @@ public class NodeWrapper {
 				queue.addAll(node.getChildren().stream().map(NodeWrapper::of).map(wrapper -> {
 					childToParentMap.put(node, wrapper);
 					return wrapper;
-				}).collect(Collectors.toList()));
+				}).toList());
 			} else if (node.supportsSingleChild()) {
 				final Property<Object> property = node.getSingleChildProperty();
 				if (property != null && property.getValue() != null) {
@@ -781,8 +777,8 @@ public class NodeWrapper {
 		if (isControl()) {
 			final Control c = (Control) wrapped;
 			final Skin<?> s = c.getSkin();
-			if (s instanceof SkinBase) {
-				return ((SkinBase) s).getChildren();
+			if (s instanceof SkinBase skinBase) {
+				return skinBase.getChildren();
 			}
 		}
 		return supportsMultipleChildren() ? getChildren() : FXCollections.observableArrayList();
@@ -798,8 +794,8 @@ public class NodeWrapper {
 		if (isControl()) {
 			final Control c = (Control) wrapped;
 			AFXUtils.executeOnceWhenPropertyIsNonNull(c.skinProperty(), skin -> {
-				if (skin instanceof SkinBase) {
-					addDecorationUniquely(decorationNode, ((SkinBase) skin).getChildren());
+				if (skin instanceof SkinBase skinBase) {
+					addDecorationUniquely(decorationNode, skinBase.getChildren());
 				} else if (supportsMultipleChildren()) {
 					addDecorationUniquely(decorationNode, getChildren());
 				}
@@ -1126,7 +1122,7 @@ public class NodeWrapper {
 			if (!target.isBorderPane()) {
 				throwIllegalStateExceptionForUnexpectedType(target, BorderPane.class);
 			}
-			final BorderPane borderPane = (BorderPane) target.getWrapped();
+			final BorderPane borderPane = target.getWrapped();
 			final Node n = (Node) node;
 			switch (position) {
 			case TOP:

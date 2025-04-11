@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Date;
 
@@ -45,7 +44,7 @@ class JavaTimeToDateConverterTest {
 		final Date date = new Date();
 
 		// WHEN and THEN
-		assertThat(converter.apply(date.toInstant()), equalTo(date));
+		assertThat(converter.apply(date.toInstant())).isEqualTo(date);
 	}
 
 }

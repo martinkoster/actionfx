@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Predicate;
@@ -63,7 +60,7 @@ class UseFilteredListControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(controller.tableView.getItems(), instanceOf(FilteredList.class));
+		assertThat(controller.tableView.getItems()).isInstanceOf(FilteredList.class);
 	}
 
 	@Test
@@ -76,9 +73,9 @@ class UseFilteredListControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(controller.tableView.getItems(), instanceOf(SortedList.class));
+		assertThat(controller.tableView.getItems()).isInstanceOf(SortedList.class);
 		final SortedList<String> sortedList = (SortedList<String>) controller.tableView.getItems();
-		assertThat(sortedList.getSource(), instanceOf(FilteredList.class));
+		assertThat(sortedList.getSource()).isInstanceOf(FilteredList.class);
 	}
 
 	@Test
@@ -91,9 +88,9 @@ class UseFilteredListControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(controller.tableView.getItems(), instanceOf(FilteredList.class));
+		assertThat(controller.tableView.getItems()).isInstanceOf(FilteredList.class);
 		final FilteredList<String> filteredList = (FilteredList<String>) controller.tableView.getItems();
-		assertThat(filteredList.getPredicate(), sameInstance(controller.filterPredicateProperty.get()));
+		assertThat(filteredList.getPredicate()).isSameAs(controller.filterPredicateProperty.get());
 	}
 
 	@Test
@@ -107,7 +104,7 @@ class UseFilteredListControllerExtensionTest {
 				() -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("is not of expected type"));
+		assertThat(ex.getMessage()).contains("is not of expected type");
 	}
 
 	@Test
@@ -120,7 +117,7 @@ class UseFilteredListControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("resolved to null!"));
+		assertThat(ex.getMessage()).contains("resolved to null!");
 	}
 
 	@Test
@@ -133,7 +130,7 @@ class UseFilteredListControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("resolved to an ObservableValue, but its value is null!"));
+		assertThat(ex.getMessage()).contains("resolved to an ObservableValue, but its value is null!");
 	}
 
 	@Test
@@ -146,8 +143,7 @@ class UseFilteredListControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(),
-				containsString("resolved to an ObservableValue, but its value is not a java.util.function.Predicate!"));
+		assertThat(ex.getMessage()).contains("resolved to an ObservableValue, but its value is not a java.util.function.Predicate!");
 	}
 
 	public class ControllerWithTableView {

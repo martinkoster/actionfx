@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.7.0
+
+### Technical Upgrades
+
+- Updated build to Java 17
+- Upgraded Gradle to 8.13 for build and for actionfx-app-factory generated applications
+- Upgraded external dependencies to recent versions (commons-lang3, commons-beanutils, bytebuddy, SonarQube Plugin)
+- Replaced JavaEE javax.* packages by corresponding Jakarta packages
+- Migrated all JUnit tests from using Hamcrest Matcher to AssertJ.
+- Added support for Spring Boot 3.4.4 (AFXAutoConfiguration is no longer configured via spring.factories)
+- Migrated CI build from Gitlab to Github Actions
+
+### Bugfixes
+
+- Fixed issue with wrong FXML file location in attribute 'fxml' of annotation 'AFXController' in actionfx-appfactory,
+  when FXML file was located outside of project directory and was copied into the project directory during generation
+  phase.
+- Fixed issue with generated ActionFX controller class names in actionfx-appfactory.
+
 ## 1.6.0 (18.04.2023)
 
 ### New Features

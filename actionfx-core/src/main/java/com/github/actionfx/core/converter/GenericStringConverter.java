@@ -65,7 +65,7 @@ public class GenericStringConverter<T> extends StringConverter<T> implements Bid
 
 	/**
 	 * Creates a default to-string converter, which basically calls the
-	 * {@link String#toString()} method of the type.
+	 * {@link String} method of the type.
 	 *
 	 * @return the default to-string converter
 	 */

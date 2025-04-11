@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Locale;
 
@@ -45,9 +43,9 @@ class StringToFloatConverterTest {
 		final StringToFloatConverter converter = new StringToFloatConverter("#,###.##", Locale.GERMANY, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply("10.000,44"), equalTo(Float.valueOf(10000.44f)));
-		assertThat(converter.apply("100"), equalTo(Float.valueOf(100)));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply("10.000,44")).isEqualTo(Float.valueOf(10000.44f));
+		assertThat(converter.apply("100")).isEqualTo(Float.valueOf(100));
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -56,9 +54,9 @@ class StringToFloatConverterTest {
 		final StringToFloatConverter converter = new StringToFloatConverter("#,###.##", Locale.US, true);
 
 		// WHEN and THEN
-		assertThat(converter.apply("10,000.44"), equalTo(Float.valueOf(10000.44f)));
-		assertThat(converter.apply("100"), equalTo(Float.valueOf(100)));
-		assertThat(converter.apply(null), nullValue());
+		assertThat(converter.apply("10,000.44")).isEqualTo(Float.valueOf(10000.44f));
+		assertThat(converter.apply("100")).isEqualTo(Float.valueOf(100));
+		assertThat(converter.apply(null)).isNull();
 	}
 
 	@Test
@@ -67,7 +65,7 @@ class StringToFloatConverterTest {
 		final StringToFloatConverter converter = new StringToFloatConverter("#,###.##", Locale.US, false);
 
 		// WHEN and THEN
-		assertThat(converter.apply(null), equalTo(StringToFloatConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS));
-		assertThat(converter.apply("invalid"), equalTo(StringToFloatConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS));
+		assertThat(converter.apply(null)).isEqualTo(StringToFloatConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS);
+		assertThat(converter.apply("invalid")).isEqualTo(StringToFloatConverter.DEFAULT_VALUE_ON_NULL_AND_PARSE_ERRORS);
 	}
 }

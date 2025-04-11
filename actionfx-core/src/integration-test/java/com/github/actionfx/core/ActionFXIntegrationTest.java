@@ -23,15 +23,7 @@
  */
 package com.github.actionfx.core;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,25 +78,25 @@ class ActionFXIntegrationTest {
 		final View view = actionFX.getView("mainId");
 
 		// THEN
-		assertThat(view, notNullValue());
-		assertThat(view.getRootNode(), instanceOf(BorderPane.class));
+		assertThat(view).isNotNull();
+		assertThat((Object) view.getRootNode()).isInstanceOf(BorderPane.class);
 		final BorderPane borderPane = (BorderPane) view.getRootNode();
 
 		// check that view is properly nested
-		assertThat(borderPane.getCenter(), notNullValue());
-		assertThat(borderPane.getCenter(), instanceOf(TabPane.class));
+		assertThat(borderPane.getCenter()).isNotNull();
+		assertThat(borderPane.getCenter()).isInstanceOf(TabPane.class);
 		final TabPane tabPane = (TabPane) borderPane.getCenter();
 
-		assertThat(tabPane.getTabs(), hasSize(2));
-		assertThat(tabPane.getTabs().get(0).getText(), equalTo("Tab 1"));
-		assertThat(tabPane.getTabs().get(1).getText(), equalTo("Tab 2"));
+		assertThat(tabPane.getTabs()).hasSize(2);
+		assertThat(tabPane.getTabs().get(0).getText()).isEqualTo("Tab 1");
+		assertThat(tabPane.getTabs().get(1).getText()).isEqualTo("Tab 2");
 
 		// check that tab pane 1 has the titled pane inside its anchor pane
-		assertThat(tabPane.getTabs().get(0).getContent(), instanceOf(AnchorPane.class));
+		assertThat(tabPane.getTabs().get(0).getContent()).isInstanceOf(AnchorPane.class);
 		final AnchorPane anchorPane = (AnchorPane) tabPane.getTabs().get(0).getContent();
 		// inside the anchor pane, we expect an embedded titledpane
-		assertThat(anchorPane.getChildren(), hasSize(1));
-		assertThat(anchorPane.getChildren().get(0), instanceOf(TitledPane.class));
+		assertThat(anchorPane.getChildren()).hasSize(1);
+		assertThat(anchorPane.getChildren().get(0)).isInstanceOf(TitledPane.class);
 	}
 
 	/**
@@ -122,12 +114,12 @@ class ActionFXIntegrationTest {
 		final ControllerWithNestedviewOnField controller = actionFX.getBean(ControllerWithNestedviewOnField.class);
 
 		// THEN (2 AFXNestedView annotations are evaluated)
-		assertThat(controller.mainBorderPane, notNullValue());
-		assertThat(controller.mainBorderPane.getTop(), notNullValue());
-		assertThat(controller.mainBorderPane.getTop(), instanceOf(BorderPane.class));
+		assertThat(controller.mainBorderPane).isNotNull();
+		assertThat(controller.mainBorderPane.getTop()).isNotNull();
+		assertThat(controller.mainBorderPane.getTop()).isInstanceOf(BorderPane.class);
 
-		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
-		assertThat(controller.mainBorderPane.getCenter(), instanceOf(TitledPane.class));
+		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
+		assertThat(controller.mainBorderPane.getCenter()).isInstanceOf(TitledPane.class);
 	}
 
 	@Test
@@ -142,10 +134,10 @@ class ActionFXIntegrationTest {
 		actionFX.showMainView(stage);
 
 		// THEN (stage holds scene which in turn holds the view)
-		assertThat(stage.getScene(), notNullValue());
-		assertThat(stage.getScene().getRoot(), notNullValue());
-		assertThat(stage.getScene().getRoot(), instanceOf(BorderPane.class));
-		assertThat(actionFX.getPrimaryStage(), sameInstance(stage));
+		assertThat(stage.getScene()).isNotNull();
+		assertThat(stage.getScene().getRoot()).isNotNull();
+		assertThat(stage.getScene().getRoot()).isInstanceOf(BorderPane.class);
+		assertThat(actionFX.getPrimaryStage()).isSameAs(stage);
 	}
 
 	@Test
@@ -158,8 +150,8 @@ class ActionFXIntegrationTest {
 		final ResourceBundle bundle = actionFX.getControllerResourceBundle("nestedViewController");
 
 		// THEN
-		assertThat(bundle, notNullValue());
-		assertThat(bundle.getString("label.text"), equalTo("Hello World"));
+		assertThat(bundle).isNotNull();
+		assertThat(bundle.getString("label.text")).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -172,7 +164,7 @@ class ActionFXIntegrationTest {
 		final ResourceBundle bundle = actionFX.getControllerResourceBundle("fantasyController");
 
 		// THEN
-		assertThat(bundle, nullValue());
+		assertThat(bundle).isNull();
 	}
 
 	@Test
@@ -185,8 +177,8 @@ class ActionFXIntegrationTest {
 		final ResourceBundle bundle = actionFX.getControllerResourceBundle(NestedViewController.class);
 
 		// THEN
-		assertThat(bundle, notNullValue());
-		assertThat(bundle.getString("label.text"), equalTo("Hello World"));
+		assertThat(bundle).isNotNull();
+		assertThat(bundle.getString("label.text")).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -199,7 +191,7 @@ class ActionFXIntegrationTest {
 		final String message = actionFX.getMessage(NestedViewController.class, "label.text", "Default message");
 
 		// THEN
-		assertThat(message, equalTo("Hello World"));
+		assertThat(message).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -212,7 +204,7 @@ class ActionFXIntegrationTest {
 		final String message = actionFX.getMessage(NestedViewController.class, "fantasy key", "Default message");
 
 		// THEN
-		assertThat(message, equalTo("Default message"));
+		assertThat(message).isEqualTo("Default message");
 	}
 
 	@Test
@@ -225,7 +217,7 @@ class ActionFXIntegrationTest {
 		final String message = actionFX.getMessage(NestedViewController.class, "", "Default message");
 
 		// THEN
-		assertThat(message, equalTo("Default message"));
+		assertThat(message).isEqualTo("Default message");
 	}
 
 	@Test
@@ -238,7 +230,7 @@ class ActionFXIntegrationTest {
 		final String message = actionFX.getMessage(NestedViewController.class, null, "Default message");
 
 		// THEN
-		assertThat(message, equalTo("Default message"));
+		assertThat(message).isEqualTo("Default message");
 	}
 
 	@Test
@@ -251,7 +243,7 @@ class ActionFXIntegrationTest {
 		final String message = actionFX.getMessage(String.class, "label.text", "Default message");
 
 		// THEN
-		assertThat(message, equalTo("Default message"));
+		assertThat(message).isEqualTo("Default message");
 	}
 
 	@Test
@@ -264,13 +256,13 @@ class ActionFXIntegrationTest {
 		final NestedViewController controller = actionFX.getBean(NestedViewController.class);
 
 		// THEN
-		assertThat(controller, notNullValue());
-		assertThat(controller.getLocale(), notNullValue());
-		assertThat(controller.getLocale(), equalTo(Locale.US));
-		assertThat(controller.getObservableLocale(), notNullValue());
-		assertThat(controller.getObservableLocale().getValue(), equalTo(Locale.US));
-		assertThat(controller.getActionFX(), sameInstance(ActionFX.getInstance()));
-		assertThat(controller.getDialogController(), notNullValue());
+		assertThat(controller).isNotNull();
+		assertThat(controller.getLocale()).isNotNull();
+		assertThat(controller.getLocale()).isEqualTo(Locale.US);
+		assertThat(controller.getObservableLocale()).isNotNull();
+		assertThat(controller.getObservableLocale().getValue()).isEqualTo(Locale.US);
+		assertThat(controller.getActionFX()).isSameAs(ActionFX.getInstance());
+		assertThat(controller.getDialogController()).isNotNull();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -288,17 +280,15 @@ class ActionFXIntegrationTest {
 
 		// THEN
 		final ActionFXExtensionsBean ceb = ActionFX.getInstance().getBean(ActionFXExtensionsBean.class);
-		assertThat(ceb, notNullValue());
-		assertThat(ceb.getCustomControllerExtensions(), hasSize(2));
+		assertThat(ceb).isNotNull();
+		assertThat(ceb.getCustomControllerExtensions()).hasSize(2);
 		final Consumer<Object> ext1 = ceb.getCustomControllerExtensions().get(0);
 		final Consumer<Object> ext2 = ceb.getCustomControllerExtensions().get(1);
-		assertThat(ext1, instanceOf(CustomControllerExtension.class));
-		assertThat(ext2, instanceOf(AnotherCustomControllerExtension.class));
+		assertThat(ext1).isInstanceOf(CustomControllerExtension.class);
+		assertThat(ext2).isInstanceOf(AnotherCustomControllerExtension.class);
 
-		assertThat(((CustomControllerExtension) ext1).getExtendedControllerList(),
-				hasItems(NestedViewController.class, NestedTabPaneController.class));
-		assertThat(((AnotherCustomControllerExtension) ext2).getExtendedControllerList(),
-				hasItems(NestedViewController.class, NestedTabPaneController.class));
+		assertThat(((CustomControllerExtension) ext1).getExtendedControllerList()).contains(NestedViewController.class, NestedTabPaneController.class);
+		assertThat(((AnotherCustomControllerExtension) ext2).getExtendedControllerList()).contains(NestedViewController.class, NestedTabPaneController.class);
 	}
 
 	@Test
@@ -314,8 +304,8 @@ class ActionFXIntegrationTest {
 
 		// THEN
 		WaitForAsyncUtils.sleep(200, TimeUnit.MILLISECONDS);
-		assertThat(controller.executionOrder, contains(1, 2, 3, 4));
-		assertThat(controller.executionArguments, contains("Hello World", "Hello World", "Hello World"));
+		assertThat(controller.executionOrder).containsExactly(1, 2, 3, 4);
+		assertThat(controller.executionArguments).containsExactly("Hello World", "Hello World", "Hello World");
 	}
 
 	@Test
@@ -327,29 +317,29 @@ class ActionFXIntegrationTest {
 		final ControllerWithNestedviewOnField controller = actionFX.getBean(ControllerWithNestedviewOnField.class);
 
 		// WHEN
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(true));
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(true));
-		assertThat(controller.mainBorderPane.getTop(), notNullValue());
-		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isTrue();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isTrue();
+		assertThat(controller.mainBorderPane.getTop()).isNotNull();
+		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
 
 		actionFX.undockNestedView("borderPaneTopView");
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(false));
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(true));
-		assertThat(controller.mainBorderPane.getTop(), nullValue());
-		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isFalse();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isTrue();
+		assertThat(controller.mainBorderPane.getTop()).isNull();
+		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
 
 		actionFX.undockNestedView("borderPaneCenterView");
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(false));
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(false));
-		assertThat(controller.mainBorderPane.getTop(), nullValue());
-		assertThat(controller.mainBorderPane.getCenter(), nullValue());
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isFalse();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isFalse();
+		assertThat(controller.mainBorderPane.getTop()).isNull();
+		assertThat(controller.mainBorderPane.getCenter()).isNull();
 
 		actionFX.dockNestedView("borderPaneTopView");
 		actionFX.dockNestedView("borderPaneCenterView");
-		assertThat(actionFX.isNestedViewDocked("borderPaneTopView"), equalTo(true));
-		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView"), equalTo(true));
-		assertThat(controller.mainBorderPane.getTop(), notNullValue());
-		assertThat(controller.mainBorderPane.getCenter(), notNullValue());
+		assertThat(actionFX.isNestedViewDocked("borderPaneTopView")).isTrue();
+		assertThat(actionFX.isNestedViewDocked("borderPaneCenterView")).isTrue();
+		assertThat(controller.mainBorderPane.getTop()).isNotNull();
+		assertThat(controller.mainBorderPane.getCenter()).isNotNull();
 
 	}
 

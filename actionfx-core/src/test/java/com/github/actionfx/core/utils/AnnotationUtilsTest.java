@@ -23,14 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -39,9 +32,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.junit.jupiter.api.Test;
 
@@ -72,20 +64,19 @@ class AnnotationUtilsTest {
 	@Test
 	void testFindAnnotation_annotationPresentOnGivenClass() {
 		// WHEN and THEN
-		assertThat(AnnotationUtils.findAnnotation(ClassWithSomeAnnotation.class, SomeAnnotation.class), notNullValue());
+		assertThat(AnnotationUtils.findAnnotation(ClassWithSomeAnnotation.class, SomeAnnotation.class)).isNotNull();
 	}
 
 	@Test
 	void testFindAnnotation_annotationPresentOnSuperClass() {
 		// WHEN and THEN
-		assertThat(AnnotationUtils.findAnnotation(ClassDerivedFromClassWithSomeAnnotation.class, SomeAnnotation.class),
-				notNullValue());
+		assertThat(AnnotationUtils.findAnnotation(ClassDerivedFromClassWithSomeAnnotation.class, SomeAnnotation.class)).isNotNull();
 	}
 
 	@Test
 	void testFindAnnotation_annotationNotPresent() {
 		// WHEN and THEN
-		assertThat(AnnotationUtils.findAnnotation(ClassWithoutSomeAnnotation.class, SomeAnnotation.class), nullValue());
+		assertThat(AnnotationUtils.findAnnotation(ClassWithoutSomeAnnotation.class, SomeAnnotation.class)).isNull();
 	}
 
 	@Test
@@ -95,9 +86,8 @@ class AnnotationUtilsTest {
 				RepeatableAnnotation.class);
 
 		// THEN
-		assertThat(list, hasSize(3));
-		assertThat(list.stream().map(RepeatableAnnotation::value).collect(Collectors.toList()),
-				containsInAnyOrder(1, 2, 3));
+		assertThat(list).hasSize(3);
+        assertThat(list.stream().map(RepeatableAnnotation::value).toList()).containsExactlyInAnyOrder(1, 2, 3);
 	}
 
 	@Test
@@ -107,9 +97,8 @@ class AnnotationUtilsTest {
 				.findAllAnnotations(ClassDerivedFromClassWithRepeatableAnnotations.class, RepeatableAnnotation.class);
 
 		// THEN
-		assertThat(list, hasSize(4));
-		assertThat(list.stream().map(RepeatableAnnotation::value).collect(Collectors.toList()),
-				containsInAnyOrder(1, 2, 3, 4));
+		assertThat(list).hasSize(4);
+        assertThat(list.stream().map(RepeatableAnnotation::value).toList()).containsExactlyInAnyOrder(1, 2, 3, 4);
 	}
 
 	@Test
@@ -119,7 +108,7 @@ class AnnotationUtilsTest {
 				RepeatableAnnotation.class);
 
 		// THEN
-		assertThat(list, hasSize(0));
+        assertThat(list).isEmpty();
 	}
 
 	@Test
@@ -132,7 +121,7 @@ class AnnotationUtilsTest {
 				PostConstruct.class);
 
 		// THEN
-		assertThat(instance.isIninitialized1Invoked(), equalTo(true));
+		assertThat(instance.isIninitialized1Invoked()).isTrue();
 	}
 
 	@Test
@@ -145,8 +134,8 @@ class AnnotationUtilsTest {
 				ClassWithPostConstructDerivedFromClassWithPostConstructAnnotation.class, instance, PostConstruct.class);
 
 		// THEN
-		assertThat(instance.isIninitialized1Invoked(), equalTo(true));
-		assertThat(instance.isIninitialized2Invoked(), equalTo(true));
+		assertThat(instance.isIninitialized1Invoked()).isTrue();
+		assertThat(instance.isIninitialized2Invoked()).isTrue();
 	}
 
 	@Test
@@ -216,23 +205,20 @@ class AnnotationUtilsTest {
 	}
 
 	private void thenAssertFieldsInAnyOrder(final Collection<Field> fields, final List<String> exptectedFieldNames) {
-		assertThat(fields, notNullValue());
-		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList()),
-				hasItems(exptectedFieldNames.toArray())); // hasItems instead of containsInAnyOrder, because Jacoco
-															// dynamically adds fields :(
+		assertThat(fields).isNotNull();
+		assertThat(fields.stream().map(Field::getName).toList()).containsAll(exptectedFieldNames);
 	}
 
 	private void thenAssertFieldsInExactOrder(final Collection<Field> fields, final List<String> exptectedFieldNames) {
-		assertThat(fields, notNullValue());
-		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList()),
-				contains(exptectedFieldNames.toArray()));
+		assertThat(fields).isNotNull();
+		assertThat(fields.stream().map(Field::getName).toList()).containsExactlyElementsOf(exptectedFieldNames);
 	}
 
 	private void thenAssertFieldsInReverseOrder(final Collection<Field> fields,
 			final List<String> exptectedFieldNames) {
 		final List<String> reversed = new ArrayList<>(exptectedFieldNames);
 		Collections.reverse(reversed);
-		assertThat(fields, notNullValue());
-		assertThat(fields.stream().map(Field::getName).collect(Collectors.toList()), contains(reversed.toArray()));
+		assertThat(fields).isNotNull();
+        assertThat(fields.stream().map(Field::getName).toList()).containsAll(reversed);
 	}
 }

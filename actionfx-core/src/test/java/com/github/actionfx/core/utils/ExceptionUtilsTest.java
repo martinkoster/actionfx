@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 
@@ -41,23 +39,22 @@ class ExceptionUtilsTest {
 
 	@Test
 	void testToPrintableString() {
-		assertThat(ExceptionUtils.toPrintableString(new Object[0]), equalTo("[]"));
-		assertThat(ExceptionUtils.toPrintableString(null, null), equalTo("[null, null]"));
-		assertThat(ExceptionUtils.toPrintableString(Integer.valueOf(42), "Hello World"), equalTo("[42, Hello World]"));
-		assertThat(ExceptionUtils.toPrintableString(String.class, Integer.class),
-				equalTo("[class java.lang.String, class java.lang.Integer]"));
+		assertThat(ExceptionUtils.toPrintableString(new Object[0])).isEqualTo("[]");
+		assertThat(ExceptionUtils.toPrintableString(null, null)).isEqualTo("[null, null]");
+		assertThat(ExceptionUtils.toPrintableString(Integer.valueOf(42), "Hello World")).isEqualTo("[42, Hello World]");
+		assertThat(ExceptionUtils.toPrintableString(String.class, Integer.class)).isEqualTo("[class java.lang.String, class java.lang.Integer]");
 	}
 
 	@Test
 	void testToPrintableString_withArray() {
 		assertThat(ExceptionUtils.toPrintableString(Integer.valueOf(42),
-				new Integer[] { Integer.valueOf(1), Integer.valueOf(2) }), equalTo("[42, [1, 2]]"));
+				new Integer[]{Integer.valueOf(1), Integer.valueOf(2)})).isEqualTo("[42, [1, 2]]");
 	}
 
 	@Test
 	void testToPrintableString_withCollection() {
 		assertThat(ExceptionUtils.toPrintableString(Integer.valueOf(42),
-				Arrays.asList(Integer.valueOf(1), Integer.valueOf(2))), equalTo("[42, [1, 2]]"));
+				Arrays.asList(Integer.valueOf(1), Integer.valueOf(2)))).isEqualTo("[42, [1, 2]]");
 	}
 
 	@Test
@@ -69,9 +66,9 @@ class ExceptionUtilsTest {
 		final RuntimeException wrapped = ExceptionUtils.wrapInRuntimeExceptionIfNecessary(ex);
 
 		// THEN
-		assertThat(wrapped, instanceOf(NestedThrowableException.class));
+		assertThat(wrapped).isInstanceOf(NestedThrowableException.class);
 		final NestedThrowableException nested = (NestedThrowableException) wrapped;
-		assertThat(nested.getCause(), equalTo(ex));
+		assertThat(nested.getCause()).isEqualTo(ex);
 	}
 
 	@Test
@@ -83,6 +80,6 @@ class ExceptionUtilsTest {
 		final RuntimeException wrapped = ExceptionUtils.wrapInRuntimeExceptionIfNecessary(ex);
 
 		// THEN
-		assertThat(wrapped, equalTo(ex));
+		assertThat(wrapped).isEqualTo(ex);
 	}
 }

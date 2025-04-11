@@ -29,6 +29,8 @@ import java.util.stream.Stream;
 
 import com.github.actionfx.core.utils.ReflectionUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Represents a single XML element inside a FXML document, while this element
  * can have again further {@link FxmlElement}s as children.s
@@ -46,20 +48,23 @@ public class FxmlElement {
 
 	private final String importStatement;
 
-	private String id = null;
+	private String id;
 
-	private String onActionProperty = null;
+	private String onActionProperty;
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public FxmlElement(final FxmlElement parent, final String name, final String importStatement) {
 		this.parent = parent;
 		this.name = name;
 		this.importStatement = importStatement;
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public FxmlElement getParent() {
 		return parent;
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public List<FxmlElement> getChildren() {
 		return children;
 	}

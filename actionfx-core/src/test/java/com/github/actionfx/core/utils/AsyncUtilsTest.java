@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -56,18 +55,18 @@ class AsyncUtilsTest {
 			WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
 			return "Hello World";
 		};
-		final Consumer<String> consumer = value -> result.set(value);
+		final Consumer<String> consumer = result::set;
 
 		// WHEN
 		AsyncUtils.executeAsynchronously(supplier, consumer);
 
 		// THEN
 		// the result is not yet available
-		assertThat(result.get(), equalTo(""));
+		assertThat(result.get()).isEmpty();
 
 		// lets wait until supplier is done
 		WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
-		assertThat(result.get(), equalTo("Hello World"));
+		assertThat(result.get()).isEqualTo("Hello World");
 	}
 
 }

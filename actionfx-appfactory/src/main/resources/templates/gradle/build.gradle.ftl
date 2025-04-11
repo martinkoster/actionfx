@@ -9,9 +9,9 @@ plugins {
 }
 
 wrapper {
-    gradleVersion = "7.4.2"
+gradleVersion = "8.13"
     distributionType = Wrapper.DistributionType.ALL
-    distributionUrl = "https://services.gradle.org/distributions/gradle-7.4.2-bin.zip"
+distributionUrl = "https://services.gradle.org/distributions/gradle-8.13-bin.zip"
 }
 
 description = "ActionFX: A declarative, less-intrusive JavaFX MVC framework with dependency injection"
@@ -26,20 +26,18 @@ apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
 </#if>
 
-sourceCompatibility = "11" 
-targetCompatibility = "11"
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
     
 configurations {
 	published
 	all*.exclude module: "slf4j-log4j12"
-	all*.exclude module: "jsr305"
 	integrationTestImplementation.extendsFrom testImplementation
 	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
       
 repositories {
 	mavenCentral()
-    jcenter()
     mavenLocal()
 }
     
@@ -65,7 +63,6 @@ java {
 test {
 	useJUnitPlatform()
 	reports {
-		html.enabled = true
 		html.destination = file("${r"${reporting.baseDir}/${name}"}")
 	}
 	testLogging {
@@ -119,15 +116,13 @@ eclipse {
 // Code analysis //
 ///////////////////
 spotbugs {
-    effort = "max"
-    reportLevel = "high"  
+    effort = com.github.spotbugs.snom.Effort.MAX
 	reportsDir = file("$buildDir/reports/spotbugs")
 }
     
 spotbugsMain {
     reports {
     	html {
-        	enabled = true
             destination = file("$buildDir/reports/spotbugs/spotbugs-main.html")
             stylesheet = "fancy-hist.xsl"
        	}
@@ -212,4 +207,5 @@ dependencies {
 	testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: "${r"${junitJupiterVersion}"}"
    	testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "${r"${junitJupiterVersion}"}"
    	testImplementation group: 'org.hamcrest', name: 'hamcrest', version: "${r"${hamcrestVersion}"}"
+testImplementation group: "org.assertj", name: "assertj-core", version: "${r"${assertJVersion}"}"
 }

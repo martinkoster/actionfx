@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.method;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -80,7 +77,7 @@ class ActionFXMethodInvocationTest {
 
         // THEN
         verify(holder, times(1)).voidMethod();
-        assertThat(returnValue, nullValue());
+		assertThat(returnValue).isNull();
     }
 
     @Test
@@ -93,7 +90,7 @@ class ActionFXMethodInvocationTest {
 
         // THEN
         verify(holder, times(1)).intMethod(eq(42));
-        assertThat(returnValue, equalTo(43));
+		assertThat(returnValue).isEqualTo(43);
     }
 
     @SuppressWarnings("unchecked")
@@ -147,9 +144,8 @@ class ActionFXMethodInvocationTest {
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> new ActionFXMethodInvocation(holder, "ambigiousMethod", false, "Hello World", 42));
 
-        // THEN
-        assertThat(ex.getMessage(), containsString(
-                "has ambiguously matching methods with name 'ambigiousMethod' that accept the supplied arguments"));
+		// THEN
+		assertThat(ex.getMessage()).contains("has ambiguously matching methods with name 'ambigiousMethod' that accept the supplied arguments");
     }
 
     @Test
@@ -158,9 +154,8 @@ class ActionFXMethodInvocationTest {
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> new ActionFXMethodInvocation(holder, "voidMethod", false, "Hello World", 42));
 
-        // THEN
-        assertThat(ex.getMessage(),
-                containsString("does not have method with name 'voidMethod' that accepts the supplied arguments"));
+		// THEN
+		assertThat(ex.getMessage()).contains("does not have method with name 'voidMethod' that accepts the supplied arguments");
     }
 
     @Test
@@ -174,7 +169,7 @@ class ActionFXMethodInvocationTest {
 
         // THEN
         verify(holder, times(1)).voidMethod();
-        assertThat(returnValue, nullValue());
+		assertThat(returnValue).isNull();
     }
 
     @Test
@@ -223,7 +218,7 @@ class ActionFXMethodInvocationTest {
     }
 
     @Test
-    void testForOnActionProperty_withMethodInstance() throws NoSuchMethodException, SecurityException {
+    void testForOnActionProperty_withMethodInstance() throws SecurityException {
         // GIVEN
         final ActionEvent actionEvent = new ActionEvent();
         final Method method = ReflectionUtils.findMethod(holder.getClass(), "methodWithArgs", String.class,
@@ -240,7 +235,7 @@ class ActionFXMethodInvocationTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void testForOnActionPropertyWithAsyncCall_withMethodInstance() throws NoSuchMethodException, SecurityException {
+    void testForOnActionPropertyWithAsyncCall_withMethodInstance() throws SecurityException {
         // GIVEN
         final ActionEvent actionEvent = new ActionEvent();
         final Consumer<Integer> consumer = Mockito.mock(Consumer.class);

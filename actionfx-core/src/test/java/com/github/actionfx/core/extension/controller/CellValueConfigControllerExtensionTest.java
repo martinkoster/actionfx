@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -94,8 +91,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but requested column index exceeds the number of available columns!"));
+		assertThat(ex.getMessage()).contains("Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but requested column index exceeds the number of available columns!");
 	}
 
 	@Test
@@ -128,8 +124,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but requested column ID is not present!"));
+		assertThat(ex.getMessage()).contains("Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but requested column ID is not present!");
 	}
 
 	@Test
@@ -162,7 +157,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("is annotated by @AFXCellValueConfig, but value is null!"));
+		assertThat(ex.getMessage()).contains("is annotated by @AFXCellValueConfig, but value is null!");
 	}
 
 	@Test
@@ -175,8 +170,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but annotation does not define, which column shall be configured!"));
+		assertThat(ex.getMessage()).contains("Annotation @AFXTableColum is applied to a javafx.scene.control.TableView, but annotation does not define, which column shall be configured!");
 	}
 
 	@Test
@@ -222,13 +216,13 @@ class CellValueConfigControllerExtensionTest {
 	@SuppressWarnings("rawtypes")
 	void assertCellContains(final TableView tableView, final int row, final int col, final Object expectedValue) {
 		final TableColumn column = (TableColumn) tableView.getColumns().get(col);
-		assertThat(column.getCellData(row), equalTo(expectedValue));
+		assertThat(column.getCellData(row)).isEqualTo(expectedValue);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void assertCellType(final TableView tableView, final int col, final Class<? extends IndexedCell> expectedCellType) {
 		final TableColumn column = (TableColumn) tableView.getColumns().get(col);
-		assertThat(column.getCellFactory().call(tableView), instanceOf(expectedCellType));
+		assertThat(column.getCellFactory().call(tableView)).isInstanceOf(expectedCellType);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -237,7 +231,7 @@ class CellValueConfigControllerExtensionTest {
 		final TableColumn column = (TableColumn) tableView.getColumns().get(col);
 		final TextFieldTableCell cell = (TextFieldTableCell) column.getCellFactory().call(column);
 		cell.updateItem(value, false);
-		assertThat(cell.getText(), equalTo(expectedText));
+		assertThat(cell.getText()).isEqualTo(expectedText);
 	}
 
 	@Test
@@ -268,8 +262,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but requested column index exceeds the number of available columns!"));
+		assertThat(ex.getMessage()).contains("Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but requested column index exceeds the number of available columns!");
 	}
 
 	@Test
@@ -300,8 +293,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but requested column ID is not present!"));
+		assertThat(ex.getMessage()).contains("Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but requested column ID is not present!");
 	}
 
 	@Test
@@ -332,7 +324,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("is annotated by @AFXCellValueConfig, but value is null!"));
+		assertThat(ex.getMessage()).contains("is annotated by @AFXCellValueConfig, but value is null!");
 	}
 
 	@Test
@@ -345,8 +337,7 @@ class CellValueConfigControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but annotation does not define, which column shall be configured!"));
+		assertThat(ex.getMessage()).contains("Annotation @AFXTableColum is applied to a javafx.scene.control.TreeTableView, but annotation does not define, which column shall be configured!");
 	}
 
 	@Test
@@ -378,7 +369,7 @@ class CellValueConfigControllerExtensionTest {
 	@SuppressWarnings("rawtypes")
 	void assertCellContains(final TreeTableView tableView, final int row, final int col, final Object expectedValue) {
 		final TreeTableColumn column = (TreeTableColumn) tableView.getColumns().get(col);
-		assertThat(column.getCellData(row), equalTo(expectedValue));
+		assertThat(column.getCellData(row)).isEqualTo(expectedValue);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -387,7 +378,7 @@ class CellValueConfigControllerExtensionTest {
 		final TreeTableColumn column = (TreeTableColumn) tableView.getColumns().get(col);
 		final TextFieldTreeTableCell cell = (TextFieldTreeTableCell) column.getCellFactory().call(column);
 		cell.updateItem(value, false);
-		assertThat(cell.getText(), equalTo(expectedText));
+		assertThat(cell.getText()).isEqualTo(expectedText);
 	}
 
 	@Test
@@ -430,7 +421,7 @@ class CellValueConfigControllerExtensionTest {
 	void assertCellConvertsValueToString(final TreeView treeView, final Object value, final String expectedText) {
 		final TextFieldTreeCell cell = (TextFieldTreeCell) treeView.getCellFactory().call(treeView);
 		cell.updateItem(value, false);
-		assertThat(cell.getText(), equalTo(expectedText));
+		assertThat(cell.getText()).isEqualTo(expectedText);
 	}
 
 	@Test
@@ -493,7 +484,7 @@ class CellValueConfigControllerExtensionTest {
 			final String expectedText) {
 		final TextFieldListCell cell = (TextFieldListCell) listView.getCellFactory().call(listView);
 		cell.updateItem(value, false);
-		assertThat(cell.getText(), equalTo(expectedText));
+		assertThat(cell.getText()).isEqualTo(expectedText);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -757,7 +748,7 @@ class CellValueConfigControllerExtensionTest {
 		public View _view;
 
 		@AFXCellValueConfig(propertyValue = "name")
-		protected TableView<Person> tableView = null;
+		protected TableView<Person> tableView;
 
 	}
 
@@ -775,7 +766,7 @@ class CellValueConfigControllerExtensionTest {
 		public View _view;
 
 		@AFXCellValueConfig(propertyValue = "name")
-		protected TreeTableView<Person> tableView = null;
+		protected TreeTableView<Person> tableView;
 
 	}
 

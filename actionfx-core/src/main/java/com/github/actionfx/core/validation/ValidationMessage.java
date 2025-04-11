@@ -25,6 +25,7 @@ package com.github.actionfx.core.validation;
 
 import java.util.Comparator;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.scene.control.Control;
 
 /**
@@ -140,6 +141,7 @@ public class ValidationMessage implements Comparable<ValidationMessage> {
      * @author koster
      *
      */
+    @SuppressFBWarnings(value = "SE_COMPARATOR_SHOULD_BE_SERIALIZABLE", justification = "Making the Comparator serializable does not make sense as compared items ValidationMessage are not serializable either (and not planned to be serializable).")
     public static class ValidationMessageComparator implements Comparator<ValidationMessage> {
         @Override
         public int compare(final ValidationMessage vm1, final ValidationMessage vm2) {

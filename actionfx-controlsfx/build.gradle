@@ -20,7 +20,8 @@ dependencies {
         api group: "org.controlsfx", name: "controlsfx", version: "${controlsfxVersion}"
 
         
-        testImplementation project(":actionfx-testing")
+        implementation "org.assertj:assertj-core:3.27.3"
+    testImplementation project(":actionfx-testing")
 }
 
 test {    

@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javafx.scene.control.Control;
 
@@ -290,7 +289,7 @@ public class ValidationResult {
 	 */
 	public static ValidationResult from(final Collection<ValidationResult> results) {
 		return new ValidationResult(results.stream().map(ValidationResult::getMessages).flatMap(Collection::stream)
-				.collect(Collectors.toList()));
+                .toList());
 	}
 
 	/**
@@ -348,7 +347,7 @@ public class ValidationResult {
 	 */
 	private List<ValidationMessage> getMessages(final ValidationStatus severity) {
 		final List<ValidationMessage> filteredMessages = severity == null ? messages
-				: messages.stream().filter(msg -> msg.getStatus() == severity).collect(Collectors.toList());
+                : messages.stream().filter(msg -> msg.getStatus() == severity).toList();
 		return Collections.unmodifiableList(filteredMessages);
 	}
 

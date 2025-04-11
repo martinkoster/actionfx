@@ -76,7 +76,7 @@ import javafx.scene.paint.Color;
  * @author koster
  *
  */
-public class ControlWrapperProvider {
+public final class ControlWrapperProvider {
 
 	private ControlWrapperProvider() {
 		// class can not be instatiated

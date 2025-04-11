@@ -23,7 +23,7 @@
  */
 package com.github.actionfx.core.test;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import com.github.actionfx.core.view.AbstractBindingView;
 
@@ -31,7 +31,7 @@ import javafx.scene.layout.AnchorPane;
 
 public class TestView extends AbstractBindingView {
 
-    private boolean initializeInvoked = false;
+    private boolean initializeInvoked;
 
     public TestView() {
         rootNode = new AnchorPane();

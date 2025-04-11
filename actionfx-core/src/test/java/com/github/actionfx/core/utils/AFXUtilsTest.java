@@ -23,14 +23,8 @@
  */
 package com.github.actionfx.core.utils;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,7 +33,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
@@ -95,8 +88,7 @@ class AFXUtilsTest {
     @Test
     void testLoadFxml() {
         final Node node = AFXUtils.loadFxml("/testfxml/SampleView.fxml", this);
-        assertNotNull(node);
-        assertTrue(node instanceof GridPane);
+        assertThat(node).isNotNull().isInstanceOf(GridPane.class);
     }
 
     @Test
@@ -109,13 +101,12 @@ class AFXUtilsTest {
         final Node node = AFXUtils.loadFxml("/testfxml/MultilingualView.fxml", this, bundle);
 
         // THEN
-        assertNotNull(node);
-        assertTrue(node instanceof VBox);
+        assertThat(node).isNotNull().isInstanceOf(VBox.class);
         final VBox vbox = (VBox) node;
-        assertThat(vbox.getChildren(), hasSize(1));
-        assertThat(vbox.getChildren().get(0), instanceOf(Label.class));
+        assertThat(vbox.getChildren()).hasSize(1);
+        assertThat(vbox.getChildren().get(0)).isInstanceOf(Label.class);
         final Label label = (Label) vbox.getChildren().get(0);
-        assertThat(label.getText(), equalTo("Hello World"));
+        assertThat(label.getText()).isEqualTo("Hello World");
     }
 
     @Test
@@ -159,7 +150,7 @@ class AFXUtilsTest {
 
             // THEN (runnable is immediately executed, because this test runs in the JavaFX
             // thread -> result available)
-            assertThat(booleanProperty.get(), equalTo(true));
+            assertThat(booleanProperty.get()).isTrue();
         });
     }
 
@@ -192,7 +183,7 @@ class AFXUtilsTest {
 
         };
         final String actual = AFXUtils.runInFxThreadAndWait(task);
-        assertThat(actual, Matchers.equalTo(value));
+        assertThat(actual).isEqualTo(value);
     }
 
     @Test
@@ -218,19 +209,19 @@ class AFXUtilsTest {
         // create a binding between button's disable state and the list
         AFXUtils.enableNodeWhenListHasElements(button, list);
 
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // add one element to the list
         list.add("test");
 
         // button is now enabled
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // remove elements again
         list.clear();
 
         // button is disabled again
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -246,13 +237,13 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenListHasElements(button, listProperty);
 
         // THEN (list property not yet set, so button is disabled)
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         listProperty.set(list);
 
         // AND THEN (still empty, still disabled)
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         // add one element to the list
@@ -260,7 +251,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is now enabled
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         // remove elements again
@@ -268,7 +259,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is disabled again
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -281,19 +272,19 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenListHasNoElements(button, list);
 
         // button is not disabled, because list has no elements
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // add one element to the list
         list.add("test");
 
         // button is now disabled
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // remove elements again
         list.clear();
 
         // button is enabled again
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -310,7 +301,7 @@ class AFXUtilsTest {
 
         // THEN
         // button is not disabled, because list has no elements
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         listProperty.set(list);
@@ -319,7 +310,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is now disabled
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         // remove elements again
@@ -327,7 +318,7 @@ class AFXUtilsTest {
 
         // AND THEN
         // button is enabled again
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -340,19 +331,19 @@ class AFXUtilsTest {
         // create a binding between button's disable state and the list
         AFXUtils.enableNodeWhenStringPropertyHasText(button, textField.textProperty());
 
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // set a text
         textField.setText("test");
 
         // button is now enabled
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // remove text again
         textField.setText("");
 
         // button is disabled again
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
     }
 
@@ -366,19 +357,19 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenAllControlsHaveUserValues(button, tf);
 
         // field is empty, button is expected to be empty
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // set text
         tf.setText("hello world");
 
         // button is enabled now
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // remove text again
         tf.setText("");
 
         // and button is expected to be disabled again
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -392,25 +383,25 @@ class AFXUtilsTest {
         AFXUtils.enableNodeWhenAllControlsHaveUserValues(button, tf, ta);
 
         // field is empty, button is expected to be empty
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // set text in text area
         ta.setText("hello world");
 
         // button is still disbled
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // set text in text field now
         tf.setText("hello from me too");
 
         // now both registered textinputcontrols have values, so button is enabled
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // remove text from the area again
         ta.setText("");
 
         // and button is expected to be disabled again
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -424,13 +415,13 @@ class AFXUtilsTest {
 
         // THEN
         // initial state was "false", so button is expected to be disabled
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         condition.set(true);
 
         // AND THEN
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -444,14 +435,14 @@ class AFXUtilsTest {
 
         // THEN
         // disabled, value is 10, expected is 0
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         property.set(0);
 
         // AND THEN
         // enabled, value is 0, expected is 0
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -465,14 +456,14 @@ class AFXUtilsTest {
 
         // THEN
         // disabled, value is "hello", expected is null
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
 
         // AND WHEN
         property.set(null);
 
         // AND THEN
         // enabled, value is null, expected is null
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
     }
 
     @Test
@@ -486,14 +477,14 @@ class AFXUtilsTest {
 
         // THEN
         // enabled, value is 10, expected is 0
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         property.set(0);
 
         // AND THEN
         // disabled, value is 0 expected is 0
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
@@ -507,23 +498,23 @@ class AFXUtilsTest {
 
         // THEN
         // enabled, value is "hello", expected is null
-        assertThat(button.isDisabled(), equalTo(false));
+        assertThat(button.isDisabled()).isFalse();
 
         // AND WHEN
         property.set(null);
 
         // AND THEN
         // disabled, value is null expected is null
-        assertThat(button.isDisabled(), equalTo(true));
+        assertThat(button.isDisabled()).isTrue();
     }
 
     @Test
     void testToAwtColor() {
         final java.awt.Color awtColor = AFXUtils.toAwtColor(Color.rgb(1, 2, 3, 1.0));
-        assertThat(awtColor.getRed(), equalTo(1));
-        assertThat(awtColor.getGreen(), equalTo(2));
-        assertThat(awtColor.getBlue(), equalTo(3));
-        assertThat(awtColor.getAlpha(), equalTo(255));
+        assertThat(awtColor.getRed()).isEqualTo(1);
+        assertThat(awtColor.getGreen()).isEqualTo(2);
+        assertThat(awtColor.getBlue()).isEqualTo(3);
+        assertThat(awtColor.getAlpha()).isEqualTo(255);
     }
 
     @Test
@@ -541,8 +532,8 @@ class AFXUtilsTest {
         // THEN
         // scene now contains the accelerator added for the button
         final ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
-        assertThat(accelerators.keySet(), hasSize(1));
-        assertThat(accelerators.containsKey(kcc), equalTo(true));
+        assertThat(accelerators.keySet()).hasSize(1);
+        assertThat(accelerators).containsKey(kcc);
     }
 
     @Test
@@ -560,8 +551,8 @@ class AFXUtilsTest {
         // THEN
         // scene now contains the accelerator added for the button
         final ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
-        assertThat(accelerators.keySet(), hasSize(1));
-        assertThat(accelerators.containsKey(kcc), equalTo(true));
+        assertThat(accelerators.keySet()).hasSize(1);
+        assertThat(accelerators).containsKey(kcc);
     }
 
     @Test
@@ -573,7 +564,7 @@ class AFXUtilsTest {
         AFXUtils.executeOnceWhenPropertyIsNonNull(observable, item -> observable.set("Hello World"));
 
         // THEN (immediate execution expected, because the value is not null)
-        assertThat(observable.get(), equalTo("Hello World"));
+        assertThat(observable.get()).isEqualTo("Hello World");
     }
 
     @Test
@@ -585,13 +576,13 @@ class AFXUtilsTest {
         AFXUtils.executeOnceWhenPropertyIsNonNull(observable, item -> observable.set("Hello World"));
 
         // THEN (consumer is not yet executed, because property is null)
-        assertThat(observable.get(), nullValue());
+        assertThat(observable.get()).isNull();
 
         // AND WHEN (non-null property is set)
         observable.set("Hello");
 
         // THEN (consumer is now executed, after the property value has been set)
-        assertThat(observable.get(), equalTo("Hello World"));
+        assertThat(observable.get()).isEqualTo("Hello World");
     }
 
     @Test
@@ -603,7 +594,7 @@ class AFXUtilsTest {
         AFXUtils.executeOnceWhenPropertyHasValue(observable, "Hello", item -> observable.set("Hello World"));
 
         // THEN (immediate execution expected, because the value is not null)
-        assertThat(observable.get(), equalTo("Hello World"));
+        assertThat(observable.get()).isEqualTo("Hello World");
     }
 
     @Test
@@ -615,13 +606,13 @@ class AFXUtilsTest {
         AFXUtils.executeOnceWhenPropertyHasValue(observable, "Hello", item -> observable.set("Hello World"));
 
         // THEN (consumer is not yet executed, because property is null and not "Hello")
-        assertThat(observable.get(), nullValue());
+        assertThat(observable.get()).isNull();
 
         // AND WHEN (non-null property is set)
         observable.set("Hello");
 
         // THEN (immediate execution expected, because the value is not null)
-        assertThat(observable.get(), equalTo("Hello World"));
+        assertThat(observable.get()).isEqualTo("Hello World");
     }
 
     @Test
@@ -634,13 +625,13 @@ class AFXUtilsTest {
 
         // THEN (consumer is not yet executed, because property is "Some Value" and not
         // "Hello")
-        assertThat(observable.get(), equalTo("Some Value"));
+        assertThat(observable.get()).isEqualTo("Some Value");
 
         // AND WHEN (non-null property is set)
         observable.set("Hello");
 
         // THEN (immediate execution expected, because the value is not null)
-        assertThat(observable.get(), equalTo("Hello World"));
+        assertThat(observable.get()).isEqualTo("Hello World");
     }
 
     @Test
@@ -650,30 +641,28 @@ class AFXUtilsTest {
         final FilteredList<String> filteredList = new FilteredList<>(sourceList);
 
         // WHEN and THEN
-        assertThat(AFXUtils.getNestedObservableList(sourceList), equalTo(sourceList));
-        assertThat(AFXUtils.getNestedObservableList(filteredList), equalTo(sourceList));
+        assertThat(AFXUtils.getNestedObservableList(sourceList)).isEqualTo(sourceList);
+        assertThat(AFXUtils.getNestedObservableList(filteredList)).isEqualTo(sourceList);
     }
 
     @Test
     void testDetermineObservableValueType_withValue() {
-        assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty(0)), equalTo(int.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty("")), equalTo(String.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleObjectProperty<>(Integer.valueOf(42))),
-                equalTo(Integer.class));
+        assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty(0))).isEqualTo(int.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty(""))).isEqualTo(String.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleObjectProperty<>(Integer.valueOf(42)))).isEqualTo(Integer.class);
     }
 
     @Test
     void testDetermineObservableValueType_withoutValue() {
-        assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty()), equalTo(int.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty(null)), equalTo(String.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleBooleanProperty()), equalTo(boolean.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleFloatProperty()), equalTo(float.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleDoubleProperty()), equalTo(double.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleObjectProperty<Integer>(null)),
-                equalTo(Object.class)); // type erasure, no chance to get the type
-        assertThat(AFXUtils.determineObservableValueType(new SimpleMapProperty<>()), equalTo(ObservableMap.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleSetProperty<>()), equalTo(ObservableSet.class));
-        assertThat(AFXUtils.determineObservableValueType(new SimpleListProperty<>()), equalTo(ObservableList.class));
+        assertThat(AFXUtils.determineObservableValueType(new SimpleIntegerProperty())).isEqualTo(int.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleStringProperty(null))).isEqualTo(String.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleBooleanProperty())).isEqualTo(boolean.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleFloatProperty())).isEqualTo(float.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleDoubleProperty())).isEqualTo(double.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleObjectProperty<Integer>(null))).isEqualTo(Object.class); // type erasure, no chance to get the type
+        assertThat(AFXUtils.determineObservableValueType(new SimpleMapProperty<>())).isEqualTo(ObservableMap.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleSetProperty<>())).isEqualTo(ObservableSet.class);
+        assertThat(AFXUtils.determineObservableValueType(new SimpleListProperty<>())).isEqualTo(ObservableList.class);
     }
 
     @Test
@@ -687,11 +676,11 @@ class AFXUtilsTest {
         AFXUtils.injectAsRootPane(scene, newRoot);
 
         // THEN
-        assertThat(scene.getRoot(), equalTo(newRoot));
-        assertThat(newRoot.getChildren(), hasSize(1));
-        assertThat(newRoot.getChildren().get(0), equalTo(oldRoot));
-        assertThat(oldRoot.getMaxWidth(), equalTo(Double.MAX_VALUE));
-        assertThat(oldRoot.getMaxHeight(), equalTo(Double.MAX_VALUE));
+        assertThat(scene.getRoot()).isEqualTo(newRoot);
+        assertThat(newRoot.getChildren()).hasSize(1);
+        assertThat(newRoot.getChildren().get(0)).isEqualTo(oldRoot);
+        assertThat(oldRoot.getMaxWidth()).isEqualTo(Double.MAX_VALUE);
+        assertThat(oldRoot.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
     }
 
     @Test
@@ -705,10 +694,10 @@ class AFXUtilsTest {
         AFXUtils.injectAsRootPane(scene, newRoot);
 
         // THEN
-        assertThat(scene.getRoot(), equalTo(newRoot));
-        assertThat(newRoot.getContent(), equalTo(oldRoot));
-        assertThat(oldRoot.getMaxWidth(), equalTo(Double.MAX_VALUE));
-        assertThat(oldRoot.getMaxHeight(), equalTo(Double.MAX_VALUE));
+        assertThat(scene.getRoot()).isEqualTo(newRoot);
+        assertThat(newRoot.getContent()).isEqualTo(oldRoot);
+        assertThat(oldRoot.getMaxWidth()).isEqualTo(Double.MAX_VALUE);
+        assertThat(oldRoot.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
     }
 
     @Test
@@ -722,10 +711,10 @@ class AFXUtilsTest {
         AFXUtils.injectAsRootPane(scene, newRoot);
 
         // THEN
-        assertThat(scene.getRoot(), equalTo(newRoot));
-        assertThat(newRoot.getChildren(), hasSize(1));
-        assertThat(newRoot.getChildren().get(0), equalTo(oldRoot));
-        assertThat(oldRoot.getMaxWidth(), not(equalTo(Double.MAX_VALUE)));
-        assertThat(oldRoot.getMaxHeight(), not(equalTo(Double.MAX_VALUE)));
+        assertThat(scene.getRoot()).isEqualTo(newRoot);
+        assertThat(newRoot.getChildren()).hasSize(1);
+        assertThat(newRoot.getChildren().get(0)).isEqualTo(oldRoot);
+        assertThat(oldRoot.getMaxWidth()).isNotEqualTo(Double.MAX_VALUE);
+        assertThat(oldRoot.getMaxHeight()).isNotEqualTo(Double.MAX_VALUE);
     }
 }

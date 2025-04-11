@@ -33,7 +33,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -996,7 +996,7 @@ public class ActionFX {
 
         private boolean enableBeanContainerAutodetection = true;
 
-        private ValidationMode validationGlobalMode = null;
+        private ValidationMode validationGlobalMode;
 
         protected boolean validationApplyResultDecoration = true;
 

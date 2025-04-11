@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,12 +40,12 @@ class StringToEnumConverterTest {
         // GIVEN
         final StringToEnumConverter<TestEnum> converter = new StringToEnumConverter<>(TestEnum.class);
 
-        // WHEN and THEN
-        assertThat(converter.convert("VALUEA"), equalTo(TestEnum.VALUEA));
-        assertThat(converter.convert("VALUEB"), equalTo(TestEnum.VALUEB));
+		// WHEN and THEN
+		assertThat(converter.convert("VALUEA")).isEqualTo(TestEnum.VALUEA);
+		assertThat(converter.convert("VALUEB")).isEqualTo(TestEnum.VALUEB);
     }
 
-    public static enum TestEnum {
+	public enum TestEnum {
         VALUEA,
         VALUEB,
     }

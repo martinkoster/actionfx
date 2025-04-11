@@ -38,6 +38,7 @@ import com.github.actionfx.core.instrumentation.ActionFXEnhancer;
 import com.github.actionfx.core.instrumentation.interceptors.AFXActionMethodInterceptor;
 import com.github.actionfx.core.view.View;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -72,8 +73,9 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 
 	// field is static, because the installation of the runtime agent is independent
 	// of this instance, but JVM-dependent
-	private static boolean agentInstalled = false;
+	private static boolean agentInstalled;
 
+	@SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Interface method needs to set a JVM-wide static variable that agent is installed.")
 	@Override
 	public void installAgent() {
 		if (agentInstalled()) {
@@ -82,7 +84,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 		final Instrumentation instrumentation = ByteBuddyAgent.install();
 		new AgentBuilder.Default().with(RedefinitionStrategy.RETRANSFORMATION)
 				.type(ElementMatchers.isAnnotatedWith(AFXController.class))
-				.transform((builder, typeDescription, classLoader, module) -> addViewField(interceptMethods(builder)))
+				.transform((builder, typeDescription, classLoader, module, protectionDomain) -> addViewField(interceptMethods(builder)))
 				.installOn(instrumentation);
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("ByteBuddy agent successfully installed.");
@@ -145,7 +147,7 @@ public class ActionFXByteBuddyEnhancer implements ActionFXEnhancer {
 	 * @author koster
 	 *
 	 */
-	public static class AFXActionMethodInterceptorDelegator {
+	public static final class AFXActionMethodInterceptorDelegator {
 
 		private AFXActionMethodInterceptorDelegator() {
 			// can not be instantiated

@@ -38,7 +38,7 @@ import javafx.scene.Node;
  * @see Decoration
  * @see DecorationUtils
  */
-public class StyleClassDecoration extends Decoration {
+public final class StyleClassDecoration extends Decoration {
 
     private final String[] styleClasses;
 

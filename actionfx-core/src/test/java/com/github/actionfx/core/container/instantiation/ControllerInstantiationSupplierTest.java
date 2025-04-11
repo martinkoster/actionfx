@@ -23,15 +23,10 @@
  */
 package com.github.actionfx.core.container.instantiation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -57,7 +52,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
- * JUnit test case for {@link FxmlViewInstantiationSupplier}
+ * JUnit test case for {@link ControllerInstantiationSupplier}
  *
  * @author koster
  *
@@ -80,23 +75,25 @@ class ControllerInstantiationSupplierTest {
 		final SampleViewController controller = supplier.get();
 
 		// THEN
-		assertThat(controller, notNullValue());
+		assertThat(controller).isNotNull();
 		final View view = ControllerWrapper.getViewFrom(controller);
-		assertThat(view, notNullValue());
-		assertThat(view.getRootNode(), notNullValue());
-		assertThat(view.getId(), equalTo("testId"));
+		assertThat(view).isNotNull();
+		assertThat((Object) view.getRootNode()).isNotNull();
+		assertThat(view.getId()).isEqualTo("testId");
 
-		assertThat(view, instanceOf(FxmlView.class));
+		assertThat(view).isInstanceOf(FxmlView.class);
 		final FxmlView fxmlView = (FxmlView) view;
-		assertThat(fxmlView.getWidth(), equalTo(100));
-		assertThat(fxmlView.getHeight(), equalTo(50));
-		assertThat(fxmlView.getIcon(), equalTo("icon.png"));
-		assertThat(fxmlView.getPosX(), equalTo(10));
-		assertThat(fxmlView.getPosY(), equalTo(20));
-		assertThat(fxmlView.isMaximized(), equalTo(true));
-		assertThat(fxmlView.isModalDialogue(), equalTo(false));
-		assertThat(fxmlView.getWindowTitle(), equalTo("Hello World"));
-		assertThat(fxmlView.getStylesheets(), hasItems(equalTo("cssClass1"), equalTo("cssClass2")));
+		assertThat(fxmlView.getWidth()).isEqualTo(100);
+		assertThat(fxmlView.getHeight()).isEqualTo(50);
+		assertThat(fxmlView.getIcon()).isEqualTo("icon.png");
+		assertThat(fxmlView.getPosX()).isEqualTo(10);
+		assertThat(fxmlView.getPosY()).isEqualTo(20);
+		assertThat(fxmlView.isMaximized()).isTrue();
+		assertThat(fxmlView.isModalDialogue()).isFalse();
+		assertThat(fxmlView.getWindowTitle()).isEqualTo("Hello World");
+		assertThat(fxmlView.getStylesheets())
+				.anyMatch(phrase -> phrase.contains("cssClass1"))
+				.anyMatch(phrase -> phrase.contains("cssClass2"));
 	}
 
 	@Test
@@ -110,22 +107,22 @@ class ControllerInstantiationSupplierTest {
 		final MultilingualViewController controller = supplier.get();
 
 		// THEN
-		assertThat(controller, notNullValue());
+		assertThat(controller).isNotNull();
 		final View view = ControllerWrapper.getViewFrom(controller);
-		assertThat(view, notNullValue());
-		assertThat(view.getRootNode(), notNullValue());
-		assertThat(view.getId(), equalTo("multilingualView"));
+		assertThat(view).isNotNull();
+		assertThat((Object) view.getRootNode()).isNotNull();
+		assertThat(view.getId()).isEqualTo("multilingualView");
 
-		assertThat(view, instanceOf(FxmlView.class));
+		assertThat(view).isInstanceOf(FxmlView.class);
 		final FxmlView fxmlView = (FxmlView) view;
 		final Node node = fxmlView.getRootNode();
 		assertNotNull(node);
-		assertTrue(node instanceof VBox);
+		assertInstanceOf(VBox.class, node);
 		final VBox vbox = (VBox) node;
-		assertThat(vbox.getChildren(), hasSize(1));
-		assertThat(vbox.getChildren().get(0), instanceOf(Label.class));
+		assertThat(vbox.getChildren()).hasSize(1);
+		assertThat(vbox.getChildren().get(0)).isInstanceOf(Label.class);
 		final Label label = (Label) vbox.getChildren().get(0);
-		assertThat(label.getText(), equalTo("Hello World"));
+		assertThat(label.getText()).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -139,16 +136,16 @@ class ControllerInstantiationSupplierTest {
 		final ViewController controller = supplier.get();
 
 		// THEN
-		assertThat(controller, notNullValue());
+		assertThat(controller).isNotNull();
 		final View view = ControllerWrapper.getViewFrom(controller);
-		assertThat(view, notNullValue());
-		assertThat(view.getRootNode(), notNullValue());
-		assertThat(view.getId(), equalTo("parentView"));
+		assertThat(view).isNotNull();
+		assertThat((Object) view.getRootNode()).isNotNull();
+		assertThat(view.getId()).isEqualTo("parentView");
 
-		assertThat(view, instanceOf(ParentView.class));
-		assertThat(controller.label, notNullValue());
-		assertThat(controller.label.getText(), equalTo("Hello World"));
-		assertThat(controller.tableView, notNullValue());
+		assertThat(view).isInstanceOf(ParentView.class);
+		assertThat(controller.label).isNotNull();
+		assertThat(controller.label.getText()).isEqualTo("Hello World");
+		assertThat(controller.tableView).isNotNull();
 	}
 
 	@Test
@@ -158,9 +155,9 @@ class ControllerInstantiationSupplierTest {
 				ViewControllerWithInvalidAFXControllerAnnotation.class);
 
 		// WHEN and THEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> supplier.get());
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, supplier::get);
 
-		assertThat(ex.getMessage(), equalTo("Failed to instantiate class in JavaFX thread!"));
+		assertThat(ex.getMessage()).isEqualTo("Failed to instantiate class in JavaFX thread!");
 	}
 
 	/**

@@ -30,7 +30,8 @@ dependencies {
 
         implementation project(":actionfx-core")
         
-		implementation group: 'org.freemarker', name: 'freemarker', version: "${freemarkerVersion}"
+		implementation group: "org.assertj", name: "assertj-core", version: "3.27.3"
+    implementation group: 'org.freemarker', name: 'freemarker', version: "${freemarkerVersion}"
         
         testImplementation project(":actionfx-testing")
 

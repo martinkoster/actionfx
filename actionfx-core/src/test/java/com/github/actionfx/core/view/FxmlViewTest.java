@@ -25,16 +25,7 @@ package com.github.actionfx.core.view;
 
 import static com.github.actionfx.core.test.utils.TestUtils.assertControlHasUserValue;
 import static com.github.actionfx.core.test.utils.TestUtils.enterValue;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -102,10 +92,9 @@ class FxmlViewTest {
 		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
 
 		// THEN
-		assertThat(view.getId(), equalTo("testId"));
-		assertThat(view.getController(), instanceOf(TestController.class));
-		assertThat(view.getRootNode(), notNullValue());
-		assertThat(view.getRootNode(), instanceOf(GridPane.class));
+		assertThat(view.getId()).isEqualTo("testId");
+		assertThat(view.getController()).isInstanceOf(TestController.class);
+		assertThat((Object) view.getRootNode()).isNotNull().isInstanceOf(GridPane.class);
 	}
 
 	@Test
@@ -119,10 +108,10 @@ class FxmlViewTest {
 				new MultilingualViewController(), bundle);
 
 		// THEN
-		assertThat(view.getId(), equalTo("multilingualView"));
-		assertThat(view.getController(), instanceOf(MultilingualViewController.class));
+		assertThat(view.getId()).isEqualTo("multilingualView");
+		assertThat(view.getController()).isInstanceOf(MultilingualViewController.class);
 		final MultilingualViewController controller = (MultilingualViewController) view.getController();
-		assertThat(controller.getLabel().getText(), equalTo("Hallo Welt"));
+		assertThat(controller.getLabel().getText()).isEqualTo("Hallo Welt");
 	}
 
 	@Test
@@ -135,8 +124,8 @@ class FxmlViewTest {
 		view.show();
 
 		// THEN
-		assertThat(view.getWindow(), notNullValue());
-		assertThat(view.getWindow(), instanceOf(Stage.class));
+		assertThat(view.getWindow()).isNotNull();
+		assertThat(view.getWindow()).isInstanceOf(Stage.class);
 	}
 
 	@Test
@@ -150,10 +139,10 @@ class FxmlViewTest {
 		view.show(stage);
 
 		// THEN
-		assertThat(view.getWindow(), notNullValue());
-		assertThat(view.getWindow(), sameInstance(stage));
-		assertThat(stage.getScene(), notNullValue());
-		assertThat(stage.getScene().getRoot(), sameInstance(view.getRootNode()));
+		assertThat(view.getWindow()).isNotNull();
+		assertThat(view.getWindow()).isSameAs(stage);
+		assertThat(stage.getScene()).isNotNull();
+		assertThat(stage.getScene().getRoot()).isSameAs(view.getRootNode());
 	}
 
 	@Test
@@ -168,10 +157,10 @@ class FxmlViewTest {
 		view.show(popup, owner);
 
 		// THEN
-		assertThat(view.getWindow(), notNullValue());
-		assertThat(view.getWindow(), sameInstance(popup));
-		assertThat(popup.getContent(), hasSize(1));
-		assertThat(popup.getContent().get(0), sameInstance(view.getRootNode()));
+		assertThat(view.getWindow()).isNotNull();
+		assertThat(view.getWindow()).isSameAs(popup);
+		assertThat(popup.getContent()).hasSize(1);
+		assertThat(popup.getContent().get(0)).isSameAs(view.getRootNode());
 	}
 
 	@Test
@@ -199,8 +188,8 @@ class FxmlViewTest {
 		view.attachViewToParent(parent, NodeWrapper.anchorPaneFillingAttacher());
 
 		// THEN
-		assertThat(parent.getChildren(), hasSize(1));
-		assertThat(parent.getChildren().get(0), sameInstance(view.getRootNode()));
+		assertThat(parent.getChildren()).hasSize(1);
+		assertThat(parent.getChildren().get(0)).isSameAs(view.getRootNode());
 	}
 
 	@Test
@@ -214,7 +203,7 @@ class FxmlViewTest {
 		view.detachView();
 
 		// THEN
-		assertThat(parent.getChildren(), hasSize(0));
+		assertThat(parent.getChildren()).isEmpty();
 	}
 
 	@Test
@@ -224,14 +213,14 @@ class FxmlViewTest {
 		final AnchorPane parent = new AnchorPane();
 		view.attachViewToParent(parent, NodeWrapper.anchorPaneFillingAttacher());
 		view.detachView();
-		assertThat(parent.getChildren(), hasSize(0));
+		assertThat(parent.getChildren()).isEmpty();
 
 		// WHEN
 		view.reattachView();
 
 		// THEN
-		assertThat(parent.getChildren(), hasSize(1));
-		assertThat(parent.getChildren().get(0), sameInstance(view.getRootNode()));
+		assertThat(parent.getChildren()).hasSize(1);
+		assertThat(parent.getChildren().get(0)).isSameAs(view.getRootNode());
 	}
 
 	@Test
@@ -240,26 +229,26 @@ class FxmlViewTest {
 		final FxmlView view = new FxmlView("testId", "/testfxml/SampleView.fxml", new TestController());
 
 		// WHEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> view.reattachView());
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, view::reattachView);
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("Can not re-attach view"));
+		assertThat(ex.getMessage()).contains("Can not re-attach view");
 	}
 
 	@Test
 	void testLookupNode_nodeIsCached() {
 		// GIVEN
 		final FxmlView view = new FxmlView("testId", "/testfxml/SampleViewWithNodeId.fxml", new TestController());
-		assertThat(view.lookupCache.entrySet(), hasSize(0));
+		assertThat(view.lookupCache.entrySet()).isEmpty();
 
 		// WHEN
 		final NodeWrapper textFieldWrapper = view.lookupNode("textField");
 
 		// THEN
-		assertThat(textFieldWrapper, notNullValue());
-		assertThat(textFieldWrapper.getWrapped(), instanceOf(TextField.class));
+		assertThat(textFieldWrapper).isNotNull();
+		assertThat((Object) textFieldWrapper.getWrapped()).isInstanceOf(TextField.class);
 		// check that the node is now cached!
-		assertThat(view.lookupCache.get("textField"), equalTo(textFieldWrapper));
+		assertThat((Object) view.lookupCache.get("textField")).isEqualTo(textFieldWrapper);
 	}
 
 	@Test
@@ -293,13 +282,13 @@ class FxmlViewTest {
 		enterValue(view, "shoppingCartListView", Arrays.asList("Item 4", "Item 5"));
 
 		// check that model has the entered values reflected
-		assertThat(model.getFirstName(), equalTo("John"));
-		assertThat(model.getLastName(), equalTo("Doe"));
-		assertThat(model.getCountry(), equalTo("USA"));
-		assertThat(model.getStreet(), equalTo("1600 Pennsylvania Avenue"));
-		assertThat(model.getPostalCode(), equalTo("20500"));
-		assertThat(model.getCity(), equalTo("Washington"));
-		assertThat(model.getSelectedProducts(), contains("Item 4", "Item 5"));
+		assertThat(model.getFirstName()).isEqualTo("John");
+		assertThat(model.getLastName()).isEqualTo("Doe");
+		assertThat(model.getCountry()).isEqualTo("USA");
+		assertThat(model.getStreet()).isEqualTo("1600 Pennsylvania Avenue");
+		assertThat(model.getPostalCode()).isEqualTo("20500");
+		assertThat(model.getCity()).isEqualTo("Washington");
+		assertThat(model.getSelectedProducts()).containsExactly("Item 4", "Item 5");
 	}
 
 	@Test
@@ -334,13 +323,13 @@ class FxmlViewTest {
 		enterValue(view, "shoppingCartListView", Arrays.asList("Item 4", "Item 5"));
 
 		// check that model has the old values, as model is no longer bound
-		assertThat(model.getFirstName(), equalTo("Please enter first name"));
-		assertThat(model.getLastName(), equalTo("Please enter last name"));
-		assertThat(model.getCountry(), equalTo("Germany"));
-		assertThat(model.getStreet(), equalTo("Please enter street"));
-		assertThat(model.getPostalCode(), equalTo("Please enter postal code"));
-		assertThat(model.getCity(), equalTo("Please enter city"));
-		assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
+		assertThat(model.getFirstName()).isEqualTo("Please enter first name");
+		assertThat(model.getLastName()).isEqualTo("Please enter last name");
+		assertThat(model.getCountry()).isEqualTo("Germany");
+		assertThat(model.getStreet()).isEqualTo("Please enter street");
+		assertThat(model.getPostalCode()).isEqualTo("Please enter postal code");
+		assertThat(model.getCity()).isEqualTo("Please enter city");
+		assertThat(model.getSelectedProducts()).containsExactly("Item 1", "Item 2", "Item 3");
 	}
 
 	@Test
@@ -375,13 +364,13 @@ class FxmlViewTest {
 		enterValue(view, "shoppingCartListView", Arrays.asList("Item 4", "Item 5"));
 
 		// check that model has the old values, as model is no longer bound
-		assertThat(model.getFirstName(), equalTo("Please enter first name"));
-		assertThat(model.getLastName(), equalTo("Please enter last name"));
-		assertThat(model.getCountry(), equalTo("Germany"));
-		assertThat(model.getStreet(), equalTo("Please enter street"));
-		assertThat(model.getPostalCode(), equalTo("Please enter postal code"));
-		assertThat(model.getCity(), equalTo("Please enter city"));
-		assertThat(model.getSelectedProducts(), contains("Item 1", "Item 2", "Item 3"));
+		assertThat(model.getFirstName()).isEqualTo("Please enter first name");
+		assertThat(model.getLastName()).isEqualTo("Please enter last name");
+		assertThat(model.getCountry()).isEqualTo("Germany");
+		assertThat(model.getStreet()).isEqualTo("Please enter street");
+		assertThat(model.getPostalCode()).isEqualTo("Please enter postal code");
+		assertThat(model.getCity()).isEqualTo("Please enter city");
+		assertThat(model.getSelectedProducts()).containsExactly("Item 1", "Item 2", "Item 3");
 	}
 
 	@Test
@@ -403,9 +392,9 @@ class FxmlViewTest {
 		textField.setText("Hello there");
 
 		// THEN
-		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThat(view.getValidationResult().getStatus()).isEqualTo(ValidationStatus.ERROR);
 		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
-		assertThat(ControlWrapper.of(textField).isRequired(), equalTo(false));
+		assertThat(ControlWrapper.of(textField).isRequired()).isFalse();
 	}
 
 	@Test
@@ -426,8 +415,8 @@ class FxmlViewTest {
 		textField.setText("Hello there");
 
 		// THEN
-		assertThat(view.getValidationResult().getStatus(), equalTo(ValidationStatus.OK));
-		assertThat(ControlWrapper.of(textField).isRequired(), equalTo(true));
+		assertThat(view.getValidationResult().getStatus()).isEqualTo(ValidationStatus.OK);
+		assertThat(ControlWrapper.of(textField).isRequired()).isTrue();
 		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class);
 	}
 
@@ -452,7 +441,7 @@ class FxmlViewTest {
 		// THEN
 		assertThatValidationStatusIsERROR(view.getValidationResult());
 		assertThatValidationResultHoldsMessagesWithText(view.getValidationResult(), "Error message");
-		assertThat(ControlWrapper.of(textField).isRequired(), equalTo(true));
+		assertThat(ControlWrapper.of(textField).isRequired()).isTrue();
 		assertThatNodeHasDecorationsOfType(textField, GraphicDecoration.class, GraphicDecoration.class,
 				StyleClassDecoration.class);
 	}
@@ -683,33 +672,34 @@ class FxmlViewTest {
 
 	private void assertThatValidationResultHoldsMessagesWithText(final ValidationResult validationResult,
 			final String... messages) {
-		assertThat(validationResult, notNullValue());
-		assertThat(validationResult.getMessages(), hasSize(messages.length));
-		assertThat(validationResult.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-				containsInAnyOrder(messages));
+		assertThat(validationResult).isNotNull();
+		assertThat(validationResult.getMessages()).hasSize(messages.length);
+		assertThat(validationResult.getMessages().stream().map(ValidationMessage::getText).toList()).containsExactlyInAnyOrder(messages);
 	}
 
 	private void assertThatValidationStatusIsOK(final ValidationResult validationResult) {
 		if (validationResult != null) {
-			assertThat(validationResult.getStatus(), equalTo(ValidationStatus.OK));
+			assertThat(validationResult.getStatus()).isEqualTo(ValidationStatus.OK);
 		}
 	}
 
 	private void assertThatValidationStatusIsERROR(final ValidationResult validationResult) {
-		assertThat(validationResult, notNullValue());
-		assertThat(validationResult.getStatus(), equalTo(ValidationStatus.ERROR));
+		assertThat(validationResult).isNotNull();
+		assertThat(validationResult.getStatus()).isEqualTo(ValidationStatus.ERROR);
 	}
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void assertThatNodeHasDecorationsOfType(final Node node, final Class<?>... decorationTypes) {
 		final List<Decoration> nodeDecorations = DecorationUtils.getDecorations(node);
-		assertThat(nodeDecorations, hasSize(decorationTypes.length));
-		assertThat(nodeDecorations.stream().map(Decoration::getClass).collect(Collectors.toList()),
-				hasItems(decorationTypes));
+		assertThat(nodeDecorations).hasSize(decorationTypes.length);
+		List actualDecorationTypes = nodeDecorations.stream().map(Decoration::getClass).toList();
+		List expectedDecorationTypes = Arrays.asList(decorationTypes);
+		assertThat(actualDecorationTypes).containsAll(expectedDecorationTypes);
 	}
 
 	private void assertThatNodeHasNoDecorations(final Node node) {
 		final List<Decoration> nodeDecorations = DecorationUtils.getDecorations(node);
-		assertThat(nodeDecorations, hasSize(0));
+		assertThat(nodeDecorations).isEmpty();
 	}
 
 	private void givenActionFXSpecifiesValidationMode(final ValidationMode validationMode) {

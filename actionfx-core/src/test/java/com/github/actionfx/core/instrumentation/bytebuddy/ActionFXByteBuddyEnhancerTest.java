@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.instrumentation.bytebuddy;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -81,8 +79,8 @@ class ActionFXByteBuddyEnhancerTest {
 			throw new IllegalStateException(
 					"Class has not the expected field '" + ActionFXEnhancer.VIEW_FIELD_NAME + "'!", e);
 		}
-		assertThat(field, notNullValue());
-		assertThat(field.getType(), equalTo(View.class));
+		assertThat(field).isNotNull();
+		assertThat(field.getType()).isEqualTo(View.class);
 	}
 
 }

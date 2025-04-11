@@ -137,13 +137,21 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 		final Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(rootPackage);
 
 		for (final BeanDefinition beanDefinition : beanDefinitions) {
-			if (beanDefinition == null || beanDefinition.getBeanClassName() == null) {
+			final String beanClassName = getBeanClassName(beanDefinition);
+			if (beanClassName == null) {
 				continue;
 			}
-			final Class<?> beanClass = ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), // NORSONAR
+			final Class<?> beanClass = ClassUtils.resolveClassName(beanClassName, // NORSONAR
 					getClass().getClassLoader());
 			addControllerBeanDefinition(beanClass);
 		}
+	}
+
+	private static String getBeanClassName(final BeanDefinition beanDefinition) {
+		if (beanDefinition == null) {
+			return null;
+		}
+		return beanDefinition.getBeanClassName();
 	}
 
 	@Override
@@ -173,7 +181,6 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 	 *
 	 * @param beanName    the bean name
 	 * @param definition  the bean definition
-	 * @param beanFactory the bean factory
 	 */
 	protected void registerBeanDefinition(final String beanName, final BeanDefinition definition) {
 		checkSpringContextAvailability();

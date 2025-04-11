@@ -2,7 +2,7 @@ package com.github.actionfx.core.test.nestedviewapp;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXController;

@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -50,9 +47,9 @@ class StringToObjectConverterTest {
         // WHEN
         final CustomObjectWithValueOf result = converter.convert("Hello there");
 
-        // THEN
-        assertThat(result, notNullValue());
-        assertThat(result.getValue(), equalTo("Hello there"));
+		// THEN
+		assertThat(result).isNotNull();
+		assertThat(result.getValue()).isEqualTo("Hello there");
     }
 
     @Test
@@ -64,9 +61,9 @@ class StringToObjectConverterTest {
         // WHEN
         final CustomObjectWithConstructor result = converter.convert("Hello there");
 
-        // THEN
-        assertThat(result, notNullValue());
-        assertThat(result.getValue(), equalTo("Hello there"));
+		// THEN
+		assertThat(result).isNotNull();
+		assertThat(result.getValue()).isEqualTo("Hello there");
     }
 
     @Test
@@ -75,8 +72,8 @@ class StringToObjectConverterTest {
         final StringToObjectConverter<UnknownObject> converter = new StringToObjectConverter<>(
                 UnknownObject.class);
 
-        // WHEN and THEN
-        assertThat(converter.convert("Hello there"), nullValue());
+		// WHEN and THEN
+		assertThat(converter.convert("Hello there")).isNull();
     }
 
     @Test
@@ -85,8 +82,8 @@ class StringToObjectConverterTest {
         final StringToObjectConverter<UnknownObject> converter = new StringToObjectConverter<>(
                 UnknownObject.class);
 
-        // WHEN and THEN
-        assertThat(converter.convert(null), nullValue());
+		// WHEN and THEN
+		assertThat(converter.convert(null)).isNull();
     }
 
     @Test
@@ -98,12 +95,11 @@ class StringToObjectConverterTest {
         // WHEN
         final Charset result = converter.convert("UTF8");
 
-        // THEN
-        assertThat(result, notNullValue());
-        assertThat(result, equalTo(StandardCharsets.UTF_8));
+		// THEN
+        assertThat(result).isNotNull().isEqualTo(StandardCharsets.UTF_8);
     }
 
-    public static class CustomObjectWithValueOf {
+	public static final class CustomObjectWithValueOf {
 
         private String value;
 

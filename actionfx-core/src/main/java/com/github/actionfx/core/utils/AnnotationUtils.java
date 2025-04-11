@@ -41,7 +41,7 @@ import java.util.TreeMap;
  * @author koster
  *
  */
-public class AnnotationUtils {
+public final class AnnotationUtils {
 
     private AnnotationUtils() {
         // class can not be instantiated

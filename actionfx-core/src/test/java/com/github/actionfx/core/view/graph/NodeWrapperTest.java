@@ -23,23 +23,13 @@
  */
 package com.github.actionfx.core.view.graph;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,22 +81,22 @@ class NodeWrapperTest {
 
 	@Test
 	void testIsParent() {
-		assertThat(wrapperWithAnchorPane().isParent(), equalTo(true));
-		assertThat(wrapperWithCanvas().isParent(), equalTo(false));
+		assertThat(wrapperWithAnchorPane().isParent()).isTrue();
+		assertThat(wrapperWithCanvas().isParent()).isFalse();
 	}
 
 	@Test
 	void testIsLeafNode() {
-		assertThat(wrapperWithAnchorPane().isLeafNode(), equalTo(false));
-		assertThat(wrapperWithTabPane().isLeafNode(), equalTo(false));
-		assertThat(wrapperWithTab().isLeafNode(), equalTo(false));
-		assertThat(wrapperWithCanvas().isLeafNode(), equalTo(true));
+		assertThat(wrapperWithAnchorPane().isLeafNode()).isFalse();
+		assertThat(wrapperWithTabPane().isLeafNode()).isFalse();
+		assertThat(wrapperWithTab().isLeafNode()).isFalse();
+		assertThat(wrapperWithCanvas().isLeafNode()).isTrue();
 	}
 
 	@Test
 	void testIsControl() {
-		assertThat(wrapperWithScrollPane().isControl(), equalTo(true));
-		assertThat(wrapperWithAnchorPane().isControl(), equalTo(false));
+		assertThat(wrapperWithScrollPane().isControl()).isTrue();
+		assertThat(wrapperWithAnchorPane().isControl()).isFalse();
 	}
 
 	@Test
@@ -115,9 +105,9 @@ class NodeWrapperTest {
 		final Label[] labels = new Label[] { label("text1"), label("text2") };
 
 		// WHEN and THEN
-		assertThat(wrapperWithAnchorPane(labels).getChildren(), contains(labels));
-		assertThat(wrapperWithVBox(labels).getChildren(), contains(labels));
-		assertThat(wrapperWithSplitPane(labels).getChildren(), contains(labels));
+		assertThat(wrapperWithAnchorPane(labels).getChildren()).containsExactly((Object[]) labels);
+		assertThat(wrapperWithVBox(labels).getChildren()).containsExactly((Object[]) labels);
+		assertThat(wrapperWithSplitPane(labels).getChildren()).containsExactly((Object[]) labels);
 	}
 
 	@Test
@@ -126,7 +116,7 @@ class NodeWrapperTest {
 		final TitledPane titledPane = new TitledPane();
 
 		// WHEN and THEN
-		assertThat(wrapperWithAccordion(titledPane).getChildren(), contains(titledPane));
+		assertThat(wrapperWithAccordion(titledPane).getChildren()).containsExactly(titledPane);
 	}
 
 	@Test
@@ -135,7 +125,7 @@ class NodeWrapperTest {
 		final NodeWrapper wrapper = wrapperWithNodeWithNullNodeList();
 
 		// WHEN and THEN
-		assertThrows(IllegalStateException.class, () -> wrapper.getChildren());
+		assertThrows(IllegalStateException.class, wrapper::getChildren);
 	}
 
 	@Test
@@ -144,7 +134,7 @@ class NodeWrapperTest {
 		final NodeWrapper wrapper = wrapperWithScrollPane();
 
 		// WHEN and THEN
-		assertThrows(IllegalStateException.class, () -> wrapper.getChildren());
+		assertThrows(IllegalStateException.class, wrapper::getChildren);
 	}
 
 	@Test
@@ -153,7 +143,7 @@ class NodeWrapperTest {
 		final NodeWrapper wrapper = wrapperWithCanvas();
 
 		// WHEN and THEN
-		assertThrows(IllegalStateException.class, () -> wrapper.getChildren());
+		assertThrows(IllegalStateException.class, wrapper::getChildren);
 	}
 
 	@Test
@@ -165,7 +155,7 @@ class NodeWrapperTest {
 		final Property<Node> property = wrapperWithScrollPane(label).getSingleChildProperty();
 
 		// THEN
-		assertThat(property.getValue(), sameInstance(label));
+		assertThat(property.getValue()).isSameAs(label);
 	}
 
 	@Test
@@ -174,23 +164,23 @@ class NodeWrapperTest {
 		final NodeWrapper wrapper = wrapperWithNodeWithNullChild();
 
 		// WHEN and THEN
-		assertThrows(IllegalStateException.class, () -> wrapper.getSingleChildProperty());
+		assertThrows(IllegalStateException.class, wrapper::getSingleChildProperty);
 	}
 
 	@Test
 	void testSupportsMultipleChildren() {
-		assertThat(wrapperWithAnchorPane().supportsMultipleChildren(), equalTo(true));
-		assertThat(wrapperWithVBox().supportsMultipleChildren(), equalTo(true));
-		assertThat(wrapperWithSplitPane().supportsMultipleChildren(), equalTo(true));
-		assertThat(wrapperWithScrollPane().supportsMultipleChildren(), equalTo(false)); // single child only
+		assertThat(wrapperWithAnchorPane().supportsMultipleChildren()).isTrue();
+		assertThat(wrapperWithVBox().supportsMultipleChildren()).isTrue();
+		assertThat(wrapperWithSplitPane().supportsMultipleChildren()).isTrue();
+		assertThat(wrapperWithScrollPane().supportsMultipleChildren()).isFalse(); // single child only
 	}
 
 	@Test
 	void testSupportsSingleChild() {
-		assertThat(wrapperWithAnchorPane().supportsSingleChild(), equalTo(false));
-		assertThat(wrapperWithVBox().supportsSingleChild(), equalTo(false));
-		assertThat(wrapperWithSplitPane().supportsSingleChild(), equalTo(false));
-		assertThat(wrapperWithScrollPane().supportsSingleChild(), equalTo(true)); // single child only
+		assertThat(wrapperWithAnchorPane().supportsSingleChild()).isFalse();
+		assertThat(wrapperWithVBox().supportsSingleChild()).isFalse();
+		assertThat(wrapperWithSplitPane().supportsSingleChild()).isFalse();
+		assertThat(wrapperWithScrollPane().supportsSingleChild()).isTrue(); // single child only
 	}
 
 	@Test
@@ -203,8 +193,7 @@ class NodeWrapperTest {
 		final List<Node> result = wrapper.getChildrenReadOnly();
 
 		// THEN
-		assertThat(result, hasSize(2));
-		assertThat(result, contains(labels));
+		assertThat(result).hasSize(2).containsExactly(labels);
 	}
 
 	@Test
@@ -217,13 +206,12 @@ class NodeWrapperTest {
 		final List<Node> result = wrapper.getChildrenReadOnly();
 
 		// THEN
-		assertThat(result, hasSize(1));
-		assertThat(result, contains(label));
+		assertThat(result).hasSize(1).containsExactly(label);
 	}
 
 	@Test
 	void testGetChildrenReadOnly_nodeSupportsNoChildren() {
-		assertThat(wrapperWithCanvas().getChildrenReadOnly(), hasSize(0));
+		assertThat(wrapperWithCanvas().getChildrenReadOnly()).isEmpty();
 	}
 
 	@Test
@@ -236,7 +224,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(label, NodeWrapper.defaultAttacher());
 
 		// THEN
-		assertThat(wrapper.getSingleChildProperty().getValue(), sameInstance(label));
+		assertThat(wrapper.getSingleChildProperty().getValue()).isSameAs(label);
 	}
 
 	@Test
@@ -249,7 +237,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(label, NodeWrapper.defaultAttacher());
 
 		// THEN
-		assertThat(wrapper.getSingleChildProperty().getValue(), sameInstance(label));
+		assertThat(wrapper.getSingleChildProperty().getValue()).isSameAs(label);
 	}
 
 	@Test
@@ -263,7 +251,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(attached, NodeWrapper.defaultAttacher());
 
 		// THEN
-		assertThat(wrapper.getChildren(), contains(sameInstance(firstChild), sameInstance(attached)));
+		assertThat(wrapper.getChildren()).containsExactly(firstChild, attached);
 	}
 
 	@Test
@@ -276,7 +264,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(tab, NodeWrapper.defaultAttacher());
 
 		// THEN
-		assertThat(wrapper.getChildren(), contains(sameInstance(tab)));
+		assertThat(wrapper.getChildren()).contains(tab);
 	}
 
 	@Test
@@ -291,8 +279,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(attached, NodeWrapper.listAttacher(1));
 
 		// THEN (it is position in the middle)
-		assertThat(wrapper.getChildren(),
-				contains(sameInstance(firstChild), sameInstance(attached), sameInstance(secondChild)));
+		assertThat(wrapper.getChildren()).containsExactly(firstChild, attached, secondChild);
 	}
 
 	@Test
@@ -306,7 +293,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(attached, NodeWrapper.listFirstAttacher());
 
 		// THEN (it is positioned as first child)
-		assertThat(wrapper.getChildren(), contains(sameInstance(attached), sameInstance(firstChild)));
+		assertThat(wrapper.getChildren()).containsExactly(attached, firstChild);
 	}
 
 	@Test
@@ -320,7 +307,7 @@ class NodeWrapperTest {
 		wrapper.attachNode(attached, NodeWrapper.listLastAttacher());
 
 		// THEN (it is positioned as last child)
-		assertThat(wrapper.getChildren(), contains(sameInstance(firstChild), sameInstance(attached)));
+		assertThat(wrapper.getChildren()).containsExactly(firstChild, attached);
 	}
 
 	@Test
@@ -344,15 +331,15 @@ class NodeWrapperTest {
 
 		// THEN (it is positioned where the 5th child before)
 		final GridPane gridPane = (GridPane) wrapper.getWrapped();
-		assertThat(getNodeByRowColumnIndex(0, 0, gridPane), sameInstance(firstChild));
-		assertThat(getNodeByRowColumnIndex(0, 1, gridPane), sameInstance(secondChild));
-		assertThat(getNodeByRowColumnIndex(0, 2, gridPane), sameInstance(thirdChild));
-		assertThat(getNodeByRowColumnIndex(1, 0, gridPane), sameInstance(fourthChild));
-		assertThat(getNodeByRowColumnIndex(1, 1, gridPane), sameInstance(attached)); // attached replaces fifthChild
-		assertThat(getNodeByRowColumnIndex(1, 2, gridPane), sameInstance(sixthChild));
-		assertThat(getNodeByRowColumnIndex(2, 0, gridPane), sameInstance(seventhChild));
-		assertThat(getNodeByRowColumnIndex(2, 1, gridPane), sameInstance(eightChild));
-		assertThat(getNodeByRowColumnIndex(2, 2, gridPane), sameInstance(ninthChild));
+		assertThat(getNodeByRowColumnIndex(0, 0, gridPane)).isSameAs(firstChild);
+		assertThat(getNodeByRowColumnIndex(0, 1, gridPane)).isSameAs(secondChild);
+		assertThat(getNodeByRowColumnIndex(0, 2, gridPane)).isSameAs(thirdChild);
+		assertThat(getNodeByRowColumnIndex(1, 0, gridPane)).isSameAs(fourthChild);
+		assertThat(getNodeByRowColumnIndex(1, 1, gridPane)).isSameAs(attached); // attached replaces fifthChild
+		assertThat(getNodeByRowColumnIndex(1, 2, gridPane)).isSameAs(sixthChild);
+		assertThat(getNodeByRowColumnIndex(2, 0, gridPane)).isSameAs(seventhChild);
+		assertThat(getNodeByRowColumnIndex(2, 1, gridPane)).isSameAs(eightChild);
+		assertThat(getNodeByRowColumnIndex(2, 2, gridPane)).isSameAs(ninthChild);
 	}
 
 	@Test
@@ -374,11 +361,11 @@ class NodeWrapperTest {
 
 		// THEN
 		final BorderPane borderPane = (BorderPane) wrapper.getWrapped();
-		assertThat(borderPane.getTop(), sameInstance(top));
-		assertThat(borderPane.getLeft(), sameInstance(left));
-		assertThat(borderPane.getRight(), sameInstance(right));
-		assertThat(borderPane.getBottom(), sameInstance(bottom));
-		assertThat(borderPane.getCenter(), sameInstance(center));
+		assertThat(borderPane.getTop()).isSameAs(top);
+		assertThat(borderPane.getLeft()).isSameAs(left);
+		assertThat(borderPane.getRight()).isSameAs(right);
+		assertThat(borderPane.getBottom()).isSameAs(bottom);
+		assertThat(borderPane.getCenter()).isSameAs(center);
 	}
 
 	@Test
@@ -391,12 +378,12 @@ class NodeWrapperTest {
 		wrapper.attachNode(label, NodeWrapper.anchorPaneAttacher(10.0, 20.0, 30.0, 40.0));
 
 		// THEN
-		assertThat(wrapper.getChildren(), hasSize(1));
-		assertThat(wrapper.getChildren().get(0), sameInstance(label));
-		assertThat(AnchorPane.getLeftAnchor((Node) wrapper.getChildren().get(0)), equalTo(10.0));
-		assertThat(AnchorPane.getTopAnchor((Node) wrapper.getChildren().get(0)), equalTo(20.0));
-		assertThat(AnchorPane.getRightAnchor((Node) wrapper.getChildren().get(0)), equalTo(30.0));
-		assertThat(AnchorPane.getBottomAnchor((Node) wrapper.getChildren().get(0)), equalTo(40.0));
+		assertThat(wrapper.getChildren()).hasSize(1);
+		assertThat(wrapper.getChildren().get(0)).isSameAs(label);
+		assertThat(AnchorPane.getLeftAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(10.0);
+		assertThat(AnchorPane.getTopAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(20.0);
+		assertThat(AnchorPane.getRightAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(30.0);
+		assertThat(AnchorPane.getBottomAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(40.0);
 	}
 
 	@Test
@@ -409,12 +396,12 @@ class NodeWrapperTest {
 		wrapper.attachNode(label, NodeWrapper.anchorPaneFillingAttacher());
 
 		// THEN
-		assertThat(wrapper.getChildren(), hasSize(1));
-		assertThat(wrapper.getChildren().get(0), sameInstance(label));
-		assertThat(AnchorPane.getLeftAnchor((Node) wrapper.getChildren().get(0)), equalTo(0.0));
-		assertThat(AnchorPane.getTopAnchor((Node) wrapper.getChildren().get(0)), equalTo(0.0));
-		assertThat(AnchorPane.getRightAnchor((Node) wrapper.getChildren().get(0)), equalTo(0.0));
-		assertThat(AnchorPane.getBottomAnchor((Node) wrapper.getChildren().get(0)), equalTo(0.0));
+		assertThat(wrapper.getChildren()).hasSize(1);
+		assertThat(wrapper.getChildren().get(0)).isSameAs(label);
+		assertThat(AnchorPane.getLeftAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(0.0);
+		assertThat(AnchorPane.getTopAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(0.0);
+		assertThat(AnchorPane.getRightAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(0.0);
+		assertThat(AnchorPane.getBottomAnchor((Node) wrapper.getChildren().get(0))).isEqualTo(0.0);
 	}
 
 	@Test
@@ -424,7 +411,7 @@ class NodeWrapperTest {
 		hbox.setId("hbox");
 
 		// WHEN and THEN
-		assertThat(NodeWrapper.of(hbox).getId(), equalTo("hbox"));
+		assertThat(NodeWrapper.of(hbox).getId()).isEqualTo("hbox");
 	}
 
 	@Test
@@ -434,7 +421,7 @@ class NodeWrapperTest {
 		tab.setId("tab");
 
 		// WHEN and THEN
-		assertThat(NodeWrapper.of(tab).getId(), equalTo("tab"));
+		assertThat(NodeWrapper.of(tab).getId()).isEqualTo("tab");
 	}
 
 	@Test
@@ -453,8 +440,7 @@ class NodeWrapperTest {
 		nodeWrapper.applyNodeVisitorByDFS(visitor);
 
 		// THEN (check expected visited order of depth-first search)
-		assertThat(ids, contains("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne",
-				"tabTwo", "canvas", "vbox", "anchorPane", "gridPane"));
+		assertThat(ids).containsExactly("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo", "canvas", "vbox", "anchorPane", "gridPane");
 	}
 
 	@Test
@@ -475,8 +461,7 @@ class NodeWrapperTest {
 
 		// THEN (check expected visited order of depth-first search, stopped at
 		// "tabTwo")
-		assertThat(ids, contains("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne",
-				"tabTwo"));
+		assertThat(ids).containsExactly("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo");
 	}
 
 	@Test
@@ -495,8 +480,7 @@ class NodeWrapperTest {
 		nodeWrapper.applyNodeVisitorByBFS(visitor);
 
 		// THEN (check expected visited order of breadth-first search)
-		assertThat(ids, contains("borderPane", "accordion", "scrollPane", "tabPane", "vbox", "titledPane", "listView",
-				"tabOne", "tabTwo", "anchorPane", "gridPane", "canvas"));
+		assertThat(ids).containsExactly("borderPane", "accordion", "scrollPane", "tabPane", "vbox", "titledPane", "listView", "tabOne", "tabTwo", "anchorPane", "gridPane", "canvas");
 	}
 
 	@Test
@@ -515,8 +499,7 @@ class NodeWrapperTest {
 
 		// THEN (check expected visited order of breadth-first search, stopped at
 		// "tabTwo")
-		assertThat(ids, contains("borderPane", "accordion", "scrollPane", "tabPane", "vbox", "titledPane", "listView",
-				"tabOne", "tabTwo"));
+		assertThat(ids).containsExactly("borderPane", "accordion", "scrollPane", "tabPane", "vbox", "titledPane", "listView", "tabOne", "tabTwo");
 	}
 
 	@Test
@@ -526,26 +509,25 @@ class NodeWrapperTest {
 
 		// WHEN
 		final List<String> ids = nodeWrapper.getNodesAsStream().map(NodeWrapper::getId).filter(Objects::nonNull)
-				.collect(Collectors.toList());
+				.toList();
 
 		// THEN (check expected visited order of depth-first search)
-		assertThat(ids, contains("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne",
-				"tabTwo", "canvas", "vbox", "anchorPane", "gridPane"));
+		assertThat(ids).containsExactly("borderPane", "accordion", "titledPane", "scrollPane", "listView", "tabPane", "tabOne", "tabTwo", "canvas", "vbox", "anchorPane", "gridPane");
 	}
 
 	@Test
 	void testLookup_nodesExist() {
-		assertThat(wrapperWithHierarchy().lookup("borderPane").getWrapped(), instanceOf(BorderPane.class));
-		assertThat(wrapperWithHierarchy().lookup("accordion").getWrapped(), instanceOf(Accordion.class));
-		assertThat(wrapperWithHierarchy().lookup("scrollPane").getWrapped(), instanceOf(ScrollPane.class));
-		assertThat(wrapperWithHierarchy().lookup("tabPane").getWrapped(), instanceOf(TabPane.class));
-		assertThat(wrapperWithHierarchy().lookup("vbox").getWrapped(), instanceOf(VBox.class));
-		assertThat(wrapperWithHierarchy().lookup("listView").getWrapped(), instanceOf(ListView.class));
-		assertThat(wrapperWithHierarchy().lookup("tabOne").getWrapped(), instanceOf(Tab.class));
-		assertThat(wrapperWithHierarchy().lookup("tabTwo").getWrapped(), instanceOf(Tab.class));
-		assertThat(wrapperWithHierarchy().lookup("anchorPane").getWrapped(), instanceOf(AnchorPane.class));
-		assertThat(wrapperWithHierarchy().lookup("gridPane").getWrapped(), instanceOf(GridPane.class));
-		assertThat(wrapperWithHierarchy().lookup("canvas").getWrapped(), instanceOf(Canvas.class));
+		assertThat((Object) wrapperWithHierarchy().lookup("borderPane").getWrapped()).isInstanceOf(BorderPane.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("accordion").getWrapped()).isInstanceOf(Accordion.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("scrollPane").getWrapped()).isInstanceOf(ScrollPane.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("tabPane").getWrapped()).isInstanceOf(TabPane.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("vbox").getWrapped()).isInstanceOf(VBox.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("listView").getWrapped()).isInstanceOf(ListView.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("tabOne").getWrapped()).isInstanceOf(Tab.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("tabTwo").getWrapped()).isInstanceOf(Tab.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("anchorPane").getWrapped()).isInstanceOf(AnchorPane.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("gridPane").getWrapped()).isInstanceOf(GridPane.class);
+		assertThat((Object) wrapperWithHierarchy().lookup("canvas").getWrapped()).isInstanceOf(Canvas.class);
 	}
 
 	@Test
@@ -563,8 +545,7 @@ class NodeWrapperTest {
 		final Window window = NodeWrapper.of(label).getWindow();
 
 		// THEN
-		assertThat(window, notNullValue());
-		assertThat(window, sameInstance(stage));
+		assertThat(window).isNotNull().isSameAs(stage);
 	}
 
 	@Test
@@ -579,13 +560,36 @@ class NodeWrapperTest {
 		final Scene nodeScene = NodeWrapper.of(label).getScene();
 
 		// THEN
-		assertThat(nodeScene, notNullValue());
-		assertThat(nodeScene, sameInstance(scene));
+		assertThat(nodeScene).isNotNull().isSameAs(scene);
+	}
+
+	@Test
+	void testGetScene_tabInTabPane() {
+		// GIVEN
+		final Tab tab = new Tab();
+		final TabPane tabPane = new TabPane();
+		tabPane.getTabs().add(tab);
+		final Scene scene = new Scene(tabPane);
+
+		// WHEN
+		final Scene nodeScene = NodeWrapper.of(tab).getScene();
+
+		// THEN
+		assertThat(nodeScene).isNotNull().isSameAs(scene);
+	}
+
+	@Test
+	void testGetScene_tabWithoutTabPane() {
+		// GIVEN
+		final Tab tab = new Tab();
+
+		// WHEN and THEN
+		assertThat(NodeWrapper.of(tab).getScene()).isNull();
 	}
 
 	@Test
 	void testLookup_nodeDoesNotExist() {
-		assertThat(wrapperWithHierarchy().lookup("fantasyNode"), nullValue());
+		assertThat(wrapperWithHierarchy().lookup("fantasyNode")).isNull();
 	}
 
 	@Test
@@ -597,7 +601,7 @@ class NodeWrapperTest {
 		final ObjectProperty<EventHandler<ActionEvent>> onActionProperty = wrapper.getOnActionProperty();
 
 		// THEN
-		assertThat(onActionProperty, notNullValue());
+		assertThat(onActionProperty).isNotNull();
 	}
 
 	@Test
@@ -606,11 +610,10 @@ class NodeWrapperTest {
 		final NodeWrapper wrapper = ControlWrapper.of(new ControlWithNonObjectPropertyAction());
 
 		// WHEN
-		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> wrapper.getOnActionProperty());
+		final IllegalStateException ex = assertThrows(IllegalStateException.class, wrapper::getOnActionProperty);
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"OnAction property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!"));
+		assertThat(ex.getMessage()).contains("OnAction property in control of type 'com.github.actionfx.core.view.graph.ControlWrapperTest.ControlWithNonObjectPropertyAction' has type 'javafx.beans.property.SimpleStringProperty', expected was type 'javafx.beans.property.ObjectProperty'!");
 	}
 
 	@Test
@@ -619,7 +622,7 @@ class NodeWrapperTest {
 		final Field onActionProperty = NodeWrapper.getOnActionPropertyField(Button.class);
 
 		// THEN
-		assertThat(onActionProperty, notNullValue());
+		assertThat(onActionProperty).isNotNull();
 	}
 
 	@Test
@@ -628,7 +631,7 @@ class NodeWrapperTest {
 		final Field onActionProperty = NodeWrapper.getOnActionPropertyField(BorderPane.class);
 
 		// THEN
-		assertThat(onActionProperty, nullValue());
+		assertThat(onActionProperty).isNull();
 	}
 
 	@Test
@@ -637,7 +640,7 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = ControlWrapperProvider.button();
 
 		// WHEN and THEN
-		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0));
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty();
 	}
 
 	@Test
@@ -646,7 +649,7 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = NodeWrapper.of(new AnchorPane());
 
 		// WHEN and THEN
-		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0));
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty();
 	}
 
 	@Test
@@ -655,7 +658,7 @@ class NodeWrapperTest {
 		final NodeWrapper nodeWrapper = NodeWrapper.of(new Tab());
 
 		// WHEN and THEN
-		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0));
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty();
 	}
 
 	@Test
@@ -670,7 +673,7 @@ class NodeWrapperTest {
 		button.setSkin(new ButtonSkin(button));
 
 		// THEN
-		assertThat(nodeWrapper.getDecorationChildren(), hasItem(decorationNode));
+		assertThat(nodeWrapper.getDecorationChildren()).contains(decorationNode);
 	}
 
 	@Test
@@ -683,7 +686,7 @@ class NodeWrapperTest {
 		nodeWrapper.decorateWithDecorationNode(decorationNode);
 
 		// THEN
-		assertThat(nodeWrapper.getDecorationChildren(), hasSize(0)); // not supported...
+		assertThat(nodeWrapper.getDecorationChildren()).isEmpty(); // not supported...
 
 	}
 
@@ -697,7 +700,7 @@ class NodeWrapperTest {
 		nodeWrapper.decorateWithDecorationNode(decorationNode);
 
 		// THEN
-		assertThat(nodeWrapper.getDecorationChildren(), hasItem(decorationNode));
+		assertThat(nodeWrapper.getDecorationChildren()).contains(decorationNode);
 	}
 
 	private static NodeWrapper wrapperWithAccordion(final TitledPane titledPane) {

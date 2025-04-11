@@ -23,14 +23,7 @@
  */
 package com.github.actionfx.spring;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -101,15 +94,15 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		final MainController controller = actionFX.getBean("mainController");
 		final PrototypeScopedController prototypeScopedController = actionFX.getBean(PrototypeScopedController.class);
 
-		assertThat(controller, notNullValue());
+		assertThat(controller).isNotNull();
 
-		assertThat(controller.getPrototypeScopedController(), notNullValue());
+		assertThat(controller.getPrototypeScopedController()).isNotNull();
 		// controller is prototyped! so instances must be different!
-		assertThat(controller.getPrototypeScopedController(), not(sameInstance(prototypeScopedController)));
+		assertThat(controller.getPrototypeScopedController()).isNotSameAs(prototypeScopedController);
 
 		// check, that @Autowired-annotated field in abstract base class is resolved
-		assertThat(controller.getActionFX(), notNullValue());
-		assertThat(controller.getActionFX(), sameInstance(actionFX)); // type is still a singleton!
+		assertThat(controller.getActionFX()).isNotNull();
+		assertThat(controller.getActionFX()).isSameAs(actionFX); // type is still a singleton!
 	}
 
 	@Test
@@ -122,7 +115,7 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 		Event.fireEvent(controller.getActionFXButton(), new ActionEvent());
 
 		// THEN
-		assertThat(controller.isActionFired(), equalTo(true));
+		assertThat(controller.isActionFired()).isTrue();
 	}
 
 	@Test
@@ -133,17 +126,15 @@ class SpringBootAutoconfigurationIntegrationTest implements ApplicationContextAw
 
 		// THEN (custom controller extensions have been applied)
 		final ActionFXExtensionsBean ceb = applicationContext.getBean(ActionFXExtensionsBean.class);
-		assertThat(ceb, notNullValue());
-		assertThat(ceb.getCustomControllerExtensions(), hasSize(2));
+		assertThat(ceb).isNotNull();
+		assertThat(ceb.getCustomControllerExtensions()).hasSize(2);
 		final Consumer<Object> ext1 = ceb.getCustomControllerExtensions().get(0);
 		final Consumer<Object> ext2 = ceb.getCustomControllerExtensions().get(1);
-		assertThat(ext1, instanceOf(CustomControllerExtension.class));
-		assertThat(ext2, instanceOf(AnotherCustomControllerExtension.class));
+		assertThat(ext1).isInstanceOf(CustomControllerExtension.class);
+		assertThat(ext2).isInstanceOf(AnotherCustomControllerExtension.class);
 
-		assertThat(((CustomControllerExtension) ext1).getExtendedControllerList(),
-				hasItems(ViewWithButtonController.class));
-		assertThat(((AnotherCustomControllerExtension) ext2).getExtendedControllerList(),
-				hasItems(ViewWithButtonController.class));
+		assertThat(((CustomControllerExtension) ext1).getExtendedControllerList()).contains(ViewWithButtonController.class);
+		assertThat(((AnotherCustomControllerExtension) ext2).getExtendedControllerList()).contains(ViewWithButtonController.class);
 	}
 
 	@Override

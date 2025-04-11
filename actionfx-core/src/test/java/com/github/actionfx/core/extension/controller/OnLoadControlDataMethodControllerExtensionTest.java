@@ -23,12 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +69,7 @@ class OnLoadControlDataMethodControllerExtensionTest {
 
 		// THEN (verify that table has the items loaded from the
 		// method "loadData")
-		assertThat(tableView.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+		assertThat(tableView.getItems()).containsExactly("Loaded 1", "Loaded 2", "Loaded 3");
 	}
 
 	@Test
@@ -90,14 +85,14 @@ class OnLoadControlDataMethodControllerExtensionTest {
 
 		// THEN (initially, data is empty, because the data loading flag is set to false
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(tableView.getItems(), hasSize(0));
+        assertThat(tableView.getItems()).isEmpty();
 
 		// and WHEN (we switch the loading flag to "true")
 		controller.listenerEnabled.set(true);
 
 		// and THEN
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(tableView.getItems(), contains("Loaded 1", "Loaded 2", "Loaded 3"));
+		assertThat(tableView.getItems()).containsExactly("Loaded 1", "Loaded 2", "Loaded 3");
 	}
 
 	@Test
@@ -113,8 +108,8 @@ class OnLoadControlDataMethodControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN (
-		assertThat(treeTableView.getRoot(), notNullValue());
-		assertThat(treeTableView.getRoot().getValue(), equalTo("root"));
+		assertThat(treeTableView.getRoot()).isNotNull();
+		assertThat(treeTableView.getRoot().getValue()).isEqualTo("root");
 	}
 
 	@Test
@@ -131,15 +126,15 @@ class OnLoadControlDataMethodControllerExtensionTest {
 		// THEN (initially, root value is empty, because the data loading flag is set to
 		// false
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(treeTableView.getRoot(), nullValue());
+		assertThat(treeTableView.getRoot()).isNull();
 
 		// and WHEN (we switch the loading flag to "true")
 		controller.listenerEnabled.set(true);
 
 		// and THEN
 		WaitForAsyncUtils.sleep(300, TimeUnit.MILLISECONDS);
-		assertThat(treeTableView.getRoot(), notNullValue());
-		assertThat(treeTableView.getRoot().getValue(), equalTo("root"));
+		assertThat(treeTableView.getRoot()).isNotNull();
+		assertThat(treeTableView.getRoot().getValue()).isEqualTo("root");
 	}
 
 	public class ControllerWithTable {

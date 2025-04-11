@@ -37,9 +37,9 @@ import javafx.application.Platform;
  * @author koster
  *
  */
-public class AsyncUtils {
+public final class AsyncUtils {
 
-    protected static final ExecutorService AFX_EXECUTOR_SERVICE = getExecutorService();
+    private static final ExecutorService AFX_EXECUTOR_SERVICE = getExecutorService();
 
     private AsyncUtils() {
         // class can not be instantiated

@@ -23,10 +23,7 @@
  */
 package com.github.actionfx.core.method;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Method;
@@ -82,7 +79,7 @@ class ControlValueAnnotatedParameterResolverTest {
 		final String value = resolver.resolve(instance, method, parameter, annotation, String.class);
 
 		// THEN
-		assertThat(value, equalTo("Hello World"));
+		assertThat(value).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -98,7 +95,7 @@ class ControlValueAnnotatedParameterResolverTest {
 		final String value = resolver.resolve(instance, method, parameter, annotation, String.class);
 
 		// THEN
-		assertThat(value, equalTo("Hello World"));
+		assertThat(value).isEqualTo("Hello World");
 	}
 
 	@Test
@@ -114,7 +111,7 @@ class ControlValueAnnotatedParameterResolverTest {
 		final Double value = resolver.resolve(instance, method, parameter, annotation, Double.class);
 
 		// THEN
-		assertThat(value, equalTo(Double.valueOf(42.0)));
+		assertThat(value).isEqualTo(Double.valueOf(42.0));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -131,7 +128,7 @@ class ControlValueAnnotatedParameterResolverTest {
 		final List<String> value = resolver.resolve(instance, method, parameter, annotation, List.class);
 
 		// THEN
-		assertThat(value, contains("Item 2", "Item 3"));
+		assertThat(value).containsExactly("Item 2", "Item 3");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -148,7 +145,7 @@ class ControlValueAnnotatedParameterResolverTest {
 		final List<String> value = resolver.resolve(instance, method, parameter, annotation, List.class);
 
 		// THEN
-		assertThat(value, contains("Item 1", "Item 2", "Item 3"));
+		assertThat(value).containsExactly("Item 1", "Item 2", "Item 3");
 	}
 
 	@Test
@@ -165,8 +162,7 @@ class ControlValueAnnotatedParameterResolverTest {
 				() -> resolver.resolve(instance, method, parameter, annotation, List.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString(
-				"There is no node with ID='someUnknownControl' inside the view associated with controller"));
+		assertThat(ex.getMessage()).contains("There is no node with ID='someUnknownControl' inside the view associated with controller");
 	}
 
 	@Test
@@ -183,8 +179,8 @@ class ControlValueAnnotatedParameterResolverTest {
 				() -> resolver.resolve(instance, method, parameter, annotation, List.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("Node with ID='vbox' inside the view hosted by controller"));
-		assertThat(ex.getMessage(), containsString("is not a javafx.scene.control.Control!"));
+		assertThat(ex.getMessage()).contains("Node with ID='vbox' inside the view hosted by controller");
+		assertThat(ex.getMessage()).contains("is not a javafx.scene.control.Control!");
 	}
 
 	@Test
@@ -201,9 +197,8 @@ class ControlValueAnnotatedParameterResolverTest {
 				() -> resolver.resolve(instance, method, parameter, annotation, List.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("Value retrieved for control with ID='textField'"));
-		assertThat(ex.getMessage(),
-				containsString(" is not compatible with the method argument of type 'interface java.util.List'!"));
+		assertThat(ex.getMessage()).contains("Value retrieved for control with ID='textField'");
+		assertThat(ex.getMessage()).contains(" is not compatible with the method argument of type 'interface java.util.List'!");
 	}
 
 	@Test
@@ -221,7 +216,7 @@ class ControlValueAnnotatedParameterResolverTest {
 				() -> resolver.resolve(instance, method, parameter, annotation, List.class));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("There is no view associated with controller"));
+		assertThat(ex.getMessage()).contains("There is no view associated with controller");
 	}
 
 	public class ClassWithMethods {

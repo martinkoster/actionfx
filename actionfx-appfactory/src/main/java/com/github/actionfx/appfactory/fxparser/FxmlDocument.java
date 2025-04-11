@@ -23,11 +23,13 @@
  */
 package com.github.actionfx.appfactory.fxparser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Represents a parsed FXML document containing the single XML elements as
@@ -46,15 +48,18 @@ public class FxmlDocument {
 	// ID -> simple node name
 	private final Map<String, String> idNodesMap = new TreeMap<>();
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public FxmlDocument(final FxmlElement rootElement, final Map<String, String> imports) {
 		this.rootElement = rootElement;
 		this.imports.putAll(imports);
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public FxmlElement getRootElement() {
 		return rootElement;
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public Map<String, String> getImports() {
 		return imports;
 	}
@@ -69,7 +74,7 @@ public class FxmlDocument {
 	 * @return the import statements as fully qualified class names
 	 */
 	public List<String> getImportsAsFullyQualifiedStatements() {
-		return imports.values().stream().collect(Collectors.toList());
+		return new ArrayList<>(imports.values());
 	}
 
 	/**
@@ -79,9 +84,10 @@ public class FxmlDocument {
 	 * @return import statements for nodes to be injected into a controller
 	 */
 	public List<String> getImportStatementsForIdNodes() {
-		return idNodesMap.values().stream().map(imports::get).distinct().collect(Collectors.toList());
+        return idNodesMap.values().stream().map(imports::get).distinct().toList();
 	}
 
+	@SuppressFBWarnings(value = {"EI_EXPOSE_REP", "EI_EXPOSE_REP2"}, justification = "Not relevant for AppFactory.")
 	public Map<String, String> getIdNodesMap() {
 		return idNodesMap;
 	}

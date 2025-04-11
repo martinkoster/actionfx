@@ -53,7 +53,7 @@ import javafx.scene.control.SelectionModel;
  * @author koster
  *
  */
-public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyReference<S>, ObservableValue<E>> {
+public final class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyReference<S>, ObservableValue<E>> {
 
 	private final BindingType bindingType;
 
@@ -61,7 +61,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 
 	private final BindingListener contentBinding;
 
-	private boolean bound = false;
+    private boolean bound;
 
 	private Class<? extends E> targetType;
 
@@ -156,10 +156,11 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 		case BIDIRECTIONAL:
 			bindBidirectional();
 			break;
-		default:
 		case UNIDIRECTIONAL:
 			bindUnidirectional();
 			break;
+            default:
+                bindUnidirectional();
 		}
 		bound = true;
 	}
@@ -170,10 +171,11 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 		case BIDIRECTIONAL:
 			unbindBidirectional();
 			break;
-		default:
 		case UNIDIRECTIONAL:
 			unbindUnidirectional();
 			break;
+            default:
+                unbindUnidirectional();
 		}
 		bound = false;
 	}
@@ -191,7 +193,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	/**
 	 * Binds {@code source} and {@code target} bidirectionally.
 	 */
-	protected void bindBidirectional() {
+    private void bindBidirectional() {
 		setTargetValue(source.getValue());
 		source.getFxProperty().addListener(contentBinding);
 		target.addListener(contentBinding);
@@ -200,7 +202,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	/**
 	 * Removes a bidirectional binding between {@code source} and {@code target}.
 	 */
-	protected void unbindBidirectional() {
+    private void unbindBidirectional() {
 		source.getFxProperty().removeListener(contentBinding);
 		target.removeListener(contentBinding);
 	}
@@ -208,7 +210,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	/**
 	 * Binds {@code source} and {@code target} unidirectionally.
 	 */
-	protected void bindUnidirectional() {
+    private void bindUnidirectional() {
 		setTargetValue(source.getValue());
 		target.addListener(contentBinding);
 	}
@@ -216,7 +218,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	/**
 	 * Removes a unidirectional binding between {@code source} and {@code target}.
 	 */
-	protected void unbindUnidirectional() {
+    private void unbindUnidirectional() {
 		target.removeListener(contentBinding);
 	}
 
@@ -228,7 +230,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	 * @return {@code true}, if the selection model shall be used (if supplied),
 	 *         {@code false} for regular binding.
 	 */
-	protected boolean useSelectionModelForBinding() {
+    private boolean useSelectionModelForBinding() {
 		return selectionModel != null && ObservableValue.class.isAssignableFrom(target.getClass());
 	}
 
@@ -285,7 +287,7 @@ public class ObservableValueBinding<S, E> extends AbstractBinding<BeanPropertyRe
 	 */
 	private class BindingListener implements ChangeListener<Object> {
 
-		private boolean updating = false;
+        private boolean updating;
 
 		@SuppressWarnings("unchecked")
 		@Override

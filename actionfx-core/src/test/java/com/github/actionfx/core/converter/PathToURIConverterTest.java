@@ -23,8 +23,7 @@
  */
 package com.github.actionfx.core.converter;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.net.URI;
@@ -50,7 +49,7 @@ class PathToURIConverterTest {
 		final URI result = converter.convert(file.toPath());
 
 		// THEN
-		assertThat(result, equalTo(file.toURI()));
+		assertThat(result).isEqualTo(file.toURI());
 	}
 
 }

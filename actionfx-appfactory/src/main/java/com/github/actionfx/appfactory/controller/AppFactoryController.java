@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 import com.github.actionfx.appfactory.config.ControllerFactoryConfig;
 import com.github.actionfx.appfactory.config.MainAppFactoryConfig;

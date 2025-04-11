@@ -22,7 +22,7 @@ import javafx.stage.Window;
  * @author koster
  *
  */
-public class AFXActionMethodInterceptor {
+public final class AFXActionMethodInterceptor {
 
 	private AFXActionMethodInterceptor() {
 		// class can not be instantiated

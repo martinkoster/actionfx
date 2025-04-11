@@ -1,0 +1,169 @@
+name: ActionFX Build Management
+
+on:
+  push:
+    branches: [ '**' ]  # Trigger on all branches
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Set up Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .gradle/wrapper
+            .gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set Gradle user home
+        run: echo "GRADLE_USER_HOME=${GITHUB_WORKSPACE}/.gradle" >> $GITHUB_ENV
+
+      - name: Assemble project
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew assemble --no-daemon
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Run unit tests
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew check --no-daemon
+
+      - name: Upload unit test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  integration-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Run integration tests
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew integrationTest --no-daemon
+
+      - name: Upload integration test artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+
+  code-quality:
+    needs: [ unit-test, integration-test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Download Unit Test Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-test-artifacts
+          path: ./
+
+      - name: Download Integration Test Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: integration-test-artifacts
+          path: ./
+
+      - name: Generate code coverage report
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew jacocoTestReport sonar -x test -x integrationTest --no-daemon
+
+      - name: Upload quality artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-artifacts
+          path: |
+            build/
+            actionfx-core/build/
+            actionfx-testing/build/
+            actionfx-controlsfx/build/
+            actionfx-spring-boot/build/
+            actionfx-appfactory/build/
+            actionfx-app-sample/build/
+

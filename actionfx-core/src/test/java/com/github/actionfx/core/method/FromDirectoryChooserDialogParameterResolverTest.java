@@ -23,11 +23,7 @@
  */
 package com.github.actionfx.core.method;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
@@ -106,10 +102,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, notNullValue());
-		assertThat(result, instanceOf(File.class));
-		assertThat(result, equalTo(file));
-		assertThat(resolver.continueMethodInvocation(), equalTo(true));
+		assertThat(result).isNotNull().isInstanceOf(File.class).isEqualTo(file);
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -127,10 +121,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, notNullValue());
-		assertThat(result, instanceOf(Path.class));
-		assertThat(result, equalTo(file.toPath()));
-		assertThat(resolver.continueMethodInvocation(), equalTo(true));
+		assertThat(result).isNotNull().isInstanceOf(Path.class).isEqualTo(file.toPath());
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -148,10 +140,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, notNullValue());
-		assertThat(result, instanceOf(URI.class));
-		assertThat(result, equalTo(file.toURI()));
-		assertThat(resolver.continueMethodInvocation(), equalTo(true));
+		assertThat(result).isNotNull().isInstanceOf(URI.class).isEqualTo(file.toURI());
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
@@ -169,14 +159,12 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, notNullValue());
-		assertThat(result, instanceOf(String.class));
-		assertThat(result, equalTo(file.getAbsolutePath()));
-		assertThat(resolver.continueMethodInvocation(), equalTo(true));
+		assertThat(result).isNotNull().isInstanceOf(String.class).isEqualTo(file.getAbsolutePath());
+		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
-	void testResolve_doNotContinueOnCancel() throws IOException {
+	void testResolve_doNotContinueOnCancel() {
 		// GIVEN
 		final ClassWithMethods instance = new ClassWithMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class,
@@ -190,8 +178,8 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result, nullValue());
-		assertThat(resolver.continueMethodInvocation(), equalTo(false));
+		assertThat(result).isNull();
+		assertThat(resolver.continueMethodInvocation()).isFalse();
 	}
 
 	public class ClassWithMethods {

@@ -25,7 +25,7 @@ package com.github.actionfx.bookstore.controller;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.actionfx.bookstore.model.Book;
 import com.github.actionfx.bookstore.model.OrderSummary;

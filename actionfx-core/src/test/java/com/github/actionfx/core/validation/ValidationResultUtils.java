@@ -23,30 +23,25 @@
  */
 package com.github.actionfx.core.validation;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.stream.Collectors;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Util class for asserting {@link ValidationResult} instances.
  *
  * @author MartinKoster
  */
-public class ValidationResultUtils {
+public final class ValidationResultUtils {
 
     private ValidationResultUtils() {
         // class can not be instantiated
     }
 
     public static void assertThatStatusIs(final ValidationResult vr, final ValidationStatus status) {
-        assertThat(vr.getStatus(), equalTo(status));
+		assertThat(vr.getStatus()).isEqualTo(status);
     }
 
     public static void assertThatMessageWithTextIsPresent(final ValidationResult vr, final String text) {
-        assertThat(vr.getMessages().stream().map(ValidationMessage::getText).collect(Collectors.toList()),
-                hasItem(text));
+        assertThat(vr.getMessages().stream().map(ValidationMessage::getText).toList()).contains(text);
     }
 
 }

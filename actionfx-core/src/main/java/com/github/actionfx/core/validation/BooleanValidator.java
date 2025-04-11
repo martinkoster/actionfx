@@ -34,7 +34,7 @@ import com.github.actionfx.core.view.graph.ControlWrapper;
  */
 public class BooleanValidator extends AbstractRequiredValidator {
 
-    private boolean expectedValue;
+	private final boolean expectedValue;
 
     /**
      * Default constructor.
@@ -63,6 +63,6 @@ public class BooleanValidator extends AbstractRequiredValidator {
 
     protected Boolean getValue(final ControlWrapper controlWrapper, final ControlProperties controlProperty) {
         final Object value = controlWrapper.getValue(controlProperty);
-        return value != null ? convert(value, Boolean.class, null) : null;
+        return value != null ? convert(value, Boolean.class, null) : Boolean.FALSE;
     }
 }

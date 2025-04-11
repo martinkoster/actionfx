@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.extension.controller;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -85,8 +83,8 @@ class NestedViewControllerExtensionTest {
 		extension.accept(controller);
 
 		// THEN
-		assertThat(controller.mainBorderPane.getTop(), sameInstance(topView.getRootNode()));
-		assertThat(controller.mainBorderPane.getCenter(), sameInstance(centerView.getRootNode()));
+		assertThat(controller.mainBorderPane.getTop()).isSameAs(topView.getRootNode());
+		assertThat(controller.mainBorderPane.getCenter()).isSameAs(centerView.getRootNode());
 	}
 
 	@Test
@@ -99,7 +97,7 @@ class NestedViewControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("the field value is not a javafx.scene.Parent!"));
+		assertThat(ex.getMessage()).contains("the field value is not a javafx.scene.Parent!");
 	}
 
 	@Test
@@ -112,7 +110,7 @@ class NestedViewControllerExtensionTest {
 		final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> extension.accept(controller));
 
 		// THEN
-		assertThat(ex.getMessage(), containsString("the field value is null!"));
+		assertThat(ex.getMessage()).contains("the field value is null!");
 	}
 
 	public class ControllerWithNestedviewOnField {
@@ -137,6 +135,6 @@ class NestedViewControllerExtensionTest {
 		public View _view;
 
 		@AFXNestedView(refViewId = "centerView", attachToBorderPanePosition = BorderPanePosition.CENTER)
-		public BorderPane mainBorderPane = null;
+		public BorderPane mainBorderPane;
 	}
 }

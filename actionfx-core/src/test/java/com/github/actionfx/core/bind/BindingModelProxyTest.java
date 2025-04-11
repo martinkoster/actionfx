@@ -23,9 +23,7 @@
  */
 package com.github.actionfx.core.bind;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -86,10 +84,10 @@ class BindingModelProxyTest {
 		proxy.bind();
 
 		// THEN
-		assertThat(textField1.getText(), equalTo("Hello World"));
-		assertThat(listView.getSelectionModel().getSelectedItems(), contains("Item 1", "Item 2"));
-		assertThat(textField2.getText(), equalTo("Hello World"));
-		assertThat(dateTimeTextField.getText(), equalTo("05.09.2021 13:05"));
+		assertThat(textField1.getText()).isEqualTo("Hello World");
+		assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Item 1", "Item 2");
+		assertThat(textField2.getText()).isEqualTo("Hello World");
+		assertThat(dateTimeTextField.getText()).isEqualTo("05.09.2021 13:05");
 	}
 
 	@Test
@@ -109,10 +107,10 @@ class BindingModelProxyTest {
 		dateTimeTextField.setText("05.10.2022 15:10");
 
 		// THEN
-		assertThat(model.stringValue.get(), equalTo("Changed Value!"));
-		assertThat(model.observableList, contains("Item 3"));
-		assertThat(model.plainString, equalTo("And another new value!"));
-		assertThat(model.localDateTime, equalTo(LocalDateTime.of(2022, 10, 5, 15, 10)));
+		assertThat(model.stringValue.get()).isEqualTo("Changed Value!");
+		assertThat(model.observableList).containsExactly("Item 3");
+		assertThat(model.plainString).isEqualTo("And another new value!");
+		assertThat(model.localDateTime).isEqualTo(LocalDateTime.of(2022, 10, 5, 15, 10));
 	}
 
 	@Test
@@ -131,9 +129,9 @@ class BindingModelProxyTest {
 		textField1.setText("Changed Value!");
 		listView.getSelectionModel().clearAndSelect(2);
 		textField2.setText("And another new value!");
-		assertThat(model.stringValue.get(), equalTo("Hello World")); // no value change, since unbound
-		assertThat(model.observableList, contains("Item 1", "Item 2"));// no value change, since unbound
-		assertThat(model.plainString, equalTo("Hello World"));// no value change, since unbound
+		assertThat(model.stringValue.get()).isEqualTo("Hello World"); // no value change, since unbound
+		assertThat(model.observableList).containsExactly("Item 1", "Item 2");// no value change, since unbound
+		assertThat(model.plainString).isEqualTo("Hello World");// no value change, since unbound
 	}
 
 	private static List<BindingTarget> list(final BindingTarget... bindingTargets) {

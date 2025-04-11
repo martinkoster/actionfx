@@ -39,9 +39,9 @@ import javafx.scene.control.Control;
  */
 public class CustomMethodValidator implements Validator {
 
-    private Object controller;
+	private final Object controller;
 
-    private Method method;
+	private final Method method;
 
     public CustomMethodValidator(final Object controller, final Method method) {
         this.controller = controller;
@@ -55,7 +55,7 @@ public class CustomMethodValidator implements Validator {
         final ActionFXMethodInvocation methodInvocation = new ActionFXMethodInvocation(controller,
                 method, currentValue);
         final Object returnValue = methodInvocation.call();
-        return returnValue instanceof ValidationResult ? (ValidationResult) returnValue : null;
+        return returnValue instanceof ValidationResult validationResult ? validationResult : null;
     }
 
 }

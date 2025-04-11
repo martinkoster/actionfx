@@ -75,7 +75,7 @@ import javafx.scene.control.TreeItem;
  * @author koster
  *
  */
-public class ControlsFXControlProvider {
+public final class ControlsFXControlProvider {
 
 	private ControlsFXControlProvider() {
 		// class can not be instatiated

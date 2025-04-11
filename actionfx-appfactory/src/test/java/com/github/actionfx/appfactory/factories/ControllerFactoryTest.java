@@ -23,10 +23,8 @@
  */
 package com.github.actionfx.appfactory.factories;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -81,11 +79,11 @@ class ControllerFactoryTest {
         TestUtils.assertFileContentIdentical(tmpFolder.toAbsolutePath() + "/MainView.fxml", "/fxml/MainView.fxml");
         final ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(logConsumer, times(4)).accept(captor.capture());
-        assertThat(captor.getAllValues(), contains(//
-                containsString("Created ActionFX controller directory"), //
-                containsString("Created resources folder for FXML file in"), //
-                containsString("Copied FXML file from"), //
-                containsString("Created ActionFX controller with name")));
+        assertThat(captor.getAllValues())
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller directory"))
+                .anyMatch(phrase -> phrase.contains("Created resources folder for FXML file in"))
+                .anyMatch(phrase -> phrase.contains("Copied FXML file from"))
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller with name"));
     }
 
     @SuppressWarnings("unchecked")
@@ -117,9 +115,9 @@ class ControllerFactoryTest {
                 "/fxml/MainView.fxml");
         final ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(logConsumer, times(2)).accept(captor.capture());
-        assertThat(captor.getAllValues(), contains(//
-                containsString("Created ActionFX controller directory"), //
-                containsString("Created ActionFX controller with name")));
+        assertThat(captor.getAllValues())
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller directory"))
+                .anyMatch(phrase -> phrase.contains("Created ActionFX controller with name"));
     }
 
     @SuppressWarnings("unchecked")
@@ -132,6 +130,31 @@ class ControllerFactoryTest {
         final ControllerFactory controllerFactory = new ControllerFactory(cfg, logConsumer);
 
         // WHEN and THEN
-        assertThat(controllerFactory.getViewId(), equalTo("MainView"));
+        assertThat(controllerFactory.getViewId()).isEqualTo("MainView");
+    }
+
+    @Test
+    void testDeriveControllerName() {
+        // WHEN and THEN
+        assertThat(ControllerFactory.deriveControllerName("/somepath/somefile.fxml")).isEqualTo("SomefileController");
+        assertThat(ControllerFactory.deriveControllerName("/somepath/a.fxml")).isEqualTo("AController");
+        assertThat(ControllerFactory.deriveControllerName("/somepath/SomefileView.fxml")).isEqualTo("SomefileController");
+        assertThatThrownBy(() -> ControllerFactory.deriveControllerName(null)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be null");
+        assertThatThrownBy(() -> ControllerFactory.deriveControllerName("")).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not have an extension");
+    }
+
+    @Test
+    void testDeriveFxmlClasspathLocation() {
+        // GIVEN
+        final ControllerFactoryConfig factoryConfig = new ControllerFactoryConfig();
+        factoryConfig.setRelativeFXMLResourcesDirectory("views");
+
+        // WHEN and THEN
+        assertThatThrownBy(() -> ControllerFactory.deriveFxmlClasspathLocation(null, factoryConfig)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be null");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/src/main/resources/someresourcefolder/view.fxml", factoryConfig)).isEqualTo("/someresourcefolder/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/src/main/resources/fxml/view.fxml", factoryConfig)).isEqualTo("/fxml/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/views/view.fxml", factoryConfig)).isEqualTo("/views/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("/projects/someactionfxproject/view.fxml", factoryConfig)).isEqualTo("/view.fxml");
+        assertThat(ControllerFactory.deriveFxmlClasspathLocation("view.fxml", factoryConfig)).isEqualTo("/view.fxml");
     }
 }

@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Scanner;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import com.github.actionfx.core.ActionFX;
 import com.github.actionfx.core.annotation.AFXControlValue;
