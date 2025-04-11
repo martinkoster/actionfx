@@ -146,8 +146,7 @@ public class BooleanBindingBuilder {
      *         {@link PredicateBuilder#build()}.
      */
     public <T> PredicateBuilder<T> andAllTestablesFulfillPredicate(final Predicate<T> predicate) {
-        final PredicateBuilder<T> b = forPredicate(predicate);
-        b.booleanOp(BooleanOp.AND);
+        final PredicateBuilder<T> b = andForPredicate(predicate);
         b.matchingOp(MatchingOp.ALL_MATCH);
         return b;
     }
