@@ -63,12 +63,10 @@ public abstract class AbstractCachingBindingTargetResolver implements BindingTar
 	 * @return the resolved {@link BindingTarget}s
 	 */
 	protected List<BindingTarget> resolveInternal(final Object bean, final View view) {
-		final List<BindingTarget> result = view.getViewNodesAsStream()
+		return view.getViewNodesAsStream()
 				.filter(nodeWrapper -> Control.class.isAssignableFrom(nodeWrapper.getWrappedType()))
 				.map(node -> resolveInternal((Control) node.getWrapped(), bean, view)).flatMap(List::stream)
-				.toList();
-		Collections.sort(result, new BindingTargetComparator());
-		return result;
+				.sorted(new BindingTargetComparator()).toList();
 	}
 
 	/**
