@@ -213,7 +213,7 @@ public class ControllerFactory {
      *            the FXML file name
      * @return the derived controller name
      */
-    private String deriveControllerName(final String fxmlFile) {
+    static String deriveControllerName(final String fxmlFile) {
         final String nameWithoutExtension = getFilenameWithoutExtension(fxmlFile);
         return nameWithoutExtension.endsWith(VIEW_SUFFIX)
                 ? deriveControllerNameByViewNameEndingWithView(nameWithoutExtension)
@@ -222,7 +222,7 @@ public class ControllerFactory {
 
     private static String deriveControllerNameByViewName(final String nameWithoutExtension) {
         return nameWithoutExtension.length() == 1 ? nameWithoutExtension.substring(0, 1).toUpperCase() + CONTROLLER_SUFFIX :
-                nameWithoutExtension.substring(0, 1).toUpperCase() + nameWithoutExtension.substring(1, nameWithoutExtension.length()) + CONTROLLER_SUFFIX;
+                nameWithoutExtension.substring(0, 1).toUpperCase() + nameWithoutExtension.substring(1) + CONTROLLER_SUFFIX;
     }
 
     private static String deriveControllerNameByViewNameEndingWithView(final String nameWithoutExtension) {
@@ -272,16 +272,19 @@ public class ControllerFactory {
         return classpathLocation.startsWith("/") ? classpathLocation : "/" + classpathLocation;
     }
 
-    private String getFilenameWithoutExtension(final String fxmlFile) {
+    private static String getFilenameWithoutExtension(final String fxmlFile) {
         if (fxmlFile == null) {
             throw new IllegalArgumentException("Argument 'fxmlFile' must not be null");
         }
         final Path fxmlPath = Path.of(fxmlFile);
         final Path fileName = fxmlPath.getFileName();
         if (fileName == null) {
-            throw new IllegalArgumentException("Argument 'fxmlFile' does not point to a valid file.");
+            throw new IllegalArgumentException("Argument '" + fxmlFile + "' does not point to a valid file.");
         }
         final String filename = fileName.toString();
+        if (filename.indexOf(".") <= 0) {
+            throw new IllegalArgumentException("Argument '" + fxmlFile + "' does not have an extension.");
+        }
         return filename.substring(0, filename.lastIndexOf("."));
     }
 

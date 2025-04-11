@@ -24,6 +24,7 @@
 package com.github.actionfx.appfactory.factories;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -130,5 +131,15 @@ class ControllerFactoryTest {
 
         // WHEN and THEN
         assertThat(controllerFactory.getViewId()).isEqualTo("MainView");
+    }
+
+    @Test
+    void testDeriveControllerName() {
+        // WHEN and THEN
+        assertThat(ControllerFactory.deriveControllerName("/somepath/somefile.fxml")).isEqualTo("SomefileController");
+        assertThat(ControllerFactory.deriveControllerName("/somepath/a.fxml")).isEqualTo("AController");
+        assertThat(ControllerFactory.deriveControllerName("/somepath/SomefileView.fxml")).isEqualTo("SomefileController");
+        assertThatThrownBy(() -> ControllerFactory.deriveControllerName(null)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be null");
+        assertThatThrownBy(() -> ControllerFactory.deriveControllerName("")).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not have an extension");
     }
 }
