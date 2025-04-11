@@ -240,21 +240,21 @@ class ValueChangeAwareObservableListTest {
 	@Test
 	void testsize() {
 		// WHEN and THEN
-		assertThat(list.size()).isEqualTo(3);
+		assertThat(list.size()).isEqualTo(3); //NOSONAR size is "method under test"
 	}
 
 	@Test
 	void testIsEmpty() {
 		// WHEN and THEN
-		assertThat(list.isEmpty()).isFalse();
-		assertThat(new ValueChangeAwareObservableList<>(Collections.emptyList()).isEmpty()).isTrue();
+		assertThat(list.isEmpty()).isFalse(); //NOSONAR isEmpty is "method under test"
+		assertThat(new ValueChangeAwareObservableList<>(Collections.emptyList()).isEmpty()).isTrue(); //NOSONAR isEmpty is "method under test"
 	}
 
 	@Test
 	void testContains() {
 		// WHEN and THEN
-		assertThat(list.contains("two")).isTrue();
-		assertThat(list.contains("four")).isFalse();
+		assertThat(list.contains("two")).isTrue(); //NOSONAR contains is "method under test"
+		assertThat(list.contains("four")).isFalse(); //NOSONAR contains is "method under test"
 	}
 
 	@Test
@@ -275,7 +275,7 @@ class ValueChangeAwareObservableListTest {
 		final Object[] arr = list.toArray();
 
 		// THEN
-		assertThat(arr.length).isEqualTo(3);
+		assertThat(arr).hasSize(3);
 		assertThat(arr[0]).isEqualTo("one");
 		assertThat(arr[1]).isEqualTo("two");
 		assertThat(arr[2]).isEqualTo("three");
@@ -287,7 +287,7 @@ class ValueChangeAwareObservableListTest {
 		final String[] arr = list.toArray(new String[3]);
 
 		// THEN
-		assertThat(arr.length).isEqualTo(3);
+		assertThat(arr).hasSize(3);
 		assertThat(arr[0]).isEqualTo("one");
 		assertThat(arr[1]).isEqualTo("two");
 		assertThat(arr[2]).isEqualTo("three");
@@ -316,8 +316,8 @@ class ValueChangeAwareObservableListTest {
 	@Test
 	void containsAll() {
 		// WHEN
-		assertThat(list.containsAll(Arrays.asList("one", "two", "three"))).isTrue();
-		assertThat(list.containsAll(Arrays.asList("one", "four"))).isFalse();
+		assertThat(list.containsAll(Arrays.asList("one", "two", "three"))).isTrue(); //NOSONAR containsAll is "method under test"
+		assertThat(list.containsAll(Arrays.asList("one", "four"))).isFalse(); //NOSONAR containsAll is "method under test"
 	}
 
 	@Test
@@ -392,7 +392,7 @@ class ValueChangeAwareObservableListTest {
 		final Object[] arr = list.toArray(num -> new String[3]);
 
 		// THEN
-		assertThat(arr.length).isEqualTo(3);
+		assertThat(arr).hasSize(3);
 		assertThat(arr[0]).isEqualTo("one");
 		assertThat(arr[1]).isEqualTo("two");
 		assertThat(arr[2]).isEqualTo("three");
@@ -421,14 +421,14 @@ class ValueChangeAwareObservableListTest {
 	@Test
 	void testEquals() {
 		// WHEN and THEN
-		assertThat(list.equals(Arrays.asList("one", "two", "three"))).isTrue();
-		assertThat(list.equals(Arrays.asList("one", "two"))).isFalse();
+		assertThat(list.equals(Arrays.asList("one", "two", "three"))).isTrue(); //NOSONAR equals is "method under test"
+		assertThat(list.equals(Arrays.asList("one", "two"))).isFalse(); //NOSONAR equals is "method under test"
 	}
 
 	@Test
 	void testHashCode() {
 		// WHEN and THEN
-		assertThat(list.hashCode()).isEqualTo(Arrays.asList("one", "two", "three").hashCode());
+		assertThat(list).hasSameHashCodeAs(Arrays.asList("one", "two", "three"));
 		assertThat(list.hashCode()).isNotEqualTo(Arrays.asList("one", "two").hashCode());
 	}
 

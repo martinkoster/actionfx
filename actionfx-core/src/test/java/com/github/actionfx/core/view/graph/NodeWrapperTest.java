@@ -193,8 +193,7 @@ class NodeWrapperTest {
 		final List<Node> result = wrapper.getChildrenReadOnly();
 
 		// THEN
-		assertThat(result).hasSize(2);
-		assertThat(result).containsExactly(labels);
+		assertThat(result).hasSize(2).containsExactly(labels);
 	}
 
 	@Test
@@ -207,8 +206,7 @@ class NodeWrapperTest {
 		final List<Node> result = wrapper.getChildrenReadOnly();
 
 		// THEN
-		assertThat(result).hasSize(1);
-		assertThat(result).containsExactly(label);
+		assertThat(result).hasSize(1).containsExactly(label);
 	}
 
 	@Test
@@ -547,8 +545,7 @@ class NodeWrapperTest {
 		final Window window = NodeWrapper.of(label).getWindow();
 
 		// THEN
-		assertThat(window).isNotNull();
-		assertThat(window).isSameAs(stage);
+		assertThat(window).isNotNull().isSameAs(stage);
 	}
 
 	@Test
@@ -563,8 +560,7 @@ class NodeWrapperTest {
 		final Scene nodeScene = NodeWrapper.of(label).getScene();
 
 		// THEN
-		assertThat(nodeScene).isNotNull();
-		assertThat(nodeScene).isSameAs(scene);
+		assertThat(nodeScene).isNotNull().isSameAs(scene);
 	}
 
 	@Test

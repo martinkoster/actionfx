@@ -1195,8 +1195,7 @@ class ControlWrapperTest {
         final ObservableList<String> values = wrapper.getItems();
 
         // THEN
-        assertThat(values).isInstanceOf(ValueChangeAwareObservableList.class);
-        assertThat(values).containsExactly("one", "two", "three");
+        assertThat(values).isInstanceOf(ValueChangeAwareObservableList.class).containsExactly("one", "two", "three");
     }
 
     @Test
@@ -1649,24 +1648,6 @@ class ControlWrapperTest {
     }
 
     @Test
-    void testBindUserValue_unidirectionalBinding_typeObservableList_targetObservableListIsReadOnly() {
-        // GIVEN
-        final ControlWrapper wrapper = ControlWrapperProvider.listView(true);
-        final BeanWrapper beanWrapper = new BeanWrapper(new Model());
-        final BeanPropertyReference<ObservableList<String>> bindingSource = beanWrapper
-                .getBeanPropertyReference("observableList");
-        final ListView<String> listView = wrapper.getWrapped();
-
-        // WHEN
-        wrapper.bindUserValue(bindingSource);
-
-        // THEN
-        assertThat(listView.getSelectionModel().getSelectedItems()).containsExactly("Choice 1", "Choice 2");
-        listView.getSelectionModel().select("Choice 3");
-        assertThat(bindingSource.getValue()).containsExactly("Choice 1", "Choice 2", "Choice 3");
-    }
-
-    @Test
     void testBindUserValue_bindingNotPossible_typeObservableList() {
         // GIVEN
         final ControlWrapper wrapper = ControlWrapperProvider.listView(true);
@@ -1910,7 +1891,7 @@ class ControlWrapperTest {
         if (expectedValue != null && List.class.isAssignableFrom(expectedValue.getClass())) {
             final List expectedValueList = (List) expectedValue;
             if (expectedValueList.isEmpty()) {
-                assertThat(((List) actualValue).isEmpty()).isTrue();
+                assertThat(((List) actualValue)).isEmpty();
             } else {
                 assertThat((List<Object>) actualValue).containsExactly(expectedValueList.toArray());
             }

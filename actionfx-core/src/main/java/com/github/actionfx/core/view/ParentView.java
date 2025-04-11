@@ -128,7 +128,7 @@ public class ParentView extends AbstractBindingView {
     }
 
     @Override
-    protected final void finalize() {
+    protected final void finalize() { // NOSONAR fix Spotbugs finding "CT_CONSTRUCTOR_THROW"
         // do nothing - fix Spotbugs finding "CT_CONSTRUCTOR_THROW"
     }
 }

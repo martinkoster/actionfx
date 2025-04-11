@@ -105,8 +105,7 @@ class ControllerWrapperTest {
 		final Window window = ControllerWrapper.of(controller).getWindow();
 
 		// THEN
-		assertThat(window).isNotNull();
-		assertThat(window).isSameAs(stage);
+		assertThat(window).isNotNull().isSameAs(stage);
 	}
 
 	@Test
@@ -136,8 +135,7 @@ class ControllerWrapperTest {
 		final Scene nodeScene = ControllerWrapper.of(controller).getScene();
 
 		// THEN
-		assertThat(nodeScene).isNotNull();
-		assertThat(nodeScene).isSameAs(scene);
+		assertThat(nodeScene).isNotNull().isSameAs(scene);
 	}
 
 	@AFXController(viewId = "testId", fxml = "/testfxml/SampleView.fxml", icon = "icon.png", singleton = true, maximized = true, modal = false, title = "Hello World", width = 100, height = 50, posX = 10, posY = 20, stylesheets = {

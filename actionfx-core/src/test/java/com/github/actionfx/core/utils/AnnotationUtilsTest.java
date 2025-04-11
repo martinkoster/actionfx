@@ -211,7 +211,7 @@ class AnnotationUtilsTest {
 
 	private void thenAssertFieldsInExactOrder(final Collection<Field> fields, final List<String> exptectedFieldNames) {
 		assertThat(fields).isNotNull();
-        assertThat(fields.stream().map(Field::getName).toList()).containsAll(exptectedFieldNames);
+		assertThat(fields.stream().map(Field::getName).toList()).containsExactlyElementsOf(exptectedFieldNames);
 	}
 
 	private void thenAssertFieldsInReverseOrder(final Collection<Field> fields,

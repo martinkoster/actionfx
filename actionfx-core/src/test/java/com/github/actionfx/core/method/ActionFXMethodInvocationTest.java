@@ -218,7 +218,7 @@ class ActionFXMethodInvocationTest {
     }
 
     @Test
-    void testForOnActionProperty_withMethodInstance() throws NoSuchMethodException, SecurityException {
+    void testForOnActionProperty_withMethodInstance() throws SecurityException {
         // GIVEN
         final ActionEvent actionEvent = new ActionEvent();
         final Method method = ReflectionUtils.findMethod(holder.getClass(), "methodWithArgs", String.class,
@@ -235,7 +235,7 @@ class ActionFXMethodInvocationTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void testForOnActionPropertyWithAsyncCall_withMethodInstance() throws NoSuchMethodException, SecurityException {
+    void testForOnActionPropertyWithAsyncCall_withMethodInstance() throws SecurityException {
         // GIVEN
         final ActionEvent actionEvent = new ActionEvent();
         final Consumer<Integer> consumer = Mockito.mock(Consumer.class);

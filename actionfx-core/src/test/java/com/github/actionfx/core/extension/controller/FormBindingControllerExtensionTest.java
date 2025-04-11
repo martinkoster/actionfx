@@ -327,7 +327,7 @@ class FormBindingControllerExtensionTest {
 
     private static void assertControlHasNoValidationError(final View view, final Control control) {
         final Optional<ValidationMessage> vmOpt = getValidationMessage(view, control);
-        assertThat(vmOpt.isEmpty()).isTrue();
+        assertThat(vmOpt).isNotPresent();
     }
 
     private static Optional<ValidationMessage> getValidationMessage(final View view, final Control control) {

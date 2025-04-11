@@ -52,7 +52,7 @@ class ValidationMessageTest {
 
 		// WHEN and THEN
 		assertThat(msg.getStatus()).isEqualTo(ValidationStatus.ERROR);
-		assertThat(msg.getText()).isEqualTo("");
+        assertThat(msg.getText()).isEmpty();
 		assertThat(msg.getTarget()).isNull();
         assertThat(msg.isApplyValidationResultDecoration()).isTrue();
     }
@@ -86,7 +86,7 @@ class ValidationMessageTest {
         final ValidationMessage msg3 = new ValidationMessage(ValidationStatus.ERROR, "ERROR1", tf1);
 
 		// WHEN and THEN
-		assertThat(msg1.hashCode()).isEqualTo(msg3.hashCode());
+        assertThat(msg1).hasSameHashCodeAs(msg3);
         assertNotEquals(msg1.hashCode(), msg2.hashCode());
     }
 

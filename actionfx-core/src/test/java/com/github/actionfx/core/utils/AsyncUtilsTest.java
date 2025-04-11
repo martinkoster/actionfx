@@ -62,7 +62,7 @@ class AsyncUtilsTest {
 
 		// THEN
 		// the result is not yet available
-		assertThat(result.get()).isEqualTo("");
+		assertThat(result.get()).isEmpty();
 
 		// lets wait until supplier is done
 		WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);

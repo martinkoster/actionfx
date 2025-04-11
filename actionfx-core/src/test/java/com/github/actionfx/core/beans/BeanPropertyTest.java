@@ -192,7 +192,7 @@ class BeanPropertyTest {
 		property.setValue(model, "Hello World!");
 
 		// THEN
-		assertThat(model.mappedProperty.get("hello")).isEqualTo("Hello World!");
+		assertThat(model.mappedProperty).containsEntry("hello", "Hello World!");
 	}
 
 	@Test

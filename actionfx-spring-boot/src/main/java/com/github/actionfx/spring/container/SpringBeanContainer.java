@@ -137,10 +137,7 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 		final Set<BeanDefinition> beanDefinitions = scanner.findCandidateComponents(rootPackage);
 
 		for (final BeanDefinition beanDefinition : beanDefinitions) {
-			if (beanDefinition == null) {
-				continue;
-			}
-			final String beanClassName = beanDefinition.getBeanClassName();
+			final String beanClassName = getBeanClassName(beanDefinition);
 			if (beanClassName == null) {
 				continue;
 			}
@@ -148,6 +145,13 @@ public class SpringBeanContainer extends AbstractActionFXBeanContainer {
 					getClass().getClassLoader());
 			addControllerBeanDefinition(beanClass);
 		}
+	}
+
+	private static String getBeanClassName(final BeanDefinition beanDefinition) {
+		if (beanDefinition == null) {
+			return null;
+		}
+		return beanDefinition.getBeanClassName();
 	}
 
 	@Override

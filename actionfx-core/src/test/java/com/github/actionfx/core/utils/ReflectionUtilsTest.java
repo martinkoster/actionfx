@@ -171,7 +171,8 @@ class ReflectionUtilsTest {
 		final Field fieldWithoutGetterSetter = ClassWithMethods.class.getDeclaredField("fieldWithoutGetterSetter");
 
 		// WHEN and THEN
-		assertThatThrownBy(() -> ReflectionUtils.getFieldValueByGetter(fieldWithoutGetterSetter, new ClassWithMethods()))
+		final ClassWithMethods instance = new ClassWithMethods();
+		assertThatThrownBy(() -> ReflectionUtils.getFieldValueByGetter(fieldWithoutGetterSetter, instance))
 				.isInstanceOf(IllegalStateException.class).hasMessageContaining("Getter method not found");
 	}
 
@@ -195,7 +196,8 @@ class ReflectionUtilsTest {
 		final Field fieldWithoutGetterSetter = ClassWithMethods.class.getDeclaredField("fieldWithoutGetterSetter");
 
 		// WHEN and THEN
-		assertThatThrownBy(() -> ReflectionUtils.getFieldValueByPropertyGetter(fieldWithoutGetterSetter, new ClassWithMethods()))
+		final ClassWithMethods instance = new ClassWithMethods();
+		assertThatThrownBy(() -> ReflectionUtils.getFieldValueByPropertyGetter(fieldWithoutGetterSetter, instance))
 				.isInstanceOf(IllegalStateException.class).hasMessageContaining("Property-Getter method not found");
 	}
 
@@ -229,7 +231,8 @@ class ReflectionUtilsTest {
 		final Field fieldWithoutGetterSetter = ClassWithMethods.class.getDeclaredField("fieldWithoutGetterSetter");
 
 		// WHEN and THEN
-		assertThatThrownBy(() -> ReflectionUtils.setFieldValueBySetter(fieldWithoutGetterSetter, new ClassWithMethods(), 42))
+		final ClassWithMethods instance = new ClassWithMethods();
+		assertThatThrownBy(() -> ReflectionUtils.setFieldValueBySetter(fieldWithoutGetterSetter, instance, 42))
 				.isInstanceOf(IllegalStateException.class).hasMessageContaining("Setter method not found");
 	}
 
@@ -342,8 +345,7 @@ class ReflectionUtilsTest {
 				method -> "method".equals(method.getName()));
 
 		// THEN (overridden method in base class is not part of the result list)
-		assertThat(methods).hasSize(2);
-		assertThat(methods).containsExactlyInAnyOrder(DerivedClassOverridingMethod.class.getMethod("method", String.class, Integer.class), BaseClass.class.getMethod("method", Integer.class));
+		assertThat(methods).hasSize(2).containsExactlyInAnyOrder(DerivedClassOverridingMethod.class.getMethod("method", String.class, Integer.class), BaseClass.class.getMethod("method", Integer.class));
 	}
 
 	@Test
@@ -429,8 +431,7 @@ class ReflectionUtilsTest {
 		final Class<?> clazz = ReflectionUtils.resolveClassName("com.github.actionfx.core.utils.ReflectionUtils", null);
 
 		// THEN
-		assertThat(clazz).isNotNull();
-		assertThat(clazz).isEqualTo(ReflectionUtils.class);
+		assertThat(clazz).isNotNull().isEqualTo(ReflectionUtils.class);
 	}
 
 	@Test
@@ -440,8 +441,7 @@ class ReflectionUtilsTest {
 				ReflectionUtilsTest.class.getClassLoader());
 
 		// THEN
-		assertThat(clazz).isNotNull();
-		assertThat(clazz).isEqualTo(ReflectionUtils.class);
+		assertThat(clazz).isNotNull().isEqualTo(ReflectionUtils.class);
 	}
 
 	@Test
@@ -460,8 +460,7 @@ class ReflectionUtilsTest {
 				.resolveClassName("com.github.actionfx.core.utils.ReflectionUtilsTest$ClassWithField", null);
 
 		// THEN
-		assertThat(clazz).isNotNull();
-		assertThat(clazz).isEqualTo(ClassWithField.class);
+		assertThat(clazz).isNotNull().isEqualTo(ClassWithField.class);
 	}
 
 	@Test
@@ -524,7 +523,7 @@ class ReflectionUtilsTest {
 		private final Integer a = Integer.valueOf(42);
 
 		// member field with no getter and setter
-		private final Integer fieldWithoutGetterSetter = Integer.valueOf(1);
+		private final Integer fieldWithoutGetterSetter = Integer.valueOf(1); // NOSONAR field is required for looking up via reflection
 
 		private StringProperty string;
 

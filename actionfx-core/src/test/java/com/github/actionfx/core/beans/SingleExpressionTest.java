@@ -38,8 +38,8 @@ class SingleExpressionTest {
 
 	@Test
 	void testGetPropertyName() {
-		assertThat(expr(null).getPropertyName()).isEqualTo("");
-		assertThat(expr("").getPropertyName()).isEqualTo("");
+		assertThat(expr(null).getPropertyName()).isEmpty();
+		assertThat(expr("").getPropertyName()).isEmpty();
 		assertThat(expr("field").getPropertyName()).isEqualTo("field");
 		assertThat(expr("field[2]").getPropertyName()).isEqualTo("field");
 		assertThat(expr("field(map.key)").getPropertyName()).isEqualTo("field");
@@ -62,7 +62,7 @@ class SingleExpressionTest {
 		assertThat(expr(null).getKey()).isNull();
 		assertThat(expr("").getKey()).isNull();
 		assertThat(expr("field").getKey()).isNull();
-		assertThat(expr("field[2]").getKey()).isEqualTo("");
+		assertThat(expr("field[2]").getKey()).isEmpty();
 		assertThat(expr("field(map.key)").getKey()).isEqualTo("map.key");
 		assertThrows(IllegalArgumentException.class, () -> expr("field(map.key").getKey());
 	}

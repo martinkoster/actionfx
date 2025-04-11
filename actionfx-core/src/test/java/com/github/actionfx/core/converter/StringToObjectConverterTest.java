@@ -96,8 +96,7 @@ class StringToObjectConverterTest {
         final Charset result = converter.convert("UTF8");
 
 		// THEN
-		assertThat(result).isNotNull();
-		assertThat(result).isEqualTo(StandardCharsets.UTF_8);
+        assertThat(result).isNotNull().isEqualTo(StandardCharsets.UTF_8);
     }
 
 	public static final class CustomObjectWithValueOf {

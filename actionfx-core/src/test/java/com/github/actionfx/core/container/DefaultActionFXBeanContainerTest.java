@@ -128,8 +128,7 @@ class DefaultActionFXBeanContainerTest {
         assertThat(view1.isInitializeInvoked()).isTrue();
         assertThat(view2).isNotNull();
         assertThat(view2.isInitializeInvoked()).isTrue();
-        assertThat(view1).isSameAs(view2); // consecutive calls to getBean yield the same instance
-        assertThat(view1).isInstanceOf(DerivedFromTestView.class);
+        assertThat(view1).isSameAs(view2).isInstanceOf(DerivedFromTestView.class); // consecutive calls to getBean yield the same instance
     }
 
     @Test

@@ -777,8 +777,8 @@ public class NodeWrapper {
 		if (isControl()) {
 			final Control c = (Control) wrapped;
 			final Skin<?> s = c.getSkin();
-			if (s instanceof SkinBase) {
-				return ((SkinBase) s).getChildren();
+			if (s instanceof SkinBase skinBase) {
+				return skinBase.getChildren();
 			}
 		}
 		return supportsMultipleChildren() ? getChildren() : FXCollections.observableArrayList();
@@ -794,8 +794,8 @@ public class NodeWrapper {
 		if (isControl()) {
 			final Control c = (Control) wrapped;
 			AFXUtils.executeOnceWhenPropertyIsNonNull(c.skinProperty(), skin -> {
-				if (skin instanceof SkinBase) {
-					addDecorationUniquely(decorationNode, ((SkinBase) skin).getChildren());
+				if (skin instanceof SkinBase skinBase) {
+					addDecorationUniquely(decorationNode, skinBase.getChildren());
 				} else if (supportsMultipleChildren()) {
 					addDecorationUniquely(decorationNode, getChildren());
 				}

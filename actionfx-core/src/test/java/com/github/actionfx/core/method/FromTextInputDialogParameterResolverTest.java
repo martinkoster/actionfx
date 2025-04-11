@@ -89,8 +89,7 @@ class FromTextInputDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result).isNotNull();
-		assertThat(result).isEqualTo("music.wav");
+		assertThat(result).isNotNull().isEqualTo("music.wav");
         assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 

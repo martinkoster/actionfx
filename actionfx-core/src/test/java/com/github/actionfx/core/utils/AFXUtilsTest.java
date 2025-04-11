@@ -25,7 +25,6 @@ package com.github.actionfx.core.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -89,8 +88,7 @@ class AFXUtilsTest {
     @Test
     void testLoadFxml() {
         final Node node = AFXUtils.loadFxml("/testfxml/SampleView.fxml", this);
-        assertNotNull(node);
-        assertTrue(node instanceof GridPane);
+        assertThat(node).isNotNull().isInstanceOf(GridPane.class);
     }
 
     @Test
@@ -103,8 +101,7 @@ class AFXUtilsTest {
         final Node node = AFXUtils.loadFxml("/testfxml/MultilingualView.fxml", this, bundle);
 
         // THEN
-        assertNotNull(node);
-        assertTrue(node instanceof VBox);
+        assertThat(node).isNotNull().isInstanceOf(VBox.class);
         final VBox vbox = (VBox) node;
         assertThat(vbox.getChildren()).hasSize(1);
         assertThat(vbox.getChildren().get(0)).isInstanceOf(Label.class);
@@ -536,7 +533,7 @@ class AFXUtilsTest {
         // scene now contains the accelerator added for the button
         final ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
         assertThat(accelerators.keySet()).hasSize(1);
-        assertThat(accelerators.containsKey(kcc)).isTrue();
+        assertThat(accelerators).containsKey(kcc);
     }
 
     @Test
@@ -555,7 +552,7 @@ class AFXUtilsTest {
         // scene now contains the accelerator added for the button
         final ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
         assertThat(accelerators.keySet()).hasSize(1);
-        assertThat(accelerators.containsKey(kcc)).isTrue();
+        assertThat(accelerators).containsKey(kcc);
     }
 
     @Test

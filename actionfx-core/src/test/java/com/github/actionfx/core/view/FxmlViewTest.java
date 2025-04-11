@@ -94,8 +94,7 @@ class FxmlViewTest {
 		// THEN
 		assertThat(view.getId()).isEqualTo("testId");
 		assertThat(view.getController()).isInstanceOf(TestController.class);
-		assertThat((Object) view.getRootNode()).isNotNull();
-		assertThat((Object) view.getRootNode()).isInstanceOf(GridPane.class);
+		assertThat((Object) view.getRootNode()).isNotNull().isInstanceOf(GridPane.class);
 	}
 
 	@Test

@@ -102,9 +102,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result).isNotNull();
-		assertThat(result).isInstanceOf(File.class);
-		assertThat(result).isEqualTo(file);
+		assertThat(result).isNotNull().isInstanceOf(File.class).isEqualTo(file);
 		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
@@ -123,9 +121,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result).isNotNull();
-		assertThat(result).isInstanceOf(Path.class);
-		assertThat(result).isEqualTo(file.toPath());
+		assertThat(result).isNotNull().isInstanceOf(Path.class).isEqualTo(file.toPath());
 		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
@@ -144,9 +140,7 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result).isNotNull();
-		assertThat(result).isInstanceOf(URI.class);
-		assertThat(result).isEqualTo(file.toURI());
+		assertThat(result).isNotNull().isInstanceOf(URI.class).isEqualTo(file.toURI());
 		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
@@ -165,14 +159,12 @@ class FromDirectoryChooserDialogParameterResolverTest {
 		final Object result = resolver.resolve(instance, method, parameter, annotation, parameter.getType());
 
 		// THEN
-		assertThat(result).isNotNull();
-		assertThat(result).isInstanceOf(String.class);
-		assertThat(result).isEqualTo(file.getAbsolutePath());
+		assertThat(result).isNotNull().isInstanceOf(String.class).isEqualTo(file.getAbsolutePath());
 		assertThat(resolver.continueMethodInvocation()).isTrue();
 	}
 
 	@Test
-	void testResolve_doNotContinueOnCancel() throws IOException {
+	void testResolve_doNotContinueOnCancel() {
 		// GIVEN
 		final ClassWithMethods instance = new ClassWithMethods();
 		final Method method = ReflectionUtils.findMethod(ClassWithMethods.class,

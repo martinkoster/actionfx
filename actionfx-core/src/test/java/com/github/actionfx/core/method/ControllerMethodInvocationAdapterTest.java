@@ -466,7 +466,7 @@ class ControllerMethodInvocationAdapterTest {
 	}
 
 	@Test
-	void testInvoke_fromFileOpenDialog_userCancels() throws IOException {
+	void testInvoke_fromFileOpenDialog_userCancels() {
 		// GIVEN
 		final ActionFXMock actionFX = new ActionFXMock();
 		final DialogController dialogController = Mockito.mock(DialogController.class);

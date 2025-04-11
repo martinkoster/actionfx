@@ -374,8 +374,7 @@ class ActionFXTest {
 		final PriorityAwareEventBus eventBus = actionFX.getEventBus();
 
 		// THEN
-		assertThat(eventBus).isNotNull();
-		assertThat(eventBus).isInstanceOf(SimplePriorityAwareEventBus.class);
+		assertThat(eventBus).isNotNull().isInstanceOf(SimplePriorityAwareEventBus.class);
 	}
 
 	@Test
