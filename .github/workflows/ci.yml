@@ -1,4 +1,4 @@
-name: ActionFX CI Build- and Release Management
+name: ActionFX Build Management
 
 on:
   push:
@@ -167,57 +167,3 @@ jobs:
             actionfx-appfactory/build/
             actionfx-app-sample/build/
 
-  publish-javadoc:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ./
-
-      - name: Publish Javadoc
-        run: |
-          ./gradlew copyJavaDocToDocs gitPublishPush -x test --no-daemon
-        env:
-          GRGIT_USER: ${{ secrets.GRGIT_USER }}
-          GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
-
-  release-to-maven-central:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: ./
-
-      - name: Setup Signing Key
-        run: |
-          echo "signingKey=${{ secrets.SIGNING_KEY }}" >> $GITHUB_ENV
-          echo "signingPassword=${{ secrets.SIGNING_PASSWORD }}" >> $GITHUB_ENV
-
-      - name: Release to Maven Central
-        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test --no-daemon
