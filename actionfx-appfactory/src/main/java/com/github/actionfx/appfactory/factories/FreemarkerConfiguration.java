@@ -46,6 +46,10 @@ public final class FreemarkerConfiguration {
 
     private final Configuration configuration;
 
+    private static class SingletonHelper {
+        private static final FreemarkerConfiguration INSTANCE = new FreemarkerConfiguration();
+    }
+
     /**
      * Please use {@link #getInstance()}.
      */
@@ -59,10 +63,7 @@ public final class FreemarkerConfiguration {
      * @return the freemarker configuration instance
      */
     public static synchronized FreemarkerConfiguration getInstance() {
-        if (instance == null) {
-            instance = new FreemarkerConfiguration();
-        }
-        return instance;
+        return SingletonHelper.INSTANCE;
     }
 
     /**
