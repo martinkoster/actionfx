@@ -26,6 +26,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ./
 
       - name: Publish Javadoc
@@ -53,6 +55,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ./
 
       - name: Setup Signing Key
