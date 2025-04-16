@@ -129,8 +129,8 @@ class StringToNumberConverterTest {
 
 	@Test
 	void testConvertNumberAsHex() {
-		final String aByte = "0x" + Integer.toHexString(Byte.valueOf(Byte.MAX_VALUE).intValue());
-		final String aShort = "0x" + Integer.toHexString(Short.valueOf(Short.MAX_VALUE).intValue());
+		final String aByte = "0x" + Integer.toHexString(Byte.MAX_VALUE);
+		final String aShort = "0x" + Integer.toHexString(Short.MAX_VALUE);
 		final String anInteger = "0x" + Integer.toHexString(Integer.MAX_VALUE);
 		final String aLong = "0x" + Long.toHexString(Long.MAX_VALUE);
 		final String aReallyBigInt = "FEBD4E677898DFEBFFEE44";
