@@ -25,9 +25,9 @@ jobs:
 
       - name: Import GPG keys
         run: |
-          gpg --import --batch <(echo "GNUPGP_PRIVATE_KEY") &> /dev/null
+          gpg --import --batch <(echo "$GNUPGP_PRIVATE_KEY") &> /dev/null
           # Gradle doesn't support GPG 2.1 and later: https://github.com/gradle/gradle/issues/888
-          gpg --export-secret-keys --pinentry-mode loopback --passphrase="GNUPGP_PASSPHRASE" > $HOME/.gnupg/secring.gpg
+          gpg --export-secret-keys --pinentry-mode loopback --passphrase="$GNUPGP_PASSPHRASE" > $HOME/.gnupg/secring.gpg
           rm -rf /tmp/secret
         env:
           GNUPGP_PRIVATE_KEY: ${{ secrets.GNUPGP_PRIVATE_KEY }}
