@@ -1,19 +1,17 @@
 name: ActionFX Release Management
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: [ "ActionFX Build Management" ]
-    types:
-      - completed
+  push:
+    branches: [ 'master' ]
 
 jobs:
-  publish-javadoc:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -22,42 +20,25 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      - name: Publish Javadoc
+      - name: Import GPG keys
         run: |
-          ./gradlew copyJavaDocToDocs gitPublishPush -x test --no-daemon
+          gpg --import --batch <(echo "$GPG_PRIVATE_KEY") &> /dev/null
+          # Gradle doesn't support GPG 2.1 and later: https://github.com/gradle/gradle/issues/888
+          gpg --export-secret-keys --pinentry-mode loopback --passphrase="$GPG_PASSPHRASE" > $HOME/.gnupg/secring.gpg
+          rm -rf /tmp/secret
         env:
-          GRGIT_USER: ${{ secrets.GRGIT_USER }}
-          GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-  release-to-maven-central:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./
+      - name: Run Tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          export DISPLAY=:90
+          Xvfb -ac :90 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+          ./gradlew build test
 
       - name: Setup Signing Key
         run: |
@@ -65,4 +46,16 @@ jobs:
           echo "signingPassword=${{ secrets.SIGNING_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Release to Maven Central
-        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -x test --no-daemon
+        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -i -x test -x integrationTest \
+          -Psigning.password=$GPG_PASSPHRASE -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg \
+          --no-daemon
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Publish Javadoc
+        run: |
+          ./gradlew copyJavaDocToDocs gitPublishPush -x test --no-daemon
+        env:
+          GRGIT_USER: ${{ secrets.GRGIT_USER }}
+          GRGIT_PASS: ${{ secrets.GRGIT_PASS }}
