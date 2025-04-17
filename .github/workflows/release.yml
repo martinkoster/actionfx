@@ -41,10 +41,9 @@ jobs:
           ./gradlew build test
 
       - name: Release to Maven Central
-        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -i -x test -x integrationTest \
-          -Psigning.password=$GPG_PASSPHRASE -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg \
-          --no-daemon
+        run: ./gradlew publishAllPublicationsToSonatypeRepository closeAndReleaseSonatypeStagingRepository -i -x test -x integrationTest --no-daemon
         env:
+          GNUPGP_PRIVATE_KEY: ${{ secrets.GNUPGP_PRIVATE_KEY }}
           GNUPGP_PASSPHRASE: ${{ secrets.GNUPGP_PASSPHRASE }}
 
       - name: Publish Javadoc
