@@ -45,7 +45,12 @@ jobs:
         env:
           GNUPGP_PRIVATE_KEY: ${{ secrets.GNUPGP_PRIVATE_KEY }}
           GNUPGP_PASSPHRASE: ${{ secrets.GNUPGP_PASSPHRASE }}
+          ORG_GRADLE_PROJECT_signingKey: ${{secrets.ORG_GRADLE_PROJECT_signingKey}}
+          ORG_GRADLE_PROJECT_signingPassword: ${{secrets.ORG_GRADLE_PROJECT_signingPassword}}
+          ORG_GRADLE_PROJECT_SONATYPEPASSWORD: ${{secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD}}
+          ORG_GRADLE_PROJECT_SONATYPEUSERNAME: ${{secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME}}
 
+      
       - name: Publish Javadoc
         run: |
           ./gradlew copyJavaDocToDocs gitPublishPush -x test --no-daemon
