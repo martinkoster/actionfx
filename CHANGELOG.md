@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - Replaced JavaEE javax.* packages by corresponding Jakarta packages
 - Migrated all JUnit tests from using Hamcrest Matcher to AssertJ.
 - Added support for Spring Boot 3.4.4 (AFXAutoConfiguration is no longer configured via spring.factories)
-- Migrated CI build from Gitlab to Github Actions
+- Migrated CI build from Gitlab to Github Actions (Gitlab is no longer in use as part of the release management)
 
 ### Bugfixes
 
