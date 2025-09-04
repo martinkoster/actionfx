@@ -4,12 +4,12 @@ This module contains an integration of the [ControlsFX](https://github.com/contr
 
 Module | Description | API Documentation 
 ------ | ----------- | ----------------- 
-[actionfx-controlsfx](README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/1.7.0/actionfx-controlsfx/index.html) 
+[actionfx-controlsfx](README.md) | This module integrates the components and controls of [ControlsFX](https://github.com/controlsfx/controlsfx) into ActionFX. | [Javadoc](https://martinkoster.github.io/actionfx/2.0.0/actionfx-controlsfx/index.html) 
 
 **Gradle Dependency**
 
 ```
-implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "1.7.0"
+implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", version: "2.0.0"
 ```
 
 **Maven Dependency**
@@ -18,7 +18,7 @@ implementation group: "com.github.martinkoster", name: "actionfx-controlsfx", ve
 <dependency>
     <groupId>com.github.martinkoster</groupId>
     <artifactId>actionfx-controlsfx</artifactId>
-    <version>1.7.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
